@@ -55,3 +55,35 @@ This is C typescript compiler. It can compile typescript file faster than normal
 - [X] Parse arguments
 - [ ] Print arguments
 
+# Typescript
+
+```typescript
+#if dev
+function log(...args) {
+  console.log.apply(console, ...args);
+}
+#else
+declare var log;
+#endif
+
+interface Living {
+  eat(food: Food): void;
+  die(): boolean;
+}
+
+class Animal {
+}
+
+class Cat extends Animal implements Living {
+  constructor() {
+    super();
+  }
+
+  eat(food: Food): void {
+  }
+
+  die(): boolean {
+    return true;
+  }
+}
+```
