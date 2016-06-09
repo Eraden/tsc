@@ -248,7 +248,6 @@ void init_log() {
     fclose(file);
     log_to_file("\n\n");
   } else {
-    fclose(file);
     file = fopen("./log/tsc.log", "w");
     if (!file) {
       io_panic("Failed to open tsc.log for writing!\n");
