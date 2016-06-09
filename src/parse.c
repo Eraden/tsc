@@ -20,50 +20,6 @@ static void validateName(TSParseContext *context, const char *name) {
 }
 
 //#################################################################################
-// string
-//#################################################################################
-
-static char *appendChar(const char *content, char c);
-static char *cloneString(const char *content);
-static char *concat(const char *s1, const char *s2);
-
-static char *appendChar(const char *content, char c) {
-  size_t size = content == NULL ? sizeof(char) : strlen(content) + 1;
-  char *new = (char *) malloc(size);
-  if (content != NULL) {
-    if ((new = strcpy(new, content)) == NULL) {
-      ALLOC_FAILED
-      exit(1);
-    }
-  }
-  new[size - 1] = c;
-  new[size] = 0;
-  return new;
-}
-
-static char *cloneString(const char *content) {
-  if (content == NULL) return NULL;
-  const size_t size = strlen(content) ;
-  char *new = (char *)malloc(size);
-  memset(new, 0, size);
-  strcpy(new, content);
-  return new;
-}
-
-static char *concat(const char *s1, const char *s2) {
-  if (s1 == NULL && s2 == NULL) return NULL;
-  if (s1 == NULL) return cloneString(s2);
-  if (s2 == NULL) return cloneString(s1);
-  size_t len1 = strlen(s1);
-  size_t len2 = strlen(s2);
-  char *result = (char*) malloc(len1 + len2 + 1);
-  if (result == NULL) exit(1);
-  memcpy(result, s1, len1);
-  memcpy(result + len1, s2, len2 + 1);
-  return result;
-}
-
-//#################################################################################
 // Parse
 //#################################################################################
 
@@ -149,21 +105,25 @@ void parseTSExport(TSParseContext *context) {
   } else if (strcmp(type, VAR) == 0) {
     export->type = TSExportType_Var;
   }
-  FLOG("%s\n", "    replacing old exports...");
-  FLOG("+ coll addess: %p\n", context->exports);
+  // FLOG("%s\n", "    replacing old exports...");
+  // FLOG("+ coll addess: %p\n", context->exports);
   TSExport **new = pushTSExport(context->exports, context->exportsSize, export);
   if (context->exports != NULL) free(context->exports);
   context->exports = new;
   context->exportsSize += 1;
-  FLOG("+ coll addess: %p\n", context->exports);
+  // FLOG("+ coll addess: %p\n", context->exports);
   free((void *) type);
 }
 
 /**
- * @Parse
  * TSFunction
  */
 static void parseTSFunctionArgument(TSParseContext *context, TSFunction *fn) {
+  // fprintf(stdout, "\n%s\n",
+  //     "###########################################################################\n"
+  //     "      Function argument\n"
+  //     "###########################################################################\n"
+  //     );
   TSArgument *arg = newTSArgument();
   getTSToken(context);
   skipTSWhite(context);
@@ -183,9 +143,7 @@ static void parseTSFunctionArgument(TSParseContext *context, TSFunction *fn) {
 
   validateName(context, context->currentToken->content);
   if (arg->name != NULL) {
-    char *b = concat(arg->name, context->currentToken->content);
-    free(arg->name);
-    arg->name = b;
+    CONCAT(arg->name, context->currentToken->content);
   } else {
     arg->name = cloneString(context->currentToken->content);
   }
@@ -193,47 +151,41 @@ static void parseTSFunctionArgument(TSParseContext *context, TSFunction *fn) {
   getTSToken(context);
   skipTSWhite(context);
 
-  int getNewToken = 1;
-
   if (context->lastChar == ':') {
     getTSToken(context);
     skipTSWhite(context);
     validateName(context, context->currentToken->content);
     arg->type = cloneString(context->currentToken->content);
-  } else {
-    getNewToken = 0;
-  }
 
-  if ( getNewToken ) {
     getTSToken(context);
     skipTSWhite(context);
-    if (context->lastChar == '=') {
-      getTSToken(context);
-      skipTSWhite(context);
+  }
 
-      arg->value = cloneString(context->currentToken->content);
-      while (1) {
-        getTSToken(context);
-        if (context->lastChar == ')' || context->lastChar == ',') {
-          break;
-        } else { 
-          char * b = concat(arg->value, context->currentToken->content);
-          free(arg->value);
-          arg->value = b;
-        }
+  if (context->lastChar == '=') {
+    getTSToken(context);
+    skipTSWhite(context);
+
+    arg->value = cloneString(context->currentToken->content);
+    while (1) {
+      getTSToken(context);
+      if (context->lastChar == ')' || context->lastChar == ',') {
+        break;
+      } else { 
+        CONCAT(arg->value, context->currentToken->content);
       }
     }
-    getNewToken = 0;
   }
 
   TSArgument **new = pushTSArgument(fn->arguments, fn->argumentsSize, arg);
   if (fn->arguments != NULL) free(fn->arguments);
   fn->arguments = new;
   fn->argumentsSize += 1;
-  if (getNewToken) {
+
+  if (context->lastChar != ',' && context->lastChar != ')') {
     getTSToken(context);
     skipTSWhite(context);
   }
+
   // fprintf(stdout, "argument\n  name: '%s'\n  type: '%s'\n  value: '%s'\n", arg->name, arg->type, arg->value);
   parseTSFunctionArguments(context, fn);
 }
@@ -283,20 +235,15 @@ void parseTSFunction(TSParseContext *context) {
     if (context->lastChar == '}') {
       bracketCount -= 1;
       if (bracketCount > 0 && context->currentToken->content != NULL && fn->body != NULL) {
-        char *b = concat(fn->body, context->currentToken->content);
-        free(fn->body);
-        fn->body = b;
+        CONCAT(fn->body, context->currentToken->content);
       } else break;
     } else {
       if (context->lastChar == '{')
         bracketCount += 1;
-      if (fn->body != NULL) {
-        char *b = concat(fn->body, context->currentToken->content);
-      } else if (context->currentToken->content != NULL) {
-        fn->body = cloneString(context->currentToken->content);
-      }
+      CONCAT(fn->body, context->currentToken->content);
     }
   }
+  FLOG("  function body:\n%s\n", fn->body);
   TSFunction **new = pushTSFunction(context->globalFunctions, context->globalFunctionsSize, fn);
   free(context->globalFunctions);
   context->globalFunctionsSize += 1;
@@ -335,7 +282,7 @@ void parseTSClass(TSParseContext *context) {
     context->decoratorsStack = NULL;
   }
   context->globalClassesSize += 1;
-  FLOG("+ coll addess: %p\n", context->globalClasses);
+  // FLOG("+ coll addess: %p\n", context->globalClasses);
 }
 
 void parseTSDecorator(TSParseContext *context) {
@@ -349,7 +296,7 @@ void parseTSDecorator(TSParseContext *context) {
   const char *name = cloneString(context->currentToken->content);
   dec->name = name;
 
-  getTSToken(context); // (
+  getTSToken(context);
   if (context->lastChar != '(') {
     context->position -= 1;
     return;
@@ -369,9 +316,7 @@ void parseTSDecorator(TSParseContext *context) {
       if (arg->value == NULL) {
         arg->value = cloneString(context->currentToken->content);
       } else if (context->currentToken->content != NULL) {
-        char * b = concat(arg->value, context->currentToken->content);
-        free(arg->value);
-        arg->value = b;
+        CONCAT(arg->value, context->currentToken->content);
       }
     }
   }
@@ -390,15 +335,17 @@ void parseTSDecorator(TSParseContext *context) {
 static void consumeString(TSParseContext *context) {
   char begin = context->lastChar;
   char prev = 0;
+  context->lastChar = begin;
   while (1) {
-    context->position += 1;
     char current = context->content[context->position];
     char *new = appendChar(context->currentToken->content, current);
     free((void*) context->currentToken->content);
     context->currentToken->content = new;
     if (current == begin && prev != '\\') {
+      context->position += 1;
       return;
     }
+    context->position += 1;
     prev = current;
   }
 }
@@ -485,7 +432,7 @@ void getTSToken(TSParseContext *context) {
       default:
         {
           char *new = appendChar(context->currentToken->content, c);
-          free((void*) context->currentToken->content);
+          free((void *) context->currentToken->content);
           context->currentToken->content = new;
         }
     }

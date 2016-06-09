@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tsc/types.h>
+#include <tsc/str.h>
 
 void parseTSTokens(TSParseContext *context);
 void parseTSToken(TSParseContext *context);
@@ -12,6 +13,4 @@ void parseTSFunction(TSParseContext *context);
 void getTSToken(TSParseContext *context);
 
 TSParseContext *parseFile(const char *file);
-// String
-static char *appendChar(const char *content, char c);
-static char *cloneString(const char *content);
+

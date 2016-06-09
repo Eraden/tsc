@@ -4,46 +4,84 @@
 // ToString
 //#################################################################################
 
-static char* classesToString(TSParseContext *context) {
-  FLOG("  %s\n", "creating classes...");
+static char *stringFromFunctions(TSParseContext *context) {
+  if (context == NULL) return NULL;
+  if (context->globalClassesSize == 0) return NULL;
+  const unsigned long int size = context->globalFunctionsSize;
+  char *buffer = NULL;
+  TSFunction *fn = NULL;
+  TSArgument *arg = NULL;
+  for (unsigned long int i = 0; i < size; i++) {
+    fn = context->globalFunctions[i];
+    if (fn == NULL) continue;
+    CONCAT(buffer, "  var ");
+    CONCAT(buffer, fn->name);
+    CONCAT(buffer, " = function (");
+    for (unsigned long int j = 0; j < fn->argumentsSize; j++) {
+      arg = fn->arguments[j];
+      if (j > 0) CONCAT(buffer, ", ");
+      CONCAT(buffer, arg->name);
+    }
+    CONCAT(buffer, ") {\n");
+    for (unsigned long int j = 0; j < fn->argumentsSize; j++) {
+      arg = fn->arguments[j];
+      if (arg->value != NULL) {
+        CONCAT(buffer, "    if ( void(0) === ");
+        CONCAT(buffer, arg->name);
+        CONCAT(buffer, " )\n      ");
+        CONCAT(buffer, arg->name);
+        CONCAT(buffer, " = ");
+        CONCAT(buffer, arg->value);
+        CONCAT(buffer, ";\n");
+      }
+    }
+    CONCAT(buffer, fn->body);
+    CONCAT(buffer, "};\n");
+  }
+  return buffer;
+}
+
+static char *stringFromClasses(TSParseContext *context) {
+  // FLOG("  %s\n", "creating classes...");
   if (context == NULL) return NULL;
   TSClass **coll = context->globalClasses;
   if (coll== NULL) return NULL;
   const unsigned long int size = context->globalClassesSize;
-  FLOG("    size: %lu\n", size);
+  // FLOG("    size: %lu\n", size);
   char *buffer = (char*) malloc(1024 * 8);
   TSClass *class = NULL;
   for (unsigned long int i = 0; i < size; i++) {
     class = coll[i];
-    strcat(buffer, "var ");
-    strcat(buffer, class->name);
-    strcat(buffer, " = function(){\n");
+    CONCAT(buffer, "  var ");
+    CONCAT(buffer, class->name);
+    CONCAT(buffer, " = function(){\n");
     if (class->parent != NULL) {
-      strcat(buffer, "  ");
-      strcat(buffer, class->parent);
-      strcat(buffer, ".apply(this, arguments);\n");
-      strcat(buffer, "};\n");
+      CONCAT(buffer, "    ");
+      CONCAT(buffer, class->parent);
+      CONCAT(buffer, ".apply(this, arguments);\n");
+      CONCAT(buffer, "  };\n");
       if (class->decoratorsSize > 0) {
         TSDecorator *dec;
         for (unsigned long int j = 0; j < class->decoratorsSize; j++) {
           dec = class->decorators[j];
-          strcat(buffer, class->name);
-          strcat(buffer, " = ");
-          strcat(buffer, dec->name);
+          CONCAT(buffer, "  ");
+          CONCAT(buffer, class->name);
+          CONCAT(buffer, "=");
+          CONCAT(buffer, dec->name);
           if (dec->argumentsSize > 0) {
-            strcat(buffer, "(");
+            CONCAT(buffer, "(");
             TSArgument *arg;
             for (unsigned long int k = 0; k < dec->argumentsSize; k++) {
               arg = dec->arguments[k];
-              if (k > 0) strcat(buffer, ",");
-              strcat(buffer, arg->value);
+              if (k > 0) CONCAT(buffer, ",");
+              CONCAT(buffer, arg->value);
             }
-            strcat(buffer, ")");
+            CONCAT(buffer, ")");
           }
           // args
-          strcat(buffer, "(");
-          strcat(buffer, class->name);
-          strcat(buffer, ");\n");
+          CONCAT(buffer, "(");
+          CONCAT(buffer, class->name);
+          CONCAT(buffer, ");\n");
         }
       }
     }
@@ -51,13 +89,13 @@ static char* classesToString(TSParseContext *context) {
   return buffer;
 }
 
-static char *exportsToString(TSParseContext *context) {
+static char *stringFromExports(TSParseContext *context) {
   FLOG("  %s\n", "creating exports...");
   if (context == NULL) return NULL;
   if (context->exports == NULL) return NULL;
   const long unsigned int size = context->exportsSize;
-  FLOG("    ! coll address: %p\n", context->exports);
-  FLOG("    size: %lu\n", size);
+  // FLOG("    ! coll address: %p\n", context->exports);
+  // FLOG("    size: %lu\n", size);
   char *buffer = (char*) malloc(1024);
   memset(buffer, 0, 1024);
   TSExport *export;
@@ -68,14 +106,15 @@ static char *exportsToString(TSParseContext *context) {
       case TSExportType_Class:
         {
           class = (TSClass*) export->meta;
-          if (export->asDefault == 1) strcat(buffer, "exports[DEFAULT_EXPORT] = ");
-          else {
-            strcat(buffer, "exports[\"");
-            strcat(buffer, class->name);
-            strcat(buffer, "\"] = ");
+          if (export->asDefault == 1) {
+            CONCAT(buffer, "  exports[DEFAULT_EXPORT] = ");
+          } else {
+            CONCAT(buffer, "  exports[\"");
+            CONCAT(buffer, class->name);
+            CONCAT(buffer, "\"] = ");
           }
-          strcat(buffer, class->name);
-          strcat(buffer, ";\n");
+          CONCAT(buffer, class->name);
+          CONCAT(buffer, ";\n");
           break;
         }
       default:
@@ -86,26 +125,34 @@ static char *exportsToString(TSParseContext *context) {
 }
 
 char *stringFromParseContext(TSParseContext *context) {
-  FLOG("%s\n", "Creating JavaScript log from from collected data...");
-  char *buffer = (char*) malloc(1024);
-  memset(buffer, 0, 1024);
-  strcat(buffer, "(function () {/*FILE EXPORT*/\n");
-  strcat(buffer, "var exports = {};\n(function () {\n");
-  char *join;
-  // classes
-  join = classesToString(context);
+  // FLOG("%s\n", "Creating JavaScript log from from collected data...");
+  char *buffer = NULL;
+  CONCAT(buffer, "(function () {/*FILE EXPORT*/\n");
+  CONCAT(buffer, "var exports = {};\n(function () {\n");
+  char *join = NULL;
+
+  // functions
+  join = stringFromFunctions(context);
   if (join) {
-    strcat(buffer, join);
-    free((void*) join);
+    CONCAT(buffer, join);
+    free(join);
+  }
+
+  // classes
+  join = stringFromClasses(context);
+  if (join) {
+    CONCAT(buffer, join);
+    free(join);
   }
 
   // exports
-  join = exportsToString(context);
+  join = stringFromExports(context);
   if (join) {
-    strcat(buffer, join);
-    free((void*) join);
+    CONCAT(buffer, join);
+    free(join);
   }
-  strcat(buffer, "}());\n");
-  strcat(buffer, "return exports;\n}());");
+
+  CONCAT(buffer, "}());\n");
+  CONCAT(buffer, "return exports;\n}());");
   return buffer;
 }

@@ -2,6 +2,18 @@
 
 This is C typescript compiler. It can compile typescript file faster than normal tsc provided by Microsoft.
 
+## Build
+
+```bash
+git clone git@github.com:Eraden/tsc.git
+cd tsc
+mkdir build
+cd build
+cmake ..
+make -j9
+./tsc examples
+```
+
 ## Progress
 
 ### Compiler
@@ -51,9 +63,9 @@ This is C typescript compiler. It can compile typescript file faster than normal
 ### Function
 
 - [X] Parse empty function
-- [ ] Print empty function
+- [X] Print empty function
 - [X] Parse arguments
-- [ ] Print arguments
+- [X] Print arguments
 
 # Typescript
 

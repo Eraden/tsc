@@ -4,6 +4,7 @@ project(tsc)
 set(
   SOURCE_FILES
   src/log.c
+  src/str.c
   src/main.c
 )
 
@@ -24,4 +25,4 @@ target_link_libraries(
   tsdump
 )
 
-FILE(COPY test.ts DESTINATION .)
+FILE(COPY examples DESTINATION .)
