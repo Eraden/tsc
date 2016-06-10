@@ -18,6 +18,8 @@ static const char *TS_PROTECTED   = "protected";
 static const char *TS_PRIVATE     = "private";
 static const char *TS_PACKAGE     = "package";
 static const char *TS_FRIEND      = "friend";
+static const char *TS_GET         = "get";
+static const char *TS_SET         = "set";
 
 enum TSError {
   INVALID_DECORATOR_ANNOTATION = 10,
@@ -35,12 +37,14 @@ enum TSMethod_Type {
   TSMethod_Type_Setter
 };
 
-enum TSArgumentModifier {
-  TSArgumentModifier_Undefined,
-  TSArgumentModifier_Public,
-  TSArgumentModifier_Private,
-  TSArgumentModifier_Protected,
-  TSArgumentModifier_Local
+enum TSAccessModifier {
+  TSAccessModifier_Undefined,
+  TSAccessModifier_Public,
+  TSAccessModifier_Private,
+  TSAccessModifier_Protected,
+  TSAccessModifier_Local,
+  TSAccessModifier_Package,
+  TSAccessModifier_Friend
 };
 
 enum TSExportType {
@@ -64,7 +68,7 @@ typedef struct sTSArgument {
   char *name;
   char *type;
   char *value;
-  enum TSArgumentModifier modifier;
+  enum TSAccessModifier modifier;
   unsigned short int isRest;
 } TSArgument;
 
@@ -80,8 +84,11 @@ typedef struct sTSDecorator {
 
 typedef struct sTSField {
   TSDecorator **decorators;
+  unsigned long int decoratorsSize;
+  enum TSAccessModifier modifier;
   const char *name;
   const char *type;
+  const char *value;
 } TSField;
 
 #define TSField_SIZE sizeof(TSField)
@@ -103,6 +110,7 @@ typedef struct sTSMethod {
   unsigned long int argumentsSize;
   TSDecorator **decorators;
   unsigned long int decoratorsSize;
+  enum TSAccessModifier modifier;
   const char *body;
   const char *name;
   enum TSMethod_Type type;
@@ -149,6 +157,14 @@ typedef struct sTSParseContext {
 
 #define TSParseContext_SIZE sizeof(TSParseContext)
 
+typedef struct sTSParseClassBodyData {
+  enum TSAccessModifier access;
+  enum TSMethod_Type mthType;
+  char *name;
+} TSParseClassBodyData;
+
+#define TSParseClassBodyData_SIZE sizeof(TSParseClassBodyData)
+
 // Types
 TSToken *newTSToken();
 void freeTSToken(TSToken *token);
@@ -179,3 +195,10 @@ TSClass **pushTSClass(TSClass **coll, unsigned long int size, TSClass *el);
 TSExport *newTSExport();
 void freeTSExport(TSExport *export);
 TSExport **pushTSExport(TSExport **coll, unsigned long int size, TSExport *el);
+
+TSField *newTSField();
+void freeTSField(const TSField *field);
+TSField **pushTSField(TSField **coll, unsigned long int size, TSField *el);
+
+TSParseClassBodyData *newTSParseClassBodyData();
+void freeTSParseClassBodyData(const TSParseClassBodyData *data);

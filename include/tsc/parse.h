@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tsc/sys.h>
 #include <tsc/types.h>
 #include <tsc/str.h>
 

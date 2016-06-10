@@ -15,7 +15,7 @@ export default class Test extends Some {
   private field3: Date;
   field;
 
-  public constructor() {
+  constructor() {
     super();
   }
 }

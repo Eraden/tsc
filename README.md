@@ -20,20 +20,35 @@ make -j9
 
 - [X] Read file
 - [X] Log files
-- [ ] -e environment
-- [ ] .tsc file
+- [ ] `-e environment`
+- [ ] `tsconfig` file
+- [ ] `--strong` mode
+- [ ] `--strict` mode
+- [ ] `--relax` mode
 
-### Precompiler
+### Typings
 
-- [ ] #if #else #endif
-- [ ] #ifdefined
-- [ ] -D flag
+- [ ] Reading `typings` directory
+- [ ] Process `.ts.d` files
+- [ ] Process `///<reference source="" />`
+
+### Pre-compiler
+
+- [ ] `#if #else #endif`
+- [ ] `#ifdefined`
+- [ ] `-DVARIABLE=VALUE` flag
+
+### Comments
+
+- [ ] Parse single line comments
+- [ ] Parse multi-line comments
+- [ ] `--preserveComments` flag
 
 ### Decorators
 
 - [X] Parse class decorator
 - [X] Print class decorator
-- [ ] Parse funtion decorator
+- [ ] Parse function decorator
 - [ ] Print function decorator
 - [ ] Parse class method decorator
 - [ ] Print class method decorator
@@ -41,6 +56,12 @@ make -j9
 - [ ] Print class field decorator
 - [ ] Parse argument decorator
 - [ ] Print argument decorator
+
+### Interface
+
+- [ ] Parse empty interface
+- [ ] Parse interface field requirement
+- [ ] Parse interface method prototype
 
 ### Class
 
@@ -60,6 +81,11 @@ make -j9
 - [ ] Print class method arguments
 - [ ] Support method `super`
 
+### Fields
+
+- [X] Parse class field
+- [X] Print class field
+
 ### Function
 
 - [X] Parse empty function
@@ -67,16 +93,46 @@ make -j9
 - [X] Parse arguments
 - [X] Print arguments
 
+### Validations
+
+- [ ] Types register
+- [ ] Print parse warnings
+- [ ] Print warning about unused variables
+- [ ] Print warning about unused functions
+
+# Modes
+
+## Relax
+
+* Accept `any` as type.
+* Accept undefined types as `any`.
+* JavaScript will be generated regardless of errors and warnings.
+
+## Strict
+
+* Accept `any` as type.
+* Unknown types will not be accepted.
+* JavaScript will be generated regardless of errors and warnings.
+
+## Strong
+
+* Does not accept `any` as type.
+* Unknown types will not be accepted.
+* JavaScript will not be generated if errors or warnings occurred.
+
+
 # Typescript
 
 ```typescript
-#if dev
+//#if dev
 function log(...args) {
   console.log.apply(console, ...args);
 }
-#else
+//#else
 declare var log;
-#endif
+//#endif
+
+class Food {}
 
 interface Living {
   eat(food: Food): void;

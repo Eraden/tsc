@@ -9,6 +9,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <assert.h>
 
 #if defined __APPLE__
 #include <unistd.h>

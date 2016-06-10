@@ -27,3 +27,9 @@
   if (coll != NULL) for (unsigned long int i = 0; i < size - 1; i++) new[i] = coll[i]; \
   return new; \
 }
+
+#define TS_ASSERT(context, condition, failure_msg) \
+  if (!(condition)) { \
+    ERR("%s\n", failure_msg); \
+    PANIC(context, 1); \
+  }

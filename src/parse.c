@@ -257,25 +257,143 @@ void parseTSFunction(TSParseContext *context) {
       CONCAT(fn->body, context->currentToken->content);
     }
   }
-//  FLOG("  function body:\n%s\n", fn->body);
   TSFunction **new = pushTSFunction(context->globalFunctions, context->globalFunctionsSize, fn);
   free(context->globalFunctions);
   context->globalFunctionsSize += 1;
   context->globalFunctions = new;
 }
 
+static unsigned short parseTSClassMethod(TSParseContext *context, TSClass *tsClass, TSParseClassBodyData *data ) {
+  fprintf(stdout, "Found class method\n\n");
+  getTSToken(context);
+  skipTSWhite(context);
+  return 1;
+}
+
+static unsigned short parseTSClassField(TSParseContext *context, TSClass *tsClass, TSParseClassBodyData *data) {
+  fprintf(stdout, "Found class field\n\n");
+  TSField *field = newTSField();
+  field->name = cloneString(data->name);
+  field->modifier = data->access == TSAccessModifier_Undefined ?
+                    TSAccessModifier_Private :
+                    data->access;
+  TSField **new = pushTSField(tsClass->fields, tsClass->fieldsSize, field);
+  free(tsClass->fields);
+  tsClass->fields = new;
+  tsClass->fieldsSize += 1;
+  if (context->lastChar == ':') {
+    getTSToken(context);
+    skipTSWhite(context);
+    field->type = cloneString(context->currentToken->content);
+    getTSToken(context);
+    skipTSWhite(context);
+  }
+  if (context->lastChar == '=') {
+    getTSToken(context);
+    skipTSWhite(context);
+    field->value = cloneString(context->currentToken->content);
+    getTSToken(context);
+    skipTSWhite(context);
+  }
+  getTSToken(context);
+  skipTSWhite(context);
+  return 1;
+}
+
 /**
- * Class
- */
+* Class
+*/
+
+static short unsigned int collectTSClassBodyMemberData(TSParseContext *context, TSClass *class, TSParseClassBodyData *data) {
+  if (strcmp(context->currentToken->content, TS_PUBLIC) == 0) {
+    TS_ASSERT(context, data->access == TSAccessModifier_Undefined, "Double access definition!");
+    data->access = TSAccessModifier_Public;
+    getTSToken(context);
+    skipTSWhite(context);
+    return 1;
+  }
+  if (strcmp(context->currentToken->content, TS_PROTECTED) == 0) {
+    assert(data->access == TSAccessModifier_Undefined);
+    data->access = TSAccessModifier_Protected;
+    getTSToken(context);
+    skipTSWhite(context);
+    return 1;
+  }
+  if (strcmp(context->currentToken->content, TS_PRIVATE) == 0) {
+    TS_ASSERT(context, data->access == TSAccessModifier_Undefined, "Double access definition!");
+    data->access = TSAccessModifier_Private;
+    getTSToken(context);
+    skipTSWhite(context);
+    return 1;
+  }
+  if (strcmp(context->currentToken->content, TS_PACKAGE) == 0) {
+    TS_ASSERT(context, data->access == TSAccessModifier_Undefined, "Double access definition!");
+    data->access = TSAccessModifier_Package;
+    getTSToken(context);
+    skipTSWhite(context);
+    return 1;
+  }
+  if (strcmp(context->currentToken->content, TS_FRIEND) == 0) {
+    TS_ASSERT(context, data->access == TSAccessModifier_Undefined, "Double access definition!");
+    data->access = TSAccessModifier_Friend;
+    getTSToken(context);
+    skipTSWhite(context);
+    return 1;
+  }
+
+  if (strcmp(context->currentToken->content, TS_GET) == 0) {
+    TS_ASSERT(context, data->mthType == TSMethod_Type_Undefined, "Double method type definition!");
+    data->mthType = TSMethod_Type_Getter;
+    getTSToken(context);
+    skipTSWhite(context);
+    return 1;
+  }
+  if (strcmp(context->currentToken->content, TS_SET) == 0) {
+    TS_ASSERT(context, data->mthType == TSMethod_Type_Undefined, "Double method type definition!");
+    data->mthType = TSMethod_Type_Setter;
+    getTSToken(context);
+    skipTSWhite(context);
+    return 1;
+  }
+  return 0;
+}
 
 static short unsigned int parseClassBody(TSParseContext *context, TSClass *class) {
   getTSToken(context);
   skipTSWhite(context);
 
-  TSToken *token = context->currentToken;
-  const char *content = token->content;
+  if (context->lastChar == '}') return 0;
 
-  return 0;
+  TSParseClassBodyData *data = newTSParseClassBodyData();
+
+  while (1) {
+    if (context->lastChar == '}')
+      return 0;
+
+    while(collectTSClassBodyMemberData(context, class, data));
+
+    fprintf(stdout, "[class body] current token: %s\n", context->currentToken->content);
+
+    if (context->lastChar == '(') {
+      parseTSClassMethod(context, class, data);
+      freeTSParseClassBodyData(data);
+      data = newTSParseClassBodyData();
+    }
+
+    else
+
+    if (context->lastChar == ';' || context->lastChar == ':' || context->lastChar == '=') {
+      parseTSClassField(context, class, data);
+      freeTSParseClassBodyData(data);
+      data = newTSParseClassBodyData();
+    }
+
+    else
+    {
+      CONCAT(data->name, context->currentToken->content);
+      getTSToken(context);
+    }
+  }
 }
 
 void parseTSMethod(TSParseContext *context) {
@@ -403,40 +521,42 @@ void getTSToken(TSParseContext *context) {
     context->lastChar = c;
     context->position += 1;
     context->character += 1;
-    if (c == '\n') context->line += 1;
+    if (c == '\n') {
+      context->line += 1;
+    }
     switch (c) {
       case '\'':
       case '"':
-        {
-          if (context->currentToken->content != NULL) {
-            if (context->position > 0) context->position -= 1;
-            if (context->character > 0) context->character -= 1;
-            context->lastChar = prev;
-            // FLOG("-- Current token content: '%s'\n", context->currentToken->content);
-            return;
-          }
-          char *new = appendChar(context->currentToken->content, c);
-          free((void*) context->currentToken->content);
-          context->currentToken->content = new;
-          consumeString(context);
+      {
+        if (context->currentToken->content != NULL) {
+          if (context->position > 0) context->position -= 1;
+          if (context->character > 0) context->character -= 1;
+          context->lastChar = prev;
           // FLOG("-- Current token content: '%s'\n", context->currentToken->content);
           return;
         }
+        char *new = appendChar(context->currentToken->content, c);
+        free((void*) context->currentToken->content);
+        context->currentToken->content = new;
+        consumeString(context);
+        // FLOG("-- Current token content: '%s'\n", context->currentToken->content);
+        return;
+      }
       case '\n':
-        {
-          if (context->currentToken->content != NULL) {
-            if (context->position > 0) context->position -= 1;
-            if (context->character > 0) context->character -= 1;
-            context->lastChar = prev;
-            return;
-          }
-          char *new = appendChar(context->currentToken->content, c);
-          free((void*) context->currentToken->content);
-          context->currentToken->content = new;
-          context->character = 0;
-          // FLOG("-- Current token content: '%s'\n", context->currentToken->content);
+      {
+        if (context->currentToken->content != NULL) {
+          if (context->position > 0) context->position -= 1;
+          if (context->character > 0) context->character -= 1;
+          context->lastChar = prev;
           return;
         }
+        char *new = appendChar(context->currentToken->content, c);
+        free((void*) context->currentToken->content);
+        context->currentToken->content = new;
+        context->character = 0;
+//           FLOG("-- Current token content: '%s'\n", context->currentToken->content);
+        return;
+      }
       case ' ':
       case ')':
       case '(':
@@ -446,26 +566,27 @@ void getTSToken(TSParseContext *context) {
       case ':':
       case ',':
       case '=':
-        {
-          if (context->currentToken->content != NULL) {
-            if (context->position > 0) context->position -= 1;
-            if (context->character > 0) context->character -= 1;
-            context->lastChar = prev;
-            // FLOG("-- Current token content: '%s'\n", context->currentToken->content);
-            return;
-          }
-          char *new = appendChar(context->currentToken->content, c);
-          free((void*) context->currentToken->content);
-          context->currentToken->content = new;
+      case ';':
+      {
+        if (context->currentToken->content != NULL) {
+          if (context->position > 0) context->position -= 1;
+          if (context->character > 0) context->character -= 1;
+          context->lastChar = prev;
           // FLOG("-- Current token content: '%s'\n", context->currentToken->content);
           return;
         }
+        char *new = appendChar(context->currentToken->content, c);
+        free((void*) context->currentToken->content);
+        context->currentToken->content = new;
+        // FLOG("-- Current token content: '%s'\n", context->currentToken->content);
+        return;
+      }
       default:
-        {
-          char *new = appendChar(context->currentToken->content, c);
-          free((void *) context->currentToken->content);
-          context->currentToken->content = new;
-        }
+      {
+        char *new = appendChar(context->currentToken->content, c);
+        free((void *) context->currentToken->content);
+        context->currentToken->content = new;
+      }
     }
   }
 }

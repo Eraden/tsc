@@ -53,6 +53,60 @@ static char *stringFromFunctions(TSParseContext *context) {
   return buffer;
 }
 
+static char *stringFromClassFields(TSClass *tsClass) {
+  if (tsClass->fieldsSize == 0) return NULL;
+  TSField *field = NULL;
+  char *buffer = NULL;
+  CONCAT(buffer, "  (function (T, proto) {\n");
+//  CONCAT(
+//      buffer,
+//      "    proto[META_TABLE] = {\n"
+//          "      'get': function () {\n"
+//          "        this[PRIVATE] || this[PRIVATE] = {};\n"
+//          "        return { 'private': this[PRIVATE] };\n"
+//          "      }\n"
+//          "    };\n"
+//  );
+  for (unsigned long int i = 0; i < tsClass->fieldsSize; i++) {
+    field = tsClass->fields[i];
+    CONCAT(buffer, "    proto['");
+    CONCAT(buffer, field->name);
+    CONCAT(
+        buffer,
+        "'] = {\n"
+    );
+    if (field->modifier == TSAccessModifier_Private) {
+      // TODO: Implement private access as meta table so extended class can't use or modify parent data
+      CONCAT(
+          buffer,
+          "      'enumerable': false,\n"
+              "      'writable': true,\n"
+              "      'configurable': false,\n"
+              "      'value': "
+      );
+    } else {
+      CONCAT(
+          buffer,
+          "      'enumerable': false,\n"
+              "      'writable': true,\n"
+              "      'configurable': false,\n"
+              "      'value': "
+      );
+    }
+    CONCAT(buffer, field->value == NULL ? "null" : field->value);
+    CONCAT(
+        buffer,
+        "\n"
+            "    };\n"
+    );
+  }
+  CONCAT(buffer, "    Object.defineProperties(T.prototype, proto);\n");
+  CONCAT(buffer, "  }(");
+  CONCAT(buffer, tsClass->name);
+  CONCAT(buffer, ", {}));\n");
+  return buffer;
+}
+
 static char *stringFromClasses(TSParseContext *context) {
   // FLOG("  %s\n", "creating classes...");
   if (context == NULL) return NULL;
@@ -61,23 +115,23 @@ static char *stringFromClasses(TSParseContext *context) {
   const unsigned long int size = context->globalClassesSize;
   // FLOG("    size: %lu\n", size);
   char *buffer = NULL;
-  TSClass *class = NULL;
+  TSClass *tsClass = NULL;
   for (unsigned long int i = 0; i < size; i++) {
-    class = coll[i];
+    tsClass = coll[i];
     CONCAT(buffer, "  var ");
-    CONCAT(buffer, class->name);
-    CONCAT(buffer, " = function(){\n");
-    if (class->parent != NULL) {
+    CONCAT(buffer, tsClass->name);
+    CONCAT(buffer, " = function () {\n");
+    if (tsClass->parent != NULL) {
       CONCAT(buffer, "    ");
-      CONCAT(buffer, class->parent);
+      CONCAT(buffer, tsClass->parent);
       CONCAT(buffer, ".apply(this, arguments);\n");
       CONCAT(buffer, "  };\n");
-      if (class->decoratorsSize > 0) {
+      if (tsClass->decoratorsSize > 0) {
         TSDecorator *dec;
-        for (unsigned long int j = 0; j < class->decoratorsSize; j++) {
-          dec = class->decorators[j];
+        for (unsigned long int j = 0; j < tsClass->decoratorsSize; j++) {
+          dec = tsClass->decorators[j];
           CONCAT(buffer, "  ");
-          CONCAT(buffer, class->name);
+          CONCAT(buffer, tsClass->name);
           CONCAT(buffer, "=");
           CONCAT(buffer, dec->name);
           if (dec->argumentsSize > 0) {
@@ -92,10 +146,13 @@ static char *stringFromClasses(TSParseContext *context) {
           }
           // args
           CONCAT(buffer, "(");
-          CONCAT(buffer, class->name);
+          CONCAT(buffer, tsClass->name);
           CONCAT(buffer, ");\n");
         }
       }
+    }
+    if (tsClass->fieldsSize > 0) {
+      CONCAT(buffer, stringFromClassFields(tsClass));
     }
   }
   return buffer;
@@ -115,19 +172,19 @@ static char *stringFromExports(TSParseContext *context) {
     export = context->exports[i];
     switch (export->type) {
       case TSExportType_Class:
-        {
-          class = (TSClass*) export->meta;
-          if (export->asDefault == 1) {
-            CONCAT(buffer, "  exports[DEFAULT_EXPORT] = ");
-          } else {
-            CONCAT(buffer, "  exports[\"");
-            CONCAT(buffer, class->name);
-            CONCAT(buffer, "\"] = ");
-          }
+      {
+        class = (TSClass*) export->meta;
+        if (export->asDefault == 1) {
+          CONCAT(buffer, "  exports[DEFAULT_EXPORT] = ");
+        } else {
+          CONCAT(buffer, "  exports[\"");
           CONCAT(buffer, class->name);
-          CONCAT(buffer, ";\n");
-          break;
+          CONCAT(buffer, "\"] = ");
         }
+        CONCAT(buffer, class->name);
+        CONCAT(buffer, ";\n");
+        break;
+      }
       default:
         break;
     }
@@ -136,7 +193,7 @@ static char *stringFromExports(TSParseContext *context) {
 }
 
 char *stringFromParseContext(TSParseContext *context) {
-  // FLOG("%s\n", "Creating JavaScript log from from collected data...");
+//   FLOG("%s\n", "Creating JavaScript log from from collected data...");
   char *buffer = NULL;
   CONCAT(buffer, "(function () {/*FILE EXPORT*/\n");
   CONCAT(buffer, "var exports = {};\n(function () {\n");

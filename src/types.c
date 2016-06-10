@@ -120,7 +120,7 @@ TSArgument *newTSArgument() {
   arg->name = NULL;
   arg->type = NULL;
   arg->value = NULL;
-  arg->modifier = TSArgumentModifier_Undefined;
+  arg->modifier = TSAccessModifier_Undefined;
   arg->isRest = 0;
   return arg;
 }
@@ -131,6 +131,35 @@ void freeTSArgument(TSArgument *arg) {
 }
 
 PUSH_TS(TSArgument)
+
+//#################################################################################
+// TSField
+//#################################################################################
+
+TSField *newTSField() {
+  TSField *field = (TSField *) calloc(TSField_SIZE, 1);
+  CHECK_ALLOC_FAILED(field, TSField);
+  field->name = NULL;
+  field->type = NULL;
+  field->value = NULL;
+  field->decorators = NULL;
+  field->decoratorsSize = 0;
+  field->modifier = TSAccessModifier_Undefined;
+  return field;
+}
+
+void freeTSField(const TSField *field) {
+  if (field->decoratorsSize > 0) {
+    for (unsigned long int i = 0; i <  field->decoratorsSize; i++) {
+      freeTSDecorator(field->decorators[i]);
+    }
+  }
+  if (field->name != NULL) free((void *) field->name);
+  if (field->type != NULL) free((void *) field->type);
+  free((void *) field);
+}
+
+PUSH_TS(TSField)
 
 //#################################################################################
 // TSFunction
@@ -151,6 +180,16 @@ TSFunction *newTSFunction() {
 
 void freeTSFunction(TSFunction *mth) {
   if (mth == NULL) return;
+  if (mth->decoratorsSize > 0) {
+    for (unsigned long int i = 0; i < mth->decoratorsSize; i++) {
+      freeTSDecorator(mth->decorators[i]);
+    }
+  }
+  if (mth->argumentsSize > 0) {
+    for (unsigned long int i = 0; i < mth->argumentsSize; i++) {
+      freeTSArgument(mth->arguments[i]);
+    }
+  }
   free(mth);
 }
 
@@ -170,6 +209,7 @@ TSMethod *newTSMethod() {
   method->decoratorsSize = 0;
   method->arguments = NULL;
   method->argumentsSize = 0;
+  method->modifier = TSAccessModifier_Undefined;
   return method;
 }
 
@@ -203,14 +243,14 @@ void freeTSClass(TSClass *class) {
   if (class->name != NULL) free((void*)class->name);
   if (class->parent != NULL) free((void*)class->parent);
   if (class->decorators != NULL) {
-    unsigned long int size = sizeof(class->decorators) / sizeof(TSDecorator *);
+    unsigned long int size = class->decoratorsSize;
     for (unsigned long int i = 0; i < size; i++)
       freeTSDecorator(class->decorators[i]);
     free((void*)class->decorators);
     class->decorators = NULL;
   }
   if (class->methods != NULL) {
-    unsigned long int size = sizeof(class->methods) / sizeof(TSMethod *);
+    unsigned long int size = class->methodsSize;
     for (unsigned long int i = 0; i < size; i++)
       freeTSMethod(class->methods[i]);
     free((void*)class->methods);
@@ -225,7 +265,6 @@ PUSH_TS(TSClass)
 // TSDecorator
 //#################################################################################
 
-
 TSDecorator *newTSDecorator() {
   TSDecorator *dec = (TSDecorator *) calloc(TSDecorator_SIZE, 1);
   CHECK_ALLOC_FAILED(dec, TSDecorator)
@@ -237,8 +276,8 @@ TSDecorator *newTSDecorator() {
 
 void freeTSDecorator(TSDecorator *dec) {
   if (dec == NULL) return;
-  if (dec->arguments) {
-    unsigned int size = sizeof(dec->arguments);
+  if (dec->argumentsSize > 0) {
+    unsigned long size = dec->argumentsSize;
     for (unsigned int i = 0; i < size; i++) {
       freeTSArgument(dec->arguments[i]);
     }
@@ -248,3 +287,22 @@ void freeTSDecorator(TSDecorator *dec) {
 
 PUSH_TS(TSDecorator)
 
+//#################################################################################
+// TSParseClassBodyData
+//#################################################################################
+
+TSParseClassBodyData *newTSParseClassBodyData() {
+  TSParseClassBodyData *data = (TSParseClassBodyData *) calloc(TSParseClassBodyData_SIZE, 1);
+  CHECK_ALLOC_FAILED(data, TSParseClassBodyData)
+  data->access = TSAccessModifier_Undefined;
+  data->mthType = TSMethod_Type_Undefined;
+  data->name = NULL;
+  return data;
+}
+
+void freeTSParseClassBodyData(const TSParseClassBodyData *data) {
+  if (data->name != NULL) {
+    free(data->name);
+  }
+  free((void *) data);
+}
