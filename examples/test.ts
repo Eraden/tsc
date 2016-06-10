@@ -18,6 +18,10 @@ export default class Test extends Some {
   constructor() {
     super();
   }
+
+  public method() {
+    return 1;
+  }
 }
 
 export class Example {

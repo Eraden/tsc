@@ -4,6 +4,10 @@
 // ToString
 //#################################################################################
 
+static char *stringFromTSClassDecorators(const TSClass *tsClass);
+
+static char *stringFromTSClassDecoratorArgs(const TSDecorator *dec);
+
 static char *stringFromFunctions(TSParseContext *context) {
   if (context == NULL) return NULL;
   if (context->globalClassesSize == 0) return NULL;
@@ -107,13 +111,44 @@ static char *stringFromClassFields(TSClass *tsClass) {
   return buffer;
 }
 
+static char *stringFromTSClassDecoratorArgs(const TSDecorator *dec) {
+  TSArgument *arg;
+  char *buffer = NULL;
+  for (unsigned long int i = 0; i < dec->argumentsSize; i++) {
+    arg = dec->arguments[i];
+    if (i > 0) CONCAT(buffer, ",");
+    CONCAT(buffer, arg->value);
+  }
+  return buffer;
+}
+
+static char *stringFromTSClassDecorators(const TSClass *tsClass) {
+  TSDecorator *dec;
+  char *buffer = NULL;
+  for (unsigned long int i = 0; i < tsClass->decoratorsSize; i++) {
+    dec = tsClass->decorators[i];
+    CONCAT(buffer, "  ");
+    CONCAT(buffer, tsClass->name);
+    CONCAT(buffer, "=");
+    CONCAT(buffer, dec->name);
+    if (dec->argumentsSize > 0) {
+      CONCAT(buffer, "(");
+      CONCAT(buffer, stringFromTSClassDecoratorArgs(dec));
+      CONCAT(buffer, ")");
+    }
+    // args
+    CONCAT(buffer, "(");
+    CONCAT(buffer, tsClass->name);
+    CONCAT(buffer, ");\n");
+  }
+  return buffer;
+}
+
 static char *stringFromClasses(TSParseContext *context) {
-  // FLOG("  %s\n", "creating classes...");
   if (context == NULL) return NULL;
   TSClass **coll = context->globalClasses;
   if (coll== NULL) return NULL;
   const unsigned long int size = context->globalClassesSize;
-  // FLOG("    size: %lu\n", size);
   char *buffer = NULL;
   TSClass *tsClass = NULL;
   for (unsigned long int i = 0; i < size; i++) {
@@ -125,31 +160,10 @@ static char *stringFromClasses(TSParseContext *context) {
       CONCAT(buffer, "    ");
       CONCAT(buffer, tsClass->parent);
       CONCAT(buffer, ".apply(this, arguments);\n");
-      CONCAT(buffer, "  };\n");
-      if (tsClass->decoratorsSize > 0) {
-        TSDecorator *dec;
-        for (unsigned long int j = 0; j < tsClass->decoratorsSize; j++) {
-          dec = tsClass->decorators[j];
-          CONCAT(buffer, "  ");
-          CONCAT(buffer, tsClass->name);
-          CONCAT(buffer, "=");
-          CONCAT(buffer, dec->name);
-          if (dec->argumentsSize > 0) {
-            CONCAT(buffer, "(");
-            TSArgument *arg;
-            for (unsigned long int k = 0; k < dec->argumentsSize; k++) {
-              arg = dec->arguments[k];
-              if (k > 0) CONCAT(buffer, ",");
-              CONCAT(buffer, arg->value);
-            }
-            CONCAT(buffer, ")");
-          }
-          // args
-          CONCAT(buffer, "(");
-          CONCAT(buffer, tsClass->name);
-          CONCAT(buffer, ");\n");
-        }
-      }
+    }
+    CONCAT(buffer, "  };\n");
+    if (tsClass->decoratorsSize > 0) {
+      CONCAT(buffer, stringFromTSClassDecorators(tsClass));
     }
     if (tsClass->fieldsSize > 0) {
       CONCAT(buffer, stringFromClassFields(tsClass));
@@ -159,12 +173,9 @@ static char *stringFromClasses(TSParseContext *context) {
 }
 
 static char *stringFromExports(TSParseContext *context) {
-//  FLOG("  %s\n", "creating exports...");
   if (context == NULL) return NULL;
   if (context->exports == NULL) return NULL;
   const long unsigned int size = context->exportsSize;
-  // FLOG("    ! coll address: %p\n", context->exports);
-  // FLOG("    size: %lu\n", size);
   char *buffer = NULL;
   TSExport *export;
   TSClass *class;
@@ -193,7 +204,6 @@ static char *stringFromExports(TSParseContext *context) {
 }
 
 char *stringFromParseContext(TSParseContext *context) {
-//   FLOG("%s\n", "Creating JavaScript log from from collected data...");
   char *buffer = NULL;
   CONCAT(buffer, "(function () {/*FILE EXPORT*/\n");
   CONCAT(buffer, "var exports = {};\n(function () {\n");

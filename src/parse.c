@@ -267,6 +267,19 @@ static unsigned short parseTSClassMethod(TSParseContext *context, TSClass *tsCla
   fprintf(stdout, "Found class method\n\n");
   getTSToken(context);
   skipTSWhite(context);
+  TSMethod *mth = newTSMethod();
+  int brackets = 1;
+  while (brackets) {
+    getTSToken(context);
+    skipTSWhite(context);
+    if (context->lastChar == '}') brackets -= 1;
+    if (context->lastChar == '{') brackets += 1;
+    if (brackets) CONCAT(mth->body, context->currentToken->content);
+  }
+  TSMethod **new = pushTSMethod(tsClass->methods, tsClass->methodsSize, mth);
+  free(tsClass->methods);
+  tsClass->methods = new;
+  tsClass->methodsSize += 1;
   return 1;
 }
 
@@ -372,7 +385,7 @@ static short unsigned int parseClassBody(TSParseContext *context, TSClass *class
 
     while(collectTSClassBodyMemberData(context, class, data));
 
-    fprintf(stdout, "[class body] current token: %s\n", context->currentToken->content);
+//    fprintf(stdout, "[class body] current token: %s\n", context->currentToken->content);
 
     if (context->lastChar == '(') {
       parseTSClassMethod(context, class, data);

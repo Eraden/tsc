@@ -111,8 +111,8 @@ typedef struct sTSMethod {
   TSDecorator **decorators;
   unsigned long int decoratorsSize;
   enum TSAccessModifier modifier;
-  const char *body;
-  const char *name;
+  char *body;
+  char *name;
   enum TSMethod_Type type;
 } TSMethod;
 

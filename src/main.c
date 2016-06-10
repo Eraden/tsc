@@ -27,9 +27,15 @@ int main(int argc, char **argv) {
   init_log();
   TSParseContext *context = parseFile("./examples/test.ts");
   char *str = NULL;
+  char *js = stringFromParseContext(context);
   CONCAT(str, "var DEFAULT_EXPORT = Symbol();\n");
-  CONCAT(str, stringFromParseContext(context));
+  CONCAT(str, js);
   LOG("%s\n", str);
+  FILE *f = fopen("./app.js", "w");
+  if (f) {
+    fprintf(f, "%s\n", js);
+    fclose(f);
+  }
   if (str) free(str);
   freeTSParseContext(context);
   return 0;
