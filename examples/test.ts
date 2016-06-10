@@ -1,4 +1,4 @@
-function Component(data: Object, desc:Descriptor={}) {
+function Component(data: Object, desc:Descriptor={}, s ="", ...rest) {
   if (desc) {
   } else
     return 1;

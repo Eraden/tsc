@@ -121,6 +121,7 @@ TSArgument *newTSArgument() {
   arg->type = NULL;
   arg->value = NULL;
   arg->modifier = TSArgumentModifier_Undefined;
+  arg->isRest = 0;
   return arg;
 }
 

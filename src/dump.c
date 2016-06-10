@@ -19,10 +19,22 @@ static char *stringFromFunctions(TSParseContext *context) {
     CONCAT(buffer, " = function (");
     for (unsigned long int j = 0; j < fn->argumentsSize; j++) {
       arg = fn->arguments[j];
-      if (j > 0) CONCAT(buffer, ", ");
-      CONCAT(buffer, arg->name);
+      if (arg->isRest != 1) {
+        if (j > 0) CONCAT(buffer, ", ");
+        CONCAT(buffer, arg->name);
+      }
     }
     CONCAT(buffer, ") {\n");
+    arg = fn->arguments[fn->argumentsSize - 1];
+    if (arg->isRest) {
+      char length[256];
+      sprintf(length, "%lu", fn->argumentsSize - 1);
+      CONCAT(buffer, "    var ");
+      CONCAT(buffer, arg->name);
+      CONCAT(buffer, " = [].slice.call(arguments, ");
+      CONCAT(buffer, length);
+      CONCAT(buffer, ");\n");
+    }
     for (unsigned long int j = 0; j < fn->argumentsSize; j++) {
       arg = fn->arguments[j];
       if (arg->value != NULL) {
