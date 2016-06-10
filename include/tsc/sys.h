@@ -2,11 +2,13 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <stdarg.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <ctype.h>
 #include <time.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 #if defined __APPLE__
 #include <unistd.h>

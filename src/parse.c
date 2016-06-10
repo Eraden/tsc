@@ -142,10 +142,15 @@ static void parseTSFunctionArgument(TSParseContext *context, TSFunction *fn) {
   }
 
   validateName(context, context->currentToken->content);
-  if (arg->name != NULL) {
-    CONCAT(arg->name, context->currentToken->content);
+  const char *name = context->currentToken->content;
+  if (name && strlen(name) > 4 && name[0] == '.' && name[1] == '.' && name[2] == '.') {
+    size_t s = strlen(name) - 3;
+    arg->name = (char *) malloc(s);
+    for (size_t i = 0; i < s; i++) arg->name[i] = name[i+3];
+    arg->name[s] = 0;
+    arg->isRest = 1;
   } else {
-    arg->name = cloneString(context->currentToken->content);
+    arg->name = cloneString(name);
   }
 
   getTSToken(context);

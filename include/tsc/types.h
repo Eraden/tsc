@@ -65,6 +65,7 @@ typedef struct sTSArgument {
   char *type;
   char *value;
   enum TSArgumentModifier modifier;
+  unsigned short int isRest;
 } TSArgument;
 
 #define TSArgument_SIZE sizeof(TSArgument)
