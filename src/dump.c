@@ -60,7 +60,7 @@ static char *stringFromClasses(TSParseContext *context) {
   if (coll== NULL) return NULL;
   const unsigned long int size = context->globalClassesSize;
   // FLOG("    size: %lu\n", size);
-  char *buffer = (char*) malloc(1024 * 8);
+  char *buffer = NULL;
   TSClass *class = NULL;
   for (unsigned long int i = 0; i < size; i++) {
     class = coll[i];
@@ -102,14 +102,13 @@ static char *stringFromClasses(TSParseContext *context) {
 }
 
 static char *stringFromExports(TSParseContext *context) {
-  FLOG("  %s\n", "creating exports...");
+//  FLOG("  %s\n", "creating exports...");
   if (context == NULL) return NULL;
   if (context->exports == NULL) return NULL;
   const long unsigned int size = context->exportsSize;
   // FLOG("    ! coll address: %p\n", context->exports);
   // FLOG("    size: %lu\n", size);
-  char *buffer = (char*) malloc(1024);
-  memset(buffer, 0, 1024);
+  char *buffer = NULL;
   TSExport *export;
   TSClass *class;
   for (unsigned long int i = 0; i < size; i++) {

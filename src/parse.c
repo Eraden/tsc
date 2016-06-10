@@ -106,18 +106,26 @@ void parseTSExport(TSParseContext *context) {
     export->type = TSExportType_Var;
   }
   // FLOG("%s\n", "    replacing old exports...");
-  // FLOG("+ coll addess: %p\n", context->exports);
+  // FLOG("+ coll address: %p\n", context->exports);
   TSExport **new = pushTSExport(context->exports, context->exportsSize, export);
   if (context->exports != NULL) free(context->exports);
   context->exports = new;
   context->exportsSize += 1;
-  // FLOG("+ coll addess: %p\n", context->exports);
+  // FLOG("+ coll address: %p\n", context->exports);
   free((void *) type);
 }
 
 /**
  * TSFunction
  */
+
+static void pushTSArgumentToTSFunction(TSFunction *fn, TSArgument *arg) {
+  TSArgument **new = pushTSArgument(fn->arguments, fn->argumentsSize, arg);
+  if (fn->arguments != NULL) free(fn->arguments);
+  fn->arguments = new;
+  fn->argumentsSize += 1;
+}
+
 static short unsigned int parseTSFunctionArgument(TSParseContext *context, TSFunction *fn) {
   TSArgument *arg = newTSArgument();
   getTSToken(context);
@@ -138,7 +146,7 @@ static short unsigned int parseTSFunctionArgument(TSParseContext *context, TSFun
   const char *name = context->currentToken->content;
   if (name && strlen(name) > 4 && name[0] == '.' && name[1] == '.' && name[2] == '.') {
     size_t s = strlen(name) - 3;
-    arg->name = (char *) malloc(s);
+    arg->name = (char *) calloc(sizeof(char), s);
     for (size_t i = 0; i < s; i++) arg->name[i] = name[i+3];
     arg->name[s] = 0;
     arg->isRest = 1;
@@ -157,8 +165,10 @@ static short unsigned int parseTSFunctionArgument(TSParseContext *context, TSFun
 
     getTSToken(context);
     skipTSWhite(context);
-    if (context->lastChar == ')')
+    if (context->lastChar == ')') {
+      pushTSArgumentToTSFunction(fn, arg);
       return 0;
+    }
   }
 
   if (context->lastChar == '=') {
@@ -169,6 +179,9 @@ static short unsigned int parseTSFunctionArgument(TSParseContext *context, TSFun
     while (1) {
       getTSToken(context);
       if (context->lastChar == ')') {
+        pushTSArgumentToTSFunction(fn, arg);
+        return 0;
+      } else if (context->lastChar == ',') {
         break;
       } else {
         CONCAT(arg->value, context->currentToken->content);
@@ -176,13 +189,11 @@ static short unsigned int parseTSFunctionArgument(TSParseContext *context, TSFun
     }
   }
 
-  TSArgument **new = pushTSArgument(fn->arguments, fn->argumentsSize, arg);
-  if (fn->arguments != NULL) free(fn->arguments);
-  fn->arguments = new;
-  fn->argumentsSize += 1;
+  pushTSArgumentToTSFunction(fn, arg);
 
-  if (context->lastChar == ')')
+  if (context->lastChar == ')') {
     return 0;
+  }
 
   if (context->lastChar != ',') {
     getTSToken(context);
@@ -246,11 +257,25 @@ void parseTSFunction(TSParseContext *context) {
       CONCAT(fn->body, context->currentToken->content);
     }
   }
-  FLOG("  function body:\n%s\n", fn->body);
+//  FLOG("  function body:\n%s\n", fn->body);
   TSFunction **new = pushTSFunction(context->globalFunctions, context->globalFunctionsSize, fn);
   free(context->globalFunctions);
   context->globalFunctionsSize += 1;
   context->globalFunctions = new;
+}
+
+/**
+ * Class
+ */
+
+static short unsigned int parseClassBody(TSParseContext *context, TSClass *class) {
+  getTSToken(context);
+  skipTSWhite(context);
+
+  TSToken *token = context->currentToken;
+  const char *content = token->content;
+
+  return 0;
 }
 
 void parseTSMethod(TSParseContext *context) {
@@ -273,6 +298,8 @@ void parseTSClass(TSParseContext *context) {
     getTSToken(context); // move to white
     skipTSWhite(context);
     class->parent = cloneString(context->currentToken->content);
+    getTSToken(context);
+    skipTSWhite(context);
   }
   // FLOG("+ coll address: %p\n", context->globalClasses);
   TSClass **new = pushTSClass(context->globalClasses, context->globalClassesSize, class);
@@ -285,6 +312,7 @@ void parseTSClass(TSParseContext *context) {
     context->decoratorsStack = NULL;
   }
   context->globalClassesSize += 1;
+  while (parseClassBody(context, class));
   // FLOG("+ coll address: %p\n", context->globalClasses);
 }
 

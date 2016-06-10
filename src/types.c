@@ -28,7 +28,7 @@ static unsigned long long int readFile(const char *path, char **buffer, unsigned
 //#################################################################################
 
 TSToken *newTSToken() {
-  TSToken *token = (TSToken*)malloc(TSToken_SIZE);
+  TSToken *token = (TSToken *) calloc(TSToken_SIZE, 1);
   CHECK_ALLOC_FAILED(token, TSToken)
   token->content = NULL;
   return token;
@@ -50,7 +50,7 @@ void freeTSToken(TSToken *token) {
 TSParseContext *newTSParseContext(const char *file_path) {
   char *b = (char*) calloc(sizeof(char), 1024);
   char *buffer = NULL;
-  TSParseContext *context = (TSParseContext*) calloc(TSParseContext_SIZE, 1);
+  TSParseContext *context = (TSParseContext *) calloc(TSParseContext_SIZE, 1);
   CHECK_ALLOC_FAILED(context, TSParseContext)
   context->file = realpath(file_path, b);
   if (context->file == NULL) {
@@ -96,7 +96,7 @@ void freeTSParseContext(TSParseContext *context) {
 //#################################################################################
 
 TSExport *newTSExport() {
-  TSExport *export = (TSExport*) malloc(TSExport_SIZE);
+  TSExport *export = (TSExport *) calloc(TSExport_SIZE, 1);
   CHECK_ALLOC_FAILED(export, TSExport)
   export->type = TSExportType_Undefined;
   export->asDefault = 0;
@@ -115,7 +115,7 @@ PUSH_TS(TSExport)
 //#################################################################################
 
 TSArgument *newTSArgument() {
-  TSArgument *arg = (TSArgument*) malloc(TSArgument_SIZE);
+  TSArgument *arg = (TSArgument *) calloc(TSArgument_SIZE, 1);
   CHECK_ALLOC_FAILED(arg, TSArgument)
   arg->name = NULL;
   arg->type = NULL;
@@ -137,7 +137,7 @@ PUSH_TS(TSArgument)
 //#################################################################################
 
 TSFunction *newTSFunction() {
-  TSFunction *method = (TSFunction *) malloc(TSFunction_SIZE);
+  TSFunction *method = (TSFunction *) calloc(TSFunction_SIZE, 1);
   CHECK_ALLOC_FAILED(method, TSFunction)
   method->name = NULL;
   method->type = TSMethod_Type_Undefined;
@@ -161,7 +161,7 @@ PUSH_TS(TSFunction)
 //#################################################################################
 
 TSMethod *newTSMethod() {
-  TSMethod *method = (TSMethod*)malloc(TSMethod_SIZE);
+  TSMethod *method = (TSMethod *) calloc(TSMethod_SIZE, 1);
   CHECK_ALLOC_FAILED(method, TSMethod)
   method->name = NULL;
   method->type = TSMethod_Type_Undefined;
@@ -185,7 +185,7 @@ PUSH_TS(TSMethod)
 //#################################################################################
 
 TSClass *newTSClass() {
-  TSClass *class = (TSClass*)malloc(TSClass_SIZE);
+  TSClass *class = (TSClass *) calloc(TSClass_SIZE, 1);
   CHECK_ALLOC_FAILED(class, TSClass)
   class->decorators = NULL;
   class->decoratorsSize = 0;
@@ -203,14 +203,14 @@ void freeTSClass(TSClass *class) {
   if (class->name != NULL) free((void*)class->name);
   if (class->parent != NULL) free((void*)class->parent);
   if (class->decorators != NULL) {
-    unsigned long int size = sizeof(class->decorators) / sizeof(TSDecorator*);
+    unsigned long int size = sizeof(class->decorators) / sizeof(TSDecorator *);
     for (unsigned long int i = 0; i < size; i++)
       freeTSDecorator(class->decorators[i]);
     free((void*)class->decorators);
     class->decorators = NULL;
   }
   if (class->methods != NULL) {
-    unsigned long int size = sizeof(class->methods) / sizeof(TSMethod*);
+    unsigned long int size = sizeof(class->methods) / sizeof(TSMethod *);
     for (unsigned long int i = 0; i < size; i++)
       freeTSMethod(class->methods[i]);
     free((void*)class->methods);
@@ -227,7 +227,7 @@ PUSH_TS(TSClass)
 
 
 TSDecorator *newTSDecorator() {
-  TSDecorator *dec = (TSDecorator*)malloc(TSDecorator_SIZE);
+  TSDecorator *dec = (TSDecorator *) calloc(TSDecorator_SIZE, 1);
   CHECK_ALLOC_FAILED(dec, TSDecorator)
   dec->name = NULL;
   dec->arguments = NULL;
