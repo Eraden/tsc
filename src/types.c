@@ -13,7 +13,7 @@ static unsigned long long int readFile(const char *path, char **buffer, unsigned
     exit(FILE_NOT_FOUND_ERROR);
   }
   fseek(file, 0L, SEEK_END);
-  *size = ftell(file);
+  *size = (unsigned long long int) ftell(file);
   const unsigned int c = sizeof(char);
   *buffer = (char*) malloc( (*size) * c + 1 );
   if ((*buffer) == NULL) return 0;
@@ -48,9 +48,9 @@ void freeTSToken(TSToken *token) {
 //#################################################################################
 
 TSParseContext *newTSParseContext(const char *file_path) {
-  char *b = (char*) malloc(1024);
+  char *b = (char*) calloc(sizeof(char), 1024);
   char *buffer = NULL;
-  TSParseContext *context = (TSParseContext*) malloc(TSParseContext_SIZE);
+  TSParseContext *context = (TSParseContext*) calloc(TSParseContext_SIZE, 1);
   CHECK_ALLOC_FAILED(context, TSParseContext)
   context->file = realpath(file_path, b);
   if (context->file == NULL) {

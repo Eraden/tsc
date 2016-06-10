@@ -1,15 +1,15 @@
 #include <tsc/parse.h>
 
 static void parseTSFunctionArguments(TSParseContext *context, TSFunction *fn);
-static void parseTSFunctionArgument(TSParseContext *context, TSFunction *fn);
+static short unsigned int parseTSFunctionArgument(TSParseContext *context, TSFunction *fn);
 
 static void validateName(TSParseContext *context, const char *name) {
   const unsigned long int nameSize = strlen(name);
   const char *invalidTokens = ":{}()|!+-*/\\@=,";
-  const unsigned int invalidTokensSize = strlen(invalidTokens);
+  const size_t invalidTokensSize = strlen(invalidTokens);
   for (unsigned long int i = 0; i < nameSize; i++) {
     char c = name[i];
-    for (unsigned int j = 0; j < invalidTokensSize; j++) {
+    for (size_t j = 0; j < invalidTokensSize; j++) {
       char t = invalidTokens[j];
       if (c == t) {
         ERR("Invalid token '%c' in name: '%s'\n", c, name);
@@ -69,7 +69,7 @@ void parseTSExport(TSParseContext *context) {
   getTSToken(context);
   skipTSWhite(context);
   if (strcmp(context->currentToken->content, DEFAULT) == 0) {
-    FLOG("  %s\n", "recognized as default export");
+//    FLOG("  %s\n", "recognized as default export");
     if (context->hasDefaultExport == 1) {
       ERR("%s\n", "File can has only one default export!");
       PANIC(context, MULTIPLE_DEFAULT_EXPORT_ERROR);
@@ -79,14 +79,14 @@ void parseTSExport(TSParseContext *context) {
     getTSToken(context);
     skipTSWhite(context);
   } else {
-    FLOG("  %s\n", "recognized as named export");
+//    FLOG("  %s\n", "recognized as named export");
   }
   const char *type = cloneString(context->currentToken->content);
-  FLOG("Export type '%s'\n", type);
+//  FLOG("Export type '%s'\n", type);
   parseTSToken(context);
   // TODO
   if (strcmp(type, CLASS) == 0) {
-    FLOG("  %s\n", "processing class export...");
+//    FLOG("  %s\n", "processing class export...");
     export->type = TSExportType_Class;
     unsigned long int size = context->globalClassesSize;
     if (size == 0) {
@@ -118,17 +118,10 @@ void parseTSExport(TSParseContext *context) {
 /**
  * TSFunction
  */
-static void parseTSFunctionArgument(TSParseContext *context, TSFunction *fn) {
-  // fprintf(stdout, "\n%s\n",
-  //     "###########################################################################\n"
-  //     "      Function argument\n"
-  //     "###########################################################################\n"
-  //     );
+static short unsigned int parseTSFunctionArgument(TSParseContext *context, TSFunction *fn) {
   TSArgument *arg = newTSArgument();
   getTSToken(context);
   skipTSWhite(context);
-
-  // fprintf(stdout, "  parseTSFunctionArgument token = '%s'\n", context->currentToken->content);
 
   if (strcmp(context->currentToken->content, TS_PUBLIC) == 0) {
     ERR("%s\n", "Function should not have this context!");
@@ -159,6 +152,8 @@ static void parseTSFunctionArgument(TSParseContext *context, TSFunction *fn) {
 
     getTSToken(context);
     skipTSWhite(context);
+    if (context->lastChar == ')')
+      return 0;
   }
 
   if (context->lastChar == '=') {
@@ -168,9 +163,9 @@ static void parseTSFunctionArgument(TSParseContext *context, TSFunction *fn) {
     arg->value = cloneString(context->currentToken->content);
     while (1) {
       getTSToken(context);
-      if (context->lastChar == ')' || context->lastChar == ',') {
+      if (context->lastChar == ')') {
         break;
-      } else { 
+      } else {
         CONCAT(arg->value, context->currentToken->content);
       }
     }
@@ -181,17 +176,19 @@ static void parseTSFunctionArgument(TSParseContext *context, TSFunction *fn) {
   fn->arguments = new;
   fn->argumentsSize += 1;
 
-  if (context->lastChar != ',' && context->lastChar != ')') {
+  if (context->lastChar == ')')
+    return 0;
+
+  if (context->lastChar != ',') {
     getTSToken(context);
     skipTSWhite(context);
+    return 1;
   }
 
-  // fprintf(stdout, "argument\n  name: '%s'\n  type: '%s'\n  value: '%s'\n", arg->name, arg->type, arg->value);
-  parseTSFunctionArguments(context, fn);
+  return 1;
 }
 
 static void parseTSFunctionArguments(TSParseContext *context, TSFunction *fn) {
-  // fprintf(stdout, "parseTSFunctionArguments token = '%s'\n", context->currentToken->content);
   if (context->lastChar == ')') {
     FLOG("    %s\n", "No more arguments");
     return;
@@ -201,7 +198,8 @@ static void parseTSFunctionArguments(TSParseContext *context, TSFunction *fn) {
       PANIC(context, INVALID_TOKEN);
     }
   }
-  parseTSFunctionArgument(context, fn);
+
+  while(parseTSFunctionArgument(context, fn));
 }
 
 void parseTSFunction(TSParseContext *context) {
@@ -271,7 +269,7 @@ void parseTSClass(TSParseContext *context) {
     skipTSWhite(context);
     class->parent = cloneString(context->currentToken->content);
   }
-  // FLOG("+ coll addess: %p\n", context->globalClasses);
+  // FLOG("+ coll address: %p\n", context->globalClasses);
   TSClass **new = pushTSClass(context->globalClasses, context->globalClassesSize, class);
   if (context->globalClasses) free((void*) context->globalClasses);
   context->globalClasses = new;
@@ -282,7 +280,7 @@ void parseTSClass(TSParseContext *context) {
     context->decoratorsStack = NULL;
   }
   context->globalClassesSize += 1;
-  // FLOG("+ coll addess: %p\n", context->globalClasses);
+  // FLOG("+ coll address: %p\n", context->globalClasses);
 }
 
 void parseTSDecorator(TSParseContext *context) {
