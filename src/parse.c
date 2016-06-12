@@ -1,12 +1,13 @@
 #include <tsc/parse.h>
 
+static const char invalidTokens[] = ":{}()|!+-*/\\@=,";
+static const size_t invalidTokensSize = 15;
+
 static void parseTSFunctionArguments(TSParseContext *context, TSFunction *fn);
 static short unsigned int parseTSFunctionArgument(TSParseContext *context, TSFunction *fn);
 
 static void validateName(TSParseContext *context, const char *name) {
   const unsigned long int nameSize = strlen(name);
-  const char *invalidTokens = ":{}()|!+-*/\\@=,";
-  const size_t invalidTokensSize = strlen(invalidTokens);
   for (unsigned long int i = 0; i < nameSize; i++) {
     char c = name[i];
     for (size_t j = 0; j < invalidTokensSize; j++) {
@@ -376,7 +377,6 @@ static unsigned short parseTSClassMethod(TSParseContext *context, TSClass *tsCla
   int brackets = 1;
   while (brackets) {
     getTSToken(context);
-    skipTSWhite(context);
     if (context->lastChar == '}') brackets -= 1;
     if (context->lastChar == '{') brackets += 1;
     if (brackets) {
@@ -395,14 +395,15 @@ static unsigned short parseTSClassMethod(TSParseContext *context, TSClass *tsCla
         getTSToken(context); // )
         skipTSWhite(context);
         getTSToken(context); // ;
-        skipTSWhite(context);
       } else {
         tsMethod->body = concat(tsMethod->body, context->currentToken->content);
       }
-    }
+    };
   }
   tsClass->methods = pushTSMethod(tsClass->methods, tsClass->methodsSize, tsMethod);
   tsClass->methodsSize += 1;
+  getTSToken(context); // }
+  skipTSWhite(context);
   return 1;
 }
 
@@ -434,7 +435,7 @@ static unsigned short parseTSClassField(TSParseContext *context, TSClass *tsClas
   return 1;
 }
 
-static short unsigned int collectTSClassBodyMemberData(TSParseContext *context, TSClass *class, TSParseClassBodyData *data) {
+static unsigned short collectTSClassBodyMemberData(TSParseContext *context, TSParseClassBodyData *data) {
   if (strcmp(context->currentToken->content, TS_PUBLIC) == 0) {
     TS_ASSERT(context, data->access == TSAccessModifier_Undefined, "Double access definition!");
     data->access = TSAccessModifier_Public;
@@ -488,7 +489,7 @@ static short unsigned int collectTSClassBodyMemberData(TSParseContext *context, 
   return 0;
 }
 
-static short unsigned int parseClassBody(TSParseContext *context, TSClass *class) {
+static short unsigned int parseClassBody(TSParseContext *context, TSClass *tsClass) {
   getTSToken(context);
   skipTSWhite(context);
 
@@ -500,12 +501,12 @@ static short unsigned int parseClassBody(TSParseContext *context, TSClass *class
     if (context->lastChar == '}')
       return 0;
 
-    while(collectTSClassBodyMemberData(context, class, data));
+    while(collectTSClassBodyMemberData(context, data));
 
     fprintf(stdout, "[class body] current token: %s\n", context->currentToken->content);
 
     if (context->lastChar == '(') {
-      parseTSClassMethod(context, class, data);
+      parseTSClassMethod(context, tsClass, data);
       freeTSParseClassBodyData(data);
       data = newTSParseClassBodyData();
     }
@@ -513,14 +514,14 @@ static short unsigned int parseClassBody(TSParseContext *context, TSClass *class
     else
 
     if (context->lastChar == ';' || context->lastChar == ':' || context->lastChar == '=') {
-      parseTSClassField(context, class, data);
+      parseTSClassField(context, tsClass, data);
       freeTSParseClassBodyData(data);
       data = newTSParseClassBodyData();
     }
 
     else
     {
-      CONCAT(data->name, context->currentToken->content);
+      data->name = concat(data->name, context->currentToken->content);
       getTSToken(context);
     }
   }

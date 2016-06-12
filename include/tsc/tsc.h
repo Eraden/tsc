@@ -8,3 +8,4 @@
 #include <tsc/parse.h>
 #include <tsc/str.h>
 #include <tsc/output.h>
+#include <tsc/options.h>

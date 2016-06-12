@@ -1,6 +1,6 @@
 #include <tsc/log.h>
 
-static void io_panic(const char *msg) {
+void io_panic(const char *msg) {
   fprintf(stderr, "%s\n", msg);
   switch (errno) {
     case EPERM:
@@ -238,7 +238,7 @@ void log_to_file(char *msg, ...) {
   fclose(file);
 }
 
-void log_error(char *msg, ...) {
+void __unused log_error(char *msg, ...) {
   FILE *file = fopen("./log/tsc.error.log", "a");
   if (!file) {
     io_panic("Failed to open tsc.error.log for appending!\n");

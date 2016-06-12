@@ -1,6 +1,6 @@
 #pragma once
 
 #include <tsc/sys.h>
+#include <tsc/log.h>
 
-FILE *output;
 void out(char *str);

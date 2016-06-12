@@ -6,6 +6,7 @@ set(
   src/log.c
   src/str.c
   src/output.c
+  src/options.c
   src/main.c
 )
 

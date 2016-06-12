@@ -20,11 +20,12 @@ make -j9
 
 - [X] Read file
 - [X] Log files
-- [ ] `-e environment`
+- [X] `-e environment`
 - [ ] `tsconfig` file
-- [ ] `--strong` mode
-- [ ] `--strict` mode
-- [ ] `--relax` mode
+- [X] `--strong` mode
+- [X] `--strict` mode
+- [X] `--relax` mode
+- [X] `-o file` wirte to file
 
 ### Typings
 
@@ -132,7 +133,9 @@ function log(...args) {
 declare var log;
 //#endif
 
-class Food {}
+class Food {
+  public energy: number = 20;
+}
 
 interface Living {
   eat(food: Food): void;
@@ -143,15 +146,18 @@ class Animal {
 }
 
 class Cat extends Animal implements Living {
+  private alive: boolean = true;
+  private energy: number = 100;
   constructor() {
     super();
   }
 
   eat(food: Food): void {
+    this.energy += food.energy;
   }
 
   die(): boolean {
-    return true;
+    return !(this.alive = false);
   }
 }
 ```
