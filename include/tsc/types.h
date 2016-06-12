@@ -5,21 +5,21 @@
 #include <tsc/macro.h>
 
 static const char  DECORATOR      = '@';
-static const char *CLASS          = "class";
-static const char *FUNCTION       = "function";
-static const char *CONST          = "const";
-static const char *LET            = "let";
-static const char *VAR            = "var";
-static const char *EXPORT         = "export";
-static const char *DEFAULT        = "default";
-static const char *EXTENDS        = "extends";
-static const char *TS_PUBLIC      = "public";
-static const char *TS_PROTECTED   = "protected";
-static const char *TS_PRIVATE     = "private";
-static const char *TS_PACKAGE     = "package";
-static const char *TS_FRIEND      = "friend";
-static const char *TS_GET         = "get";
-static const char *TS_SET         = "set";
+static char *CLASS          = "class";
+static char *FUNCTION       = "function";
+static char *CONST          = "const";
+static char *LET            = "let";
+static char *VAR            = "var";
+static char *EXPORT         = "export";
+static char *DEFAULT        = "default";
+static char *EXTENDS        = "extends";
+static char *TS_PUBLIC      = "public";
+static char *TS_PROTECTED   = "protected";
+static char *TS_PRIVATE     = "private";
+static char *TS_PACKAGE     = "package";
+static char *TS_FRIEND      = "friend";
+static char *TS_GET         = "get";
+static char *TS_SET         = "set";
 
 enum TSError {
   INVALID_DECORATOR_ANNOTATION = 10,
@@ -34,7 +34,8 @@ enum TSMethod_Type {
   TSMethod_Type_Undefined,
   TSMethod_Type_Normal,
   TSMethod_Type_Getter,
-  TSMethod_Type_Setter
+  TSMethod_Type_Setter,
+  TSMethod_Type_Constructor
 };
 
 enum TSAccessModifier {
@@ -75,7 +76,7 @@ typedef struct sTSArgument {
 #define TSArgument_SIZE sizeof(TSArgument)
 
 typedef struct sTSDecorator {
-  const char *name;
+  char *name;
   TSArgument **arguments;
   unsigned long int argumentsSize;
 } TSDecorator;
@@ -86,9 +87,9 @@ typedef struct sTSField {
   TSDecorator **decorators;
   unsigned long int decoratorsSize;
   enum TSAccessModifier modifier;
-  const char *name;
-  const char *type;
-  const char *value;
+  char *name;
+  char *type;
+  char *value;
 } TSField;
 
 #define TSField_SIZE sizeof(TSField)
@@ -99,7 +100,7 @@ typedef struct sTSFunction {
   TSDecorator **decorators;
   unsigned long int decoratorsSize;
   char *body;
-  const char *name;
+  char *name;
   enum TSMethod_Type type;
 } TSFunction;
 
@@ -125,21 +126,21 @@ typedef struct sTSClass {
   unsigned long int methodsSize;
   TSField **fields;
   unsigned long int fieldsSize;
-  const char *parent;
-  const char *name;
+  char *parent;
+  char *name;
 } TSClass;
 
 #define TSClass_SIZE  sizeof(TSClass)
 
 typedef struct sTSToken {
-  const char *content;
+  char *content;
 } TSToken;
 
 #define TSToken_SIZE sizeof(TSToken)
 
 typedef struct sTSParseContext {
-  const char *content;
-  const char *file;
+  char *content;
+  char *file;
   unsigned long long int line, character, position;
   unsigned long long int size;
   unsigned short int hasDefaultExport;
@@ -169,7 +170,7 @@ typedef struct sTSParseClassBodyData {
 TSToken *newTSToken();
 void freeTSToken(TSToken *token);
 
-TSParseContext *newTSParseContext(const char *file_path);
+TSParseContext *newTSParseContext(char *file_path);
 void freeTSParseContext(TSParseContext *context);
 
 TSArgument *newTSArgument();

@@ -6,6 +6,6 @@
 // String
 char *appendChar(const char *content, char c);
 char *cloneString(const char *content);
-char *concat(const char *a, const char *b);
+char *concat(char *a, char *b);
 
-#define CONCAT(dest, src) { char *b = concat(dest, src); free(dest); dest = b; }
+#define CONCAT(dest, src) dest = concat(dest, src);

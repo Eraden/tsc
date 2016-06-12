@@ -16,8 +16,13 @@
 #define POS(type, context) \
   log_to_file(#type" at %s:%llu:%llu:%llu\n", context->file, context->line, context->character, context->position);
 #define PUSH_TS(class) class **push##class (class **coll, unsigned long int size, class *el) { \
-  class **new = (class **) malloc(sizeof(class *) * (size + 1)); \
-  if (coll != NULL) for (unsigned long int i = 0; i < size + 1; i++) new[i] = coll[i]; \
+  class **new; \
+  if (coll == NULL) {\
+    new = (class **) calloc(sizeof(class *) * (size + 1), 1); \
+    if (coll != NULL) for (unsigned long int i = 0; i < size + 1; i++) new[i] = coll[i]; \
+  } else {\
+    new = (class **) realloc(coll, sizeof(class *) * (size + 1));\
+  } \
   new[size] = el; \
   return new; \
 }

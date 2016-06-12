@@ -1,12 +1,12 @@
 #include <tsc/types.h>
 
-static unsigned long long int readFile(const char *path, char **buffer, unsigned long long int *size);
+static unsigned long long int readFile(char *path, char **buffer, unsigned long long int *size);
 
 //#################################################################################
 // IO
 //#################################################################################
 
-static unsigned long long int readFile(const char *path, char **buffer, unsigned long long int *size) {
+static unsigned long long int readFile(char *path, char **buffer, unsigned long long int *size) {
   FILE *file = fopen(path, "r");
   if (file == NULL) {
     ERR("File '%s' not found!", path);
@@ -47,8 +47,8 @@ void freeTSToken(TSToken *token) {
 // TSParseContext
 //#################################################################################
 
-TSParseContext *newTSParseContext(const char *file_path) {
-  char *b = (char*) calloc(sizeof(char), 1024);
+TSParseContext *newTSParseContext(char *file_path) {
+  char *b = (char *) calloc(sizeof(char), 1024);
   char *buffer = NULL;
   TSParseContext *context = (TSParseContext *) calloc(TSParseContext_SIZE, 1);
   CHECK_ALLOC_FAILED(context, TSParseContext)

@@ -1,182 +1,195 @@
 #include <tsc/dump.h>
 
-//#################################################################################
-// ToString
-//#################################################################################
+static void dumpFromTSClassDecorators(const TSClass *tsClass);
 
-static char *stringFromTSClassDecorators(const TSClass *tsClass);
+static void dumpFromTSClassDecoratorArgs(const TSDecorator *dec);
 
-static char *stringFromTSClassDecoratorArgs(const TSDecorator *dec);
-
-static char *stringFromFunctions(TSParseContext *context) {
-  if (context == NULL) return NULL;
-  if (context->globalClassesSize == 0) return NULL;
+static void dumpFromFunctions(TSParseContext *context) {
+  if (context == NULL) return;
+  if (context->globalClassesSize == 0) return;
   const unsigned long int size = context->globalFunctionsSize;
-  char *buffer = NULL;
   TSFunction *fn = NULL;
   TSArgument *arg = NULL;
   for (unsigned long int i = 0; i < size; i++) {
     fn = context->globalFunctions[i];
     if (fn == NULL) continue;
-    CONCAT(buffer, "  var ");
-    CONCAT(buffer, fn->name);
-    CONCAT(buffer, " = function (");
+    out("  var ");
+    out(fn->name);
+    out(" = function (");
     for (unsigned long int j = 0; j < fn->argumentsSize; j++) {
       arg = fn->arguments[j];
       if (arg->isRest != 1) {
-        if (j > 0) CONCAT(buffer, ", ");
-        CONCAT(buffer, arg->name);
+        if (j > 0) out(", ");
+        out(arg->name);
       }
     }
-    CONCAT(buffer, ") {\n");
+    out(") {\n");
     arg = fn->arguments[fn->argumentsSize - 1];
     if (arg->isRest) {
       char length[256];
       sprintf(length, "%lu", fn->argumentsSize - 1);
-      CONCAT(buffer, "    var ");
-      CONCAT(buffer, arg->name);
-      CONCAT(buffer, " = [].slice.call(arguments, ");
-      CONCAT(buffer, length);
-      CONCAT(buffer, ");\n");
+      out("    var ");
+      out(arg->name);
+      out(" = [].slice.call(arguments, ");
+      out(length);
+      out(");\n");
     }
     for (unsigned long int j = 0; j < fn->argumentsSize; j++) {
       arg = fn->arguments[j];
       if (arg->value != NULL) {
-        CONCAT(buffer, "    if ( void(0) === ");
-        CONCAT(buffer, arg->name);
-        CONCAT(buffer, " )\n      ");
-        CONCAT(buffer, arg->name);
-        CONCAT(buffer, " = ");
-        CONCAT(buffer, arg->value);
-        CONCAT(buffer, ";\n");
+        out("    if ( void(0) === ");
+        out(arg->name);
+        out(" )\n      ");
+        out(arg->name);
+        out(" = ");
+        out(arg->value);
+        out(";\n");
       }
     }
-    CONCAT(buffer, fn->body);
-    CONCAT(buffer, "};\n");
+    out(fn->body);
+    out("};\n");
   }
-  return buffer;
 }
 
-static char *stringFromClassFields(TSClass *tsClass) {
-  if (tsClass->fieldsSize == 0) return NULL;
-  TSField *field = NULL;
-  char *buffer = NULL;
-  CONCAT(buffer, "  (function (T, proto) {\n");
-//  CONCAT(
-//      buffer,
-//      "    proto[META_TABLE] = {\n"
-//          "      'get': function () {\n"
-//          "        this[PRIVATE] || this[PRIVATE] = {};\n"
-//          "        return { 'private': this[PRIVATE] };\n"
-//          "      }\n"
-//          "    };\n"
-//  );
-  for (unsigned long int i = 0; i < tsClass->fieldsSize; i++) {
-    field = tsClass->fields[i];
-    CONCAT(buffer, "    proto['");
-    CONCAT(buffer, field->name);
-    CONCAT(
-        buffer,
-        "'] = {\n"
+static void dumpFromClassMethods(TSClass *tsClass) {
+  if (tsClass->methodsSize == 0) return;
+  TSMethod *method = NULL;
+  for (unsigned long int i = 0; i < tsClass->methodsSize; i++) {
+    method = tsClass->methods[i];
+    if (method->type == TSMethod_Type_Constructor) continue;
+    out("    // Method\n");
+    out("    proto['");
+    out(method->name);
+    out("'] = {\n");
+    // TODO: Implement private access as meta table so extended class can't use or modify parent data
+    out(
+        "      'enumerable': false,\n"
+            "      'writable': false,\n"
+            "      'configurable': false,\n"
+            "      'value': "
     );
-    if (field->modifier == TSAccessModifier_Private) {
-      // TODO: Implement private access as meta table so extended class can't use or modify parent data
-      CONCAT(
-          buffer,
-          "      'enumerable': false,\n"
-              "      'writable': true,\n"
-              "      'configurable': false,\n"
-              "      'value': "
-      );
-    } else {
-      CONCAT(
-          buffer,
-          "      'enumerable': false,\n"
-              "      'writable': true,\n"
-              "      'configurable': false,\n"
-              "      'value': "
-      );
-    }
-    CONCAT(buffer, field->value == NULL ? "null" : field->value);
-    CONCAT(
-        buffer,
+    out(
+        "function () {\n"
+            "        "
+    );
+    if (method->body != NULL) out(method->body);
+    out("\n      }");
+    out(
         "\n"
             "    };\n"
     );
   }
-  CONCAT(buffer, "    Object.defineProperties(T.prototype, proto);\n");
-  CONCAT(buffer, "  }(");
-  CONCAT(buffer, tsClass->name);
-  CONCAT(buffer, ", {}));\n");
-  return buffer;
 }
 
-static char *stringFromTSClassDecoratorArgs(const TSDecorator *dec) {
+static void dumpFromClassFields(TSClass *tsClass) {
+  if (tsClass->fieldsSize == 0) return;
+  TSField *field = NULL;
+  for (unsigned long int i = 0; i < tsClass->fieldsSize; i++) {
+    field = tsClass->fields[i];
+    out("    // Field\n");
+    out("    proto['");
+    out(field->name);
+    out("'] = {\n");
+    // TODO: Implement private access as meta table so extended class can't use or modify parent data
+    out(
+        "      'enumerable': false,\n"
+            "      'writable': true,\n"
+            "      'configurable': false,\n"
+            "      'value': "
+    );
+    out(field->value == NULL ? "null" : field->value);
+    out(
+        "\n"
+            "    };\n"
+    );
+  }
+}
+
+static void dumpFromTSClassDecoratorArgs(const TSDecorator *dec) {
   TSArgument *arg;
-  char *buffer = NULL;
   for (unsigned long int i = 0; i < dec->argumentsSize; i++) {
     arg = dec->arguments[i];
-    if (i > 0) CONCAT(buffer, ",");
-    CONCAT(buffer, arg->value);
+    if (i > 0) out(",");
+    out(arg->value);
   }
-  return buffer;
 }
 
-static char *stringFromTSClassDecorators(const TSClass *tsClass) {
+static void dumpFromTSClassDecorators(const TSClass *tsClass) {
   TSDecorator *dec;
-  char *buffer = NULL;
   for (unsigned long int i = 0; i < tsClass->decoratorsSize; i++) {
     dec = tsClass->decorators[i];
-    CONCAT(buffer, "  ");
-    CONCAT(buffer, tsClass->name);
-    CONCAT(buffer, "=");
-    CONCAT(buffer, dec->name);
+    out("  ");
+    out(tsClass->name);
+    out("=");
+    out(dec->name);
     if (dec->argumentsSize > 0) {
-      CONCAT(buffer, "(");
-      CONCAT(buffer, stringFromTSClassDecoratorArgs(dec));
-      CONCAT(buffer, ")");
+      out("(");
+      dumpFromTSClassDecoratorArgs(dec);
+      out(")");
     }
     // args
-    CONCAT(buffer, "(");
-    CONCAT(buffer, tsClass->name);
-    CONCAT(buffer, ");\n");
+    out("(");
+    out(tsClass->name);
+    out(");\n");
   }
-  return buffer;
 }
 
-static char *stringFromClasses(TSParseContext *context) {
-  if (context == NULL) return NULL;
+static void dumpFromClasses(TSParseContext *context) {
+  if (context == NULL) return;
   TSClass **coll = context->globalClasses;
-  if (coll== NULL) return NULL;
+  if (coll== NULL) return;
   const unsigned long int size = context->globalClassesSize;
-  char *buffer = NULL;
   TSClass *tsClass = NULL;
   for (unsigned long int i = 0; i < size; i++) {
     tsClass = coll[i];
-    CONCAT(buffer, "  var ");
-    CONCAT(buffer, tsClass->name);
-    CONCAT(buffer, " = function () {\n");
-    if (tsClass->parent != NULL) {
-      CONCAT(buffer, "    ");
-      CONCAT(buffer, tsClass->parent);
-      CONCAT(buffer, ".apply(this, arguments);\n");
+    out("  var ");
+    out(tsClass->name);
+    out(" = ");
+    TSMethod *tsMethod = NULL;
+    TSArgument *tsArgument = NULL;
+    unsigned short int foundConstructor = 0;
+    for (unsigned long int mthI = 0; mthI < tsClass->methodsSize; mthI++) {
+      tsMethod = tsClass->methods[mthI];
+      if (tsMethod->type == TSMethod_Type_Constructor) {
+        out("function (");
+        for (unsigned long int argI = 0; argI < tsMethod->argumentsSize; argI++) {
+          tsArgument = tsMethod->arguments[argI];
+          if (argI > 0) out(",");
+          out(tsArgument->name);
+        }
+        out(") {\n    ");
+        out(tsMethod->body);
+        foundConstructor = 1;
+        break;
+      }
     }
-    CONCAT(buffer, "  };\n");
+    if (!foundConstructor) {
+      out("function () {\n");
+    }
+    out("\n  };\n");
     if (tsClass->decoratorsSize > 0) {
-      CONCAT(buffer, stringFromTSClassDecorators(tsClass));
+      dumpFromTSClassDecorators(tsClass);
     }
-    if (tsClass->fieldsSize > 0) {
-      CONCAT(buffer, stringFromClassFields(tsClass));
+    if (tsClass->methodsSize + tsClass->fieldsSize > 0) {
+      out("  (function (T, proto) {\n");
+      if (tsClass->fieldsSize > 0) {
+        dumpFromClassFields(tsClass);
+      }
+      if (tsClass->methodsSize > 0) {
+        dumpFromClassMethods(tsClass);
+      }
+      out("    Object.defineProperties(T.prototype, proto);\n");
+      out("  }(");
+      out(tsClass->name);
+      out(", {}));\n");
     }
   }
-  return buffer;
 }
 
-static char *stringFromExports(TSParseContext *context) {
-  if (context == NULL) return NULL;
-  if (context->exports == NULL) return NULL;
+static void dumpFromExports(TSParseContext *context) {
+  if (context == NULL) return;
+  if (context->exports == NULL) return;
   const long unsigned int size = context->exportsSize;
-  char *buffer = NULL;
   TSExport *export;
   TSClass *class;
   for (unsigned long int i = 0; i < size; i++) {
@@ -186,51 +199,35 @@ static char *stringFromExports(TSParseContext *context) {
       {
         class = (TSClass*) export->meta;
         if (export->asDefault == 1) {
-          CONCAT(buffer, "  exports[DEFAULT_EXPORT] = ");
+          out("  exports[DEFAULT_EXPORT] = ");
         } else {
-          CONCAT(buffer, "  exports[\"");
-          CONCAT(buffer, class->name);
-          CONCAT(buffer, "\"] = ");
+          out("  exports[\"");
+          out(class->name);
+          out("\"] = ");
         }
-        CONCAT(buffer, class->name);
-        CONCAT(buffer, ";\n");
+        out(class->name);
+        out(";\n");
         break;
       }
       default:
         break;
     }
   }
-  return buffer;
 }
 
-char *stringFromParseContext(TSParseContext *context) {
-  char *buffer = NULL;
-  CONCAT(buffer, "(function () {/*FILE EXPORT*/\n");
-  CONCAT(buffer, "var exports = {};\n(function () {\n");
-  char *join = NULL;
+void dumpFromParseContext(TSParseContext *context) {
+  out("(function () {/*FILE EXPORT*/\n");
+  out("  var exports = {};\n(function () {\n");
 
   // functions
-  join = stringFromFunctions(context);
-  if (join) {
-    CONCAT(buffer, join);
-    free(join);
-  }
+  dumpFromFunctions(context);
 
   // classes
-  join = stringFromClasses(context);
-  if (join) {
-    CONCAT(buffer, join);
-    free(join);
-  }
+  dumpFromClasses(context);
 
   // exports
-  join = stringFromExports(context);
-  if (join) {
-    CONCAT(buffer, join);
-    free(join);
-  }
+  dumpFromExports(context);
 
-  CONCAT(buffer, "}());\n");
-  CONCAT(buffer, "return exports;\n}());");
-  return buffer;
+  out("  }());\n");
+  out("  return exports;\n}());\n\n");
 }

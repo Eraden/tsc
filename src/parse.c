@@ -107,9 +107,7 @@ void parseTSExport(TSParseContext *context) {
   }
   // FLOG("%s\n", "    replacing old exports...");
   // FLOG("+ coll address: %p\n", context->exports);
-  TSExport **new = pushTSExport(context->exports, context->exportsSize, export);
-  if (context->exports != NULL) free(context->exports);
-  context->exports = new;
+  context->exports = pushTSExport(context->exports, context->exportsSize, export);
   context->exportsSize += 1;
   // FLOG("+ coll address: %p\n", context->exports);
   free((void *) type);
@@ -120,9 +118,7 @@ void parseTSExport(TSParseContext *context) {
  */
 
 static void pushTSArgumentToTSFunction(TSFunction *fn, TSArgument *arg) {
-  TSArgument **new = pushTSArgument(fn->arguments, fn->argumentsSize, arg);
-  if (fn->arguments != NULL) free(fn->arguments);
-  fn->arguments = new;
+  fn->arguments = pushTSArgument(fn->arguments, fn->argumentsSize, arg);
   fn->argumentsSize += 1;
 }
 
@@ -226,7 +222,6 @@ void parseTSFunction(TSParseContext *context) {
   TSFunction *fn = newTSFunction();
   validateName(context, context->currentToken->content);
   fn->name = cloneString(context->currentToken->content);
-  FLOG("    fn name: '%s'\n", fn->name);
   getTSToken(context); // args
   skipTSWhite(context);
   if (context->lastChar != '(') {
@@ -249,36 +244,164 @@ void parseTSFunction(TSParseContext *context) {
     if (context->lastChar == '}') {
       bracketCount -= 1;
       if (bracketCount > 0 && context->currentToken->content != NULL && fn->body != NULL) {
-        CONCAT(fn->body, context->currentToken->content);
+        fn->body = concat(fn->body, context->currentToken->content);
       } else break;
     } else {
       if (context->lastChar == '{')
         bracketCount += 1;
-      CONCAT(fn->body, context->currentToken->content);
+      fn->body = concat(fn->body, context->currentToken->content);
     }
   }
-  TSFunction **new = pushTSFunction(context->globalFunctions, context->globalFunctionsSize, fn);
-  free(context->globalFunctions);
+  context->globalFunctions = pushTSFunction(context->globalFunctions, context->globalFunctionsSize, fn);
   context->globalFunctionsSize += 1;
-  context->globalFunctions = new;
+}
+
+/**
+* Class
+*/
+
+static void pushTSArgumentToTSMethod(TSMethod *tsMethod, TSArgument *tsArgument) {
+  tsMethod->arguments = pushTSArgument(tsMethod->arguments, tsMethod->argumentsSize, tsArgument);
+  tsMethod->argumentsSize += 1;
+}
+
+static short unsigned int parseTSMethodArgument(TSParseContext *context, TSMethod *tsMethod) {
+  TSArgument *arg = newTSArgument();
+  getTSToken(context);
+  skipTSWhite(context);
+
+  if (strcmp(context->currentToken->content, TS_PUBLIC) == 0) {
+    ERR("%s\n", "Function should not have this context!");
+    PANIC(context, INVALID_TOKEN);
+  } else if (strcmp(context->currentToken->content, TS_PROTECTED) == 0) {
+    ERR("%s\n", "Function should not have this context!");
+    PANIC(context, INVALID_TOKEN);
+  } else if (strcmp(context->currentToken->content, TS_PRIVATE) == 0) {
+    ERR("%s\n", "Function should not have this context!");
+    PANIC(context, INVALID_TOKEN);
+  }
+
+  validateName(context, context->currentToken->content);
+  const char *name = context->currentToken->content;
+  if (name && strlen(name) > 4 && name[0] == '.' && name[1] == '.' && name[2] == '.') {
+    size_t s = strlen(name) - 3;
+    arg->name = (char *) calloc(sizeof(char), s);
+    for (size_t i = 0; i < s; i++) arg->name[i] = name[i+3];
+    arg->name[s] = 0;
+    arg->isRest = 1;
+  } else {
+    arg->name = cloneString(name);
+  }
+
+  getTSToken(context);
+  skipTSWhite(context);
+
+  if (context->lastChar == ':') {
+    getTSToken(context);
+    skipTSWhite(context);
+    validateName(context, context->currentToken->content);
+    arg->type = cloneString(context->currentToken->content);
+
+    getTSToken(context);
+    skipTSWhite(context);
+    if (context->lastChar == ')') {
+      pushTSArgumentToTSMethod(tsMethod, arg);
+      return 0;
+    }
+  }
+
+  if (context->lastChar == '=') {
+    getTSToken(context);
+    skipTSWhite(context);
+
+    arg->value = cloneString(context->currentToken->content);
+    while (1) {
+      getTSToken(context);
+      if (context->lastChar == ')') {
+        pushTSArgumentToTSMethod(tsMethod, arg);
+        return 0;
+      } else if (context->lastChar == ',') {
+        break;
+      } else {
+        CONCAT(arg->value, context->currentToken->content);
+      }
+    }
+  }
+
+  pushTSArgumentToTSMethod(tsMethod, arg);
+
+  if (context->lastChar == ')') {
+    return 0;
+  }
+
+  if (context->lastChar != ',') {
+    getTSToken(context);
+    skipTSWhite(context);
+    return 1;
+  }
+
+  return 1;
+}
+
+static void parseTSMethodArguments(TSParseContext *context, TSMethod *method) {
+  if (context->lastChar == ')') {
+    FLOG("    %s\n", "No more arguments");
+    return;
+  } else if (context->lastChar == ',') {
+    if (method->argumentsSize == 0) {
+      ERR("%s\n", "Invalid token while parsing function arguments, unexpected ','!");
+      PANIC(context, INVALID_TOKEN);
+    }
+  }
+
+  while(parseTSMethodArgument(context, method));
 }
 
 static unsigned short parseTSClassMethod(TSParseContext *context, TSClass *tsClass, TSParseClassBodyData *data ) {
   fprintf(stdout, "Found class method\n\n");
+  // current should be '('
+  // Parse arguments
+  TSMethod *tsMethod = newTSMethod();
+  tsMethod->name = cloneString(data->name);
+  tsMethod->modifier = data->access;
+  tsMethod->type = strcmp(tsMethod->name, "constructor") == 0 ?
+                   TSMethod_Type_Constructor :
+                   data->mthType;
   getTSToken(context);
   skipTSWhite(context);
-  TSMethod *mth = newTSMethod();
+  parseTSMethodArguments(context, tsMethod);
+  getTSToken(context); // current is '(' move to next
+  skipTSWhite(context);
+  // current is '{'
   int brackets = 1;
   while (brackets) {
     getTSToken(context);
     skipTSWhite(context);
     if (context->lastChar == '}') brackets -= 1;
     if (context->lastChar == '{') brackets += 1;
-    if (brackets) CONCAT(mth->body, context->currentToken->content);
+    if (brackets) {
+      if (strcmp(context->currentToken->content, "super") == 0) {
+        if (tsMethod->type == TSMethod_Type_Constructor) {
+          tsMethod->body = concat(tsMethod->body, tsClass->parent);
+          tsMethod->body = concat(tsMethod->body, ".apply(this, arguments);");
+        } else {
+          tsMethod->body = concat(tsMethod->body, tsClass->parent);
+          tsMethod->body = concat(tsMethod->body, ".prototype.");
+          tsMethod->body = concat(tsMethod->body, tsMethod->name);
+          tsMethod->body = concat(tsMethod->body, ".apply(this, arguments);");
+        }
+        getTSToken(context); // (
+        skipTSWhite(context);
+        getTSToken(context); // )
+        skipTSWhite(context);
+        getTSToken(context); // ;
+        skipTSWhite(context);
+      } else {
+        tsMethod->body = concat(tsMethod->body, context->currentToken->content);
+      }
+    }
   }
-  TSMethod **new = pushTSMethod(tsClass->methods, tsClass->methodsSize, mth);
-  free(tsClass->methods);
-  tsClass->methods = new;
+  tsClass->methods = pushTSMethod(tsClass->methods, tsClass->methodsSize, tsMethod);
   tsClass->methodsSize += 1;
   return 1;
 }
@@ -290,9 +413,7 @@ static unsigned short parseTSClassField(TSParseContext *context, TSClass *tsClas
   field->modifier = data->access == TSAccessModifier_Undefined ?
                     TSAccessModifier_Private :
                     data->access;
-  TSField **new = pushTSField(tsClass->fields, tsClass->fieldsSize, field);
-  free(tsClass->fields);
-  tsClass->fields = new;
+  tsClass->fields = pushTSField(tsClass->fields, tsClass->fieldsSize, field);
   tsClass->fieldsSize += 1;
   if (context->lastChar == ':') {
     getTSToken(context);
@@ -312,10 +433,6 @@ static unsigned short parseTSClassField(TSParseContext *context, TSClass *tsClas
   skipTSWhite(context);
   return 1;
 }
-
-/**
-* Class
-*/
 
 static short unsigned int collectTSClassBodyMemberData(TSParseContext *context, TSClass *class, TSParseClassBodyData *data) {
   if (strcmp(context->currentToken->content, TS_PUBLIC) == 0) {
@@ -385,7 +502,7 @@ static short unsigned int parseClassBody(TSParseContext *context, TSClass *class
 
     while(collectTSClassBodyMemberData(context, class, data));
 
-//    fprintf(stdout, "[class body] current token: %s\n", context->currentToken->content);
+    fprintf(stdout, "[class body] current token: %s\n", context->currentToken->content);
 
     if (context->lastChar == '(') {
       parseTSClassMethod(context, class, data);
@@ -409,9 +526,6 @@ static short unsigned int parseClassBody(TSParseContext *context, TSClass *class
   }
 }
 
-void parseTSMethod(TSParseContext *context) {
-}
-
 void parseTSClass(TSParseContext *context) {
   if (context == NULL) {
     return;
@@ -433,19 +547,21 @@ void parseTSClass(TSParseContext *context) {
     skipTSWhite(context);
   }
   // FLOG("+ coll address: %p\n", context->globalClasses);
-  TSClass **new = pushTSClass(context->globalClasses, context->globalClassesSize, class);
-  if (context->globalClasses) free((void*) context->globalClasses);
-  context->globalClasses = new;
+  context->globalClasses = pushTSClass(context->globalClasses, context->globalClassesSize, class);
+  context->globalClassesSize += 1;
   if (context->decoratorsStackSize) {
     class->decorators = context->decoratorsStack;
     class->decoratorsSize = context->decoratorsStackSize;
     context->decoratorsStackSize = 0;
     context->decoratorsStack = NULL;
   }
-  context->globalClassesSize += 1;
   while (parseClassBody(context, class));
   // FLOG("+ coll address: %p\n", context->globalClasses);
 }
+
+/**
+ * Decorator
+ */
 
 void parseTSDecorator(TSParseContext *context) {
   POS(Decorator, context)
@@ -455,8 +571,7 @@ void parseTSDecorator(TSParseContext *context) {
   }
   TSDecorator *dec = newTSDecorator();
   getTSToken(context);
-  const char *name = cloneString(context->currentToken->content);
-  dec->name = name;
+  dec->name = cloneString(context->currentToken->content);
 
   getTSToken(context);
   if (context->lastChar != '(') {
@@ -470,9 +585,7 @@ void parseTSDecorator(TSParseContext *context) {
     if (context->lastChar == ')') break;
     else if (context->lastChar == ',') {
       arg = newTSArgument();
-      TSArgument **new = pushTSArgument(dec->arguments, dec->argumentsSize, arg);
-      free(dec->arguments);
-      dec->arguments = new;
+      dec->arguments = pushTSArgument(dec->arguments, dec->argumentsSize, arg);
       dec->argumentsSize += 1;
     } else {
       if (arg->value == NULL) {
@@ -483,14 +596,10 @@ void parseTSDecorator(TSParseContext *context) {
     }
   }
   if (arg != NULL) {
-    TSArgument **new = pushTSArgument(dec->arguments, dec->argumentsSize, arg);
-    free(dec->arguments);
-    dec->arguments = new;
+    dec->arguments = pushTSArgument(dec->arguments, dec->argumentsSize, arg);
     dec->argumentsSize += 1;
   }
-  TSDecorator **new = pushTSDecorator(context->decoratorsStack, context->decoratorsStackSize, dec);
-  if (context->decoratorsStack) free(context->decoratorsStack);
-  context->decoratorsStack = new;
+  context->decoratorsStack = pushTSDecorator(context->decoratorsStack, context->decoratorsStackSize, dec);
   context->decoratorsStackSize += 1;
 }
 
@@ -604,7 +713,7 @@ void getTSToken(TSParseContext *context) {
   }
 }
 
-TSParseContext *parseFile(const char *file) {
+TSParseContext *parseFile(char *file) {
   TSParseContext *context = newTSParseContext(file);
   parseTSTokens(context);
   return context;

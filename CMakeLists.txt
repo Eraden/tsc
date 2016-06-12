@@ -5,6 +5,7 @@ set(
   SOURCE_FILES
   src/log.c
   src/str.c
+  src/output.c
   src/main.c
 )
 

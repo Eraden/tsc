@@ -1,7 +1,4 @@
-#include <tsc/sys.h>
-#include <tsc/log.h>
-#include <tsc/parse.h>
-#include <tsc/dump.h>
+#include <tsc/tsc.h>
 
 void printDir() {
   DIR *dp;
@@ -24,19 +21,14 @@ void printDir() {
 
 int main(int argc, char **argv) {
   // printDir();
+
+  // TODO: Choose output via arguments
+  output = stdout;
+
   init_log();
   TSParseContext *context = parseFile("./examples/test.ts");
-  char *str = NULL;
-  char *js = stringFromParseContext(context);
-  CONCAT(str, "var DEFAULT_EXPORT = Symbol();\n");
-  CONCAT(str, js);
-  LOG("%s\n", str);
-  FILE *f = fopen("./app.js", "w");
-  if (f) {
-    fprintf(f, "%s\n", js);
-    fclose(f);
-  }
-  if (str) free(str);
+  out("var DEFAULT_EXPORT = Symbol();\n");
+  dumpFromParseContext(context);
   freeTSParseContext(context);
   return 0;
 }

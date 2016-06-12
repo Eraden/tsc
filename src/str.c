@@ -30,16 +30,18 @@ char *cloneString(const char *content) {
   return new;
 }
 
-char *concat(const char *s1, const char *s2) {
-  if (s1 == NULL && s2 == NULL) return NULL;
-  if (s1 == NULL) return cloneString(s2);
-  if (s2 == NULL) return cloneString(s1);
-  size_t len1 = strlen(s1);
-  size_t len2 = strlen(s2);
-  char *result = (char*) calloc(sizeof(char), len1 + len2 + 1);
+char *concat(char *destination, char *source) {
+  if (destination == NULL && source == NULL) return NULL;
+  if (destination == NULL) return cloneString(source);
+  if (source == NULL) return cloneString(destination);
+  const size_t len1 = strlen(destination);
+  const size_t len2 = strlen(source);
+  char *result = (char*) realloc(destination, len1 + len2 + 1);
   if (result == NULL) exit(1);
-  memcpy(result, s1, len1);
-  memcpy(result + len1, s2, len2 + 1);
+  if (result != destination) {
+    // free(destination);
+  }
+  strncpy(result + len1, source, len2 + 1);
   return result;
 }
 
