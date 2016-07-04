@@ -7,12 +7,11 @@ set(
   src/str.c
   src/output.c
   src/options.c
+  src/parser.c
   src/main.c
 )
 
 include_directories(include)
-
-set(CMAKE_C_FLAGS -g)
 
 add_library(tstypes src/types.c)
 add_library(tsparse src/parse.c)

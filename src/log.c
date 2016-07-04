@@ -238,7 +238,7 @@ void log_to_file(char *msg, ...) {
   fclose(file);
 }
 
-void __unused log_error(char *msg, ...) {
+void log_error(char *msg, ...) {
   FILE *file = fopen("./log/tsc.error.log", "a");
   if (!file) {
     io_panic("Failed to open tsc.error.log for appending!\n");

@@ -1,11 +1,15 @@
-class Descriptor {}
-class Some {}
+let value = 1;
+const stale = 2;
+var variable = 3;
 
 function Component(data: Object, desc: Descriptor={}, s ="", ...rest) {
   if (desc) {
   } else
     return 1;
 }
+
+class Descriptor {}
+class Some {}
 
 @Component({
 })
