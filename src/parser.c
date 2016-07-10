@@ -50,7 +50,6 @@ static void TS_parse_local_variable_value(TSParseData *tsParseData, TSLocalVaria
   while (1) {
     tok = TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      free((void *) tok);
       break;
     } else if (tok[0] == ' ' || tok[0] == ';') {
       *movedBy += strlen(tok);
@@ -90,11 +89,15 @@ static const TSParserToken TS_parse_var(TSFile *tsFile, TSParseData *tsParseData
   token.line = tsParseData->line;
   token.position = tsParseData->position;
   token.visibility = TS_VISIBILITY_SCOPE;
+  token.children = NULL;
+  token.childrenSize = 0;
 
   TS_parse_local_variable_body(tsParseData, &movedBy, &token);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+
+  log_to_file("-> end %s\n", "var");
   return token;
 }
 
@@ -108,11 +111,15 @@ static const TSParserToken TS_parse_let(TSFile *tsFile, TSParseData *tsParseData
   token.character = tsParseData->character;
   token.line = tsParseData->line;
   token.visibility = TS_VISIBILITY_SCOPE;
+  token.children = NULL;
+  token.childrenSize = 0;
 
   TS_parse_local_variable_body(tsParseData, &movedBy, &token);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+
+  log_to_file("-> end %s\n", "let");
   return token;
 }
 
@@ -126,11 +133,15 @@ static const TSParserToken TS_parse_const(TSFile *tsFile, TSParseData *tsParseDa
   token.character = tsParseData->character;
   token.line = tsParseData->line;
   token.visibility = TS_VISIBILITY_SCOPE;
+  token.children = NULL;
+  token.childrenSize = 0;
 
   TS_parse_local_variable_body(tsParseData, &movedBy, &token);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+
+  log_to_file("-> end %s\n", "const");
   return token;
 }
 
@@ -144,9 +155,13 @@ static const TSParserToken TS_parse_class(TSFile *tsFile, TSParseData *tsParseDa
   token.character = tsParseData->character;
   token.line = tsParseData->line;
   token.visibility = TS_VISIBILITY_SCOPE;
+  token.children = NULL;
+  token.childrenSize = 0;
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+
+  log_to_file("-> end %s\n", "class");
   return token;
 }
 
@@ -173,6 +188,8 @@ static void TS_parse_function_arguments(TSParseData *tsParseData, TSParserToken 
   argument.tokenType = TS_VAR;
   argument.data = data;
   argument.visibility = TS_VISIBILITY_SCOPE;
+  argument.children = NULL;
+  argument.childrenSize = 0;
 
   while (1) {
     tok = TS_getToken(tsParseData->stream);
@@ -242,11 +259,15 @@ static void TS_parse_function_body(TSFile *tsFile, TSParseData *tsParseData, TSP
   // move to bracket '{'
   tok = NULL;
   while (1) {
-    if (tok != NULL) free((void *) tok);
+    if (tok != NULL) {
+      *movedBy += strlen(tok);
+      free((void *) tok);
+    }
     tok = TS_getToken(tsParseData->stream);
     if (tok == NULL) SYNTAX_ERROR;
     *movedBy += strlen(tok);
     if (tok[0] == '{') {
+      *movedBy += strlen(tok);
       free((void *) tok);
       break;
     } else if (tok[0] == '\n') {
@@ -262,10 +283,15 @@ static void TS_parse_function_body(TSFile *tsFile, TSParseData *tsParseData, TSP
     if (tok == NULL)
       SYNTAX_ERROR;
     if (tok[0] == '}') {
+      *movedBy += strlen(tok);
+      free((void *) tok);
       break;
     }
+
     if (tok[0] == '\n') {
       *movedBy += strlen(tok);
+      free((void *) tok);
+
       tsParseData->line += 1;
       tsParseData->character = 0;
       tsParseData->position += *movedBy;
@@ -274,6 +300,8 @@ static void TS_parse_function_body(TSFile *tsFile, TSParseData *tsParseData, TSP
     }
     if (tok[0] == ' ') {
       *movedBy += strlen(tok);
+      free((void *) tok);
+
       continue;
     }
 
@@ -326,6 +354,8 @@ static const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsPars
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+
+  log_to_file("-> end %s\n", "function");
   return token;
 }
 
@@ -339,16 +369,20 @@ static const TSParserToken TS_parse_arrow(TSFile *tsFile, TSParseData *tsParseDa
   token.character = tsParseData->character;
   token.line = tsParseData->line;
   token.visibility = TS_VISIBILITY_SCOPE;
+  token.children = NULL;
+  token.childrenSize = 0;
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+
+  log_to_file("-> end %s\n", "arrow");
   return token;
 }
 
-static void TS_parse_if_body(TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
+static void TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
+  log_to_file("->   parsing as %s body\n", "if");
   const char *tok;
   TSConditionBodyTermination termination;
-  tok = NULL;
 
   while (1) {
     tok = TS_getToken(tsParseData->stream);
@@ -399,21 +433,38 @@ static void TS_parse_if_body(TSParseData *tsParseData, TSParserToken *token, u_l
       }
       *movedBy += strlen(tok);
       free((void *) tok);
+
       break;
     } else if (tok[0] == ';') {
       *movedBy += strlen(tok);
       free((void *) tok);
-      if (termination == TS_ENDS_WITHOUT_BRACKET)
+
+      if (termination == TS_ENDS_WITHOUT_BRACKET) {
         break;
+      }
     } else {
-      // body
+      tsParseData->token = tok;
+      tsParseData->character += *movedBy;
+      tsParseData->position += *movedBy;
+      *movedBy = 0;
+      TSParserToken t = TS_parse_ts_token(tsFile, tsParseData);
+      if (token->children == NULL) {
+        token->children = (TSParserToken *) calloc(sizeof(TSParserToken), 1);
+        token->children[0] = t;
+        token->childrenSize = 1;
+      } else {
+        token->children = (TSParserToken *) realloc(token->children, token->childrenSize + 1);
+        token->children[token->childrenSize] = t;
+        token->childrenSize += 1;
+      }
+      free((void *) tok);
     }
   }
+  log_to_file("->   done %s body\n", "if");
 }
 
 static void TS_parse_if_condition(TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
   const char *tok;
-  tok = NULL;
   while (1) {
     tok = TS_getToken(tsParseData->stream);
     if (tok == NULL) {
@@ -450,6 +501,8 @@ static void TS_parse_if_condition(TSParseData *tsParseData, TSParserToken *token
     }
     else if (tok[0] == '\n') {
       *movedBy += strlen(tok);
+      free((void *) tok);
+
       tsParseData->position += *movedBy;
       tsParseData->line += 1;
       tsParseData->character = 0;
@@ -457,6 +510,7 @@ static void TS_parse_if_condition(TSParseData *tsParseData, TSParserToken *token
     } else if (tok[0] == ')') {
       *movedBy += strlen(tok);
       free((void *) tok);
+
       break;
     } else {
       TSParserToken t;
@@ -479,12 +533,100 @@ static const TSParserToken TS_parse_if(TSFile *tsFile, TSParseData *tsParseData)
   token.character = tsParseData->character;
   token.line = tsParseData->line;
   token.visibility = TS_VISIBILITY_SCOPE;
+  token.children = NULL;
+  token.childrenSize = 0;
 
   TS_parse_if_condition(tsParseData, &token, &movedBy);
+  TS_parse_if_body(tsFile, tsParseData, &token, &movedBy);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+  log_to_file("-> end %s\n", "if");
   return token;
+}
+
+static void TS_parse_else_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
+  log_to_file("->   parsing as %s body\n", "else");
+  const char *tok;
+  TSConditionBodyTermination termination;
+
+  while (1) {
+    tok = TS_getToken(tsParseData->stream);
+    if (tok == NULL) {
+      SYNTAX_ERROR;
+    }
+    if (tok[0] == ' ') {
+      *movedBy += strlen(tok);
+      free((void *) tok);
+    }
+    else if (tok[0] == '\n') {
+      *movedBy += strlen(tok);
+      tsParseData->position += *movedBy;
+      tsParseData->line += 1;
+      tsParseData->character = 0;
+      *movedBy = 0;
+      termination = TS_ENDS_WITHOUT_BRACKET;
+      break;
+    } else {
+      if (tok[0] == '{')
+        termination = TS_ENDS_WITH_BRACKET;
+      else
+        termination = TS_ENDS_WITHOUT_BRACKET;
+      *movedBy += strlen(tok);
+      free((void *) tok);
+      break;
+    }
+  }
+
+  while (1) {
+    tok = TS_getToken(tsParseData->stream);
+    if (tok == NULL) {
+      SYNTAX_ERROR;
+    }
+    if (tok[0] == ' ') {
+      *movedBy += strlen(tok);
+      free((void *) tok);
+    }
+    else if (tok[0] == '\n') {
+      *movedBy += strlen(tok);
+      tsParseData->position += *movedBy;
+      tsParseData->line += 1;
+      tsParseData->character = 0;
+      *movedBy = 0;
+    } else if (tok[0] == '}') {
+      if (termination != TS_ENDS_WITH_BRACKET) {
+        SYNTAX_ERROR;
+      }
+      *movedBy += strlen(tok);
+      free((void *) tok);
+
+      break;
+    } else if (tok[0] == ';') {
+      *movedBy += strlen(tok);
+      free((void *) tok);
+
+      if (termination == TS_ENDS_WITHOUT_BRACKET) {
+        break;
+      }
+    } else {
+      tsParseData->token = tok;
+      tsParseData->character += *movedBy;
+      tsParseData->position += *movedBy;
+      *movedBy = 0;
+      TSParserToken t = TS_parse_ts_token(tsFile, tsParseData);
+      if (token->children == NULL) {
+        token->children = (TSParserToken *) calloc(sizeof(TSParserToken), 1);
+        token->children[0] = t;
+        token->childrenSize = 1;
+      } else {
+        token->children = (TSParserToken *) realloc(token->children, token->childrenSize + 1);
+        token->children[token->childrenSize] = t;
+        token->childrenSize += 1;
+      }
+      free((void *) tok);
+    }
+  }
+  log_to_file("->   done %s body\n", "else");
 }
 
 static const TSParserToken TS_parse_else(TSFile *tsFile, TSParseData *tsParseData) {
@@ -497,21 +639,66 @@ static const TSParserToken TS_parse_else(TSFile *tsFile, TSParseData *tsParseDat
   token.character = tsParseData->character;
   token.line = tsParseData->line;
   token.visibility = TS_VISIBILITY_SCOPE;
+  token.children = NULL;
+  token.childrenSize = 0;
+
+  TS_parse_else_body(tsFile, tsParseData, &token, &movedBy);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+  log_to_file("-> end %s\n", "else");
   return token;
 }
 
-static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] =  {
+static const TSParserToken TS_parse_return(TSFile *tsFile, TSParseData *tsParseData) {
+  log_to_file("-> parsing as %s\n", "return");
+  u_long movedBy = strlen(tsParseData->token);
+
+  TSParserToken token;
+  token.tokenType = TS_RETURN;
+  token.position = tsParseData->position;
+  token.character = tsParseData->character;
+  token.line = tsParseData->line;
+  token.visibility = TS_VISIBILITY_SCOPE;
+  token.children = NULL;
+  token.childrenSize = 0;
+
+  tsParseData->position += movedBy;
+  tsParseData->character += movedBy;
+  log_to_file("-> end %s\n", "return");
+  return token;
+}
+
+static const TSParserToken TS_parse_component(TSFile *tsFile, TSParseData *tsParseData) {
+  log_to_file("-> parsing as %s\n", "component");
+  u_long movedBy = strlen(tsParseData->token);
+
+  TSParserToken token;
+  token.tokenType = TS_COMPONENT;
+  token.position = tsParseData->position;
+  token.character = tsParseData->character;
+  token.line = tsParseData->line;
+  token.visibility = TS_VISIBILITY_SCOPE;
+  token.children = NULL;
+  token.childrenSize = 0;
+
+  tsParseData->position += movedBy;
+  tsParseData->character += movedBy;
+  log_to_file("-> end %s\n", "component");
+  return token;
+}
+
+static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     TS_VAR, "var", TS_parse_var,
     TS_LET, "let", TS_parse_let,
     TS_CONST, "const", TS_parse_const,
     TS_CLASS, "class", TS_parse_class,
     TS_FUNCTION, "function", TS_parse_function,
     TS_ARROW, "=>", TS_parse_arrow,
-    TS_ARROW, "if", TS_parse_if,
-    TS_ARROW, "else", TS_parse_else,
+    TS_IF, "if", TS_parse_if,
+    TS_ELSE, "else", TS_parse_else,
+    TS_RETURN, "return", TS_parse_return,
+    TS_COMPONENT, "@", TS_parse_component,
 };
 
 static void TS_put_back(FILE *stream, const char *value) {

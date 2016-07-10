@@ -1,4 +1,3 @@
-//#include <tsc/tsc.h>
 #include <tsc/parser.h>
 
 //void printDir() {
@@ -21,15 +20,8 @@
 //}
 
 int main(int argc, char **argv) {
-  // TSC_parse_options(argc, argv);
-  // printDir();
-
   init_log();
-  /*
-  TSParseContext *context = parseFile("./examples/test.ts");
-  out("var DEFAULT_EXPORT = Symbol();\n");
-  dumpFromParseContext(context);
-  freeTSParseContext(context);*/
+
   TS_parse_file("./examples/test.ts");
   return 0;
 }

@@ -20,6 +20,8 @@ typedef enum eTSTokenType {
   TS_ARROW = 0x6,
   TS_IF = 0x7,
   TS_ELSE = 0x8,
+  TS_RETURN = 0x9,
+  TS_COMPONENT = 0x10,
   TS_UNKNOWN = 0x0,
 } TSTokenType;
 
@@ -41,7 +43,7 @@ typedef struct sTSKeyword {
   TS_token_build_fn callback;
 } TSKeyword;
 
-#define KEYWORDS_SIZE 8
+#define KEYWORDS_SIZE 10
 
 typedef struct sTSLocalVariableData {
   const char *name;
@@ -56,7 +58,7 @@ typedef struct sTSFunctionData {
 
 typedef struct sTSIfData {
   TSParserToken *conditions;
-} TSFunctionData;
+} TSIfData;
 
 typedef struct sTSParseData {
   u_long position;

@@ -4,6 +4,7 @@ var variable = 3;
 
 function Component(data: Object, desc: Descriptor={}, s ="", ...rest) {
   if (desc) {
+    return 2;
   } else
     return 1;
 }

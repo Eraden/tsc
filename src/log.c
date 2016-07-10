@@ -1,3 +1,4 @@
+#define TS_DEBUG 1
 #include <tsc/log.h>
 
 void io_panic(const char *msg) {
@@ -231,11 +232,19 @@ void log_to_file(char *msg, ...) {
   if (!file) {
     io_panic("Failed to open tsc.log for appending!\n");
   }
-  va_list ap;
-  va_start(ap, msg);
-  vfprintf(file, msg, ap);
-  va_end(ap);
+  va_list ap_file;
+  va_start(ap_file, msg);
+  vfprintf(file, msg, ap_file);
+  va_end(ap_file);
   fclose(file);
+
+#ifdef TS_DEBUG
+  file = stdout;
+  va_list ap_stdout;
+  va_start(ap_stdout, msg);
+  vfprintf(file, msg, ap_stdout);
+  va_end(ap_stdout);
+#endif
 }
 
 void log_error(char *msg, ...) {

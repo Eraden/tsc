@@ -4,28 +4,38 @@ project(tsc)
 set(
   SOURCE_FILES
   src/log.c
-  src/str.c
-  src/output.c
-  src/options.c
   src/parser.c
   src/main.c
 )
 
+set(
+  HEADER_FILES
+  include/tsc/log.h
+  include/tsc/parser.h
+)
+
 include_directories(include)
 
-set(CMAKE_C_FLAGS -g)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
 
-add_library(tstypes src/types.c)
-add_library(tsparse src/parse.c)
-add_library(tsdump src/dump.c)
+MESSAGE(INFO " Compiler: ${CMAKE_C_COMPILER}")
+
+if (CMAKE_C_COMPILER MATCHES "clang")
+  MESSAGE(INFO " Setting up memory sanitizer")
+  SET(CMAKE_C_FLAGS "-g -fsanitize=memory -fsanitize-memory-track-origins=2 -fno-omit-frame-pointer")
+else()
+  MESSAGE(INFO " Not clang, unable to sanitize memory")
+  add_library(tsparser src/parser.c)
+endif()
 
 add_executable(tsc ${SOURCE_FILES})
 
-target_link_libraries(
-  tsc
-  tstypes
-  tsparse
-  tsdump
-)
+if (CMAKE_C_COMPILER MATCHES "clang")
+else()
+  target_link_libraries(
+    tsc
+    tsparser
+  )
+endif()
 
 FILE(COPY examples DESTINATION .)
