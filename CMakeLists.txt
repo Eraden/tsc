@@ -13,6 +13,8 @@ set(
 
 include_directories(include)
 
+set(CMAKE_C_FLAGS -g)
+
 add_library(tstypes src/types.c)
 add_library(tsparse src/parse.c)
 add_library(tsdump src/dump.c)

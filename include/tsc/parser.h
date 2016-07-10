@@ -1,8 +1,10 @@
 #pragma once
 
 #include <tsc/sys.h>
+#include <tsc/log.h>
 
 typedef struct sTSParseData TSParseData;
+typedef struct sTSFunctionData TSFunctionData;
 typedef struct sTSKeyword TSKeyword;
 typedef struct sTSParserToken TSParserToken;
 typedef struct sTSFile TSFile;
@@ -16,8 +18,22 @@ typedef enum eTSTokenType {
   TS_CLASS = 0x4,
   TS_FUNCTION = 0x5,
   TS_ARROW = 0x6,
+  TS_IF = 0x7,
+  TS_ELSE = 0x8,
   TS_UNKNOWN = 0x0,
 } TSTokenType;
+
+typedef enum eTSVisibility {
+  TS_VISIBILITY_SCOPE = 0x0,
+  TS_VISIBILITY_PRIVATE = 0x1,
+  TS_VISIBILITY_PROTECTED = 0x2,
+  TS_VISIBILITY_PUBLIC = 0x3
+} TSVisibility;
+
+typedef enum eTSConditionBodyTermination {
+  TS_ENDS_WITH_BRACKET = 0x1,
+  TS_ENDS_WITHOUT_BRACKET = 0x0,
+} TSConditionBodyTermination;
 
 typedef struct sTSKeyword {
   TSTokenType type;
@@ -25,12 +41,22 @@ typedef struct sTSKeyword {
   TS_token_build_fn callback;
 } TSKeyword;
 
-#define KEYWORDS_SIZE 6
+#define KEYWORDS_SIZE 8
 
 typedef struct sTSLocalVariableData {
   const char *name;
   const char *value;
 } TSLocalVariableData;
+
+typedef struct sTSFunctionData {
+  const char *name;
+  TSParserToken *arguments;
+  u_long argumentsSize;
+} TSFunctionData;
+
+typedef struct sTSIfData {
+  TSParserToken *conditions;
+} TSFunctionData;
 
 typedef struct sTSParseData {
   u_long position;
@@ -48,6 +74,7 @@ typedef struct sTSParserToken {
   u_long childrenSize;
   TSParserToken *children;
   void *data;
+  TSVisibility visibility;
 } TSParserToken;
 
 typedef struct sTSFile {

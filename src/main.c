@@ -21,10 +21,11 @@
 //}
 
 int main(int argc, char **argv) {
-/*  TSC_parse_options(argc, argv);
+  // TSC_parse_options(argc, argv);
   // printDir();
 
   init_log();
+  /*
   TSParseContext *context = parseFile("./examples/test.ts");
   out("var DEFAULT_EXPORT = Symbol();\n");
   dumpFromParseContext(context);

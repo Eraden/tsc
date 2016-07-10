@@ -1,8 +1,11 @@
 #include <tsc/parser.h>
 
+#define SYNTAX_ERROR { fprintf(stdout, "Syntax error\n"); exit(2); }
+
 static void TS_put_back(FILE *stream, const char *value);
 static void TS_validate_name(const char *name);
 
+static const char *TS_clone_string(const char *string);
 static void TS_append_ts_parser_token(TSFile *tsFile, TSParserToken *token);
 static const TSParserToken TS_parse_var(TSFile *tsFile, TSParseData *tsParseData);
 static const TSParserToken TS_parse_let(TSFile *tsFile, TSParseData *tsParseData);
@@ -10,55 +13,64 @@ static const TSParserToken TS_parse_const(TSFile *tsFile, TSParseData *tsParseDa
 static const TSParserToken TS_parse_class(TSFile *tsFile, TSParseData *tsParseData);
 static const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData);
 static const TSParserToken TS_parse_arrow(TSFile *tsFile, TSParseData *tsParseData);
-static void TS_parse_ts_token(TSFile *tsFile, TSParseData *data);
+static TSParserToken TS_parse_ts_token(TSFile *tsFile, TSParseData *data);
+static void TS_next_line(TSParseData *data);
 
-static const TSParserToken TS_parse_var(TSFile *tsFile, TSParseData *tsParseData) {
-  u_long movedBy = strlen(tsParseData->token);
+static void TS_parse_local_variable_body(TSParseData *tsParseData, u_long *movedBy, TSParserToken *token);
+static void TS_parse_local_variable_value(TSParseData *tsParseData, TSLocalVariableData *varData, u_long *movedBy);
 
-  TSParserToken token;
-  token.tokenType = TS_VAR;
-  token.character = tsParseData->character;
-  token.line = tsParseData->line;
-  token.position = tsParseData->position;
+static const char *TS_clone_string(const char *string) {
+  char *clone = (char *) calloc(sizeof(char), sizeof(string) + 1);
+  clone[sizeof(string)] = 0;
+  strcpy(clone, string);
+  return clone;
+}
 
+static void TS_parse_local_variable_body(TSParseData *tsParseData, u_long *movedBy, TSParserToken *token) {
   const char *white = TS_getToken(tsParseData->stream);
-  if (white == NULL) exit(1);
-  movedBy += strlen(white);
+  if (white == NULL)
+    SYNTAX_ERROR;
+  (*movedBy) += strlen(white);
   free((void *) white);
 
   const char *name = TS_getToken(tsParseData->stream);
   TSLocalVariableData *varData = calloc(sizeof(TSLocalVariableData), 1);
-  if (varData == NULL) exit(1);
+  if (varData == NULL)
+    SYNTAX_ERROR;
   TS_validate_name(name);
-  movedBy += strlen(name);
+  (*movedBy) += strlen(name);
   varData->name = name;
-  token.data = varData;
+  (*token).data = varData;
 
-  const char *tok;
+  TS_parse_local_variable_value(tsParseData, varData, movedBy);
+}
+
+static void TS_parse_local_variable_value(TSParseData *tsParseData, TSLocalVariableData *varData, u_long *movedBy) {
+  const char *tok = NULL;
   while (1) {
     tok = TS_getToken(tsParseData->stream);
     if (tok == NULL) {
       free((void *) tok);
       break;
     } else if (tok[0] == ' ' || tok[0] == ';') {
-      movedBy += strlen(tok);
+      *movedBy += strlen(tok);
       free((void *) tok);
     } else if (tok[0] == '=') {
-      movedBy += strlen(tok);
+      *movedBy += strlen(tok);
       free((void *) tok);
       while (1) {
         tok = TS_getToken(tsParseData->stream);
-        if (tok == NULL) exit(1);
-        if (tok[0] == '\n') exit(2);
+        if (tok == NULL) SYNTAX_ERROR;
+        if (tok[0] == '\n') SYNTAX_ERROR;
         if (tok[0] != ' ') {
           break;
         } else {
-          movedBy += strlen(tok);
+          *movedBy += strlen(tok);
           free((void *) tok);
         }
       }
       varData->value = tok;
-      movedBy += strlen(tok);
+      *movedBy += strlen(tok);
       break;
     } else {
       TS_put_back(tsParseData->stream, tok);
@@ -66,6 +78,20 @@ static const TSParserToken TS_parse_var(TSFile *tsFile, TSParseData *tsParseData
       break;
     }
   }
+}
+
+static const TSParserToken TS_parse_var(TSFile *tsFile, TSParseData *tsParseData) {
+  log_to_file("-> parsing as %s\n", "var");
+  u_long movedBy = strlen(tsParseData->token);
+
+  TSParserToken token;
+  token.tokenType = TS_VAR;
+  token.character = tsParseData->character;
+  token.line = tsParseData->line;
+  token.position = tsParseData->position;
+  token.visibility = TS_VISIBILITY_SCOPE;
+
+  TS_parse_local_variable_body(tsParseData, &movedBy, &token);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
@@ -73,6 +99,7 @@ static const TSParserToken TS_parse_var(TSFile *tsFile, TSParseData *tsParseData
 }
 
 static const TSParserToken TS_parse_let(TSFile *tsFile, TSParseData *tsParseData) {
+  log_to_file("-> parsing as %s\n", "let");
   u_long movedBy = strlen(tsParseData->token);
 
   TSParserToken token;
@@ -80,6 +107,9 @@ static const TSParserToken TS_parse_let(TSFile *tsFile, TSParseData *tsParseData
   token.position = tsParseData->position;
   token.character = tsParseData->character;
   token.line = tsParseData->line;
+  token.visibility = TS_VISIBILITY_SCOPE;
+
+  TS_parse_local_variable_body(tsParseData, &movedBy, &token);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
@@ -87,6 +117,7 @@ static const TSParserToken TS_parse_let(TSFile *tsFile, TSParseData *tsParseData
 }
 
 static const TSParserToken TS_parse_const(TSFile *tsFile, TSParseData *tsParseData) {
+  log_to_file("-> parsing as %s\n", "const");
   u_long movedBy = strlen(tsParseData->token);
 
   TSParserToken token;
@@ -94,6 +125,9 @@ static const TSParserToken TS_parse_const(TSFile *tsFile, TSParseData *tsParseDa
   token.position = tsParseData->position;
   token.character = tsParseData->character;
   token.line = tsParseData->line;
+  token.visibility = TS_VISIBILITY_SCOPE;
+
+  TS_parse_local_variable_body(tsParseData, &movedBy, &token);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
@@ -101,6 +135,7 @@ static const TSParserToken TS_parse_const(TSFile *tsFile, TSParseData *tsParseDa
 }
 
 static const TSParserToken TS_parse_class(TSFile *tsFile, TSParseData *tsParseData) {
+  log_to_file("-> parsing as %s\n", "class");
   u_long movedBy = strlen(tsParseData->token);
 
   TSParserToken token;
@@ -108,13 +143,158 @@ static const TSParserToken TS_parse_class(TSFile *tsFile, TSParseData *tsParseDa
   token.position = tsParseData->position;
   token.character = tsParseData->character;
   token.line = tsParseData->line;
+  token.visibility = TS_VISIBILITY_SCOPE;
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
   return token;
 }
 
+static void TS_append_argument(TSFunctionData *functionData, TSParserToken argument) {
+  if (functionData->arguments == NULL) {
+    functionData->arguments = (TSParserToken *) calloc(sizeof(TSParserToken), 1);
+    functionData->arguments[0] = argument;
+    functionData->argumentsSize = 1;
+  } else {
+    functionData->arguments = (TSParserToken *) calloc(sizeof(TSParserToken), functionData->argumentsSize + 1);
+    functionData->arguments[functionData->argumentsSize] = argument;
+    functionData->argumentsSize += 1;
+  }
+}
+
+static void TS_parse_function_arguments(TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
+  const char *tok;
+  u_short hadStartBracket = 0;
+  u_short assign = 0;
+  TSFunctionData *functionData = (TSFunctionData *) token->data;
+
+  TSParserToken argument;
+  TSLocalVariableData *data = (TSLocalVariableData *) calloc(sizeof(TSLocalVariableData), 1);
+  argument.tokenType = TS_VAR;
+  argument.data = data;
+  argument.visibility = TS_VISIBILITY_SCOPE;
+
+  while (1) {
+    tok = TS_getToken(tsParseData->stream);
+    if (tok == NULL) SYNTAX_ERROR;
+    if (tok[0] == '(') {
+      hadStartBracket = 1;
+      *movedBy += strlen(tok);
+      continue;
+    } else if (!hadStartBracket) {
+      SYNTAX_ERROR;
+    }
+    if (tok[0] == ')') {
+      if (data->name != NULL) {
+        TS_append_argument(functionData, argument);
+      }
+      *movedBy += strlen(tok);
+      free((void *) tok);
+      break;
+    }
+    if (tok[0] == ' ') {
+      continue;
+    } else if (tok[0] == '\n') {
+      tsParseData->line += 1;
+      tsParseData->character = 0;
+      tsParseData->position += *movedBy;
+      *movedBy = 0;
+    } else if (strcmp(tok, "private") == 0) {
+      argument.visibility = TS_VISIBILITY_PRIVATE;
+    } else if (strcmp(tok, "protected") == 0) {
+      argument.visibility = TS_VISIBILITY_PROTECTED;
+    } else if (strcmp(tok, "public") == 0) {
+      argument.visibility = TS_VISIBILITY_PUBLIC;
+    } else if (tok[0] == '=') {
+      if (data->name == NULL) {
+        SYNTAX_ERROR;
+      }
+      assign = 1;
+    } else if (tok[0] == ',') {
+      if (data->name == NULL) {
+        SYNTAX_ERROR;
+      }
+      TS_append_argument(functionData, argument);
+
+      argument.tokenType = TS_VAR;
+      argument.visibility = TS_VISIBILITY_SCOPE;
+      argument.position = 0;
+      argument.character = 0;
+      argument.line = 0;
+      data = (TSLocalVariableData *) calloc(sizeof(TSLocalVariableData), 1);
+      argument.data = data;
+      assign = 0;
+    } else if (assign) {
+      data->value = TS_clone_string(tok);
+    } else {
+      data->name = TS_clone_string(tok);
+      argument.position = token->position + *movedBy;
+      argument.character = tsParseData->character + *movedBy;
+      argument.line = tsParseData->line;
+    }
+    *movedBy += strlen(tok);
+    free((void *) tok);
+  }
+}
+
+static void TS_parse_function_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
+  const char *tok;
+  // move to bracket '{'
+  tok = NULL;
+  while (1) {
+    if (tok != NULL) free((void *) tok);
+    tok = TS_getToken(tsParseData->stream);
+    if (tok == NULL) SYNTAX_ERROR;
+    *movedBy += strlen(tok);
+    if (tok[0] == '{') {
+      free((void *) tok);
+      break;
+    } else if (tok[0] == '\n') {
+      tsParseData->line += 1;
+      tsParseData->character = 0;
+      tsParseData->position += *movedBy;
+      *movedBy = 0;
+    }
+  }
+
+  while (1) {
+    tok = TS_getToken(tsParseData->stream);
+    if (tok == NULL)
+      SYNTAX_ERROR;
+    if (tok[0] == '}') {
+      break;
+    }
+    if (tok[0] == '\n') {
+      *movedBy += strlen(tok);
+      tsParseData->line += 1;
+      tsParseData->character = 0;
+      tsParseData->position += *movedBy;
+      *movedBy = 0;
+      continue;
+    }
+    if (tok[0] == ' ') {
+      *movedBy += strlen(tok);
+      continue;
+    }
+
+    tsParseData->token = tok;
+    TSParserToken tsParserToken = TS_parse_ts_token(tsFile, tsParseData);
+    if (tsParserToken.tokenType != TS_UNKNOWN) {
+      if (token->children == NULL) {
+        token->children = (TSParserToken *) calloc(sizeof(TSParserToken), 1);
+        token->children[0] = tsParserToken;
+        token->childrenSize = 1;
+      } else {
+        token->children = (TSParserToken *) realloc(token->children, token->childrenSize +1);
+        token->children[token->childrenSize] = tsParserToken;
+        token->childrenSize += 1;
+      }
+    }
+  }
+}
+
 static const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData) {
+  log_to_file("-> parsing as %s\n", "function");
   u_long movedBy = strlen(tsParseData->token);
 
   TSParserToken token;
@@ -122,6 +302,27 @@ static const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsPars
   token.position = tsParseData->position;
   token.character = tsParseData->character;
   token.line = tsParseData->line;
+  token.visibility = TS_VISIBILITY_SCOPE;
+  token.children = NULL;
+  token.childrenSize = 0;
+
+  const char *white = TS_getToken(tsParseData->stream);
+  if (white == NULL) SYNTAX_ERROR;
+  movedBy += strlen(white);
+  free((void *) white);
+
+  const char *name = TS_getToken(tsParseData->stream);
+  TSFunctionData *functionData = calloc(sizeof(TSFunctionData), 1);
+  if (functionData == NULL) exit(1);
+  functionData->arguments = NULL;
+  functionData->argumentsSize = 0;
+  TS_validate_name(name);
+  movedBy += strlen(name);
+  functionData->name = name;
+  token.data = functionData;
+
+  TS_parse_function_arguments(tsParseData, &token, &movedBy);
+  TS_parse_function_body(tsFile, tsParseData, &token, &movedBy);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
@@ -129,6 +330,7 @@ static const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsPars
 }
 
 static const TSParserToken TS_parse_arrow(TSFile *tsFile, TSParseData *tsParseData) {
+  log_to_file("-> parsing as %s\n", "arrow");
   u_long movedBy = strlen(tsParseData->token);
 
   TSParserToken token;
@@ -136,6 +338,165 @@ static const TSParserToken TS_parse_arrow(TSFile *tsFile, TSParseData *tsParseDa
   token.position = tsParseData->position;
   token.character = tsParseData->character;
   token.line = tsParseData->line;
+  token.visibility = TS_VISIBILITY_SCOPE;
+
+  tsParseData->position += movedBy;
+  tsParseData->character += movedBy;
+  return token;
+}
+
+static void TS_parse_if_body(TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
+  const char *tok;
+  TSConditionBodyTermination termination;
+  tok = NULL;
+
+  while (1) {
+    tok = TS_getToken(tsParseData->stream);
+    if (tok == NULL) {
+      SYNTAX_ERROR;
+    }
+    if (tok[0] == ' ') {
+      *movedBy += strlen(tok);
+      free((void *) tok);
+    }
+    else if (tok[0] == '\n') {
+      *movedBy += strlen(tok);
+      tsParseData->position += *movedBy;
+      tsParseData->line += 1;
+      tsParseData->character = 0;
+      *movedBy = 0;
+      termination = TS_ENDS_WITHOUT_BRACKET;
+      break;
+    } else {
+      if (tok[0] == '{')
+        termination = TS_ENDS_WITH_BRACKET;
+      else
+        termination = TS_ENDS_WITHOUT_BRACKET;
+      *movedBy += strlen(tok);
+      free((void *) tok);
+      break;
+    }
+  }
+
+  while (1) {
+    tok = TS_getToken(tsParseData->stream);
+    if (tok == NULL) {
+      SYNTAX_ERROR;
+    }
+    if (tok[0] == ' ') {
+      *movedBy += strlen(tok);
+      free((void *) tok);
+    }
+    else if (tok[0] == '\n') {
+      *movedBy += strlen(tok);
+      tsParseData->position += *movedBy;
+      tsParseData->line += 1;
+      tsParseData->character = 0;
+      *movedBy = 0;
+    } else if (tok[0] == '}') {
+      if (termination != TS_ENDS_WITH_BRACKET) {
+        SYNTAX_ERROR;
+      }
+      *movedBy += strlen(tok);
+      free((void *) tok);
+      break;
+    } else if (tok[0] == ';') {
+      *movedBy += strlen(tok);
+      free((void *) tok);
+      if (termination == TS_ENDS_WITHOUT_BRACKET)
+        break;
+    } else {
+      // body
+    }
+  }
+}
+
+static void TS_parse_if_condition(TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
+  const char *tok;
+  tok = NULL;
+  while (1) {
+    tok = TS_getToken(tsParseData->stream);
+    if (tok == NULL) {
+      SYNTAX_ERROR;
+    }
+    if (tok[0] == ' ') {
+      *movedBy += strlen(tok);
+      free((void *) tok);
+    }
+    else if (tok[0] == '\n') {
+      *movedBy += strlen(tok);
+      tsParseData->position += *movedBy;
+      tsParseData->line += 1;
+      tsParseData->character = 0;
+      *movedBy = 0;
+    } else if (tok[0] == '(') {
+      *movedBy += strlen(tok);
+      free((void *) tok);
+      break;
+    } else {
+      SYNTAX_ERROR;
+    }
+  }
+  // after (
+
+  while (1) {
+    tok = TS_getToken(tsParseData->stream);
+    if (tok == NULL) {
+      SYNTAX_ERROR;
+    }
+    if (tok[0] == ' ') {
+      *movedBy += strlen(tok);
+      free((void *) tok);
+    }
+    else if (tok[0] == '\n') {
+      *movedBy += strlen(tok);
+      tsParseData->position += *movedBy;
+      tsParseData->line += 1;
+      tsParseData->character = 0;
+      *movedBy = 0;
+    } else if (tok[0] == ')') {
+      *movedBy += strlen(tok);
+      free((void *) tok);
+      break;
+    } else {
+      TSParserToken t;
+      t.position = tsParseData->position + *movedBy;
+      t.character = tsParseData->character + *movedBy;
+      t.line = tsParseData->line;
+      *movedBy += strlen(tok);
+      free((void *) tok);
+    }
+  }
+}
+
+static const TSParserToken TS_parse_if(TSFile *tsFile, TSParseData *tsParseData) {
+  log_to_file("-> parsing as %s\n", "if");
+  u_long movedBy = strlen(tsParseData->token);
+
+  TSParserToken token;
+  token.tokenType = TS_IF;
+  token.position = tsParseData->position;
+  token.character = tsParseData->character;
+  token.line = tsParseData->line;
+  token.visibility = TS_VISIBILITY_SCOPE;
+
+  TS_parse_if_condition(tsParseData, &token, &movedBy);
+
+  tsParseData->position += movedBy;
+  tsParseData->character += movedBy;
+  return token;
+}
+
+static const TSParserToken TS_parse_else(TSFile *tsFile, TSParseData *tsParseData) {
+  log_to_file("-> parsing as %s\n", "else");
+  u_long movedBy = strlen(tsParseData->token);
+
+  TSParserToken token;
+  token.tokenType = TS_ELSE;
+  token.position = tsParseData->position;
+  token.character = tsParseData->character;
+  token.line = tsParseData->line;
+  token.visibility = TS_VISIBILITY_SCOPE;
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
@@ -149,6 +510,8 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] =  {
     TS_CLASS, "class", TS_parse_class,
     TS_FUNCTION, "function", TS_parse_function,
     TS_ARROW, "=>", TS_parse_arrow,
+    TS_ARROW, "if", TS_parse_if,
+    TS_ARROW, "else", TS_parse_else,
 };
 
 static void TS_put_back(FILE *stream, const char *value) {
@@ -182,7 +545,10 @@ static void TS_validate_name(const char *name) {
       case '%':
       case '\n':
       case ' ':
-        exit(1);
+      {
+        log_error("Invalid name \"%s\"\n", name);
+        SYNTAX_ERROR;
+      }
       default:break;
     }
   }
@@ -200,14 +566,18 @@ static void TS_append_ts_parser_token(TSFile *tsFile, TSParserToken *token) {
   }
 }
 
-static void TS_parse_ts_token(TSFile *tsFile, TSParseData *data) {
+static TSParserToken TS_parse_ts_token(TSFile *tsFile, TSParseData *data) {
   for (u_short i = 0; i < KEYWORDS_SIZE; i++) {
     TSKeyword k = TS_KEYWORDS[i];
     if (strcmp(data->token, k.str) == 0) {
+      log_to_file("  -  data->token = \"%s\"\n  -  k.str = \"%s\"\n", data->token, k.str);
       TSParserToken token = k.callback(tsFile, data);
-      TS_append_ts_parser_token(tsFile, &token);
+      return token;
     }
   }
+  TSParserToken t;
+  t.tokenType = TS_UNKNOWN;
+  return t;
 }
 
 static void TS_next_line(TSParseData *data) {
@@ -234,6 +604,10 @@ static u_short TS_valid_char_for_token(char c) {
     case '-':
     case '/':
     case '*':
+    case '!':
+    case '|':
+    case '&':
+    case '#':
     case '\\':
     case '%':
     case '\n':
@@ -267,6 +641,10 @@ const char *TS_getToken(FILE *stream) {
       case '-':
       case '/':
       case '*':
+      case '!':
+      case '|':
+      case '&':
+      case '#':
       case '\\':
       case '%':
       case '\n':
@@ -278,6 +656,7 @@ const char *TS_getToken(FILE *stream) {
           return tok;
         } else {
           ungetc(c, stream);
+          log_to_file("# token: '%s'\n", tok);
           return tok;
         }
       }
@@ -298,6 +677,7 @@ const char *TS_getToken(FILE *stream) {
           break;
         } else {
           ungetc(c, stream);
+          log_to_file("# token: '%s'\n", tok);
           return tok;
         }
       }
@@ -315,11 +695,13 @@ const char *TS_getToken(FILE *stream) {
           }
         } else {
           ungetc(c, stream);
+          log_to_file("# token: '%s'\n", tok);
           return tok;
         }
       }
     }
   }
+  log_to_file("# token: '%s'\n", tok);
   return tok;
 }
 
@@ -335,8 +717,8 @@ const TSFile TS_parse_file(const char *file) {
   }
 
   TSParseData data;
+  data.line = 1;
   data.character = 0;
-  data.line = 0;
   data.position = 0;
   data.stream = stream;
 
@@ -348,7 +730,9 @@ const TSFile TS_parse_file(const char *file) {
     if (data.token[0] == '\n') {
       TS_next_line(&data);
     } else {
-      TS_parse_ts_token(&tsFile, &data);
+      TSParserToken token = TS_parse_ts_token(&tsFile, &data);
+      if (token.tokenType != TS_UNKNOWN)
+        TS_append_ts_parser_token(&tsFile, &token);
     }
 
     free((void *) tok);
