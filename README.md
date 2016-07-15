@@ -18,14 +18,14 @@ make -j9
 
 ### Compiler
 
-- [X] Read file
+- [ ] Read file
 - [X] Log files
-- [X] `-e environment`
+- [ ] `-e environment`
 - [ ] `tsconfig` file
-- [X] `--strong` mode
-- [X] `--strict` mode
-- [X] `--relax` mode
-- [X] `-o file` wirte to file
+- [ ] `--strong` mode
+- [ ] `--strict` mode
+- [ ] `--relax` mode
+- [ ] `-o file` write to file
 
 ### Typings
 
@@ -45,10 +45,16 @@ make -j9
 - [ ] Parse multi-line comments
 - [ ] `--preserveComments` flag
 
+### Variables
+
+- [ ] Parse `var` with value
+- [ ] Parse `let` with value
+- [ ] Parse `const` with value
+
 ### Decorators
 
-- [X] Parse class decorator
-- [X] Print class decorator
+- [ ] Parse class decorator
+- [ ] Print class decorator
 - [ ] Parse function decorator
 - [ ] Print function decorator
 - [ ] Parse class method decorator
@@ -66,9 +72,9 @@ make -j9
 
 ### Class
 
-- [X] Parse empty class
-- [X] Print empty class
-- [X] Support `extends`
+- [ ] Parse empty class
+- [ ] Print empty class
+- [ ] Support `extends`
 - [ ] Support `implements`
 - [ ] Support `friend`
 - [ ] Use class constructor
@@ -84,13 +90,13 @@ make -j9
 
 ### Fields
 
-- [X] Parse class field
-- [X] Print class field
+- [ ] Parse class field
+- [ ] Print class field
 
 ### Function
 
-- [X] Parse empty function
-- [X] Print empty function
+- [ ] Parse empty function
+- [ ] Print empty function
 - [X] Parse arguments
 - [X] Print arguments
 
@@ -100,6 +106,17 @@ make -j9
 - [ ] Print parse warnings
 - [ ] Print warning about unused variables
 - [ ] Print warning about unused functions
+
+### Output
+
+- [X] Generate single string for single file (large memory footprint)
+- [ ] Generate single string for all fields (large memory footprint)
+- [ ] Print immediately every code part (single file mode)
+- [ ] Print immediately every code part (multiple-file mode with sync)
+- [ ] Write to single file to single file with generating string (large memory footprint)
+- [ ] Write to single file to multiple files with generating string (sync mode + large memory footprint)
+- [ ] Write to single file from single file without generating string
+- [ ] Write to single file from multiple files without generating string
 
 # Modes
 

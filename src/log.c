@@ -1,4 +1,3 @@
-#define TS_DEBUG 1
 #include <tsc/log.h>
 
 void io_panic(const char *msg) {

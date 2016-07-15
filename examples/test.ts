@@ -3,7 +3,7 @@ const stale = 2;
 var variable = 3;
 
 function Component(data: Object, desc: Descriptor={}, s ="", ...rest) {
-  if (desc) {
+  if (desc != null) {
     return 2;
   } else
     return 1;
