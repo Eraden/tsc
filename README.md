@@ -36,8 +36,10 @@ make -j9
 
 ### Pre-compiler
 
-- [ ] `#if #else #endif`
-- [ ] `#ifdefined`
+- [ ] `//#if`
+- [ ] `//#else`
+- [ ] `//#endif`
+- [ ] `//#ifdefined`
 - [ ] `-DVARIABLE=VALUE` flag
 
 ### Comments
