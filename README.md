@@ -9,7 +9,7 @@ git clone git@github.com:Eraden/tsc.git
 cd tsc
 mkdir build
 cd build
-cmake ..
+cmake -DCMAKE_C_COMPILER=$(which clang) -DCMAKE_C_FLAGS="-O0" -DCMAKE_BUILD_TYPE=Debug ..
 make -j9
 ./tsc examples
 ```
@@ -26,6 +26,7 @@ make -j9
 - [ ] `--strict` mode
 - [ ] `--relax` mode
 - [ ] `-o file` write to file
+- [ ] `--tokens` print only types locations and names
 
 ### Typings
 
