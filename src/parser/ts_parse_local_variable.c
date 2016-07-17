@@ -1,6 +1,71 @@
 #include <tsc/parser/ts_variable.h>
 
-void TS_parse_local_variable_body(TSParseData *tsParseData, u_long *movedBy, TSParserToken *token, TSFile *tsFile) {
+static void
+__attribute__(( visibility("hidden") ))
+TS_parse_local_variable_value(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
+  TSLocalVariableData *data = token->data;
+  const char *tok = NULL;
+  while (1) {
+    tok = (const char *) TS_getToken(tsParseData->stream);
+    if (tok == NULL) {
+      break;
+    } else if (tok[0] == ';') {
+      *movedBy += strlen(tok);
+      free((void *) tok);
+      return;
+    } else if (tok[0] == ' ') {
+      *movedBy += strlen(tok);
+      free((void *) tok);
+    } else if (tok[0] == '=') {
+      *movedBy += strlen(tok);
+      free((void *) tok);
+      while (1) {
+        tok = (const char *) TS_getToken(tsParseData->stream);
+        if (tok == NULL) {
+          ts_syntax_error("Invalid variable value", tsFile->file, tsParseData->character, tsParseData->line);
+        }
+        if (tok[0] == '\n') {
+          ts_syntax_error("Invalid variable value", tsFile->file, tsParseData->character, tsParseData->line);
+        }
+        if (tok[0] != ' ') {
+          break;
+        } else {
+          *movedBy += strlen(tok);
+          free((void *) tok);
+        }
+      }
+      data->value = TS_clone_string(tok);
+      *movedBy += strlen(tok);
+      free((void *) tok);
+      while (1) {
+        tok = (const char *) TS_getToken(tsParseData->stream);
+        if (tok == NULL || tok[0] == ',' || tok[0] == '\n' || tok[0] == ';') {
+          if (tok != NULL) {
+            *movedBy += strlen(tok);
+            free((void *) tok);
+          }
+          break;
+        } else {
+          char *newPointer = (char *) calloc(sizeof(char), strlen(data->value) + strlen(tok) + 1);
+          strcpy(newPointer, data->value);
+          strcat(newPointer, tok);
+          free((void *) data->value);
+          data->value = newPointer;
+
+          *movedBy += strlen(tok);
+          free((void *) tok);
+        }
+      }
+      break;
+    } else {
+      TS_put_back(tsParseData->stream, tok);
+      free((void *) tok);
+      break;
+    }
+  }
+}
+
+void TS_parse_local_variable_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
   const char *tok;
   tok = (const char *) TS_getToken(tsParseData->stream);
   if (tok == NULL) {
@@ -16,48 +81,16 @@ void TS_parse_local_variable_body(TSParseData *tsParseData, u_long *movedBy, TSP
   TSLocalVariableData *data = calloc(sizeof(TSLocalVariableData), 1);
   if (data == NULL) {
     SYNTAX_ERROR;
+    log_error("%s\n", "Allocation error for local variable");
   }
-  TS_validate_name(tok);
+  if (!TS_name_is_valid(tok)) {
+    ts_syntax_error("Invalid variable name", tsFile->file, token->character, token->line);
+  }
   (*movedBy) += strlen(tok);
   data->name = TS_clone_string(tok);
   data->value = NULL;
   data->type = NULL;
   (*token).data = data;
 
-  TS_parse_local_variable_value(tsParseData, data, movedBy);
-}
-
-void TS_parse_local_variable_value(TSParseData *tsParseData, TSLocalVariableData *varData, u_long *movedBy) {
-  const char *tok = NULL;
-  while (1) {
-    tok = (const char *) TS_getToken(tsParseData->stream);
-    if (tok == NULL) {
-      break;
-    } else if (tok[0] == ' ' || tok[0] == ';') {
-      *movedBy += strlen(tok);
-      free((void *) tok);
-    } else if (tok[0] == '=') {
-      *movedBy += strlen(tok);
-      free((void *) tok);
-      while (1) {
-        tok = (const char *) TS_getToken(tsParseData->stream);
-        if (tok == NULL) SYNTAX_ERROR;
-        if (tok[0] == '\n') SYNTAX_ERROR;
-        if (tok[0] != ' ') {
-          break;
-        } else {
-          *movedBy += strlen(tok);
-          free((void *) tok);
-        }
-      }
-      varData->value = TS_clone_string(tok);
-      *movedBy += strlen(tok);
-      free((void *) tok);
-      break;
-    } else {
-      TS_put_back(tsParseData->stream, tok);
-      free((void *) tok);
-      break;
-    }
-  }
+  TS_parse_local_variable_value(tsFile, tsParseData, token, movedBy);
 }

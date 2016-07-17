@@ -1,6 +1,6 @@
 #include <tsc/parser.h>
 
-const TSParserToken TS_parse_class(TSFile *tsFile, TSParseData *tsParseData) {
+const TSParserToken TS_parse_class(TSFile *__attribute__((__unused__)) tsFile, TSParseData *tsParseData) {
   log_to_file("-> parsing as %s\n", "class");
   u_long movedBy = strlen(tsParseData->token);
 

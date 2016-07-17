@@ -22,5 +22,9 @@
 
 #define SYNTAX_ERROR { exit(2); }
 
+struct sTSFile;
+struct sTSParserToken;
+
 void ts_syntax_error(const char *msg, const char *file, const u_long character, const u_long line) __attribute__((noreturn));
+void ts_token_syntax_error(const char *msg, const struct sTSFile *tsFile, const struct sTSParserToken *token) __attribute__((noreturn));
 void ts_log_position(const char *file, const u_long character, const u_long line);

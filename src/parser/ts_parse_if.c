@@ -1,6 +1,8 @@
 #include <tsc/parser.h>
 
-static void TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
+static void
+__attribute__(( visibility("hidden") ))
+TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
   log_to_file("->   parsing as %s body\n", "if");
   const char *tok;
   TSConditionBodyTermination termination;
@@ -8,7 +10,7 @@ static void TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserT
   while (1) {
     tok = (const char *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      SYNTAX_ERROR;
+      ts_token_syntax_error("Unexpected end of if body", tsFile, token);
     }
     if (tok[0] == ' ') {
       *movedBy += strlen(tok);
@@ -36,7 +38,7 @@ static void TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserT
   while (1) {
     tok = (const char *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      SYNTAX_ERROR;
+      ts_token_syntax_error("Unexpected end of if body", tsFile, token);
     }
     if (tok[0] == ' ') {
       *movedBy += strlen(tok);
@@ -50,7 +52,7 @@ static void TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserT
       *movedBy = 0;
     } else if (tok[0] == '}') {
       if (termination != TS_ENDS_WITH_BRACKET) {
-        SYNTAX_ERROR;
+        ts_token_syntax_error("Unexpected end bracket for if when starting one was not declared", tsFile, token);
       }
       *movedBy += strlen(tok);
       free((void *) tok);
@@ -87,7 +89,9 @@ static void TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserT
   log_to_file("->   done %s body\n", "if");
 }
 
-static void TS_parse_if_condition(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
+static void
+__attribute__(( visibility("hidden") ))
+TS_parse_if_condition(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
   const char *tok;
   TSIfData *data = (TSIfData *) token->data;
   while (1) {
@@ -110,7 +114,7 @@ static void TS_parse_if_condition(TSFile *tsFile, TSParseData *tsParseData, TSPa
       free((void *) tok);
       break;
     } else {
-      ts_syntax_error("Unexpected token after if", tsFile->file, tsParseData->line, tsParseData->character);
+      ts_token_syntax_error("Unexpected token after if", tsFile, token);
     }
   }
   // after (
@@ -118,7 +122,7 @@ static void TS_parse_if_condition(TSFile *tsFile, TSParseData *tsParseData, TSPa
   while (1) {
     tok = (const char *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      SYNTAX_ERROR;
+      ts_token_syntax_error("Unexpected end of if conditions", tsFile, token);
     }
     if (tok[0] == ' ') {
       *movedBy += strlen(tok);

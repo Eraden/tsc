@@ -28,6 +28,7 @@ typedef enum eTSTokenType {
   TS_IMPORT = 0x11,
   TS_EXPORT = 0x12,
   TS_DEFAULT = 0x13,
+  TS_SCOPE = 0x14,
   TS_UNKNOWN = 0x0,
 } __attribute__ ((__packed__)) TSTokenType;
 
@@ -49,7 +50,7 @@ typedef struct sTSKeyword {
   TS_token_build_fn callback;
 } TSKeyword;
 
-#define KEYWORDS_SIZE 13
+#define KEYWORDS_SIZE 14
 
 typedef struct sTSLocalVariableData {
   const char *name;
@@ -95,7 +96,7 @@ typedef struct sTSFile {
 
 void TS_put_back(FILE *stream, const char *value);
 
-void TS_validate_name(const char *name);
+unsigned char TS_name_is_valid(const char *name);
 
 const TSParserToken TS_parse_var(TSFile *tsFile, TSParseData *tsParseData);
 const TSParserToken TS_parse_let(TSFile *tsFile, TSParseData *tsParseData);
@@ -110,10 +111,10 @@ const TSParserToken TS_parse_return(TSFile *tsFile, TSParseData *tsParseData);
 const TSParserToken TS_parse_import(TSFile *tsFile, TSParseData *tsParseData);
 const TSParserToken TS_parse_export(TSFile *tsFile, TSParseData *tsParseData);
 const TSParserToken TS_parse_default(TSFile *tsFile, TSParseData *tsParseData);
+const TSParserToken TS_parse_scope(TSFile *tsFile, TSParseData *tsParseData);
 
 TSParserToken TS_parse_ts_token(TSFile *tsFile, TSParseData *data);
 
 volatile const char *TS_getToken(FILE *stream) __attribute__((__malloc__));
 const TSFile TS_parse_file(const char *file);
 const char *TS_clone_string(const char *string) __attribute__((__malloc__));
-const char *TS_clone_volatile_str(volatile const char *volatileString) __attribute__((__malloc__));

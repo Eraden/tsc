@@ -2,5 +2,4 @@
 
 #include <tsc/parser.h>
 
-void TS_parse_local_variable_body(TSParseData *tsParseData, u_long *movedBy, TSParserToken *token, TSFile *tsFile);
-void TS_parse_local_variable_value(TSParseData *tsParseData, TSLocalVariableData *varData, u_long *movedBy);
+void TS_parse_local_variable_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token, u_long *movedBy);

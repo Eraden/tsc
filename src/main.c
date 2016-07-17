@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
   fprintf(stdout, "\n\n");
   for (int i = 0; i < 20; i++) fprintf(stdout, "#");
   fprintf(stdout, "\nFile: %s\n\n", file.file);
-  TS_print_file(&file);
+  TS_print_stream(&file, stdout);
   for (int i = 0; i < 20; i++) fprintf(stdout, "#");
   fprintf(stdout, "\n\n");
   return 0;

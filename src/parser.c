@@ -25,6 +25,7 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     TS_IMPORT, "import", TS_parse_import,
     TS_EXPORT, "export", TS_parse_export,
     TS_DEFAULT, "default", TS_parse_default,
+    TS_SCOPE, "{", TS_parse_scope,
 };
 
 void TS_put_back(FILE *stream, const char *value) {
@@ -33,7 +34,7 @@ void TS_put_back(FILE *stream, const char *value) {
   }
 }
 
-void TS_validate_name(const char *name) {
+unsigned char TS_name_is_valid(const char *name) {
   char c;
   for (u_long i = 0, l = strlen(name); i < l; i++) {
     c = name[i];
@@ -59,12 +60,13 @@ void TS_validate_name(const char *name) {
       case '\n':
       case ' ':
       {
-        log_error("Invalid name \"%s\"\n", name);
-        SYNTAX_ERROR;
+        return 0;
       }
-      default:break;
+      default:
+        break;
     }
   }
+  return 1;
 }
 
 static void TS_append_ts_parser_token(TSFile *tsFile, TSParserToken token) {
@@ -92,6 +94,12 @@ TSParserToken TS_parse_ts_token(TSFile *tsFile, TSParseData *data) {
     }
   }
   TSParserToken t;
+  t.data = (void *) TS_clone_string(data->token);
+  t.children = NULL;
+  t.childrenSize = 0;
+  t.line = data->line;
+  t.character = data->character;
+  t.position = data->position;
   t.tokenType = TS_UNKNOWN;
   return t;
 }
@@ -132,10 +140,6 @@ static u_short TS_valid_char_for_token(char c) {
     default:
       return 1;
   }
-}
-
-const char *TS_clone_volatile_str(volatile const char *volatileString) {
-  return TS_clone_string((const char *) volatileString);
 }
 
 volatile const char *TS_getToken(FILE *stream) {
@@ -264,6 +268,8 @@ const TSFile TS_parse_file(const char *file) {
       TSParserToken token = TS_parse_ts_token(&tsFile, &data);
       if (token.tokenType != TS_UNKNOWN) {
         TS_append_ts_parser_token(&tsFile, token);
+      } else {
+        free(token.data);
       }
     }
 

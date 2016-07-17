@@ -15,10 +15,12 @@ typedef struct sTSOutputSettings {
   u_long indent;
 } TSOutputSettings;
 
-const char *TS_string_from_function(TSParserToken tsParserToken, TSOutputSettings outputSettings);
-const char *TS_string_for_if(TSParserToken tsParserToken, TSOutputSettings outputSettings);
-const char *TS_string_from_var(TSParserToken tsParserToken, TSOutputSettings outputSettings);
-const char *TS_string_for_token(TSParserToken tsParserToken, TSOutputSettings outputSettings);
+const char *TS_string_from_function(const TSFile *tsFile, const TSParserToken tsParserToken, TSOutputSettings outputSettings);
+const char *TS_string_for_if(const TSFile *tsFile, const TSParserToken tsParserToken, TSOutputSettings outputSettings);
+const char *TS_string_from_var(const TSFile *tsFile, const TSParserToken tsParserToken, TSOutputSettings outputSettings);
+const char *TS_string_for_token(const TSFile *tsFile, const TSParserToken tsParserToken, TSOutputSettings outputSettings);
+const char *ts_string_for_return(const TSFile *tsFile, const TSParserToken tsParserToken, TSOutputSettings outputSettings);
+const char *TS_string_for_else(const TSFile *tsFile, const TSParserToken tsParserToken, TSOutputSettings outputSettings);
 
-const char *TS_generate_string_from_file(TSFile *tsFile);
-void TS_print_file(TSFile *tsFile);
+const char *TS_generate_string_from_file(const TSFile *tsFile);
+void TS_print_stream(const TSFile *tsFile, FILE *stream);

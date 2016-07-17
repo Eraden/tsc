@@ -3,7 +3,7 @@
 /**
  * TODO implement
  */
-const TSParserToken TS_parse_export(TSFile *tsFile, TSParseData *tsParseData) {
+const TSParserToken TS_parse_export(TSFile *__attribute__((__unused__)) tsFile, TSParseData *tsParseData) {
   log_to_file("-> parsing as %s\n", "export");
   u_long movedBy = strlen(tsParseData->token);
 

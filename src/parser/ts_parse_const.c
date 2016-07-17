@@ -1,7 +1,7 @@
 #include <tsc/parser/ts_variable.h>
 
 const TSParserToken TS_parse_const(TSFile *tsFile, TSParseData *tsParseData) {
-  log_to_file("-> parsing as %s\n", "const");
+  TS_TOKEN_BEGIN("const");
   u_long movedBy = strlen(tsParseData->token);
 
   TSParserToken token;
@@ -13,11 +13,11 @@ const TSParserToken TS_parse_const(TSFile *tsFile, TSParseData *tsParseData) {
   token.children = NULL;
   token.childrenSize = 0;
 
-  TS_parse_local_variable_body(tsParseData, &movedBy, &token, tsFile);
+  TS_parse_local_variable_body(tsFile, tsParseData, &token, &movedBy);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
 
-  log_to_file("-> end %s\n", "const");
+  TS_TOKEN_END("const");
   return token;
 }

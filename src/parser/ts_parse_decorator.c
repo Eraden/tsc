@@ -3,7 +3,7 @@
 /**
  * TODO implement
  */
-const TSParserToken TS_parse_decorator(TSFile *tsFile, TSParseData *tsParseData) {
+const TSParserToken TS_parse_decorator(TSFile *__attribute__((__unused__)) tsFile, TSParseData *tsParseData) {
   log_to_file("-> parsing as %s\n", "component");
   u_long movedBy = strlen(tsParseData->token);
 

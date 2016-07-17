@@ -22,10 +22,13 @@ SET(
     src/parser/ts_parse_decorator.c
     src/parser/ts_parse_import.c
     src/parser/ts_parse_export.c
-    src/output/ts_var.c
-    src/output/ts_if.c
-    src/output/ts_function.c
+    src/parser/ts_parse_scope.c
     src/output.c
+    src/output/ts_output_var.c
+    src/output/ts_output_if.c
+    src/output/ts_output_else.c
+    src/output/ts_output_function.c
+    src/output/ts_output_return.c
     src/main.c
 )
 

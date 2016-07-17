@@ -1,37 +1,67 @@
 #include <tsc/output.h>
 
 static u_long TS_output_measure_function_head(
+    const TSFile *tsFile,
     const u_long indent,
     const TSFunctionData *data
-) __attribute__((__nothrow__));
+)
+    __attribute__((__nothrow__))
+    __attribute(( visibility("hidden") ))
+    __attribute__(( section("output-function") ))
+;
 
 static char *TS_string_for_function_head(
+    const TSFile *tsFile,
     const TSFunctionData *data,
     const u_long indent,
     const u_long size
-) __attribute__((__malloc__));
+)
+    __attribute__((__malloc__))
+    __attribute(( visibility("hidden") ))
+    __attribute__(( section("output-function") ))
+;
 
 static char *TS_string_for_function_spread_arg(
     const u_long indent,
     const TSFunctionData *data,
     const TSLocalVariableData *arg
-) __attribute__((__malloc__));
+)
+    __attribute__((__malloc__))
+    __attribute(( visibility("hidden") ))
+    __attribute__(( section("output-function") ))
+;
 
 static char *TS_string_for_function_arg_default(
     const u_long indent,
     const TSFunctionData *data,
     const TSLocalVariableData *arg
-) __attribute__((__malloc__));
+)
+    __attribute__((__malloc__))
+    __attribute(( visibility("hidden") ))
+    __attribute__(( section("output-function") ))
+;
 
 static char *TS_string_for_function_body(
+    const TSFile *tsFile,
     const TSFunctionData *data,
     const u_long indent,
     char *string,
-    TSParserToken *tsParserToken,
+    const TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
-) __attribute__((__malloc__));
+)
+    __attribute__((__malloc__))
+    __attribute(( visibility("hidden") ))
+    __attribute__(( section("output-function") ))
+;
 
-static u_long TS_output_measure_function_head(const u_long indent, const TSFunctionData *data) {
+static u_long
+__attribute(( visibility("hidden") ))
+__attribute__(( section("output-function") ))
+TS_output_measure_function_head(
+    const TSFile *__attribute__((__unused__)) tsFile,
+    const u_long indent,
+    const TSFunctionData *data
+) {
   u_long size = sizeof(char) * (indent * 2);
   size += sizeof("function ");
   size += sizeof(data->name);
@@ -54,7 +84,12 @@ static u_long TS_output_measure_function_head(const u_long indent, const TSFunct
   return size;
 }
 
-static char *TS_string_for_function_head(const TSFunctionData *data, const u_long indent, const u_long size) {
+static char *TS_string_for_function_head(
+    const TSFile *__attribute__((__unused__)) tsFile,
+    const TSFunctionData *data,
+    const u_long indent,
+    const u_long size
+) {
   char *string = (char *) calloc(sizeof(char), size + 1);
   for (u_long i = 0, l = indent; i < l; i++) strcat(string, "  ");
   strcat(string, "function ");
@@ -128,7 +163,7 @@ static char *TS_string_for_function_spread_arg(
 
 static char *TS_string_for_function_arg_default(
     const u_long indent,
-    const TSFunctionData *data,
+    const TSFunctionData *__attribute__((__unused__)) data,
     const TSLocalVariableData *arg
 ) {
   if (arg->value == NULL) return NULL;
@@ -158,24 +193,25 @@ static char *TS_string_for_function_arg_default(
 }
 
 static char *TS_string_for_function_body(
+    const TSFile *tsFile,
     const TSFunctionData *data,
     const u_long indent,
     char *string,
-    TSParserToken *tsParserToken,
+    const TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
   TSLocalVariableData *arg;
-  volatile u_char hasSpread = 0;
+  volatile u_char hadSpread = 0;
   for (u_long argumentIndex = 0; argumentIndex < data->argumentsSize; argumentIndex++) {
     TSParserToken tsArgumentToken = data->arguments[argumentIndex];
     if (tsArgumentToken.tokenType == TS_VAR && tsArgumentToken.data != NULL) {
       arg = tsArgumentToken.data;
       u_long argSize = sizeof(arg->name) + 1;
       u_char isSpread = (u_char) (argSize > 3 && arg->name[0] == '.' && arg->name[1] == '.' && arg->name[2] == '.');
-      if (isSpread && hasSpread) {
-        SYNTAX_ERROR;
+      if (isSpread && hadSpread) {
+        ts_syntax_error("Spread argument declared twice!", tsFile->file, tsParserToken->character, tsParserToken->line);
       }
-      hasSpread = isSpread;
+      hadSpread = isSpread;
       if (isSpread) {
         char *spreadArg = TS_string_for_function_spread_arg(indent, data, arg);
         char *newPointer = (char *) calloc(sizeof(char), strlen(string) + strlen(spreadArg) + 1);
@@ -201,7 +237,7 @@ static char *TS_string_for_function_body(
   for (u_long childIndex = 0; childIndex < tsParserToken->childrenSize; childIndex++) {
     TSOutputSettings settings = outputSettings;
     settings.indent += 1;
-    const char *childString = TS_string_for_token(tsParserToken->children[childIndex], settings);
+    const char *childString = TS_string_for_token(tsFile, tsParserToken->children[childIndex], settings);
     if (childString != NULL) {
       char *newPointer = (char *) calloc(sizeof(char), strlen(string) + strlen(childString) + 1);
       strcpy(newPointer, string);
@@ -213,14 +249,14 @@ static char *TS_string_for_function_body(
   return string;
 }
 
-const char *TS_string_from_function(TSParserToken tsParserToken, TSOutputSettings outputSettings) {
+const char *TS_string_from_function(const TSFile *tsFile, const TSParserToken tsParserToken, TSOutputSettings outputSettings) {
   const u_long indent = outputSettings.indent;
   const TSFunctionData *data = tsParserToken.data;
   if (data == NULL) return NULL;
   char *string = NULL;
-  u_long size = TS_output_measure_function_head(indent, data);
-  string = TS_string_for_function_head(data, indent, size + 1);
-  string = TS_string_for_function_body(data, indent, string, &tsParserToken, outputSettings);
+  u_long size = TS_output_measure_function_head(tsFile, indent, data);
+  string = TS_string_for_function_head(tsFile, data, indent, size + 1);
+  string = TS_string_for_function_body(tsFile, data, indent, string, &tsParserToken, outputSettings);
 
   char *newPointer = (char *) calloc(sizeof(char), strlen(string) + (indent * 2) + strlen("}") + 1);
   strcpy(newPointer, string);

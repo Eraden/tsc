@@ -13,7 +13,7 @@ const TSParserToken TS_parse_let(TSFile *tsFile, TSParseData *tsParseData) {
   token.children = NULL;
   token.childrenSize = 0;
 
-  TS_parse_local_variable_body(tsParseData, &movedBy, &token, tsFile);
+  TS_parse_local_variable_body(tsFile, tsParseData, &token, &movedBy);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
