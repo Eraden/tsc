@@ -26,6 +26,8 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     TS_EXPORT, "export", TS_parse_export,
     TS_DEFAULT, "default", TS_parse_default,
     TS_SCOPE, "{", TS_parse_scope,
+    TS_EXTENDS, "extends", TS_parse_extends,
+    TS_IMPLEMENTS, "implements", TS_parse_implements,
 };
 
 void TS_put_back(FILE *stream, const char *value) {

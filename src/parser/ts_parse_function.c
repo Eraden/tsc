@@ -233,6 +233,7 @@ const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData) 
   token.visibility = TS_VISIBILITY_SCOPE;
   token.children = NULL;
   token.childrenSize = 0;
+  token.data = NULL;
 
   const char *tok;
 

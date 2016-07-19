@@ -29,6 +29,8 @@ typedef enum eTSTokenType {
   TS_EXPORT = 0x12,
   TS_DEFAULT = 0x13,
   TS_SCOPE = 0x14,
+  TS_EXTENDS = 0x15,
+  TS_IMPLEMENTS = 0x16,
   TS_UNKNOWN = 0x0,
 } __attribute__ ((__packed__)) TSTokenType;
 
@@ -50,7 +52,7 @@ typedef struct sTSKeyword {
   TS_token_build_fn callback;
 } TSKeyword;
 
-#define KEYWORDS_SIZE 14
+#define KEYWORDS_SIZE 16
 
 typedef struct sTSLocalVariableData {
   const char *name;
@@ -68,6 +70,13 @@ typedef struct sTSIfData {
   TSParserToken *conditions;
   u_long conditionsSize;
 } TSIfData;
+
+typedef struct sTSClassData {
+  const char *name;
+  const char *parentClass;
+  TSParserToken *implementsInterfaces;
+  u_long implementsInterfacesSize;
+} TSClassData;
 
 typedef struct sTSParseData {
   u_long position;
@@ -112,6 +121,8 @@ const TSParserToken TS_parse_import(TSFile *tsFile, TSParseData *tsParseData);
 const TSParserToken TS_parse_export(TSFile *tsFile, TSParseData *tsParseData);
 const TSParserToken TS_parse_default(TSFile *tsFile, TSParseData *tsParseData);
 const TSParserToken TS_parse_scope(TSFile *tsFile, TSParseData *tsParseData);
+const TSParserToken TS_parse_extends(TSFile *tsFile, TSParseData *tsParseData);
+const TSParserToken TS_parse_implements(TSFile *tsFile, TSParseData *tsParseData);
 
 TSParserToken TS_parse_ts_token(TSFile *tsFile, TSParseData *data);
 

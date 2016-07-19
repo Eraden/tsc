@@ -9,10 +9,7 @@ const char *TS_string_for_token(const TSFile *tsFile, TSParserToken tsParserToke
     case TS_CONST:
       return TS_string_from_var(tsFile, tsParserToken, outputSettings);
     case TS_CLASS: {
-      char *tag = "class";
-      char *s = (char *) calloc(sizeof(char), sizeof(tag) + 1);
-      strcat(s, tag);
-      return s;
+      return TS_string_for_class(tsFile, tsParserToken, outputSettings);
     }
     case TS_FUNCTION:
       return TS_string_from_function(tsFile, tsParserToken, outputSettings);
@@ -57,6 +54,18 @@ const char *TS_string_for_token(const TSFile *tsFile, TSParserToken tsParserToke
     }
     case TS_SCOPE: {
       char *tag = "unnamed scope";
+      char *s = (char *) calloc(sizeof(char), sizeof(tag) + 1);
+      strcat(s, tag);
+      return s;
+    }
+    case TS_EXTENDS: {
+      char *tag = "extends";
+      char *s = (char *) calloc(sizeof(char), sizeof(tag) + 1);
+      strcat(s, tag);
+      return s;
+    }
+    case TS_IMPLEMENTS: {
+      char *tag = "implements";
       char *s = (char *) calloc(sizeof(char), sizeof(tag) + 1);
       strcat(s, tag);
       return s;

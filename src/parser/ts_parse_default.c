@@ -15,6 +15,7 @@ const TSParserToken TS_parse_default(TSFile *__attribute__((__unused__)) tsFile,
   token.visibility = TS_VISIBILITY_SCOPE;
   token.children = NULL;
   token.childrenSize = 0;
+  token.data = NULL;
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;

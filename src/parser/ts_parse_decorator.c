@@ -15,6 +15,7 @@ const TSParserToken TS_parse_decorator(TSFile *__attribute__((__unused__)) tsFil
   token.visibility = TS_VISIBILITY_SCOPE;
   token.children = NULL;
   token.childrenSize = 0;
+  token.data = NULL;
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;

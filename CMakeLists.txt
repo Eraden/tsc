@@ -5,9 +5,12 @@ SET(
     SOURCE_FILES
     src/sys.c
     src/log.c
+    src/register.c
     src/parser.c
     src/parser/ts_parse_arrow.c
     src/parser/ts_parse_class.c
+    src/parser/ts_parse_extends.c
+    src/parser/ts_parse_implements.c
     src/parser/ts_parse_function.c
     src/parser/ts_parse_if.c
     src/parser/ts_parse_else.c
@@ -29,12 +32,15 @@ SET(
     src/output/ts_output_else.c
     src/output/ts_output_function.c
     src/output/ts_output_return.c
+    src/output/ts_output_class.c
     src/main.c
 )
 
 SET(
     HEADER_FILES
     include/tsc/log.h
+    include/tsc/sys.h
+    include/tsc/register.h
     include/tsc/output.h
     include/tsc/parser/ts_variable.h
     include/tsc/parser.h

@@ -50,9 +50,45 @@ make -j9
 
 ### Variables
 
-- [ ] Parse `var` with value
-- [ ] Parse `let` with value
-- [ ] Parse `const` with value
+- [X] Parse `var` with value
+- [X] Print `var` with value
+- [X] Parse `let` with value
+- [X] Print `let` with value
+- [X] Parse `const` with value
+- [X] Print `const` with value
+
+### Loops
+
+- [ ] Parse `while` loop
+- [ ] Print `while` loop
+- [ ] Parse `do {} while` loop
+- [ ] Print `do {} while` loop
+- [ ] Parse `for i` loop
+- [ ] Print `for i` loop
+- [ ] Parse `for in` loop
+- [ ] Print `for in` loop
+- [ ] Parse `for of` loop
+- [ ] Print `for of` loop
+
+### Logical gates
+
+- [X] Parse `if` statement
+- [X] Print `if` statement
+- [X] Parse `if` conditions
+- [X] Print `if` conditions
+- [X] Parse `if` body
+- [X] Print `if` body
+- [X] Parse `else` statement
+- [X] Print `else` statement
+- [X] Parse `else` body
+- [X] Print `else` body
+- [ ] Parse `switch` statement
+- [ ] Print `switch` statement
+- [ ] Parse `case` statement
+- [ ] Print `case` statement
+- [ ] Parse `default` statement
+- [ ] Print `default` statement
+- [ ] Error on double `default` statement declaration
 
 ### Decorators
 
@@ -75,13 +111,17 @@ make -j9
 
 ### Class
 
-- [ ] Parse empty class
-- [ ] Print empty class
+- [X] Parse empty class
+- [X] Print empty class
 - [ ] Support `extends`
+- [X] Print `extends` as `prototype = Object.create(Parent)`
 - [ ] Support `implements`
 - [ ] Support `friend`
-- [ ] Use class constructor
-- [ ] Use constructor `super`
+- [ ] Parse class `constructor` without `arguments`
+- [ ] Print class `constructor` without `arguments`
+- [ ] Parse `super` in `constructor`
+- [ ] Print `super` in `constructor` as `Parent.call(this)`
+- [ ] Pass `arguments` to `super` in `constructor` as `Parent.call(this, a, b, c)`
 
 ### Methods
 
@@ -89,7 +129,9 @@ make -j9
 - [ ] Print class method
 - [ ] Parse class method arguments
 - [ ] Print class method arguments
-- [ ] Support method `super`
+- [ ] Parse method `super`
+- [ ] Print method `super` as `Parent.prototype.method.call(this)`
+- [ ] Print method `super` with `arguments`
 
 ### Fields
 
@@ -98,10 +140,12 @@ make -j9
 
 ### Function
 
-- [ ] Parse empty function
-- [ ] Print empty function
+- [X] Parse empty `function`
+- [X] Print empty `function`
 - [X] Parse arguments
 - [X] Print arguments
+- [X] Parse `function` body
+- [X] Print `function` body
 
 ### Validations
 

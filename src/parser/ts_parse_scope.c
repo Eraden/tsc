@@ -44,6 +44,7 @@ const TSParserToken TS_parse_scope(TSFile *tsFile, TSParseData *tsParseData) {
   token.visibility = TS_VISIBILITY_SCOPE;
   token.children = NULL;
   token.childrenSize = 0;
+  token.data = NULL;
 
   TS_parse_scope_body(tsFile, tsParseData, &token, &movedBy);
 
