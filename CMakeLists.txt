@@ -27,12 +27,15 @@ SET(
     src/parser/ts_parse_export.c
     src/parser/ts_parse_scope.c
     src/output.c
+    src/output/ts_output_header.c
+    src/output/ts_output_footer.c
     src/output/ts_output_var.c
     src/output/ts_output_if.c
     src/output/ts_output_else.c
     src/output/ts_output_function.c
     src/output/ts_output_return.c
     src/output/ts_output_class.c
+    src/output/ts_output_export.c
     src/main.c
 )
 

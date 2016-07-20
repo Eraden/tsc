@@ -4,7 +4,11 @@ static void TS_append_ts_parser_token(TSFile *tsFile, TSParserToken token);
 
 static void TS_next_line(TSParseData *data);
 
-const char *TS_clone_string(const char *string) {
+const char *
+__attribute__((__malloc__))
+TS_clone_string(
+    const char *string
+) {
   char *clone = (char *) calloc(sizeof(char), sizeof(string) + 1);
   clone[sizeof(string)] = 0;
   strcpy(clone, string);
@@ -60,8 +64,7 @@ unsigned char TS_name_is_valid(const char *name) {
       case '\\':
       case '%':
       case '\n':
-      case ' ':
-      {
+      case ' ': {
         return 0;
       }
       default:
@@ -72,18 +75,12 @@ unsigned char TS_name_is_valid(const char *name) {
 }
 
 static void TS_append_ts_parser_token(TSFile *tsFile, TSParserToken token) {
-  if (tsFile->tokens == NULL) {
-    tsFile->tokens = calloc(sizeof(TSParserToken), 1);
-    tsFile->tokens[0] = token;
-    tsFile->tokensSize = 1;
-  } else {
-    TSParserToken *newPointer = (TSParserToken *) calloc(sizeof(TSParserToken), tsFile->tokensSize + 1);
-    memcpy(newPointer, tsFile->tokens, tsFile->tokensSize * sizeof(TSParserToken));
-    free(tsFile->tokens);
-    tsFile->tokens = newPointer;
-    tsFile->tokens[tsFile->tokensSize] = token;
-    tsFile->tokensSize += 1;
-  }
+  TSParserToken *newPointer = (TSParserToken *) calloc(sizeof(TSParserToken), tsFile->tokensSize + 1);
+  if (tsFile->tokens != NULL) memcpy(newPointer, tsFile->tokens, sizeof(TSParserToken) * tsFile->tokensSize);
+  if (tsFile->tokens != NULL) free(tsFile->tokens);
+  tsFile->tokens = newPointer;
+  tsFile->tokens[tsFile->tokensSize] = token;
+  tsFile->tokensSize += 1;
 }
 
 TSParserToken TS_parse_ts_token(TSFile *tsFile, TSParseData *data) {
@@ -174,8 +171,7 @@ volatile const char *TS_getToken(FILE *stream) {
       case '#':
       case '\\':
       case '%':
-      case '\n':
-      {
+      case '\n': {
         if (tok == NULL) {
           tok = (char *) calloc(sizeof(char), 1);
           tok[0] = c;
@@ -187,8 +183,7 @@ volatile const char *TS_getToken(FILE *stream) {
           return tok;
         }
       }
-      case ' ':
-      {
+      case ' ': {
         if (tok == NULL) {
           tok = (char *) calloc(sizeof(char), 1);
           tok[0] = c;
@@ -245,6 +240,7 @@ volatile const char *TS_getToken(FILE *stream) {
 const TSFile TS_parse_file(const char *file) {
   TSFile tsFile;
   tsFile.tokens = NULL;
+  tsFile.tokensSize = 0;
   tsFile.file = file;
 
   const char *tok;

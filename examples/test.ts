@@ -9,8 +9,12 @@ function Component(data: Object, desc: Descriptor={}, s ="", ...rest) {
     return 1;
 }
 
-class Descriptor {}
-class Some {}
+class Descriptor {
+}
+class Some {
+  enumerable: boolean = false;
+  constructor() {}
+}
 
 @Component({
 })

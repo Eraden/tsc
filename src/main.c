@@ -23,11 +23,11 @@
 int main(int argc, char **argv) {
   init_log();
 
-  TSFile file = TS_parse_file("./examples/test.ts");
+  TSFile tsFile = TS_parse_file("./examples/test.ts");
   fprintf(stdout, "\n\n");
   for (int i = 0; i < 20; i++) fprintf(stdout, "#");
-  fprintf(stdout, "\nFile: %s\n\n", file.file);
-  TS_print_stream(&file, stdout);
+  fprintf(stdout, "\nFile: %s\n\n", tsFile.file);
+  TS_print_stream(&tsFile, stdout);
   for (int i = 0; i < 20; i++) fprintf(stdout, "#");
   fprintf(stdout, "\n\n");
   return 0;
