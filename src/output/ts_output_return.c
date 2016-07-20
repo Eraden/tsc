@@ -22,7 +22,7 @@ ts_string_for_return_body(
     }
 
     if (body != NULL) {
-      u_long size = strlen(body) + 1 + strlen(";\n");
+      u_long size = TS_STRING_END + strlen(body) + strlen(";\n");
       if (returnBody != NULL) size += strlen(returnBody);
       char *newPointer = (char *) calloc(sizeof(char), size);
       if (returnBody != NULL) strcpy(newPointer, returnBody);

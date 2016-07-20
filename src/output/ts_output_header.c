@@ -21,11 +21,11 @@ __attribute__((__malloc__))
 TS_output_header() {
   char *string = NULL;
   const char *symbolPolyfill = TS_output_header_symbol_polyfill();
-  u_long size = 0 +
+  u_long size = TS_STRING_END +
                 strlen("(function (modules, window) {\n\n") +
                 strlen(symbolPolyfill) +
-                strlen("\n") +
-                1;
+                strlen("\n");
+
   string = (char *) calloc(sizeof(char), size);
   strcat(string, "(function (modules, window) {\n\n");
   strcat(string, symbolPolyfill); // not allocated so ok to leave that way

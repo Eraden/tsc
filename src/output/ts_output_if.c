@@ -44,7 +44,7 @@ ts_string_for_if_condition(
     const TSParserToken conditionToken = data->conditions[conditionIndex];
     const char *value = (char *) conditionToken.data;
 
-    u_long size = strlen(value) + 1;
+    u_long size = strlen(value) + TS_STRING_END;
     if (string != NULL) size += strlen(string);
 
     char *newPointer = (char *) calloc(sizeof(char), size);

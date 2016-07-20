@@ -1,9 +1,10 @@
 #include <tsc/output.h>
 
 static const char *
-__attribute(( visibility("hidden") ))
-__attribute__(( section("output-else") ))
-ts_string_for_else_body(const TSFile *tsFile, const TSParserToken *tsParserToken, const TSOutputSettings outputSettings) {
+__attribute(( visibility("hidden")))
+__attribute__(( section("output-else")))
+ts_string_for_else_body(const TSFile *tsFile, const TSParserToken *tsParserToken,
+                        const TSOutputSettings outputSettings) {
   char *ifBody = NULL;
   for (u_long bodyIndex = 0; bodyIndex < (*tsParserToken).childrenSize; bodyIndex++) {
     TSParserToken bodyToken = (*tsParserToken).children[bodyIndex];
@@ -13,11 +14,9 @@ ts_string_for_else_body(const TSFile *tsFile, const TSParserToken *tsParserToken
     if (childString == NULL) {
       continue;
     }
-    u_long size = 0;
-    if (ifBody == NULL) {
-      size = strlen(childString) + 1;
-    } else {
-      size = strlen(ifBody) + strlen(childString) + 1;
+    u_long size = TS_STRING_END + strlen(childString);
+    if (ifBody != NULL) {
+      size += strlen(ifBody) + strlen(childString);
     }
     char *newPointer = (char *) calloc(sizeof(char), size);
     if (ifBody != NULL) strcpy(newPointer, ifBody);
@@ -29,7 +28,7 @@ ts_string_for_else_body(const TSFile *tsFile, const TSParserToken *tsParserToken
 }
 
 const char *
-__attribute__(( section("output-else") ))
+__attribute__(( section("output-else")))
 TS_string_for_else(
     const TSFile *tsFile,
     const TSParserToken tsParserToken,
@@ -37,14 +36,14 @@ TS_string_for_else(
 ) {
   const u_long indent = outputSettings.indent;
 
-  char *string = (char *) calloc(sizeof(char), sizeof("else {\n") + (indent * 2) + 1);
+  char *string = (char *) calloc(sizeof(char), TS_STRING_END + sizeof("else {\n") + (indent * 2));
   for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
     strcat(string, "  ");
   strcat(string, "else {\n");
 
   {
     const char *elseBody = ts_string_for_else_body(tsFile, &tsParserToken, outputSettings);
-    char *newPointer = (char *) calloc(sizeof(char), strlen(string) + strlen(elseBody) + 1);
+    char *newPointer = (char *) calloc(sizeof(char), TS_STRING_END + strlen(string) + strlen(elseBody));
     strcpy(newPointer, string);
     strcat(newPointer, elseBody);
     free((void *) string);
@@ -53,7 +52,7 @@ TS_string_for_else(
   }
 
   {
-    char *newPointer = (char *) calloc(sizeof(char), strlen(string) + (indent * 2) + strlen("}\n") + 1);
+    char *newPointer = (char *) calloc(sizeof(char), TS_STRING_END + strlen(string) + (indent * 2) + strlen("}\n"));
     strcpy(newPointer, string);
     for (u_long indentIndex = 0; indentIndex < indent; indentIndex++) strcat(newPointer, "  ");
     strcat(newPointer, "}\n");

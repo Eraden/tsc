@@ -4,6 +4,7 @@
 #include <tsc/sys.h>
 
 #define TS_SPREAD_PREFIX_SIZE 3
+#define TS_STRING_END sizeof(char)
 
 typedef struct sTSOutputSettings {
   u_long indent;

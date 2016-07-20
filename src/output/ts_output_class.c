@@ -4,13 +4,14 @@ static const char *
 __attribute__(( visibility("hidden")))
 __attribute__(( section("output-class")))
 TS_string_for_class_method(
-    const u_long indent,
-    TSParserToken *child,
+    const TSOutputSettings __attribute__((__weak__)) outputSettings,
+    const TSParserToken *child,
     u_long *methodSize
 ) {
   const TSFunctionData *methodData = (*child).data;
-  const u_long methodIndent = indent + 1;
-  (*methodSize) = (indent * 2) +
+  const u_long methodIndent = outputSettings.indent + 1;
+  (*methodSize) = TS_STRING_END +
+                  (outputSettings.indent * 2) +
                   sizeof("proto['") +
                   sizeof(methodData->name) +
                   sizeof("'] = {\n") +
@@ -18,35 +19,44 @@ TS_string_for_class_method(
                   sizeof("value: function () {\n") +
                   (methodIndent * 2) +
                   sizeof("}\n") +
-                  (indent * 2) +
+                  (outputSettings.indent * 2) +
                   sizeof("};\n");
-  char *methodString= (char *) calloc(sizeof(char), *methodSize);
-  for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
-          strcat(methodString, "  ");
+
+  char *methodString = (char *) calloc(sizeof(char), *methodSize);
+  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
+    strcat(methodString, "  ");
 
   strcat(methodString, "proto['");
   strcat(methodString, methodData->name);
   strcat(methodString, "'] = {\n");
   for (u_long indentIndex = 0; indentIndex < methodIndent; indentIndex++)
-          strcat(methodString, "  ");
+    strcat(methodString, "  ");
   strcat(methodString, "value: function () {\n");
   for (u_long indentIndex = 0; indentIndex < methodIndent; indentIndex++)
-          strcat(methodString, "  ");
+    strcat(methodString, "  ");
   strcat(methodString, "}\n");
-  for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
-          strcat(methodString, "  ");
+  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
+    strcat(methodString, "  ");
   strcat(methodString, "};\n");
   return methodString;
 }
 
-const char *TS_string_for_class_field(const u_long indent, TSParserToken *child, u_long *fieldSize) {
+static const char *
+__attribute__(( visibility("hidden")))
+__attribute__(( section("output-class")))
+TS_string_for_class_field(
+    const TSOutputSettings __attribute__((__weak__)) outputSettings,
+    const TSParserToken *child,
+    u_long *fieldSize
+) {
   const TSLocalVariableData *fieldData = (*child).data;
-  const u_long fieldIndent = indent + 1;
-  (*fieldSize) = 1 + (indent * 2) +
+  const u_long fieldIndent = outputSettings.indent + 1;
+  (*fieldSize) = TS_STRING_END +
+                 (outputSettings.indent * 2) +
                  strlen("var SYMBOL_FOR_") +
                  strlen(fieldData->name) +
                  strlen(" = Symbol();\n") +
-                 (indent * 2) +
+                 (outputSettings.indent * 2) +
                  strlen("proto['") +
                  strlen(fieldData->name) +
                  strlen("'] = {\n") +
@@ -60,24 +70,25 @@ const char *TS_string_for_class_field(const u_long indent, TSParserToken *child,
                  strlen("set: function (value) { return this[SYMBOL_FOR_") +
                  strlen(fieldData->name) +
                  strlen("] = value; }\n") +
-                 (indent * 2) +
+                 (outputSettings.indent * 2) +
                  strlen("};\n");
-  char *fieldString= (char *) calloc(sizeof(char), *fieldSize);
-  for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
-          strcat(fieldString, "  ");
+
+  char *fieldString = (char *) calloc(sizeof(char), *fieldSize);
+  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
+    strcat(fieldString, "  ");
   strcat(fieldString, "var SYMBOL_FOR_");
   strcat(fieldString, fieldData->name);
   strcat(fieldString, " = Symbol();\n");
 
-  for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
-          strcat(fieldString, "  ");
+  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
+    strcat(fieldString, "  ");
   strcat(fieldString, "proto['");
   strcat(fieldString, fieldData->name);
   strcat(fieldString, "'] = {\n");
 
   // getter
   for (u_long indentIndex = 0; indentIndex < fieldIndent; indentIndex++)
-          strcat(fieldString, "  ");
+    strcat(fieldString, "  ");
   strcat(fieldString, "get: function () { return this[SYMBOL_FOR_");
   strcat(fieldString, fieldData->name);
   strcat(fieldString, "] || ");
@@ -86,12 +97,12 @@ const char *TS_string_for_class_field(const u_long indent, TSParserToken *child,
 
   // setter
   for (u_long indentIndex = 0; indentIndex < fieldIndent; indentIndex++)
-          strcat(fieldString, "  ");
+    strcat(fieldString, "  ");
   strcat(fieldString, "set: function (value) { return this[SYMBOL_FOR_");
   strcat(fieldString, fieldData->name);
   strcat(fieldString, "] = value; }\n");
-  for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
-          strcat(fieldString, "  ");
+  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
+    strcat(fieldString, "  ");
   strcat(fieldString, "};\n");
   return fieldString;
 }
@@ -102,29 +113,31 @@ __attribute__(( section("output-class")))
 TS_string_for_class_prototype(
     const TSFile *__attribute__(( __unused__ )) tsFile,
     const TSParserToken tsParserToken,
-    TSOutputSettings outputSettings
+    TSOutputSettings __attribute__((__weak__)) outputSettings
 ) {
   const TSClassData *data = tsParserToken.data;
-  const u_long indent = outputSettings.indent + 1;
+  TSOutputSettings settings = outputSettings;
+  settings.indent += 1;
   char *string = NULL;
 
-  u_long size = // begin function
-      (outputSettings.indent * 2) +
-      strlen("(function (C, P) {\n") +
-      (indent * 2) +
-      // body
-      strlen("var proto = {};\n") +
-      (indent * 2) +
-      strlen("proto['constructor'] = { value: P };\n") +
-      (indent * 2) +
-      strlen("C.prototype = Object.create(P.prototype, proto);\n") +
-      // end of function
-      (outputSettings.indent * 2) +
-      strlen("}(") +
-      strlen(data->name) +
-      strlen(", ") +
-      strlen(data->parentClass ? data->parentClass : "Object") +
-      strlen("));\n") + 1;
+  u_long size = TS_STRING_END +
+                // begin function
+                (outputSettings.indent * 2) +
+                strlen("(function (C, P) {\n") +
+                (settings.indent * 2) +
+                // body
+                strlen("var proto = {};\n") +
+                (settings.indent * 2) +
+                strlen("proto['constructor'] = { value: P };\n") +
+                (settings.indent * 2) +
+                strlen("C.prototype = Object.create(P.prototype, proto);\n") +
+                // end of function
+                (outputSettings.indent * 2) +
+                strlen("}(") +
+                strlen(data->name) +
+                strlen(", ") +
+                strlen(data->parentClass ? data->parentClass : "Object") +
+                strlen("));\n");
 
   string = (char *) calloc(sizeof(char), size);
 
@@ -134,10 +147,10 @@ TS_string_for_class_prototype(
   strcat(string, "(function (C, P) {\n");
 
   // body
-  for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
+  for (u_long indentIndex = 0; indentIndex < settings.indent; indentIndex++)
     strcat(string, "  ");
   strcat(string, "var proto = {};\n");
-  for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
+  for (u_long indentIndex = 0; indentIndex < settings.indent; indentIndex++)
     strcat(string, "  ");
   strcat(string, "proto['constructor'] = { value: P };\n");
 
@@ -146,7 +159,7 @@ TS_string_for_class_prototype(
     switch (child.tokenType) {
       case TS_CLASS_FIELD: {
         u_long fieldSize;
-        const char *fieldString = TS_string_for_class_field(indent, &child, &fieldSize);
+        const char *fieldString = TS_string_for_class_field(settings, &child, &fieldSize);
 
         char *newPointer = (char *) calloc(sizeof(char), size + fieldSize - 1);
         strcpy(newPointer, string);
@@ -159,7 +172,7 @@ TS_string_for_class_prototype(
       }
       case TS_CLASS_METHOD: {
         u_long methodSize;
-        const char *methodString = TS_string_for_class_method(indent, &child, &methodSize);
+        const char *methodString = TS_string_for_class_method(settings, &child, &methodSize);
 
         char *newPointer = (char *) calloc(sizeof(char), size + methodSize - 1);
         strcpy(newPointer, string);
@@ -167,7 +180,7 @@ TS_string_for_class_prototype(
         free(string);
         free((void *) methodString);
         string = newPointer;
-        size = size + methodSize - 1;
+        size = size + methodSize - TS_STRING_END;
         break;
       }
       default:
@@ -175,7 +188,7 @@ TS_string_for_class_prototype(
     }
   }
 
-  for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
+  for (u_long indentIndex = 0; indentIndex < settings.indent; indentIndex++)
     strcat(string, "  ");
   strcat(string, "C.prototype = Object.create(P.prototype, proto);\n");
 
@@ -204,7 +217,7 @@ TS_string_for_class_constructor(
   char *string = NULL;
 
   u_long size = 0;
-  size = 0 +
+  size = TS_STRING_END +
          (outputSettings.indent * 2 * sizeof(char)) +
          strlen("/* class */\n") +
          (outputSettings.indent * 2 * sizeof(char)) +
@@ -212,8 +225,7 @@ TS_string_for_class_constructor(
          strlen(data->name) +
          strlen("() {\n") +
          (outputSettings.indent * 2 * sizeof(char)) +
-         strlen("}\n") +
-         (1 * sizeof(char));
+         strlen("}\n");
 
   string = (char *) calloc(sizeof(char), size);
 
@@ -245,7 +257,7 @@ TS_string_for_class(
   {
     const char *constructorString = TS_string_for_class_constructor(tsFile, tsParserToken, outputSettings);
     if (constructorString != NULL) {
-      char *newPointer = (char *) calloc(sizeof(char), strlen(constructorString) + 1);
+      char *newPointer = (char *) calloc(sizeof(char), TS_STRING_END + strlen(constructorString));
       strcat(newPointer, constructorString);
       free((void *) constructorString);
       string = newPointer;
@@ -255,7 +267,7 @@ TS_string_for_class(
   {
     const char *prototypeString = TS_string_for_class_prototype(tsFile, tsParserToken, outputSettings);
     if (prototypeString != NULL) {
-      char *newPointer = (char *) calloc(sizeof(char), strlen(string) + strlen(prototypeString) + 1);
+      char *newPointer = (char *) calloc(sizeof(char), TS_STRING_END + strlen(string) + strlen(prototypeString));
       strcpy(newPointer, string);
       strcat(newPointer, prototypeString);
       free(string);

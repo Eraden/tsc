@@ -6,9 +6,8 @@ static u_long TS_output_measure_function_head(
     const TSFunctionData *data
 )
     __attribute__((__nothrow__))
-    __attribute(( visibility("hidden") ))
-    __attribute__(( section("output-function") ))
-;
+    __attribute(( visibility("hidden")))
+    __attribute__(( section("output-function")));
 
 static char *TS_string_for_function_head(
     const TSFile *tsFile,
@@ -17,9 +16,8 @@ static char *TS_string_for_function_head(
     const u_long size
 )
     __attribute__((__malloc__))
-    __attribute(( visibility("hidden") ))
-    __attribute__(( section("output-function") ))
-;
+    __attribute(( visibility("hidden")))
+    __attribute__(( section("output-function")));
 
 static char *TS_string_for_function_spread_arg(
     const u_long indent,
@@ -27,9 +25,8 @@ static char *TS_string_for_function_spread_arg(
     const TSLocalVariableData *arg
 )
     __attribute__((__malloc__))
-    __attribute(( visibility("hidden") ))
-    __attribute__(( section("output-function") ))
-;
+    __attribute(( visibility("hidden")))
+    __attribute__(( section("output-function")));
 
 static char *TS_string_for_function_arg_default(
     const u_long indent,
@@ -37,9 +34,8 @@ static char *TS_string_for_function_arg_default(
     const TSLocalVariableData *arg
 )
     __attribute__((__malloc__))
-    __attribute(( visibility("hidden") ))
-    __attribute__(( section("output-function") ))
-;
+    __attribute(( visibility("hidden")))
+    __attribute__(( section("output-function")));
 
 static char *TS_string_for_function_body(
     const TSFile *tsFile,
@@ -50,13 +46,12 @@ static char *TS_string_for_function_body(
     TSOutputSettings outputSettings
 )
     __attribute__((__malloc__))
-    __attribute(( visibility("hidden") ))
-    __attribute__(( section("output-function") ))
-;
+    __attribute(( visibility("hidden")))
+    __attribute__(( section("output-function")));
 
 static u_long
-__attribute(( visibility("hidden") ))
-__attribute__(( section("output-function") ))
+__attribute(( visibility("hidden")))
+__attribute__(( section("output-function")))
 TS_output_measure_function_head(
     const TSFile *__attribute__((__unused__)) tsFile,
     const u_long indent,
@@ -130,7 +125,7 @@ static char *TS_string_for_function_spread_arg(
 ) {
   const char *name;
   u_long variableSize;
-  u_long argSize = sizeof(arg->name) + 1 - TS_SPREAD_PREFIX_SIZE;
+  u_long argSize = sizeof(arg->name) + TS_STRING_END - TS_SPREAD_PREFIX_SIZE;
   char *tmp = (char *) calloc(sizeof(char), argSize + 1);
   for (u_long cIndex = 0; cIndex < argSize; cIndex++) {
     tmp[cIndex] = arg->name[cIndex + 3];
@@ -169,14 +164,15 @@ static char *TS_string_for_function_arg_default(
   if (arg->value == NULL) return NULL;
   const char *name = TS_clone_string(arg->name);
   const u_long nameSize = strlen(name);
-  u_long size = ((indent + 1) * 2) +
+  u_long size = TS_STRING_END +
+                ((indent + 1) * 2) +
                 strlen("if (") +
                 nameSize +
                 strlen(" == void(0)) ") +
                 nameSize +
                 strlen(" = ") +
                 strlen(arg->value) +
-                strlen("}\n") + 1;
+                strlen("}\n");
   char *defaultValue = (char *) calloc(sizeof(char), size);
   for (u_long indentIndex = 0; indentIndex < indent + 1; indentIndex++) {
     strcat(defaultValue, "  ");
@@ -206,7 +202,7 @@ static char *TS_string_for_function_body(
     TSParserToken tsArgumentToken = data->arguments[argumentIndex];
     if (tsArgumentToken.tokenType == TS_VAR && tsArgumentToken.data != NULL) {
       arg = tsArgumentToken.data;
-      u_long argSize = sizeof(arg->name) + 1;
+      u_long argSize = sizeof(arg->name) + TS_STRING_END;
       u_char isSpread = (u_char) (argSize > 3 && arg->name[0] == '.' && arg->name[1] == '.' && arg->name[2] == '.');
       if (isSpread && hadSpread) {
         ts_syntax_error("Spread argument declared twice!", tsFile->file, tsParserToken->character, tsParserToken->line);
@@ -249,7 +245,8 @@ static char *TS_string_for_function_body(
   return string;
 }
 
-const char *TS_string_from_function(const TSFile *tsFile, const TSParserToken tsParserToken, TSOutputSettings outputSettings) {
+const char *TS_string_from_function(const TSFile *tsFile, const TSParserToken tsParserToken,
+                                    TSOutputSettings outputSettings) {
   const u_long indent = outputSettings.indent;
   const TSFunctionData *data = tsParserToken.data;
   if (data == NULL) return NULL;
