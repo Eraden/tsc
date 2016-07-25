@@ -1,3 +1,7 @@
+{
+  if (1) { return 1; }
+}
+
 let value = 1;
 const stale = 2;
 var variable = 3;
@@ -6,14 +10,16 @@ function Component(data: Object, desc: Descriptor={}, s ="", ...rest) {
   if (desc != null) {
     return 2;
   } else
-    return 1;
+    return 3;
 }
 
 class Descriptor {
 }
 class Some {
   enumerable: boolean = false;
-  constructor() {}
+  constructor() {
+    if (1) this.enumerable = true;
+  }
 }
 
 @Component({
@@ -29,7 +35,7 @@ export default class Test extends Some {
   }
 
   public method() {
-    return 1;
+    return this.field;
   }
 }
 

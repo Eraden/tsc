@@ -35,7 +35,7 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
 };
 
 void TS_put_back(FILE *stream, const char *value) {
-  for (u_long i = 0, l = strlen(value); i < l; i++) {
+  for (long i = strlen(value) - 1; i >= 0; --i) {
     ungetc(value[i], stream);
   }
 }
@@ -72,6 +72,17 @@ unsigned char TS_name_is_valid(const char *name) {
     }
   }
   return 1;
+}
+
+void TS_push_child(TSParserToken *token, TSParserToken child) {
+  log_to_file("%s\n", "Pushing new TSParserToken child to TSParserToken parent");
+  TSParserToken *newPointer = (TSParserToken *) calloc(sizeof(TSParserToken), token->childrenSize + 1);
+  if (token->children != NULL) memcpy(newPointer, token->children, sizeof(TSParserToken) * token->childrenSize);
+  if (token->children != NULL) free(token->children);
+  token->children = newPointer;
+  token->children[token->childrenSize] = child;
+  token->childrenSize += 1;
+  log_to_file("    size increased to: %lu\n", token->childrenSize);
 }
 
 static void TS_append_ts_parser_token(TSFile *tsFile, TSParserToken token) {
@@ -149,6 +160,10 @@ volatile const char *TS_getToken(FILE *stream) {
   while (!feof(stream)) {
     c = (char) fgetc(stream);
     switch (c) {
+      case -1:
+      case 0: {
+        return tok;
+      }
       case '@':
       case '\'':
       case '"':
@@ -173,9 +188,8 @@ volatile const char *TS_getToken(FILE *stream) {
       case '%':
       case '\n': {
         if (tok == NULL) {
-          tok = (char *) calloc(sizeof(char), 1);
+          tok = (char *) calloc(sizeof(char), 1 + TS_STRING_END);
           tok[0] = c;
-          tok[1] = 0;
           return tok;
         } else {
           ungetc(c, stream);
@@ -185,21 +199,22 @@ volatile const char *TS_getToken(FILE *stream) {
       }
       case ' ': {
         if (tok == NULL) {
-          tok = (char *) calloc(sizeof(char), 1);
+          tok = (char *) calloc(sizeof(char), 1 + TS_STRING_END);
           tok[0] = c;
-          tok[1] = 0;
           prev = c;
           break;
         } else if (tok[0] == ' ') {
           u_long size = strlen((const char *) tok);
-          char *newPointer = calloc(sizeof(char), size + 1);
-          strcpy(newPointer, (const char *) tok);
+          volatile char *newPointer = calloc(sizeof(char), size + 1 + TS_STRING_END);
+          strcpy((char *) newPointer, (const char *) tok);
           free((void *) tok);
           tok = newPointer;
           tok[size] = c;
-          tok[size + 1] = 0;
           prev = c;
           break;
+        } else if (strlen((const char *) tok) == 0) {
+          free((void *) tok);
+          return NULL;
         } else {
           ungetc(c, stream);
           log_to_file("# token: '%s' [white + else]\n", tok);
@@ -208,19 +223,12 @@ volatile const char *TS_getToken(FILE *stream) {
       }
       default: {
         if (TS_valid_char_for_token(prev)) {
-          if (tok == NULL) {
-            tok = (char *) calloc(sizeof(char), 1);
-            tok[0] = c;
-            tok[1] = 0;
-          } else {
-            u_long size = strlen((const char *) tok);
-            char *newPointer = calloc(sizeof(char), size + 1);
-            strcpy(newPointer, (const char *) tok);
-            free((void *) tok);
-            tok = newPointer;
-            tok[size] = c;
-            tok[size + 1] = 0;
-          }
+          u_long size = tok ? strlen((const char *) tok) : 0;
+          volatile char *newPointer = (char *) calloc(sizeof(char), size + 1 + TS_STRING_END);
+          if (tok != NULL) strcpy((char *) newPointer, (const char *) tok);
+          if (tok != NULL) free((void *) tok);
+          tok = newPointer;
+          tok[size] = c;
         } else {
           ungetc(c, stream);
           log_to_file("# token: '%s' [default + else]\n", tok);
@@ -237,17 +245,31 @@ volatile const char *TS_getToken(FILE *stream) {
   return tok;
 }
 
-const TSFile TS_parse_file(const char *file) {
+const TSFile
+TS_parse_file(
+    const char *file
+) {
+  FILE *stream = fopen(file, "r");
+  if (stream == NULL) {
+    TSFile tsFile;
+    tsFile.tokens = NULL;
+    tsFile.tokensSize = 0;
+    tsFile.file = file;
+    return tsFile;
+  }
+
+  return TS_parse_stream(file, stream);
+}
+
+const TSFile
+TS_parse_stream(
+    const char *file,
+    FILE *stream
+) {
   TSFile tsFile;
   tsFile.tokens = NULL;
   tsFile.tokensSize = 0;
   tsFile.file = file;
-
-  const char *tok;
-  FILE *stream = fopen(file, "r");
-  if (stream == NULL) {
-    return tsFile;
-  }
 
   TSParseData data;
   data.line = 1;
@@ -255,6 +277,7 @@ const TSFile TS_parse_file(const char *file) {
   data.position = 0;
   data.stream = stream;
 
+  const char *tok;
   while (1) {
     tok = (const char *) TS_getToken(stream);
     if (tok == NULL) break;

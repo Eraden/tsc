@@ -13,5 +13,5 @@ void ts_syntax_error(const char *msg, const char *file, const u_long line, const
 }
 
 void ts_log_position(const char *file, const u_long character, const u_long line) {
-  log_error("      Position: %s:%lu:%lu\n", file, line + 1, character);
+  log_error("      Position: %s:%lu:%lu [line:character]\n", file, line + 1, character);
 }

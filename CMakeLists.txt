@@ -1,12 +1,10 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
 PROJECT(tsc)
 
+#include( CTest )
+
 SET(
-    SOURCE_FILES
-    src/sys.c
-    src/log.c
-    src/register.c
-    src/parser.c
+    PARSER_SOURCES
     src/parser/ts_parse_arrow.c
     src/parser/ts_parse_class.c
     src/parser/ts_parse_extends.c
@@ -26,7 +24,11 @@ SET(
     src/parser/ts_parse_import.c
     src/parser/ts_parse_export.c
     src/parser/ts_parse_scope.c
-    src/output.c
+    src/parser.c
+)
+
+SET(
+    OUTPUT_SOURCES
     src/output/ts_output_header.c
     src/output/ts_output_footer.c
     src/output/ts_output_var.c
@@ -36,7 +38,26 @@ SET(
     src/output/ts_output_return.c
     src/output/ts_output_class.c
     src/output/ts_output_export.c
-    src/main.c
+    src/output.c
+)
+
+SET(
+    SOURCE_FILES
+    src/sys.c
+    src/log.c
+    src/register.c
+)
+
+SET(
+    TEST_SOURCES
+    ${SOURCE_FILES}
+    tests/test.c
+    #    tests/output/variables.c
+    tests/parser/classes.c
+    tests/parser/variables.c
+    tests/parser/functions.c
+    tests/parser/if_conditions.c
+    tests/parser/else_conditions.c
 )
 
 SET(
@@ -51,34 +72,48 @@ SET(
 
 include_directories(include)
 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+enable_testing()
+find_package(Check REQUIRED)
+include_directories(${CHECK_INCLUDE_DIRS})
+
 MESSAGE(INFO " Compiler: ${CMAKE_C_COMPILER}")
 
 IF (NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE CACHE STRING "Debug")
-ENDIF()
+ENDIF ()
 
 IF (CMAKE_BUILD_TYPE MATCHES "Debug")
-  ADD_DEFINITIONS(-DDebug=1)
   IF (CMAKE_C_COMPILER MATCHES "clang")
     MESSAGE(INFO " Setting up memory sanitizer")
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=memory -fsanitize-memory-track-origins=2 -fno-omit-frame-pointer")
-  ENDIF()
-ENDIF()
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=memory -fsanitize-memory-track-origins=2 -fno-omit-frame-pointer")
+  ENDIF ()
+ENDIF ()
 
-IF (CMAKE_C_COMPILER MATCHES "clang")
-ELSE()
-  MESSAGE(INFO " Not clang, unable to sanitize memory")
-  add_library(tsparser src/parser.c)
-ENDIF()
+IF (Debug)
+  ADD_DEFINITIONS(-DDebug=1)
+ENDIF ()
 
-ADD_EXECUTABLE(tsc ${SOURCE_FILES})
+add_library(tsparser ${PARSER_SOURCES})
+add_library(tsoutput ${OUTPUT_SOURCES})
 
-IF (CMAKE_C_COMPILER MATCHES "clang")
-ELSE()
-  target_link_libraries(
+ADD_EXECUTABLE(tsc ${SOURCE_FILES} src/main.c)
+ADD_EXECUTABLE(tsc_test ${TEST_SOURCES} tests/main.c)
+
+target_link_libraries(
     tsc
     tsparser
-  )
-ENDIF()
+    tsoutput
+)
+
+target_link_libraries(
+    tsc_test
+    tsparser
+    tsoutput
+    ${CHECK_LIBRARIES}
+)
 
 FILE(COPY examples DESTINATION .)
+
+ADD_TEST(NAME CheckTsc COMMAND ./tsc_test)

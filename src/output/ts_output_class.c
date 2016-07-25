@@ -1,5 +1,213 @@
 #include <tsc/output.h>
 
+// PRINT
+
+static void
+__attribute__(( visibility("hidden")))
+__attribute__(( section("output-class")))
+TS_print_for_class_method(
+    const TSOutputSettings __attribute__((__weak__)) outputSettings,
+    const TSParserToken *child
+) {
+  const TSFunctionData *methodData = (*child).data;
+  const u_long methodIndent = outputSettings.indent + 1;
+
+  TS_print_indent(outputSettings.stream, outputSettings.indent);
+
+  fprintf(outputSettings.stream, "%s", "proto['");
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", methodData->name);
+  fprintf(outputSettings.stream, "%s", "'] = {\n");
+  fflush(outputSettings.stream);
+
+  TS_print_indent(outputSettings.stream, methodIndent);
+
+  fprintf(outputSettings.stream, "%s", "value: function () {\n");
+  fflush(outputSettings.stream);
+
+  TS_print_indent(outputSettings.stream, outputSettings.indent);
+
+  fprintf(outputSettings.stream, "%s", "}\n");
+  fflush(outputSettings.stream);
+
+  TS_print_indent(outputSettings.stream, outputSettings.indent);
+
+  fprintf(outputSettings.stream, "%s", "};\n");
+  fflush(outputSettings.stream);
+}
+
+static void
+__attribute__(( visibility("hidden")))
+__attribute__(( section("output-class")))
+TS_print_for_class_field(
+    const TSOutputSettings __attribute__((__weak__)) outputSettings,
+    const TSParserToken *child
+) {
+  const TSLocalVariableData *fieldData = (*child).data;
+  const u_long fieldIndent = outputSettings.indent + 1;
+
+  TS_print_indent(outputSettings.stream, outputSettings.indent);
+
+  fprintf(outputSettings.stream, "%s", "var SYMBOL_FOR_");
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", fieldData->name);
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", " = Symbol();\n");
+  fflush(outputSettings.stream);
+
+  TS_print_indent(outputSettings.stream, outputSettings.indent);
+
+  fprintf(outputSettings.stream, "%s", "proto['");
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", fieldData->name);
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", "'] = {\n");
+  fflush(outputSettings.stream);
+
+  // getter
+  TS_print_indent(outputSettings.stream, fieldIndent);
+
+  fprintf(outputSettings.stream, "%s", "get: function () { return this[SYMBOL_FOR_");
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", fieldData->name);
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", "] || ");
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", fieldData->value ? fieldData->value : "null");
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", "; },\n");
+  fflush(outputSettings.stream);
+
+  // setter
+  TS_print_indent(outputSettings.stream, fieldIndent);
+
+  fprintf(outputSettings.stream, "%s", "set: function (value) { return this[SYMBOL_FOR_");
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", fieldData->name);
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", "] = value; }\n");
+  fflush(outputSettings.stream);
+
+  TS_print_indent(outputSettings.stream, outputSettings.indent);
+
+  fprintf(outputSettings.stream, "%s", "};\n");
+  fflush(outputSettings.stream);
+}
+
+static void
+__attribute__(( visibility("hidden")))
+__attribute__(( section("output-class")))
+TS_print_for_class_prototype(
+    const TSFile *__attribute__(( __unused__ )) tsFile,
+    const TSParserToken tsParserToken,
+    TSOutputSettings __attribute__((__weak__)) outputSettings
+) {
+  const TSClassData *data = tsParserToken.data;
+  TSOutputSettings settings = outputSettings;
+  settings.indent += 1;
+
+  // begin function
+  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++) {
+    fprintf(outputSettings.stream, "%s", "  ");
+    fflush(outputSettings.stream);
+  }
+  fprintf(outputSettings.stream, "%s", "(function (C, P) {\n");
+  fflush(outputSettings.stream);
+
+  // body
+  TS_print_indent(outputSettings.stream, settings.indent);
+
+  fprintf(outputSettings.stream, "%s", "var proto = {};\n");
+  fflush(outputSettings.stream);
+
+  TS_print_indent(outputSettings.stream, settings.indent);
+
+  fprintf(outputSettings.stream, "%s", "proto['constructor'] = { value: P };\n");
+  fflush(outputSettings.stream);
+
+  for (u_long childIndex = 0; childIndex < tsParserToken.childrenSize; childIndex++) {
+    TSParserToken child = tsParserToken.children[childIndex];
+    switch (child.tokenType) {
+      case TS_CLASS_FIELD: {
+        TS_print_for_class_field(settings, &child);
+        break;
+      }
+      case TS_CLASS_METHOD: {
+        TS_print_for_class_method(settings, &child);
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  TS_print_indent(outputSettings.stream, outputSettings.indent);
+
+  fprintf(outputSettings.stream, "%s", "C.prototype = Object.create(P.prototype, proto);\n");
+  fflush(outputSettings.stream);
+
+  // end of function
+  TS_print_indent(outputSettings.stream, outputSettings.indent);
+
+  fprintf(outputSettings.stream, "%s", "}(");
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", data->name);
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", ", ");
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", data->parentClass ? data->parentClass : "Object");
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", "));\n");
+  fflush(outputSettings.stream);
+}
+
+static void
+__attribute__(( visibility("hidden")))
+__attribute__(( section("output-class")))
+TS_print_for_class_constructor(
+    const TSFile *__attribute__(( __unused__ )) tsFile,
+    const TSParserToken tsParserToken,
+    TSOutputSettings outputSettings
+) {
+  const TSClassData *data = tsParserToken.data;
+  const u_long __attribute__((__unused__)) indent = outputSettings.indent + 1;
+
+  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++) {
+    fprintf(outputSettings.stream, "%s", "  ");
+    fflush(outputSettings.stream);
+  }
+  fprintf(outputSettings.stream, "%s", "/* class */\n");
+  fflush(outputSettings.stream);
+
+  TS_print_indent(outputSettings.stream, outputSettings.indent);
+
+  fprintf(outputSettings.stream, "%s", "function ");
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", data->name);
+  fflush(outputSettings.stream);
+  fprintf(outputSettings.stream, "%s", "() {\n");
+  fflush(outputSettings.stream);
+
+  TS_print_indent(outputSettings.stream, outputSettings.indent);
+
+  fprintf(outputSettings.stream, "%s", "}\n");
+  fflush(outputSettings.stream);
+}
+
+void
+__attribute__(( section("output-class")))
+TS_print_for_class(
+    const TSFile *__attribute__(( __unused__ )) tsFile,
+    const TSParserToken tsParserToken,
+    TSOutputSettings outputSettings
+) {
+  if (tsParserToken.data == NULL) return;
+  TS_print_for_class_constructor(tsFile, tsParserToken, outputSettings);
+  TS_print_for_class_prototype(tsFile, tsParserToken, outputSettings);
+}
+
+// STRING
+
 static const char *
 __attribute__(( visibility("hidden")))
 __attribute__(( section("output-class")))

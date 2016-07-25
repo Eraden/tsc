@@ -1,8 +1,8 @@
 #pragma once
 
 #ifdef Debug
-#endif
 #define TS_DEBUG 1
+#endif
 
 #include <tsc/sys.h>
 

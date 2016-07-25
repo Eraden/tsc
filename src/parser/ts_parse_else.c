@@ -16,13 +16,24 @@ TS_parse_else_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *toke
       ts_token_syntax_error("Unexpected end of else body", tsFile, token);
     }
     switch (tok[0]) {
-      case '\n':
+      case '\n': {
+        *movedBy += strlen(tok);
+        tsParseData->position += *movedBy;
+        tsParseData->line += 1;
+        tsParseData->character = 0;
+        *movedBy = 0;
+        break;
+      }
       case ' ': {
-        proceed = 0;
-        termination = TS_ENDS_WITHOUT_BRACKET;
         *movedBy += strlen(tok);
         free((void *) tok);
         break;
+      }
+      case ';': {
+        *movedBy += strlen(tok);
+        free((void *) tok);
+
+        return;
       }
       case '{': {
         proceed = 0;
@@ -32,7 +43,10 @@ TS_parse_else_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *toke
         break;
       }
       default: {
-        ts_token_syntax_error("Unexpected token after else", tsFile, token);
+        proceed = 0;
+        TS_put_back(tsParseData->stream, tok);
+        termination = TS_ENDS_WITHOUT_BRACKET;
+        break;
       }
     }
   }

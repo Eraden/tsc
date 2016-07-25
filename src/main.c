@@ -26,6 +26,19 @@ int main(int argc, char **argv) {
   TSFile tsFile = TS_parse_file("./examples/test.ts");
   fprintf(stdout, "\n\n");
   for (int i = 0; i < 20; i++) fprintf(stdout, "#");
+  fprintf(stdout, "\nSTRING\n");
+  for (int i = 0; i < 20; i++) fprintf(stdout, "#");
+  fprintf(stdout, "\nFile: %s\n\n", tsFile.file);
+  const char *string = TS_generate_string_from_file(&tsFile);
+  fprintf(stdout, "%s", string);
+  free((void *) string);
+  for (int i = 0; i < 20; i++) fprintf(stdout, "#");
+  fprintf(stdout, "\n\n");
+
+  fprintf(stdout, "\n\n");
+  for (int i = 0; i < 20; i++) fprintf(stdout, "#");
+  fprintf(stdout, "\nSTREAM\n");
+  for (int i = 0; i < 20; i++) fprintf(stdout, "#");
   fprintf(stdout, "\nFile: %s\n\n", tsFile.file);
   TS_print_stream(&tsFile, stdout);
   for (int i = 0; i < 20; i++) fprintf(stdout, "#");

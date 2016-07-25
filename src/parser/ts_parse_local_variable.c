@@ -5,62 +5,77 @@ __attribute__(( visibility("hidden") ))
 TS_parse_local_variable_value(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
   TSLocalVariableData *data = token->data;
   const char *tok = NULL;
-  while (1) {
+  volatile unsigned char proceed = 1;
+  TSVariableParseFlag parseFlag = TS_PARSE_VARIABLE_NAME;
+  
+  while (proceed) {
     tok = (const char *) TS_getToken(tsParseData->stream);
+
     if (tok == NULL) {
       break;
-    } else if (tok[0] == ';') {
-      *movedBy += strlen(tok);
-      free((void *) tok);
-      return;
-    } else if (tok[0] == ' ') {
-      *movedBy += strlen(tok);
-      free((void *) tok);
-    } else if (tok[0] == '=') {
-      *movedBy += strlen(tok);
-      free((void *) tok);
-      while (1) {
-        tok = (const char *) TS_getToken(tsParseData->stream);
-        if (tok == NULL) {
-          ts_syntax_error("Invalid variable value", tsFile->file, tsParseData->character, tsParseData->line);
-        }
-        if (tok[0] == '\n') {
-          ts_syntax_error("Invalid variable value", tsFile->file, tsParseData->character, tsParseData->line);
-        }
-        if (tok[0] != ' ') {
-          break;
-        } else {
-          *movedBy += strlen(tok);
-          free((void *) tok);
-        }
+    }
+    log_to_file("Token for local variable: '%s'\n", tok);
+    
+    switch (tok[0]) {
+      case '\n': {
+        ts_token_syntax_error("New line in variable definition is not allowed!", tsFile, token);
       }
-      data->value = TS_clone_string(tok);
-      *movedBy += strlen(tok);
-      free((void *) tok);
-      while (1) {
-        tok = (const char *) TS_getToken(tsParseData->stream);
-        if (tok == NULL || tok[0] == ',' || tok[0] == '\n' || tok[0] == ';') {
-          if (tok != NULL) {
-            *movedBy += strlen(tok);
-            free((void *) tok);
-          }
-          break;
-        } else {
-          char *newPointer = (char *) calloc(sizeof(char), strlen(data->value) + strlen(tok) + 1);
-          strcpy(newPointer, data->value);
+      case ' ': {
+        *movedBy += strlen(tok);
+        free((void *) tok);
+        break;
+      }
+      case ';': {
+        *movedBy += strlen(tok);
+        free((void *) tok);
+        proceed = 0;
+        break;
+      }
+      case '=': {
+        log_to_file("%s", "Switching to variable value\n");
+        parseFlag = TS_PARSE_VARIABLE_VALUE;
+        *movedBy += strlen(tok);
+        free((void *) tok);
+        break;
+      }
+      case ':': {
+        log_to_file("%s", "Switching to variable type\n");
+        parseFlag = TS_PARSE_VARIABLE_TYPE;
+        *movedBy += strlen(tok);
+        free((void *) tok);
+        break;
+      }
+      case ',': {
+        *movedBy += strlen(tok);
+        free((void *) tok);
+        break;
+      }
+      default: {
+        if (parseFlag == TS_PARSE_VARIABLE_VALUE) {
+          log_to_file("%s", "Setting value for local variable\n");
+          u_long size = TS_STRING_END + strlen(tok);
+          if (data->value) size += strlen(data->value);
+          char *newPointer = (char *) calloc(sizeof(char), size);
+          if (data->value != NULL) strcpy(newPointer, data->value);
+          if (data->value != NULL) free((void *) data->value);
           strcat(newPointer, tok);
-          free((void *) data->value);
           data->value = newPointer;
-
-          *movedBy += strlen(tok);
-          free((void *) tok);
+          log_to_file("    Local variable current value: '%s'\n", data->value);
+        } else if (parseFlag == TS_PARSE_VARIABLE_TYPE) {
+          log_to_file("%s", "Setting type for local variable\n");
+          u_long size = TS_STRING_END + strlen(tok);
+          if (data->type) size += strlen(data->type);
+          char *newPointer = (char *) calloc(sizeof(char), size);
+          if (data->type != NULL) strcpy(newPointer, data->type);
+          if (data->type != NULL) free((void *) data->type);
+          strcat(newPointer, tok);
+          data->type = newPointer;
+          log_to_file("    Local variable current type: '%s'\n", data->type);
+        } else {
+          ts_token_syntax_error("Unexpected token while parsing local variable\n", tsFile, token);
         }
+        break;
       }
-      break;
-    } else {
-      TS_put_back(tsParseData->stream, tok);
-      free((void *) tok);
-      break;
     }
   }
 }
@@ -72,7 +87,7 @@ void TS_parse_local_variable_body(TSFile *tsFile, TSParseData *tsParseData, TSPa
     ts_syntax_error("Unexpected end of variable", tsFile->file, tsParseData->line, tsParseData->character);
   } else {
     log_to_file("    local variable white token: '%s'\n", tok);
-    ts_log_position(tsFile->file, tsParseData->line, tsParseData->character);
+//    ts_log_position(tsFile->file, tsParseData->line, tsParseData->character);
   }
   (*movedBy) += strlen(tok);
   free((void *) tok);

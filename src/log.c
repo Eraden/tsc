@@ -170,6 +170,7 @@ void io_panic(const char *msg) {
 static void create_log_directory() {
   const int perm = S_IRWXU | S_IRWXG | S_IROTH;
 
+//  fprintf(stdout, "Creating log directory...\n");
   const int result = mkdir("./log", perm);
   switch (result) {
     case EACCES:
@@ -204,12 +205,12 @@ static void create_log_directory() {
 void init_log() {
   create_log_directory();
   FILE *file;
-  file = fopen("./log/tsc.log", "r");
+  file = fopen("./log/info.log", "r");
   if (file != NULL) {
     fclose(file);
     log_to_file("\n\n");
   } else {
-    file = fopen("./log/tsc.log", "w");
+    file = fopen("./log/info.log", "w");
     if (!file) {
       io_panic("Failed to open tsc.log for writing!\n");
     }
@@ -217,9 +218,9 @@ void init_log() {
     char *str = ctime(&t);
     fprintf(file, "%s\n", str);
     fclose(file);
-    file = fopen("./log/tsc.error.log", "w");
+    file = fopen("./log/error.log", "w");
     if (!file) {
-      io_panic("Failed to open tsc.error.log for writing!\n");
+      io_panic("Failed to open error.log for writing!\n");
     }
     fprintf(file, "%s\n", str);
     fclose(file);
@@ -227,9 +228,9 @@ void init_log() {
 }
 
 void log_to_file(char *msg, ...) {
-  FILE *file = fopen("./log/tsc.log", "a");
+  FILE *file = fopen("./log/info.log", "a");
   if (!file) {
-    io_panic("Failed to open tsc.log for appending!\n");
+    io_panic("Failed to open info.log for appending!\n");
   }
   va_list ap_file;
   va_start(ap_file, msg);
@@ -247,9 +248,9 @@ void log_to_file(char *msg, ...) {
 }
 
 void log_error(char *msg, ...) {
-  FILE *file = fopen("./log/tsc.error.log", "a");
+  FILE *file = fopen("./log/error.log", "a");
   if (!file) {
-    io_panic("Failed to open tsc.error.log for appending!\n");
+    io_panic("Failed to open error.log for appending!\n");
   }
   va_list ap;
   va_start(ap, msg);

@@ -1,5 +1,31 @@
 #include <tsc/output.h>
 
+// PRINT
+
+void
+__attribute__(( section("output-var")))
+TS_print_from_var(
+    const TSFile *__attribute__((__unused__)) tsFile,
+    const TSParserToken tsParserToken,
+    TSOutputSettings __attribute__((__weak__)) outputSettings
+) {
+  const u_long indent = outputSettings.indent;
+  const TSLocalVariableData *data = tsParserToken.data;
+  if (data->name == NULL) return;
+
+  for (u_long i = 0, l = indent; i < l; i++)
+    fprintf(outputSettings.stream, "%s", "  ");
+  fprintf(outputSettings.stream, "%s", "var ");
+  fprintf(outputSettings.stream, "%s", data->name);
+  if (data->value) {
+    fprintf(outputSettings.stream, "%s", " = ");
+    fprintf(outputSettings.stream, "%s", data->value);
+  }
+  fprintf(outputSettings.stream, "%s", ";\n");
+}
+
+// STRING
+
 const char *
 __attribute__(( section("output-var")))
 TS_string_from_var(

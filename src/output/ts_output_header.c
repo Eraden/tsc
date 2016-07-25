@@ -1,5 +1,7 @@
 #include <tsc/output.h>
 
+// STRING
+
 static const char *
 __attribute__(( visibility("hidden")))
 __attribute__(( section("output-header")))

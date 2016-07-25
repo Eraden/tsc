@@ -1,10 +1,54 @@
 #include <tsc/output.h>
 
+// PRINT
+
+static void
+__attribute(( visibility("hidden")))
+__attribute__(( section("output-else")))
+ts_print_for_else_body(
+    const TSFile *tsFile,
+    const TSParserToken *tsParserToken,
+    const TSOutputSettings outputSettings
+) {
+  for (u_long bodyIndex = 0; bodyIndex < (*tsParserToken).childrenSize; bodyIndex++) {
+    TSParserToken bodyToken = (*tsParserToken).children[bodyIndex];
+    TSOutputSettings settings = outputSettings;
+    settings.indent += 1;
+    TS_print_for_token(tsFile, bodyToken, settings);
+  }
+}
+
+void
+__attribute__(( section("output-else")))
+TS_print_for_else(
+    const TSFile *tsFile,
+    const TSParserToken tsParserToken,
+    TSOutputSettings outputSettings
+) {
+  const u_long indent = outputSettings.indent;
+
+  TS_print_indent(outputSettings.stream, indent);
+
+  fprintf(outputSettings.stream, "%s", "else {\n");
+  fflush(outputSettings.stream);
+
+  ts_print_for_else_body(tsFile, &tsParserToken, outputSettings);
+
+  TS_print_indent(outputSettings.stream, indent);
+
+  fprintf(outputSettings.stream, "%s", "}\n");
+}
+
+// STRING
+
 static const char *
 __attribute(( visibility("hidden")))
 __attribute__(( section("output-else")))
-ts_string_for_else_body(const TSFile *tsFile, const TSParserToken *tsParserToken,
-                        const TSOutputSettings outputSettings) {
+ts_string_for_else_body(
+    const TSFile *tsFile,
+    const TSParserToken *tsParserToken,
+    const TSOutputSettings outputSettings
+) {
   char *ifBody = NULL;
   for (u_long bodyIndex = 0; bodyIndex < (*tsParserToken).childrenSize; bodyIndex++) {
     TSParserToken bodyToken = (*tsParserToken).children[bodyIndex];

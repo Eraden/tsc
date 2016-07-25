@@ -134,9 +134,10 @@ TS_parse_function_arguments(
           argumentData->name = newPointer;
         } else if (parseFlag == TS_PARSE_FN_ARG_VALUE) {
           u_long size = strlen(tok) + 1;
-          if (argumentData->value != NULL) size += strlen(argumentData->value);
+          if (argumentData->value != NULL) size = size + strlen(argumentData->value) + strlen(" ");
           char *newPointer = (char *) calloc(sizeof(char), size);
           if (argumentData->value != NULL) strcpy(newPointer, argumentData->value);
+          if (argumentData->value != NULL) strcat(newPointer, " ");
           if (argumentData->value) free((void *) argumentData->value);
           strcat(newPointer, tok);
           argumentData->value = newPointer;
@@ -250,6 +251,12 @@ const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData) 
   token.children = NULL;
   token.childrenSize = 0;
   token.data = NULL;
+  TSFunctionData *functionData = calloc(sizeof(TSFunctionData), 1);
+  functionData->arguments = NULL;
+  functionData->argumentsSize = 0;
+  functionData->name = NULL;
+  functionData->returnType = NULL;
+  token.data = functionData;
 
   const char *tok;
 
@@ -265,19 +272,12 @@ const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData) 
   }
 
   tok = (const char *) TS_getToken(tsParseData->stream);
-  TSFunctionData *functionData = calloc(sizeof(TSFunctionData), 1);
-
-  functionData->arguments = NULL;
-  functionData->argumentsSize = 0;
-  functionData->name = NULL;
-  functionData->returnType = NULL;
 
   if (!TS_name_is_valid(tok)) {
     ts_token_syntax_error("Invalid function name", tsFile, &token);
   }
 
   movedBy += strlen(tok);
-  token.data = functionData;
   functionData->name = TS_clone_string(tok);
   free((void *) tok);
 

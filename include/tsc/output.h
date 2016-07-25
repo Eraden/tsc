@@ -4,7 +4,6 @@
 #include <tsc/sys.h>
 
 #define TS_SPREAD_PREFIX_SIZE 3
-#define TS_STRING_END sizeof(char)
 
 typedef struct sTSOutputSettings {
   u_long indent;
@@ -19,8 +18,22 @@ const char *
     __attribute__((__malloc__))
     TS_output_footer();
 
+void
+    TS_print_from_function(
+    const TSFile *tsFile,
+    const TSParserToken tsParserToken,
+    TSOutputSettings outputSettings
+);
+
 const char *
     TS_string_from_function(
+    const TSFile *tsFile,
+    const TSParserToken tsParserToken,
+    TSOutputSettings outputSettings
+);
+
+void
+    TS_print_for_if(
     const TSFile *tsFile,
     const TSParserToken tsParserToken,
     TSOutputSettings outputSettings
@@ -33,8 +46,22 @@ const char *
     TSOutputSettings outputSettings
 );
 
+void
+    TS_print_from_var(
+    const TSFile *tsFile,
+    const TSParserToken tsParserToken,
+    TSOutputSettings outputSettings
+);
+
 const char *
     TS_string_from_var(
+    const TSFile *tsFile,
+    const TSParserToken tsParserToken,
+    TSOutputSettings outputSettings
+);
+
+void
+    TS_print_for_token(
     const TSFile *tsFile,
     const TSParserToken tsParserToken,
     TSOutputSettings outputSettings
@@ -47,6 +74,13 @@ const char *
     TSOutputSettings outputSettings
 );
 
+void
+    ts_print_for_return(
+    const TSFile *tsFile,
+    const TSParserToken tsParserToken,
+    TSOutputSettings outputSettings
+);
+
 const char *
     ts_string_for_return(
     const TSFile *tsFile,
@@ -54,8 +88,22 @@ const char *
     TSOutputSettings outputSettings
 );
 
+void
+    TS_print_for_else(
+    const TSFile *tsFile,
+    const TSParserToken tsParserToken,
+    TSOutputSettings outputSettings
+);
+
 const char *
     TS_string_for_else(
+    const TSFile *tsFile,
+    const TSParserToken tsParserToken,
+    TSOutputSettings outputSettings
+);
+
+void
+    TS_print_for_class(
     const TSFile *tsFile,
     const TSParserToken tsParserToken,
     TSOutputSettings outputSettings
@@ -80,3 +128,5 @@ __attribute__((__used__))
     const TSFile *tsFile,
     FILE *stream
 );
+
+void TS_print_indent(FILE *stream, const u_long indent);

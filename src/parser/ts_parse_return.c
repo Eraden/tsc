@@ -28,24 +28,25 @@ const TSParserToken TS_parse_return(TSFile *tsFile, TSParseData *tsParseData) {
           free((void *) tok);
           break;
         }
+        case '\n': {
+          movedBy += strlen(tok);
+          tsParseData->position += movedBy;
+          tsParseData->line += 1;
+          tsParseData->character = 0;
+          movedBy = 0;
+          break;
+        }
         case ';':
-        case '\n':
         {
           proceed = 0;
-          movedBy += strlen(tok);
-          free((void *) tok);
+          TS_put_back(tsParseData->stream, tok);
           break;
         }
         default:
         {
           tsParseData->token = tok;
           TSParserToken t = TS_parse_ts_token(tsFile, tsParseData);
-          TSParserToken *newPointer = (TSParserToken *) calloc(sizeof(TSParserToken), token.childrenSize + 1);
-          if (token.children != NULL) memcpy(newPointer, token.children, sizeof(TSParserToken) * token.childrenSize);
-          if (token.children) free(token.children);
-          token.children = newPointer;
-          token.children[token.childrenSize] = t;
-          token.childrenSize += 1;
+          TS_push_child(&token, t);
           break;
         }
       }

@@ -5,6 +5,7 @@
 
 #define TS_TOKEN_BEGIN(token) log_to_file("-> parsing as %s\n", token);
 #define TS_TOKEN_END(token) log_to_file("-> end %s\n", token);
+#define TS_STRING_END sizeof(char)
 
 typedef struct sTSParseData TSParseData;
 typedef struct sTSFunctionData TSFunctionData;
@@ -50,6 +51,12 @@ typedef enum sTSClassParseFlag {
   TS_PARSE_CLASS_MEMBER_METHOD_BODY = 0x4,
   TS_PARSE_CLASS_MEMBER_METHOD_RETURN_TYPE = 0x5,
 } __attribute__((__packed__)) TSClassParseFlag;
+
+typedef enum sTSVariableParseFlag {
+  TS_PARSE_VARIABLE_NAME = 0x0,
+  TS_PARSE_VARIABLE_TYPE = 0x1,
+  TS_PARSE_VARIABLE_VALUE = 0x2,
+} __attribute__((__packed__)) TSVariableParseFlag;
 
 typedef enum eTSVisibility {
   TS_VISIBILITY_SCOPE = 0x0,
@@ -125,6 +132,8 @@ void TS_put_back(FILE *stream, const char *value);
 
 unsigned char TS_name_is_valid(const char *name);
 
+void TS_push_child(TSParserToken *token, TSParserToken child);
+
 const TSParserToken TS_parse_var(TSFile *tsFile, TSParseData *tsParseData);
 
 const TSParserToken TS_parse_let(TSFile *tsFile, TSParseData *tsParseData);
@@ -161,6 +170,8 @@ TSParserToken TS_parse_ts_token(TSFile *tsFile, TSParseData *data);
 
 volatile const char *TS_getToken(FILE *stream) __attribute__((__malloc__));
 
+const char *TS_clone_string(const char *string) __attribute__((__malloc__));
+
 const TSFile TS_parse_file(const char *file);
 
-const char *TS_clone_string(const char *string) __attribute__((__malloc__));
+const TSFile TS_parse_stream(const char *file, FILE *stream);

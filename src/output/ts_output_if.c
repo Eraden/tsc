@@ -1,8 +1,68 @@
 #include <tsc/output.h>
 
+// PRINT
+
+static void
+__attribute(( visibility("hidden")))
+__attribute__(( section("output-if")))
+ts_print_for_if_body(
+    const TSFile *tsFile,
+    const TSParserToken *tsParserToken,
+    const TSOutputSettings outputSettings
+) {
+  for (u_long bodyIndex = 0; bodyIndex < (*tsParserToken).childrenSize; bodyIndex++) {
+    TSParserToken bodyToken = (*tsParserToken).children[bodyIndex];
+    TSOutputSettings settings = outputSettings;
+    settings.indent += 1;
+    TS_print_for_token(tsFile, bodyToken, settings);
+  }
+}
+
+static void
+__attribute(( visibility("hidden")))
+__attribute__(( section("output-if")))
+ts_print_for_if_condition(
+    const TSFile *__attribute__((__unused__)) tsFile,
+    const TSIfData *data,
+    const TSOutputSettings outputSettings
+) {
+  for (u_long conditionIndex = 0; conditionIndex < data->conditionsSize; conditionIndex++) {
+    const TSParserToken conditionToken = data->conditions[conditionIndex];
+    const char *value = (char *) conditionToken.data;
+    fprintf(outputSettings.stream, "%s", value);
+  }
+}
+
+void
+TS_print_for_if(
+    const TSFile *tsFile,
+    const TSParserToken tsParserToken,
+    TSOutputSettings outputSettings
+) {
+  const u_long indent = outputSettings.indent;
+  const TSIfData *data = tsParserToken.data;
+  if (!data) return;
+
+  for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
+    fprintf(outputSettings.stream, "%s", "  ");
+  fprintf(outputSettings.stream, "%s", "if (");
+
+  ts_print_for_if_condition(tsFile, data, outputSettings);
+
+  fprintf(outputSettings.stream, "%s", ") {\n");
+
+  ts_print_for_if_body(tsFile, &tsParserToken, outputSettings);
+
+  for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
+    fprintf(outputSettings.stream, "%s", "  ");
+  fprintf(outputSettings.stream, "%s", "}\n");
+}
+
+// STRING
+
 static const char *
-__attribute(( visibility("hidden") ))
-__attribute__(( section("output-if") ))
+__attribute(( visibility("hidden")))
+__attribute__(( section("output-if")))
 ts_string_for_if_body(
     const TSFile *tsFile,
     const TSParserToken *tsParserToken,
@@ -33,8 +93,8 @@ ts_string_for_if_body(
 }
 
 static const char *
-__attribute(( visibility("hidden") ))
-__attribute__(( section("output-if") ))
+__attribute(( visibility("hidden")))
+__attribute__(( section("output-if")))
 ts_string_for_if_condition(
     const TSFile *__attribute__((__unused__)) tsFile,
     const TSIfData *data
