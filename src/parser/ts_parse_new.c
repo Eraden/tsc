@@ -1,14 +1,16 @@
-#import <tsc/parser.h>
+#include <tsc/parser.h>
 
-/**
- * TODO implement
- */
-const TSParserToken TS_parse_export(TSFile *__attribute__((__unused__)) tsFile, TSParseData *tsParseData) {
-  TS_TOKEN_BEGIN("export");
+const TSParserToken
+TS_parse_new(
+    TSFile __attribute((__unused__)) *tsFile,
+    TSParseData *tsParseData
+) {
+  TS_TOKEN_BEGIN("let");
+
   u_long movedBy = strlen(tsParseData->token);
 
   TSParserToken token;
-  token.tokenType = TS_EXPORT;
+  token.tokenType = TS_NEW;
   token.position = tsParseData->position;
   token.character = tsParseData->character;
   token.line = tsParseData->line;
@@ -31,14 +33,7 @@ const TSParserToken TS_parse_export(TSFile *__attribute__((__unused__)) tsFile, 
         break;
       }
       case '\n': {
-        if (token.childrenSize == 0) {
-          ts_token_syntax_error("Expecting expression after `export` keyword. Found new line.", tsFile, &token);
-        } else {
-          proceed = 0;
-          TS_put_back(tsParseData->stream, tok);
-          free((void *) tok);
-          break;
-        }
+        ts_token_syntax_error("Expecting class after `new` keyword. Found new line.", tsFile, &token);
       }
       case ';': {
         proceed = 0;
@@ -47,20 +42,13 @@ const TSParserToken TS_parse_export(TSFile *__attribute__((__unused__)) tsFile, 
         break;
       }
       default: {
-        if (token.childrenSize == 1) {
-          TS_put_back(tsParseData->stream, tok);
-          proceed = 0;
-          break;
-        }
-
-        tsParseData->token = tok;
-        tsParseData->character += movedBy;
-        tsParseData->position += movedBy;
-        movedBy = 0;
-        TSParserToken child = TS_parse_ts_token(tsFile, tsParseData);
-
-        TS_push_child(&token, child);
-
+        u_long size = strlen(tok) + TS_STRING_END;
+        if (token.data != NULL) size += strlen(token.data);
+        char *newPointer = (char *) calloc(sizeof(char), size);
+        if (token.data != NULL) strcpy(newPointer, token.data);
+        if (token.data != NULL) free(token.data);
+        strcat(newPointer, tok);
+        token.data = newPointer;
         free((void *) tok);
         break;
       }
@@ -69,6 +57,7 @@ const TSParserToken TS_parse_export(TSFile *__attribute__((__unused__)) tsFile, 
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
-  TS_TOKEN_END("export");
+
+  TS_TOKEN_END("let");
   return token;
 }

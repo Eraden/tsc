@@ -25,12 +25,29 @@ TS_parse_extends(
     if (tok == NULL) {
       ts_token_syntax_error("Missing parent class name", tsFile, &token);
     }
-    if (tok[0] != ' ') {
-      if (!TS_name_is_valid(tok)) {
-        ts_token_syntax_error("Invalid parent class name", tsFile, &token);
+    switch (tok[0]) {
+      case ' ': {
+        movedBy += strlen(tok);
+        free((void *) tok);
+        break;
       }
-      token.data = (void *) TS_clone_string(tok);
-      proceed = 0;
+      case '\n': {
+        movedBy += strlen(tok);
+        free((void *) tok);
+        tsParseData->position += movedBy;
+        tsParseData->character = 0;
+        tsParseData->line += 1;
+        movedBy = 0;
+        break;
+      }
+      default: {
+        if (!TS_name_is_valid(tok)) {
+          ts_token_syntax_error("Invalid parent class name", tsFile, &token);
+        }
+        token.data = (void *) TS_clone_string(tok);
+        proceed = 0;
+        break;
+      }
     }
   }
 

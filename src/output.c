@@ -68,6 +68,9 @@ TS_print_for_token(
     case TS_IMPLEMENTS: {
       break;
     }
+    case TS_NEW: {
+      break;
+    }
     case TS_CLASS_FIELD:
       break;
     case TS_CLASS_METHOD:
@@ -158,6 +161,8 @@ TS_string_for_token(
       return NULL;
     case TS_CLASS_METHOD:
       return NULL;
+    case TS_NEW:
+      return NULL;
     case TS_UNKNOWN:
       return NULL;
   }
@@ -169,6 +174,11 @@ TS_print_stream(
     const TSFile *tsFile,
     FILE *stream
 ) {
+
+  if (tsFile->tokens == NULL) {
+    return;
+  }
+
   TSOutputSettings outputSettings;
   outputSettings.indent = 0;
   outputSettings.stream = stream;
@@ -199,6 +209,10 @@ TS_generate_string_from_file(
   outputSettings.indent = 0;
   outputSettings.stream = NULL;
   char *string = NULL;
+
+  if (tsFile->tokens == NULL) {
+    return NULL;
+  }
 
   const char *header = TS_output_header();
 

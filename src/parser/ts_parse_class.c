@@ -114,7 +114,7 @@ TS_parse_class_body(
   while (proceed) {
     tok = (const char *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error("Unexpected end of class header", tsFile, token);
+      ts_token_syntax_error("Unexpected end of class body", tsFile, token);
     }
 
     switch (tok[0]) {

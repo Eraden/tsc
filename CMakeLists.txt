@@ -24,6 +24,7 @@ SET(
     src/parser/ts_parse_import.c
     src/parser/ts_parse_export.c
     src/parser/ts_parse_scope.c
+    src/parser/ts_parse_new.c
     src/parser.c
 )
 
@@ -58,6 +59,8 @@ SET(
     tests/parser/functions.c
     tests/parser/if_conditions.c
     tests/parser/else_conditions.c
+    tests/parser/return_keyword.c
+    tests/parser/parse_exports.c
 )
 
 SET(

@@ -25,7 +25,7 @@ TS_print_for_class_method(
   fprintf(outputSettings.stream, "%s", "value: function () {\n");
   fflush(outputSettings.stream);
 
-  TS_print_indent(outputSettings.stream, outputSettings.indent);
+  TS_print_indent(outputSettings.stream, methodIndent);
 
   fprintf(outputSettings.stream, "%s", "}\n");
   fflush(outputSettings.stream);
@@ -69,12 +69,25 @@ TS_print_for_class_field(
 
   fprintf(outputSettings.stream, "%s", "get: function () { return this[SYMBOL_FOR_");
   fflush(outputSettings.stream);
+
   fprintf(outputSettings.stream, "%s", fieldData->name);
   fflush(outputSettings.stream);
-  fprintf(outputSettings.stream, "%s", "] || ");
+
+  fprintf(outputSettings.stream, "%s", "] == void(0) ? ");
   fflush(outputSettings.stream);
+
   fprintf(outputSettings.stream, "%s", fieldData->value ? fieldData->value : "null");
   fflush(outputSettings.stream);
+
+  fprintf(outputSettings.stream, "%s", " : this[SYMBOL_FOR_");
+  fflush(outputSettings.stream);
+
+  fprintf(outputSettings.stream, "%s", fieldData->name);
+  fflush(outputSettings.stream);
+
+  fprintf(outputSettings.stream, "%s", "]");
+  fflush(outputSettings.stream);
+
   fprintf(outputSettings.stream, "%s", "; },\n");
   fflush(outputSettings.stream);
 
@@ -271,8 +284,11 @@ TS_string_for_class_field(
                  (fieldIndent * 2) +
                  strlen("get: function () { return this[SYMBOL_FOR_") +
                  strlen(fieldData->name) +
-                 strlen("] || ") +
+                 strlen("] == void(0) ? ") +
                  strlen(fieldData->value ? fieldData->value : "null") +
+                 strlen(" : this[SYMBOL_FOR_") +
+                 strlen(fieldData->name) +
+                 strlen("]") +
                  strlen("; },\n") +
                  (fieldIndent * 2) +
                  strlen("set: function (value) { return this[SYMBOL_FOR_") +
@@ -299,8 +315,11 @@ TS_string_for_class_field(
     strcat(fieldString, "  ");
   strcat(fieldString, "get: function () { return this[SYMBOL_FOR_");
   strcat(fieldString, fieldData->name);
-  strcat(fieldString, "] || ");
+  strcat(fieldString, "] == void(0) ? ");
   strcat(fieldString, fieldData->value ? fieldData->value : "null");
+  strcat(fieldString, " : this[SYMBOL_FOR_");
+  strcat(fieldString, fieldData->name);
+  strcat(fieldString, "]");
   strcat(fieldString, "; },\n");
 
   // setter

@@ -5,6 +5,8 @@
 #include "./parser/functions.h"
 #include "./parser/if_conditions.h"
 #include "./parser/else_conditions.h"
+#include "./parser/return_keyword.h"
+#include "./parser/parse_exports.h"
 
 Suite *class_suite(void) {
   Suite *suite = suite_create("Parser");
@@ -14,11 +16,14 @@ Suite *class_suite(void) {
   parse_if_conditions_suite(suite);
   parse_else_conditions_suite(suite);
   parse_classes_suite(suite);
+  parse_return_keyword_suite(suite);
+  parse_exports_suite(suite);
   return suite;
 }
 
 
 int main(void) {
+  TS_set_log_level(TS_VERBOSITY_OFF);
   init_log();
 
 //  initFakeFile();

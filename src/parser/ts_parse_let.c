@@ -1,7 +1,8 @@
 #include <tsc/parser/ts_variable.h>
 
 const TSParserToken TS_parse_let(TSFile *tsFile, TSParseData *tsParseData) {
-  log_to_file("-> parsing as %s\n", "let");
+  TS_TOKEN_BEGIN("let");
+
   u_long movedBy = strlen(tsParseData->token);
 
   TSParserToken token;
@@ -19,6 +20,6 @@ const TSParserToken TS_parse_let(TSFile *tsFile, TSParseData *tsParseData) {
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
 
-  log_to_file("-> end %s\n", "let");
+  TS_TOKEN_END("let");
   return token;
 }

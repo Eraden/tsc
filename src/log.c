@@ -203,6 +203,8 @@ static void create_log_directory() {
 }
 
 void init_log() {
+  if (TS_check_log_level(TS_VERBOSITY_OFF) == 0) return;
+
   create_log_directory();
   FILE *file;
   file = fopen("./log/info.log", "r");
@@ -228,6 +230,8 @@ void init_log() {
 }
 
 void log_to_file(char *msg, ...) {
+  if (TS_check_log_level(TS_VERBOSITY_DEBUG) == 0) return;
+
   FILE *file = fopen("./log/info.log", "a");
   if (!file) {
     io_panic("Failed to open info.log for appending!\n");
@@ -238,16 +242,17 @@ void log_to_file(char *msg, ...) {
   va_end(ap_file);
   fclose(file);
 
-#ifdef TS_DEBUG
+  if (TS_check_log_level(TS_VERBOSITY_LOG) == 0) return;
   file = stdout;
   va_list ap_stdout;
   va_start(ap_stdout, msg);
   vfprintf(file, msg, ap_stdout);
   va_end(ap_stdout);
-#endif
 }
 
 void log_error(char *msg, ...) {
+  if (TS_check_log_level(TS_VERBOSITY_ERROR) == 0) return;
+
   FILE *file = fopen("./log/error.log", "a");
   if (!file) {
     io_panic("Failed to open error.log for appending!\n");

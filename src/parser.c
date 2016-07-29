@@ -10,7 +10,6 @@ TS_clone_string(
     const char *string
 ) {
   char *clone = (char *) calloc(sizeof(char), sizeof(string) + 1);
-  clone[sizeof(string)] = 0;
   strcpy(clone, string);
   return clone;
 }
@@ -32,6 +31,7 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     TS_SCOPE, "{", TS_parse_scope,
     TS_EXTENDS, "extends", TS_parse_extends,
     TS_IMPLEMENTS, "implements", TS_parse_implements,
+    TS_NEW, "new", TS_parse_new,
 };
 
 void TS_put_back(FILE *stream, const char *value) {
@@ -246,19 +246,17 @@ volatile const char *TS_getToken(FILE *stream) {
 }
 
 const TSFile
-TS_parse_file(
-    const char *file
-) {
-  FILE *stream = fopen(file, "r");
+TS_parse_file() {
+  FILE *stream = TS_stream_to_parse;
   if (stream == NULL) {
     TSFile tsFile;
     tsFile.tokens = NULL;
     tsFile.tokensSize = 0;
-    tsFile.file = file;
+    tsFile.file = TS_file_name;
     return tsFile;
   }
 
-  return TS_parse_stream(file, stream);
+  return TS_parse_stream(TS_file_name, stream);
 }
 
 const TSFile
