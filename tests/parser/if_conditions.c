@@ -13,6 +13,8 @@ START_TEST(parse_empty_if_condition)
 
     ck_assert_ptr_ne(data, NULL);
     ck_assert_int_eq(data->conditionsSize, 1);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -29,6 +31,8 @@ START_TEST(parse_empty_if_condition_with_brackets)
 
     ck_assert_ptr_ne(data, NULL);
     ck_assert_int_eq(data->conditionsSize, 1);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -70,6 +74,8 @@ START_TEST(parse_empty_if_condition_conditions)
 
     ck_assert_ptr_ne(trueToken.data, NULL);
     ck_assert_str_eq(trueToken.data, "true");
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -89,6 +95,8 @@ START_TEST(parse_if_condition_with_body)
 
     const TSParserToken returnToken = token.children[0];
     ck_assert(returnToken.tokenType == TS_RETURN);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -108,6 +116,8 @@ START_TEST(parse_if_condition_without_brackets_with_body)
 
     const TSParserToken returnToken = token.children[0];
     ck_assert(returnToken.tokenType == TS_RETURN);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 

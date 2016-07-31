@@ -13,6 +13,7 @@ TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token,
     if (tok == NULL) {
       ts_token_syntax_error("Unexpected end of if body while looking for brackets", tsFile, token);
     }
+
     switch (tok[0]) {
       case ' ': {
         *movedBy += strlen(tok);
@@ -21,6 +22,8 @@ TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token,
       }
       case '\n': {
         *movedBy += strlen(tok);
+        free((void *) tok);
+
         tsParseData->position += *movedBy;
         tsParseData->line += 1;
         tsParseData->character = 0;
@@ -29,14 +32,17 @@ TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token,
         break;
       }
       case ';': {
+        *movedBy += strlen(tok);
+        free((void *) tok);
         if (termination == TS_ENDS_WITHOUT_BRACKET) {
           return;
         }
       }
       case '{': {
-        termination = TS_ENDS_WITH_BRACKET;
         *movedBy += strlen(tok);
         free((void *) tok);
+
+        termination = TS_ENDS_WITH_BRACKET;
         proceed = 0;
         break;
       }
@@ -44,6 +50,8 @@ TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token,
         termination = TS_ENDS_WITHOUT_BRACKET;
         TS_put_back(tsParseData->stream, tok);
         proceed = 0;
+
+        free((void *) tok);
         break;
       }
     }
@@ -176,10 +184,14 @@ TS_parse_if_condition(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *t
       }
       default: {
         TSParserToken t;
+        t.tokenType = TS_UNKNOWN;
+        t.visibility = TS_VISIBILITY_PUBLIC;
         t.position = tsParseData->position + *movedBy;
         t.character = tsParseData->character + *movedBy;
         t.line = tsParseData->line;
         t.data = (void *) TS_clone_string(tok);
+        t.childrenSize = 0;
+        t.children = NULL;
 
         TSParserToken *newPointer = (TSParserToken *) calloc(sizeof(TSParserToken), data->conditionsSize + 1);
         if (data->conditions != NULL)
@@ -221,4 +233,19 @@ const TSParserToken TS_parse_if(TSFile *tsFile, TSParseData *tsParseData) {
   tsParseData->character += movedBy;
   TS_TOKEN_END("if")
   return token;
+}
+
+void TS_free_if(const TSParserToken token) {
+  TS_free_children(token);
+
+  TSIfData *data = token.data;
+  if (data == NULL) return;
+
+  if (data->conditions) {
+    for (u_long conditionIndex = 0; conditionIndex < data->conditionsSize; conditionIndex++) {
+      TS_free_tsToken(data->conditions[conditionIndex]);
+    }
+    free(data->conditions);
+  }
+  free(data);
 }

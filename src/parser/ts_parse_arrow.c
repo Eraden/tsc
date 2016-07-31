@@ -20,3 +20,7 @@ const TSParserToken TS_parse_arrow(TSFile *__attribute__((__unused__)) tsFile, T
   log_to_file("-> end %s\n", "arrow");
   return token;
 }
+
+void TS_free_arrow(const TSParserToken token) {
+  // TODO
+}

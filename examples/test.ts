@@ -1,7 +1,12 @@
 {
+  // inline comment
   if (1) { return 1; }
 }
 
+/**
+ * Variables
+ * @type {number}
+ */
 let value = 1;
 const stale = 2;
 var variable = 3;

@@ -4,7 +4,7 @@
  * TODO implement
  */
 const TSParserToken TS_parse_default(TSFile *__attribute__((__unused__)) tsFile, TSParseData *tsParseData) {
-  log_to_file("-> parsing as %s\n", "default");
+  TS_TOKEN_BEGIN("default");
   u_long movedBy = strlen(tsParseData->token);
 
   TSParserToken token;
@@ -19,6 +19,10 @@ const TSParserToken TS_parse_default(TSFile *__attribute__((__unused__)) tsFile,
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
-  log_to_file("-> end %s\n", "default");
+  TS_TOKEN_END("default");
   return token;
+}
+
+void TS_free_default(const TSParserToken token) {
+  // TODO
 }

@@ -25,7 +25,7 @@ typedef enum eTSTokenType {
   TS_IF = 0x7,
   TS_ELSE = 0x8,
   TS_RETURN = 0x9,
-  TS_COMPONENT = 0x10,
+  TS_DECORATOR = 0x10,
   TS_IMPORT = 0x11,
   TS_EXPORT = 0x12,
   TS_DEFAULT = 0x13,
@@ -35,6 +35,8 @@ typedef enum eTSTokenType {
   TS_NEW = 0x17,
   TS_CLASS_FIELD = 0x18,
   TS_CLASS_METHOD = 0x19,
+  TS_INLINE_COMMENT = 0x20,
+  TS_MULTILINE_COMMENT = 0x21,
   TS_UNKNOWN = 0x0,
 } __attribute__ ((__packed__)) TSTokenType;
 
@@ -54,16 +56,18 @@ typedef enum sTSClassParseFlag {
 } __attribute__((__packed__)) TSClassParseFlag;
 
 typedef enum sTSVariableParseFlag {
-  TS_PARSE_VARIABLE_NAME = 0x0,
-  TS_PARSE_VARIABLE_TYPE = 0x1,
-  TS_PARSE_VARIABLE_VALUE = 0x2,
+  TS_PARSE_VARIABLE_NONE = 0x0,
+  TS_PARSE_VARIABLE_NAME = 0x1,
+  TS_PARSE_VARIABLE_TYPE = 0x2,
+  TS_PARSE_VARIABLE_VALUE = 0x3,
 } __attribute__((__packed__)) TSVariableParseFlag;
 
 typedef enum eTSVisibility {
-  TS_VISIBILITY_SCOPE = 0x0,
-  TS_VISIBILITY_PRIVATE = 0x1,
-  TS_VISIBILITY_PROTECTED = 0x2,
-  TS_VISIBILITY_PUBLIC = 0x3
+  TS_VISIBILITY_NONE = 0x0,
+  TS_VISIBILITY_SCOPE = 0x1,
+  TS_VISIBILITY_PRIVATE = 0x2,
+  TS_VISIBILITY_PROTECTED = 0x3,
+  TS_VISIBILITY_PUBLIC = 0x4
 } __attribute__ ((__packed__)) TSVisibility;
 
 typedef enum eTSConditionBodyTermination {
@@ -77,7 +81,7 @@ typedef struct sTSKeyword {
   TS_token_build_fn callback;
 } TSKeyword;
 
-#define KEYWORDS_SIZE 17
+#define KEYWORDS_SIZE 19
 
 typedef struct sTSLocalVariableData {
   const char *name;
@@ -135,46 +139,77 @@ unsigned char TS_name_is_valid(const char *name);
 
 void TS_push_child(TSParserToken *token, TSParserToken child);
 
+void TS_free_unknown(TSParserToken token);
+
 const TSParserToken TS_parse_var(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_var(TSParserToken token);
 
 const TSParserToken TS_parse_let(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_let(TSParserToken token);
 
 const TSParserToken TS_parse_const(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_const(TSParserToken token);
 
 const TSParserToken TS_parse_class(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_class(const TSParserToken token);
+void TS_free_class_field(const TSParserToken token);
+void TS_free_class_method(const TSParserToken token);
 
 const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_function(const TSParserToken token);
 
 const TSParserToken TS_parse_arrow(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_arrow(const TSParserToken token);
 
 const TSParserToken TS_parse_if(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_if(const TSParserToken token);
 
 const TSParserToken TS_parse_else(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_else(const TSParserToken token);
 
 const TSParserToken TS_parse_decorator(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_decorator(const TSParserToken token);
 
 const TSParserToken TS_parse_return(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_return(const TSParserToken token);
 
 const TSParserToken TS_parse_import(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_import(const TSParserToken token);
 
 const TSParserToken TS_parse_export(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_export(const TSParserToken token);
 
 const TSParserToken TS_parse_default(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_default(const TSParserToken token);
 
 const TSParserToken TS_parse_scope(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_scope(const TSParserToken token);
 
 const TSParserToken TS_parse_extends(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_extends(const TSParserToken token);
 
 const TSParserToken TS_parse_implements(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_implements(const TSParserToken token);
 
 const TSParserToken TS_parse_new(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_new(const TSParserToken token);
+
+const TSParserToken TS_parse_inline_comment(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_inline_comment(const TSParserToken token);
+
+const TSParserToken TS_parse_multiline_comment(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_multiline_comment(const TSParserToken token);
 
 TSParserToken TS_parse_ts_token(TSFile *tsFile, TSParseData *data);
+void TS_free_tsToken(const TSParserToken token);
+void TS_free_children(const TSParserToken token);
 
 volatile const char *TS_getToken(FILE *stream) __attribute__((__malloc__));
 
 const char *TS_clone_string(const char *string) __attribute__((__malloc__));
 
-const TSFile TS_parse_file();
+const TSFile TS_parse_file(const char *fileName);
 
 const TSFile TS_parse_stream(const char *file, FILE *stream);
+
+void TS_free_tsFile(const TSFile tsFile);

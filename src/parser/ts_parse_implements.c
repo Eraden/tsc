@@ -24,3 +24,7 @@ TS_parse_implements(
   TS_TOKEN_END("implements");
   return token;
 }
+
+void TS_free_implements(const TSParserToken token) {
+  // TODO
+}

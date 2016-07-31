@@ -72,3 +72,7 @@ const TSParserToken TS_parse_export(TSFile *__attribute__((__unused__)) tsFile, 
   TS_TOKEN_END("export");
   return token;
 }
+
+void TS_free_export(const TSParserToken token) {
+  TS_free_children(token);
+}

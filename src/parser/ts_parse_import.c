@@ -22,3 +22,7 @@ const TSParserToken TS_parse_import(TSFile *__attribute__((__unused__)) tsFile, 
   log_to_file("-> end %s\n", "import");
   return token;
 }
+
+void TS_free_import(const TSParserToken token) {
+  // TODO
+}

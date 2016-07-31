@@ -130,3 +130,4 @@ __attribute__((__used__))
 );
 
 void TS_print_indent(FILE *stream, const u_long indent);
+void TS_push_indent_string(char *string, const u_long indent);

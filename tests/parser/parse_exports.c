@@ -17,6 +17,8 @@ START_TEST(parse_export)
 
     ck_assert_ptr_ne(data, NULL);
     ck_assert_str_eq(data->name, "A");
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 

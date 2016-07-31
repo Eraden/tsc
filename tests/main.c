@@ -7,6 +7,9 @@
 #include "./parser/else_conditions.h"
 #include "./parser/return_keyword.h"
 #include "./parser/parse_exports.h"
+#include "parser/inline_comment.h"
+#include "parser/multiline_comment.h"
+#include "parser/new_keyword.h"
 
 Suite *class_suite(void) {
   Suite *suite = suite_create("Parser");
@@ -18,6 +21,9 @@ Suite *class_suite(void) {
   parse_classes_suite(suite);
   parse_return_keyword_suite(suite);
   parse_exports_suite(suite);
+  parse_inline_comment_suite(suite);
+  parse_multiline_comment_suite(suite);
+  parse_new_suite(suite);
   return suite;
 }
 
@@ -26,15 +32,6 @@ int main(void) {
   TS_set_log_level(TS_VERBOSITY_OFF);
   init_log();
 
-//  initFakeFile();
-//  fprintf(fakeFile, "%s\n", "Hello world");
-//  char c;
-//  printf("Fake file buffer: ");
-//  int i = 0;
-//  while(!feof(fakeFile)) { if (i++ > 100) break; c = (char) fgetc(fakeFile); if (c == 0) break; printf("%c", c); }
-//  printf("\n");
-//  fclose(fakeFile);
-
   Suite *s;
   SRunner *sr;
   int number_failed = 0;
@@ -42,7 +39,7 @@ int main(void) {
   s = class_suite();
   sr = srunner_create(s);
 
-  srunner_run_all(sr, CK_VERBOSE);
+  srunner_run_all(sr, CK_NORMAL);
   number_failed += srunner_ntests_failed(sr);
   srunner_free(sr);
 

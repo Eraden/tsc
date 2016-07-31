@@ -20,14 +20,12 @@
 #include <sys/stat.h>
 #endif
 
-#define SYNTAX_ERROR { exit(2); }
+#define TS_PARSE_FAILURE_CODE 4
 
 const unsigned int TS_VERSION_MAJOR;
 const unsigned int TS_VERSION_MINOR;
 const unsigned int TS_VERSION_PATCH;
-FILE *TS_stream_to_parse;
 FILE *TS_output_stream;
-const char *TS_file_name;
 
 struct sTSFile;
 struct sTSParserToken;
@@ -40,6 +38,11 @@ typedef enum eTSVerbosity {
   TS_VERBOSITY_INFO = 0x4,
 } __attribute__((__packed__)) TSVerbosity;
 
+typedef struct sTSParserSettings {
+  const char *fileName;
+  FILE *stream;
+} TSParserSettings;
+
 void TS_set_log_level(TSVerbosity verbosity);
 unsigned char TS_check_log_level(TSVerbosity verbosity);
 
@@ -47,4 +50,4 @@ void ts_syntax_error(const char *msg, const char *file, const u_long character, 
 void ts_token_syntax_error(const char *msg, const struct sTSFile *tsFile, const struct sTSParserToken *token) __attribute__((noreturn));
 void ts_log_position(const char *file, const u_long character, const u_long line);
 
-void TS_parse_arguments(int argc, const char **argv);
+const TSParserSettings TS_parse_arguments(int argc, const char **argv);

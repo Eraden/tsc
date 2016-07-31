@@ -10,6 +10,8 @@ START_TEST(parse_empty_return)
 
     ck_assert_int_eq(returnToken.childrenSize, 0);
     ck_assert_ptr_eq(returnToken.children, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -28,6 +30,8 @@ START_TEST(parse_return_number)
     ck_assert(child.tokenType == TS_UNKNOWN);
     ck_assert_ptr_ne(child.data, NULL);
     ck_assert_str_eq(child.data, "1");
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -65,6 +69,8 @@ START_TEST(parse_return_true)
     ck_assert(child.tokenType == TS_UNKNOWN);
     ck_assert_ptr_ne(child.data, NULL);
     ck_assert_str_eq(child.data, "true");
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -83,6 +89,8 @@ START_TEST(parse_return_false)
     ck_assert(child.tokenType == TS_UNKNOWN);
     ck_assert_ptr_ne(child.data, NULL);
     ck_assert_str_eq(child.data, "false");
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -101,6 +109,8 @@ START_TEST(parse_return_new_object)
     ck_assert(child.tokenType == TS_NEW);
     ck_assert_ptr_ne(child.data, NULL);
     ck_assert_str_eq(child.data, "Object");
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 

@@ -2,11 +2,13 @@
 #include <tsc/output.h>
 
 int main(int argc, const char **argv) {
-  TS_parse_arguments(argc, argv);
+  TSParserSettings settings = TS_parse_arguments(argc, argv);
 
   init_log();
 
-  TSFile tsFile = TS_parse_file();
+  TSFile tsFile = TS_parse_stream(settings.fileName, settings.stream);
+
+  fclose(settings.stream);
 
   fprintf(stdout, "\n// File: %s\n\n", tsFile.file);
 
@@ -15,5 +17,8 @@ int main(int argc, const char **argv) {
   } else {
     TS_print_stream(&tsFile, stdout);
   }
+
+  TS_free_tsFile(tsFile);
+
   return 0;
 }

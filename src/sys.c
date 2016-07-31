@@ -4,11 +4,9 @@
 const unsigned int TS_VERSION_MAJOR = 0;
 const unsigned int TS_VERSION_MINOR = 0;
 const unsigned int TS_VERSION_PATCH = 1;
-FILE *TS_stream_to_parse = NULL;
 FILE *TS_output_stream = NULL;
-const char *TS_file_name = NULL;
 
-static TSVerbosity __attribute__((visibility("hidden"))) ts_current_log_level = TS_VERBOSITY_INFO;
+static TSVerbosity __attribute__((visibility("hidden"))) ts_current_log_level = TS_VERBOSITY_ERROR;
 
 static void __attribute__((visibility("hidden"))) TS_info_msg() {
   printf(
@@ -44,7 +42,7 @@ void ts_token_syntax_error(const char *msg, const TSFile *tsFile, const TSParser
 void ts_syntax_error(const char *msg, const char *file, const u_long line, const u_long character) {
   log_error("Syntax error: %s\n", msg);
   ts_log_position(file, line, character);
-  exit(4);
+  exit(TS_PARSE_FAILURE_CODE);
 }
 
 void ts_log_position(const char *file, const u_long character, const u_long line) {
@@ -60,8 +58,11 @@ unsigned char TS_check_log_level(TSVerbosity verbosity) {
   return (unsigned char) (ts_current_log_level >= verbosity ? 1 : 0);
 }
 
-void TS_parse_arguments(int argc, const char **argv) {
+const TSParserSettings TS_parse_arguments(int argc, const char **argv) {
   const char *arg, *tmp;
+  TSParserSettings settings;
+  settings.stream = NULL;
+  settings.fileName = NULL;
 
   for (unsigned int i = 0; i < argc; i++) {
     arg = argv[i];
@@ -103,13 +104,8 @@ void TS_parse_arguments(int argc, const char **argv) {
         exit(EXIT_FAILURE);
       }
 
-      TS_stream_to_parse = fopen(argv[++i], "r");
-      TS_file_name = TS_clone_string(argv[i]);
-
-      if (TS_stream_to_parse == NULL) {
-        fprintf(stderr, "Could not open file: '%s'\nError code: %i\n", argv[i], errno);
-        exit(errno);
-      }
+      settings.fileName = argv[++i];
+      settings.stream = fopen(settings.fileName, "r");
     } else if (strcmp(arg, "-c") == 0 || strcmp(arg, "--code") == 0) {
       if (i+1 >= argc) {
         fprintf(stderr, "Expecting code but no more arguments found");
@@ -117,8 +113,8 @@ void TS_parse_arguments(int argc, const char **argv) {
       }
 
       arg = argv[++i];
-      TS_stream_to_parse = fmemopen((void *) arg, strlen(arg), "r");
-      TS_file_name = "(code eval)";
+      settings.stream = fmemopen((void *) arg, strlen(arg), "r");
+      settings.fileName = "(code eval)";
     } else if (strcmp(arg, "-o") == 0 || strcmp(arg, "--out") == 0) {
       if (i+1 >= argc) {
         fprintf(stderr, "Expecting file name but no more arguments found");
@@ -126,7 +122,6 @@ void TS_parse_arguments(int argc, const char **argv) {
       }
 
       TS_output_stream = fopen(argv[++i], "w");
-      TS_file_name = TS_clone_string(argv[i]);
 
       if (TS_output_stream == NULL) {
         fprintf(stderr, "Could not open output file: '%s'\nError code: %i\n", argv[i], errno);
@@ -134,9 +129,12 @@ void TS_parse_arguments(int argc, const char **argv) {
       }
     }
   }
-  if (TS_stream_to_parse == NULL) {
+
+
+  if (settings.stream == NULL) {
     fprintf(stderr, "No code to parse given.\n");
     TS_info_msg();
     exit(EXIT_FAILURE);
   }
+  return settings;
 }

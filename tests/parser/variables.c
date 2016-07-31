@@ -15,6 +15,8 @@ START_TEST(parse_const)
     ck_assert_str_eq(data->name, "some");
     ck_assert_ptr_eq(data->type, NULL);
     ck_assert_ptr_eq(data->value, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -33,6 +35,8 @@ START_TEST(parse_const_with_value)
     ck_assert_str_eq(data->name, "some");
     ck_assert_ptr_eq(data->type, NULL);
     ck_assert_str_eq(data->value, "1");
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -51,6 +55,8 @@ START_TEST(parse_const_with_type)
     ck_assert_ptr_ne(data->type, NULL);
     ck_assert_str_eq(data->type, "number");
     ck_assert_ptr_eq(data->value, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -70,6 +76,8 @@ START_TEST(parse_const_with_value_and_type)
     ck_assert_str_eq(data->type, "number");
     ck_assert_ptr_ne(data->value, NULL);
     ck_assert_str_eq(data->value, "1");
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -88,6 +96,8 @@ START_TEST(parse_let)
     ck_assert_str_eq(data->name, "some");
     ck_assert_ptr_eq(data->type, NULL);
     ck_assert_ptr_eq(data->value, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -106,6 +116,8 @@ START_TEST(parse_let_with_value)
     ck_assert_str_eq(data->name, "some");
     ck_assert_ptr_eq(data->type, NULL);
     ck_assert_str_eq(data->value, "1");
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -124,6 +136,8 @@ START_TEST(parse_let_with_type)
     ck_assert_ptr_ne(data->type, NULL);
     ck_assert_str_eq(data->type, "number");
     ck_assert_ptr_eq(data->value, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -143,6 +157,8 @@ START_TEST(parse_let_with_value_and_type)
     ck_assert_str_eq(data->type, "number");
     ck_assert_ptr_ne(data->value, NULL);
     ck_assert_str_eq(data->value, "1");
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -161,6 +177,8 @@ START_TEST(parse_var)
     ck_assert_str_eq(data->name, "some");
     ck_assert_ptr_eq(data->type, NULL);
     ck_assert_ptr_eq(data->value, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -179,6 +197,8 @@ START_TEST(parse_var_with_value)
     ck_assert_str_eq(data->name, "some");
     ck_assert_ptr_eq(data->type, NULL);
     ck_assert_str_eq(data->value, "1");
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -197,6 +217,8 @@ START_TEST(parse_var_with_type)
     ck_assert_ptr_ne(data->type, NULL);
     ck_assert_str_eq(data->type, "number");
     ck_assert_ptr_eq(data->value, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -216,6 +238,26 @@ START_TEST(parse_var_with_value_and_type)
     ck_assert_str_eq(data->type, "number");
     ck_assert_ptr_ne(data->value, NULL);
     ck_assert_str_eq(data->value, "1");
+
+    TS_free_tsFile(tsFile);
+  }
+END_TEST
+
+START_TEST(parse_var_no_name)
+  {
+    build_ts_file("memory.ts", "var");
+  }
+END_TEST
+
+START_TEST(parse_var_type_without_name)
+  {
+    build_ts_file("memory.ts", "var a:");
+  }
+END_TEST
+
+START_TEST(parse_var_value_without_expression)
+  {
+    build_ts_file("memory.ts", "var a = ");
   }
 END_TEST
 
@@ -236,6 +278,10 @@ void parse_variables_suite(Suite *suite) {
   tcase_add_test(tc_variables, parse_const_with_value);
   tcase_add_test(tc_variables, parse_const_with_type);
   tcase_add_test(tc_variables, parse_const_with_value_and_type);
+
+  tcase_add_exit_test(tc_variables, parse_var_no_name, TS_PARSE_FAILURE_CODE);
+  tcase_add_exit_test(tc_variables, parse_var_type_without_name, TS_PARSE_FAILURE_CODE);
+  tcase_add_exit_test(tc_variables, parse_var_value_without_expression, TS_PARSE_FAILURE_CODE);
 
   suite_add_tcase(suite, tc_variables);
 }

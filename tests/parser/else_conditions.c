@@ -12,6 +12,8 @@ START_TEST(parse_empty_else_condition)
     ck_assert_int_eq(token.childrenSize, 0);
 
     ck_assert_ptr_eq(data, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -27,6 +29,8 @@ START_TEST(parse_empty_else_condition_with_brackets)
     ck_assert_int_eq(token.childrenSize, 0);
 
     ck_assert_ptr_eq(data, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -43,6 +47,8 @@ START_TEST(parse_empty_else_condition_with_children)
     ck_assert(token.children[0].tokenType == TS_RETURN);
 
     ck_assert_ptr_eq(data, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -59,6 +65,8 @@ START_TEST(parse_empty_else_condition_with_children_and_brackets)
     ck_assert(token.children[0].tokenType == TS_RETURN);
 
     ck_assert_ptr_eq(data, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 

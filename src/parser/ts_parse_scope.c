@@ -54,3 +54,7 @@ const TSParserToken TS_parse_scope(TSFile *tsFile, TSParseData *tsParseData) {
   TS_TOKEN_END("scope");
   return token;
 }
+
+void TS_free_scope(const TSParserToken token) {
+  // TODO
+}

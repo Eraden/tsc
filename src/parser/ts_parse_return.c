@@ -1,7 +1,7 @@
 #include <tsc/parser.h>
 
 const TSParserToken TS_parse_return(TSFile *tsFile, TSParseData *tsParseData) {
-  log_to_file("-> parsing as %s\n", "return");
+  TS_TOKEN_BEGIN("return");
   u_long movedBy = strlen(tsParseData->token);
 
   TSParserToken token;
@@ -19,9 +19,11 @@ const TSParserToken TS_parse_return(TSFile *tsFile, TSParseData *tsParseData) {
     volatile unsigned char proceed = 1;
     while (proceed) {
       tok = (const char *) TS_getToken(tsParseData->stream);
+
       if (tok == NULL) {
         break;
       }
+
       switch (tok[0]) {
         case ' ': {
           movedBy += strlen(tok);
@@ -34,19 +36,24 @@ const TSParserToken TS_parse_return(TSFile *tsFile, TSParseData *tsParseData) {
           tsParseData->line += 1;
           tsParseData->character = 0;
           movedBy = 0;
+
+          free((void *) tok);
           break;
         }
         case ';':
         {
           proceed = 0;
           TS_put_back(tsParseData->stream, tok);
+          free((void *) tok);
           break;
         }
         default:
         {
           tsParseData->token = tok;
-          TSParserToken t = TS_parse_ts_token(tsFile, tsParseData);
-          TS_push_child(&token, t);
+          TSParserToken child = TS_parse_ts_token(tsFile, tsParseData);
+          TS_push_child(&token, child);
+
+          free((void *) tok);
           break;
         }
       }
@@ -55,6 +62,10 @@ const TSParserToken TS_parse_return(TSFile *tsFile, TSParseData *tsParseData) {
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
-  log_to_file("-> end %s\n", "return");
+  TS_TOKEN_END("return");
   return token;
+}
+
+void TS_free_return(const TSParserToken token) {
+  TS_free_children(token);
 }

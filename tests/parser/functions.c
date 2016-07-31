@@ -12,6 +12,8 @@ START_TEST(parse_empty_function)
 
     ck_assert_ptr_ne(data, NULL);
     ck_assert_str_eq(data->name, "example");
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -42,6 +44,8 @@ START_TEST(parse_function_with_arg)
     ck_assert_str_eq(argData->name, "first");
     ck_assert_ptr_eq(argData->value, NULL);
     ck_assert_ptr_eq(argData->type, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -73,6 +77,8 @@ START_TEST(parse_function_with_arg_with_type)
     ck_assert_ptr_ne(argData->type, NULL);
     ck_assert_str_eq(argData->type, "number");
     ck_assert_ptr_eq(argData->value, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -104,6 +110,8 @@ START_TEST(parse_function_with_arg_with_value)
     ck_assert_ptr_ne(argData->value, NULL);
     ck_assert_str_eq(argData->value, "1");
     ck_assert_ptr_eq(argData->type, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -136,6 +144,8 @@ START_TEST(parse_function_with_arg_with_value_and_type)
     ck_assert_str_eq(argData->type, "number");
     ck_assert_ptr_ne(argData->value, NULL);
     ck_assert_str_eq(argData->value, "234");
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -181,6 +191,8 @@ START_TEST(parse_function_with_args)
     ck_assert_str_eq(argData->name, "second");
     ck_assert_ptr_eq(argData->type, NULL);
     ck_assert_ptr_eq(argData->value, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -228,6 +240,8 @@ START_TEST(parse_function_with_args_with_values)
     ck_assert_ptr_eq(argData->type, NULL);
     ck_assert_ptr_ne(argData->value, NULL);
     ck_assert_str_eq(argData->value, "2");
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -275,6 +289,8 @@ START_TEST(parse_function_with_args_with_types)
     ck_assert_ptr_ne(argData->type, NULL);
     ck_assert_str_eq(argData->type, "Object");
     ck_assert_ptr_eq(argData->value, NULL);
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 
@@ -324,6 +340,8 @@ START_TEST(parse_function_with_args_with_types_and_values)
     ck_assert_str_eq(argData->type, "Object");
     ck_assert_ptr_ne(argData->value, NULL);
     ck_assert_str_eq(argData->value, "new Object");
+
+    TS_free_tsFile(tsFile);
   }
 END_TEST
 

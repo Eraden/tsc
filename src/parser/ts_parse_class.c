@@ -6,7 +6,6 @@ __attribute__((visibility("hidden")))
 TS_parse_class_method(
     TSFile *__attribute__((__unused__)) tsFile,
     TSParseData *tsParseData,
-    TSParserToken *token,
     u_long *movedBy,
     TSParserToken *bodyToken
 ) {
@@ -18,7 +17,7 @@ TS_parse_class_method(
   while (proceed) {
     tok = (const char *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error("Unexpected end of class header", tsFile, token);
+      ts_token_syntax_error("Unexpected end of class header", tsFile, bodyToken);
     }
 
     switch (tok[0]) {
@@ -86,23 +85,22 @@ TS_parse_class_method(
   }
 }
 
-static void
+static TSParserToken
 __attribute__((visibility("hidden")))
-TS_parse_class_body(
-    TSFile *__attribute__((__unused__)) tsFile,
+TS_parse_class_member(
+    TSFile *tsFile,
     TSParseData *tsParseData,
-    TSParserToken *token,
     u_long *movedBy
 ) {
-  unsigned char proceed = 1;
+  volatile unsigned char proceed = 1;
   const char *tok;
   TSClassParseFlag parseFlag = TS_PARSE_CLASS_MEMBER_NAME;
 
   TSParserToken bodyToken;
   bodyToken.tokenType = TS_UNKNOWN;
-  bodyToken.position = 0;
-  bodyToken.character = 0;
-  bodyToken.line = 0;
+  bodyToken.position = tsParseData->position;
+  bodyToken.character = tsParseData->character;
+  bodyToken.line = tsParseData->line;
   bodyToken.visibility = TS_VISIBILITY_PRIVATE;
   bodyToken.children = NULL;
   bodyToken.childrenSize = 0;
@@ -114,7 +112,7 @@ TS_parse_class_body(
   while (proceed) {
     tok = (const char *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error("Unexpected end of class body", tsFile, token);
+      ts_token_syntax_error("Unexpected end of class member", tsFile, &bodyToken);
     }
 
     switch (tok[0]) {
@@ -132,59 +130,40 @@ TS_parse_class_body(
         *movedBy = 0;
         break;
       }
-      case '}': {
+      case '(': {
         *movedBy += strlen(tok);
         free((void *) tok);
-        proceed = 0;
-        break;
-      }
-      case '(': {
+
         bodyToken.tokenType = TS_CLASS_METHOD;
 
-        TSFunctionData *methodData = (TSFunctionData *) calloc(sizeof(TSLocalVariableData), 1);
+        TSFunctionData *methodData = (TSFunctionData *) calloc(sizeof(TSFunctionData), 1);
         methodData->name = name;
         methodData->returnType = type;
         bodyToken.data = methodData;
 
-        TS_parse_class_method(tsFile, tsParseData, token, movedBy, &bodyToken);
+        TS_parse_class_method(tsFile, tsParseData, movedBy, &bodyToken);
 
-        TSParserToken *newPointer = (TSParserToken *) calloc(sizeof(TSParserToken), token->childrenSize + 1);
-        if (token->children != NULL) memcpy(newPointer, token->children, sizeof(TSParserToken) * token->childrenSize);
-        if (token->children != NULL) free(token->children);
-        token->children = newPointer;
-        token->children[token->childrenSize] = bodyToken;
-        token->childrenSize += 1;
-
-        bodyToken.tokenType = TS_UNKNOWN;
-        bodyToken.position = 0;
-        bodyToken.character = 0;
-        bodyToken.line = 0;
-        bodyToken.visibility = TS_VISIBILITY_PRIVATE;
-        bodyToken.children = NULL;
-        bodyToken.childrenSize = 0;
-        bodyToken.data = NULL;
-        name = NULL;
-        type = NULL;
-        value = NULL;
-        parseFlag = TS_PARSE_CLASS_MEMBER_NAME;
-
-        *movedBy += strlen(tok);
-        free((void *) tok);
+        proceed = 0;
         break;
       }
       case '=': {
         *movedBy += strlen(tok);
         free((void *) tok);
+
         parseFlag = TS_PARSE_CLASS_MEMBER_VALUE;
         break;
       }
       case ':': {
         *movedBy += strlen(tok);
         free((void *) tok);
+
         parseFlag = TS_PARSE_CLASS_MEMBER_TYPE;
         break;
       }
       case ';': {
+        *movedBy += strlen(tok);
+        free((void *) tok);
+
         TSLocalVariableData *fieldData = (TSLocalVariableData *) calloc(sizeof(TSLocalVariableData), 1);
         fieldData->name = name;
         fieldData->type = type;
@@ -192,28 +171,7 @@ TS_parse_class_body(
         bodyToken.data = fieldData;
         bodyToken.tokenType = TS_CLASS_FIELD;
 
-        TSParserToken *newPointer = (TSParserToken *) calloc(sizeof(TSParserToken), token->childrenSize + 1);
-        if (token->children != NULL) memcpy(newPointer, token->children, sizeof(TSParserToken) * token->childrenSize);
-        if (token->children != NULL) free(token->children);
-        token->children = newPointer;
-        token->children[token->childrenSize] = bodyToken;
-        token->childrenSize += 1;
-
-        bodyToken.tokenType = TS_UNKNOWN;
-        bodyToken.position = 0;
-        bodyToken.character = 0;
-        bodyToken.line = 0;
-        bodyToken.visibility = TS_VISIBILITY_PRIVATE;
-        bodyToken.children = NULL;
-        bodyToken.childrenSize = 0;
-        bodyToken.data = NULL;
-        name = NULL;
-        type = NULL;
-        value = NULL;
-        parseFlag = TS_PARSE_CLASS_MEMBER_NAME;
-
-        *movedBy += strlen(tok);
-        free((void *) tok);
+        proceed = 0;
         break;
       }
       default: {
@@ -227,14 +185,16 @@ TS_parse_class_body(
           bodyToken.visibility = TS_VISIBILITY_PRIVATE;
 
         } else if (parseFlag == TS_PARSE_CLASS_MEMBER_NAME) {
-          name = TS_clone_string(tok);
+          char *tmp = (char *) calloc(sizeof(char), strlen(tok) + TS_STRING_END);
+          strcpy(tmp, tok);
+          name = tmp;
           parseFlag = TS_PARSE_CLASS_MEMBER_TYPE;
 
         } else if (parseFlag == TS_PARSE_CLASS_MEMBER_TYPE) {
           u_long size = strlen(tok);
           if (type != NULL) size += strlen(type);
-          char *newPointer = (char *) calloc(sizeof(char), size + 1);
-          if (type != NULL) memcpy(newPointer, type, size);
+          char *newPointer = (char *) calloc(sizeof(char), size + TS_STRING_END);
+          if (type != NULL) strcpy(newPointer, type);
           strcat(newPointer, tok);
           if (type == NULL) free((void *) type);
           type = newPointer;
@@ -242,8 +202,8 @@ TS_parse_class_body(
         } else /*if (parseFlag == TS_PARSE_CLASS_MEMBER_VALUE)*/ {
           u_long size = strlen(tok);
           if (value != NULL) size += strlen(value);
-          char *newPointer = (char *) calloc(sizeof(char), size + 1);
-          if (value != NULL) memcpy(newPointer, value, size);
+          char *newPointer = (char *) calloc(sizeof(char), size + TS_STRING_END);
+          if (value != NULL) strcpy(newPointer, value);
           strcat(newPointer, tok);
           if (value == NULL) free((void *) value);
           value = newPointer;
@@ -254,6 +214,7 @@ TS_parse_class_body(
       }
     }
   }
+  return bodyToken;
 }
 
 static void
@@ -296,10 +257,12 @@ TS_parse_class_head(
       default: {
         tsParseData->position += *movedBy;
         tsParseData->character += *movedBy;
-        tsParseData->line += 1;
         tsParseData->token = tok;
         *movedBy = 0;
+
         TSParserToken t = TS_parse_ts_token(tsFile, tsParseData);
+        free((void *) tok);
+
         switch (t.tokenType) {
           case TS_EXTENDS: {
             if (data->parentClass != NULL) {
@@ -319,14 +282,83 @@ TS_parse_class_head(
             break;
           }
         }
+      }
+    }
+  }
+}
+
+static void
+__attribute__((visibility("hidden")))
+TS_parse_class_body(
+    TSFile *tsFile,
+    TSParseData *tsParseData,
+    TSParserToken *token,
+    u_long *movedBy
+) {
+
+  volatile unsigned char proceed = 1;
+  const char *tok;
+
+  while (proceed) {
+    tok = (const char *) TS_getToken(tsParseData->stream);
+    if (tok == NULL) {
+      ts_token_syntax_error("Unexpected end of class member", tsFile, token);
+    }
+
+    switch (tok[0]) {
+      case ' ': {
+        *movedBy += strlen(tok);
         free((void *) tok);
+        break;
+      }
+      case '\n': {
+        *movedBy += strlen(tok);
+        free((void *) tok);
+
+        tsParseData->position += *movedBy;
+        tsParseData->character = 0;
+        tsParseData->line += 1;
+        *movedBy = 0;
+        break;
+      }
+      case '}': {
+        *movedBy += strlen(tok);
+        free((void *) tok);
+
+        proceed = 0;
+        break;
+      }
+      default: {
+        tsParseData->token = tok;
+        tsParseData->character += *movedBy;
+        tsParseData->position += *movedBy;
+        *movedBy = 0;
+
+        TSParserToken child = TS_parse_ts_token(tsFile, tsParseData);
+        free((void *) tok);
+
+        if (child.tokenType == TS_UNKNOWN) {
+          TS_put_back(tsParseData->stream, child.data);
+          free(child.data);
+
+          child = TS_parse_class_member(tsFile, tsParseData, movedBy);
+        }
+
+        TSParserToken *newPointer = (TSParserToken *) calloc(sizeof(TSParserToken), token->childrenSize + 1);
+        if (token->children != NULL) memcpy(newPointer, token->children, sizeof(TSParserToken) * token->childrenSize);
+        if (token->children != NULL) free(token->children);
+        token->children = newPointer;
+        token->children[token->childrenSize] = child;
+        token->childrenSize += 1;
+
+        break;
       }
     }
   }
 }
 
 const TSParserToken TS_parse_class(
-    TSFile *__attribute__((__unused__)) tsFile,
+    TSFile *tsFile,
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("class");
@@ -365,7 +397,7 @@ const TSParserToken TS_parse_class(
     free((void *) tok);
   }
 
-  TS_register_class(tsFile, token);
+//  TS_register_class(tsFile, token);
 
   TS_parse_class_head(tsFile, tsParseData, &token, &movedBy);
   TS_parse_class_body(tsFile, tsParseData, &token, &movedBy);
@@ -375,4 +407,24 @@ const TSParserToken TS_parse_class(
 
   TS_TOKEN_END("class");
   return token;
+}
+
+void TS_free_class(const TSParserToken token) {
+  TS_free_children(token);
+  TSClassData *data = token.data;
+  if (data == NULL) return;
+  if (data->name != NULL) free((void *) data->name);
+  if (data->parentClass != NULL) free((void *) data->parentClass);
+  if (data->implementsInterfaces != NULL) free((void *) data->implementsInterfaces);
+  free(data);
+}
+
+void TS_free_class_field(const TSParserToken token) {
+  TS_free_children(token);
+  TS_free_var(token);
+}
+
+void TS_free_class_method(const TSParserToken token) {
+  TS_free_children(token);
+  TS_free_function(token);
 }

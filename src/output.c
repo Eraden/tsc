@@ -9,6 +9,11 @@ void TS_print_indent(FILE *stream, const u_long indent) {
   }
 }
 
+void TS_push_indent_string(char *string, const u_long indent) {
+  for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
+    strcat(string, "  ");
+}
+
 void
 TS_print_for_token(
     const TSFile *tsFile,
@@ -47,7 +52,7 @@ TS_print_for_token(
       ts_print_for_return(tsFile, tsParserToken, outputSettings);
       break;
     }
-    case TS_COMPONENT: {
+    case TS_DECORATOR: {
       break;
     }
     case TS_IMPORT: {
@@ -68,15 +73,24 @@ TS_print_for_token(
     case TS_IMPLEMENTS: {
       break;
     }
+    case TS_CLASS_FIELD: {
+      break;
+    }
+    case TS_CLASS_METHOD: {
+      break;
+    }
     case TS_NEW: {
       break;
     }
-    case TS_CLASS_FIELD:
+    case TS_UNKNOWN: {
       break;
-    case TS_CLASS_METHOD:
+    }
+    case TS_INLINE_COMMENT: {
       break;
-    case TS_UNKNOWN:
+    }
+    case TS_MULTILINE_COMMENT: {
       break;
+    }
   }
 }
 
@@ -115,7 +129,7 @@ TS_string_for_token(
     case TS_RETURN: {
       return ts_string_for_return(tsFile, tsParserToken, outputSettings);
     }
-    case TS_COMPONENT: {
+    case TS_DECORATOR: {
       char *tag = "component";
       char *s = (char *) calloc(sizeof(char), sizeof(tag) + 1);
       strcat(s, tag);
@@ -158,13 +172,17 @@ TS_string_for_token(
       return s;
     }
     case TS_CLASS_FIELD:
-      return NULL;
+      break;
     case TS_CLASS_METHOD:
-      return NULL;
+      break;
     case TS_NEW:
-      return NULL;
+      break;
     case TS_UNKNOWN:
-      return NULL;
+      break;
+    case TS_INLINE_COMMENT:
+      break;
+    case TS_MULTILINE_COMMENT:
+      break;
   }
   return NULL;
 }

@@ -9,7 +9,7 @@ __attribute__((__malloc__))
 TS_clone_string(
     const char *string
 ) {
-  char *clone = (char *) calloc(sizeof(char), sizeof(string) + 1);
+  char *clone = calloc(sizeof(char), strlen(string) + TS_STRING_END);
   strcpy(clone, string);
   return clone;
 }
@@ -24,7 +24,7 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     TS_IF, "if", TS_parse_if,
     TS_ELSE, "else", TS_parse_else,
     TS_RETURN, "return", TS_parse_return,
-    TS_COMPONENT, "@", TS_parse_decorator,
+    TS_DECORATOR, "@", TS_parse_decorator,
     TS_IMPORT, "import", TS_parse_import,
     TS_EXPORT, "export", TS_parse_export,
     TS_DEFAULT, "default", TS_parse_default,
@@ -32,6 +32,8 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     TS_EXTENDS, "extends", TS_parse_extends,
     TS_IMPLEMENTS, "implements", TS_parse_implements,
     TS_NEW, "new", TS_parse_new,
+    TS_INLINE_COMMENT, "//", TS_parse_inline_comment,
+    TS_MULTILINE_COMMENT, "/*", TS_parse_multiline_comment,
 };
 
 void TS_put_back(FILE *stream, const char *value) {
@@ -164,6 +166,51 @@ volatile const char *TS_getToken(FILE *stream) {
       case 0: {
         return tok;
       }
+      case '*': {
+        if (tok == NULL) {
+          char next = (char) fgetc(stream);
+          switch (next) {
+            case '/':
+              break;
+            default: {
+              ungetc(next, stream);
+              next = 0;
+              break;
+            }
+          }
+          tok = (char *) calloc(sizeof(char), (next != 0 ? 2 : 1) + TS_STRING_END);
+          tok[0] = c;
+          if (next != 0) tok[1] = next;
+          return tok;
+        } else {
+          ungetc(c, stream);
+          log_to_file("# token: '%s' [single token + else]\n", tok);
+          return tok;
+        }
+      }
+      case '/': {
+        if (tok == NULL) {
+          char next = (char) fgetc(stream);
+          switch (next) {
+            case '*':
+            case '/':
+              break;
+            default: {
+              ungetc(next, stream);
+              next = 0;
+              break;
+            }
+          }
+          tok = (char *) calloc(sizeof(char), (next != 0 ? 2 : 1) + TS_STRING_END);
+          tok[0] = c;
+          if (next != 0) tok[1] = next;
+          return tok;
+        } else {
+          ungetc(c, stream);
+          log_to_file("# token: '%s' [single token + else]\n", tok);
+          return tok;
+        }
+      }
       case '@':
       case '\'':
       case '"':
@@ -178,8 +225,6 @@ volatile const char *TS_getToken(FILE *stream) {
       case ';':
       case '+':
       case '-':
-      case '/':
-      case '*':
       case '!':
       case '|':
       case '&':
@@ -246,17 +291,17 @@ volatile const char *TS_getToken(FILE *stream) {
 }
 
 const TSFile
-TS_parse_file() {
-  FILE *stream = TS_stream_to_parse;
+TS_parse_file(const char *fileName) {
+  FILE *stream = fopen(fileName, "r");
   if (stream == NULL) {
     TSFile tsFile;
     tsFile.tokens = NULL;
     tsFile.tokensSize = 0;
-    tsFile.file = TS_file_name;
+    tsFile.file = fileName;
     return tsFile;
   }
 
-  return TS_parse_stream(TS_file_name, stream);
+  return TS_parse_stream(fileName, stream);
 }
 
 const TSFile
@@ -295,4 +340,99 @@ TS_parse_stream(
     free((void *) tok);
   }
   return tsFile;
+}
+
+void TS_free_unknown(const TSParserToken token) {
+  TS_free_children(token);
+
+  if (token.data) free(token.data);
+}
+
+void
+TS_free_tsToken(const TSParserToken token) {
+  switch (token.tokenType) {
+    case TS_VAR:
+      TS_free_var(token);
+      break;
+    case TS_LET:
+      TS_free_let(token);
+      break;
+    case TS_CONST:
+      TS_free_const(token);
+      break;
+    case TS_CLASS:
+      TS_free_class(token);
+      break;
+    case TS_FUNCTION:
+      TS_free_function(token);
+      break;
+    case TS_ARROW:
+      TS_free_arrow(token);
+      break;
+    case TS_IF:
+      TS_free_if(token);
+      break;
+    case TS_ELSE:
+      TS_free_else(token);
+      break;
+    case TS_RETURN:
+      TS_free_return(token);
+      break;
+    case TS_DECORATOR:
+      TS_free_decorator(token);
+      break;
+    case TS_IMPORT:
+      TS_free_import(token);
+      break;
+    case TS_EXPORT:
+      TS_free_export(token);
+      break;
+    case TS_DEFAULT:
+      TS_free_default(token);
+      break;
+    case TS_SCOPE:
+      TS_free_scope(token);
+      break;
+    case TS_EXTENDS:
+      TS_free_extends(token);
+      break;
+    case TS_IMPLEMENTS:
+      TS_free_implements(token);
+      break;
+    case TS_NEW:
+      TS_free_new(token);
+      break;
+    case TS_CLASS_FIELD:
+      TS_free_class_field(token);
+      break;
+    case TS_CLASS_METHOD:
+      TS_free_class_method(token);
+      break;
+    case TS_INLINE_COMMENT:
+      TS_free_inline_comment(token);
+      break;
+    case TS_MULTILINE_COMMENT:
+      TS_free_multiline_comment(token);
+      break;
+    case TS_UNKNOWN:
+      TS_free_unknown(token);
+      break;
+  }
+}
+
+void TS_free_children(const TSParserToken token) {
+  for (u_long childIndex = 0; childIndex < token.childrenSize; childIndex++) {
+    TS_free_tsToken(token.children[childIndex]);
+  }
+  if (token.childrenSize > 0) free(token.children);
+}
+
+void
+TS_free_tsFile(
+    const TSFile tsFile
+) {
+  for (u_long index = 0; index < tsFile.tokensSize; index++) {
+    TS_free_tsToken(tsFile.tokens[index]);
+  }
+  if (tsFile.tokensSize > 0) free(tsFile.tokens);
 }

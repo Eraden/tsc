@@ -22,3 +22,14 @@ const TSParserToken TS_parse_var(TSFile *tsFile, TSParseData *tsParseData) {
   TS_TOKEN_END("var");
   return token;
 }
+
+void TS_free_var(TSParserToken token) {
+  TS_free_children(token);
+
+  TSLocalVariableData *data = token.data;
+  if (data == NULL) return;
+  if (data->name != NULL) free((void *) data->name);
+  if (data->type != NULL) free((void *) data->type);
+  if (data->value != NULL) free((void *) data->value);
+  free(data);
+}

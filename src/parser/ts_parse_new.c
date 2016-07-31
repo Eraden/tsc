@@ -5,7 +5,7 @@ TS_parse_new(
     TSFile __attribute((__unused__)) *tsFile,
     TSParseData *tsParseData
 ) {
-  TS_TOKEN_BEGIN("let");
+  TS_TOKEN_BEGIN("new");
 
   u_long movedBy = strlen(tsParseData->token);
 
@@ -23,22 +23,41 @@ TS_parse_new(
   const char *tok;
   while (proceed) {
     tok = (const char *) TS_getToken(tsParseData->stream);
+
     if (tok == NULL) {
-      break;
+      if (token.data == NULL)
+        ts_token_syntax_error("Unexpected end of stream while parsing `new` keyword.", tsFile, &token);
+      else break;
     }
+
     switch (tok[0]) {
       case ' ': {
         movedBy += strlen(tok);
         free((void *) tok);
+
         break;
       }
       case '\n': {
-        ts_token_syntax_error("Expecting class after `new` keyword. Found new line.", tsFile, &token);
+        if (token.data == NULL) {
+          free((void *) tok);
+          ts_token_syntax_error("Expecting class after `new` keyword. Found new line.", tsFile, &token);
+        } else {
+          proceed = 0;
+          TS_put_back(tsParseData->stream, tok);
+          free((void *) tok);
+        }
+        break;
       }
       case ';': {
-        proceed = 0;
-        TS_put_back(tsParseData->stream, tok);
-        free((void *) tok);
+        if (token.data == NULL) {
+          free((void *) tok);
+          ts_token_syntax_error("Expecting class after `new` keyword. Found `;`.", tsFile, &token);
+        } else {
+          proceed = 0;
+          TS_put_back(tsParseData->stream, tok);
+
+          free((void *) tok);
+        }
         break;
       }
       default: {
@@ -49,6 +68,7 @@ TS_parse_new(
         if (token.data != NULL) free(token.data);
         strcat(newPointer, tok);
         token.data = newPointer;
+
         free((void *) tok);
         break;
       }
@@ -58,6 +78,12 @@ TS_parse_new(
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
 
-  TS_TOKEN_END("let");
+  TS_TOKEN_END("new");
   return token;
+}
+
+void TS_free_new(const TSParserToken token) {
+  TS_free_children(token);
+
+  if (token.data) free(token.data);
 }

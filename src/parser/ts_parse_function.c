@@ -45,20 +45,29 @@ TS_parse_function_arguments(
 
   while (proceed) {
     tok = (const char *) TS_getToken(tsParseData->stream);
+
     if (tok == NULL) {
       ts_token_syntax_error("Unexpected end of function argument", tsFile, token);
     }
-    if (tok[0] == '(') {
-      hadStartBracket = 1;
-      *movedBy += strlen(tok);
-      continue;
-    } else if (!hadStartBracket) {
-      ts_token_syntax_error("Function arguments starts before bracket", tsFile, token);
+
+    if (!hadStartBracket) {
+      if (tok[0] == '(') {
+        hadStartBracket = 1;
+        *movedBy += strlen(tok);
+        free((void *) tok);
+        continue;
+
+      } else {
+        free((void *) tok);
+        ts_token_syntax_error("Function arguments starts before bracket", tsFile, token);
+      }
     }
+
 
     switch (tok[0]) {
       case ' ': {
         *movedBy += strlen(tok);
+        free((void *) tok);
         break;
       }
       case '\n': {
@@ -66,6 +75,7 @@ TS_parse_function_arguments(
         tsParseData->character = 0;
         tsParseData->position += *movedBy;
         *movedBy = 0;
+        free((void *) tok);
         break;
       }
       case ')': {
@@ -74,11 +84,16 @@ TS_parse_function_arguments(
         } else {
           free(argumentData);
         }
+
         *movedBy += strlen(tok);
+        free((void *) tok);
         proceed = 0;
         break;
       }
       case '=': {
+        *movedBy += strlen(tok);
+        free((void *) tok);
+
         if (argumentData->name == NULL) {
           ts_token_syntax_error("Assigning to argument without name", tsFile, token);
         }
@@ -86,6 +101,9 @@ TS_parse_function_arguments(
         break;
       }
       case ',': {
+        *movedBy += strlen(tok);
+        free((void *) tok);
+
         if (argumentData->name == NULL) {
           ts_token_syntax_error("Declared argument as next but previous has no name", tsFile, token);
         }
@@ -107,6 +125,9 @@ TS_parse_function_arguments(
         break;
       }
       case ':': {
+        *movedBy += strlen(tok);
+        free((void *) tok);
+
         if (argumentData->name == NULL) {
           ts_token_syntax_error("Declared argument type but argument has no name", tsFile, token);
         }
@@ -147,12 +168,12 @@ TS_parse_function_arguments(
         argument.position = token->position + *movedBy;
         argument.character = tsParseData->character + *movedBy;
         argument.line = tsParseData->line;
+
+        *movedBy += strlen(tok);
+        free((void *) tok);
         break;
       }
     }
-
-    *movedBy += strlen(tok);
-    free((void *) tok);
   }
 }
 
@@ -166,26 +187,35 @@ TS_parse_function_body(
 ) {
   const char *tok = NULL;
   // move to bracket '{'
-  while (1) {
+  volatile unsigned char proceed;
+
+  proceed = 1;
+
+  while (proceed) {
     tok = (const char *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
       ts_token_syntax_error("Unexpected end of function body", tsFile, token);
     }
-    *movedBy += strlen(tok);
+
     if (tok[0] == '{') {
       *movedBy += strlen(tok);
       free((void *) tok);
-      break;
+      proceed = 0;
+
     } else if (tok[0] == '\n') {
       tsParseData->line += 1;
       tsParseData->character = 0;
       tsParseData->position += *movedBy;
       *movedBy = 0;
+      free((void *) tok);
+    } else {
+      *movedBy += strlen(tok);
+      free((void *) tok);
     }
   }
 
-  volatile unsigned char proceed = 1;
+  proceed = 1;
 
   while (proceed) {
     tok = (const char *) TS_getToken(tsParseData->stream);
@@ -290,4 +320,20 @@ const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData) 
 
   TS_TOKEN_END("function");
   return token;
+}
+
+void TS_free_function(const TSParserToken token) {
+  TS_free_children(token);
+
+  TSFunctionData *data = token.data;
+  if (data == NULL) return;
+  if (data->name != NULL) free((void *) data->name);
+  if (data->returnType != NULL) free((void *) data->returnType);
+  if (data->argumentsSize > 0) {
+    for (u_long argIndex = 0; argIndex < data->argumentsSize; argIndex++) {
+      TS_free_var(data->arguments[argIndex]);
+    }
+  }
+  if (data->arguments != NULL) free(data->arguments);
+  free(data);
 }

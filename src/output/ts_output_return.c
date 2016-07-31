@@ -16,7 +16,7 @@ ts_print_for_return_body(
     TSParserToken bodyToken = (*tsParserToken).children[childIndex];
 
     if (bodyToken.tokenType == TS_UNKNOWN) {
-      fprintf(settings.stream, "%s", (char *) bodyToken.data);
+      fprintf(settings.stream, "%s;\n", (char *) bodyToken.data);
     } else {
       TS_print_for_token(tsFile, bodyToken, settings);
     }
@@ -29,8 +29,8 @@ ts_print_for_return(
     const TSParserToken tsParserToken,
     TSOutputSettings __attribute__((__weak__)) outputSettings
 ) {
-  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
-    fprintf(outputSettings.stream, "%s", "  ");
+  TS_print_indent(outputSettings.stream, outputSettings.indent);
+
   fprintf(outputSettings.stream, "%s", "return ");
 
   ts_print_for_return_body(tsFile, &tsParserToken, outputSettings);

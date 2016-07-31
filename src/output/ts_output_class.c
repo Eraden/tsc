@@ -6,6 +6,7 @@ static void
 __attribute__(( visibility("hidden")))
 __attribute__(( section("output-class")))
 TS_print_for_class_method(
+    const TSFile *tsFile,
     const TSOutputSettings __attribute__((__weak__)) outputSettings,
     const TSParserToken *child
 ) {
@@ -25,6 +26,14 @@ TS_print_for_class_method(
   fprintf(outputSettings.stream, "%s", "value: function () {\n");
   fflush(outputSettings.stream);
 
+  TSParserToken body;
+  for (u_long bodyIndex = 0; bodyIndex < child->childrenSize; bodyIndex++) {
+    body = child->children[bodyIndex];
+    TSOutputSettings settings = outputSettings;
+    settings.indent = methodIndent + 1;
+    TS_print_for_token(tsFile, body, settings);
+  }
+
   TS_print_indent(outputSettings.stream, methodIndent);
 
   fprintf(outputSettings.stream, "%s", "}\n");
@@ -40,6 +49,7 @@ static void
 __attribute__(( visibility("hidden")))
 __attribute__(( section("output-class")))
 TS_print_for_class_field(
+    const TSFile *__attribute__(( __unused__ )) tsFile,
     const TSOutputSettings __attribute__((__weak__)) outputSettings,
     const TSParserToken *child
 ) {
@@ -142,11 +152,11 @@ TS_print_for_class_prototype(
     TSParserToken child = tsParserToken.children[childIndex];
     switch (child.tokenType) {
       case TS_CLASS_FIELD: {
-        TS_print_for_class_field(settings, &child);
+        TS_print_for_class_field(tsFile, settings, &child);
         break;
       }
       case TS_CLASS_METHOD: {
-        TS_print_for_class_method(settings, &child);
+        TS_print_for_class_method(tsFile, settings, &child);
         break;
       }
       default:
@@ -244,20 +254,23 @@ TS_string_for_class_method(
                   sizeof("};\n");
 
   char *methodString = (char *) calloc(sizeof(char), *methodSize);
-  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
-    strcat(methodString, "  ");
+
+  TS_push_indent_string(methodString, outputSettings.indent);
 
   strcat(methodString, "proto['");
   strcat(methodString, methodData->name);
   strcat(methodString, "'] = {\n");
-  for (u_long indentIndex = 0; indentIndex < methodIndent; indentIndex++)
-    strcat(methodString, "  ");
+
+  TS_push_indent_string(methodString, methodIndent);
+
   strcat(methodString, "value: function () {\n");
-  for (u_long indentIndex = 0; indentIndex < methodIndent; indentIndex++)
-    strcat(methodString, "  ");
+
+  TS_push_indent_string(methodString, methodIndent);
+
   strcat(methodString, "}\n");
-  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
-    strcat(methodString, "  ");
+
+  TS_push_indent_string(methodString, outputSettings.indent);
+
   strcat(methodString, "};\n");
   return methodString;
 }
@@ -298,14 +311,15 @@ TS_string_for_class_field(
                  strlen("};\n");
 
   char *fieldString = (char *) calloc(sizeof(char), *fieldSize);
-  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
-    strcat(fieldString, "  ");
+
+  TS_push_indent_string(fieldString, outputSettings.indent);
+
   strcat(fieldString, "var SYMBOL_FOR_");
   strcat(fieldString, fieldData->name);
   strcat(fieldString, " = Symbol();\n");
 
-  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
-    strcat(fieldString, "  ");
+  TS_push_indent_string(fieldString, outputSettings.indent);
+
   strcat(fieldString, "proto['");
   strcat(fieldString, fieldData->name);
   strcat(fieldString, "'] = {\n");
@@ -323,13 +337,14 @@ TS_string_for_class_field(
   strcat(fieldString, "; },\n");
 
   // setter
-  for (u_long indentIndex = 0; indentIndex < fieldIndent; indentIndex++)
-    strcat(fieldString, "  ");
+  TS_push_indent_string(fieldString, fieldIndent);
+
   strcat(fieldString, "set: function (value) { return this[SYMBOL_FOR_");
   strcat(fieldString, fieldData->name);
   strcat(fieldString, "] = value; }\n");
-  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
-    strcat(fieldString, "  ");
+
+  TS_push_indent_string(fieldString, outputSettings.indent);
+
   strcat(fieldString, "};\n");
   return fieldString;
 }
@@ -369,16 +384,17 @@ TS_string_for_class_prototype(
   string = (char *) calloc(sizeof(char), size);
 
   // begin function
-  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
-    strcat(string, "  ");
+  TS_push_indent_string(string, outputSettings.indent);
+
   strcat(string, "(function (C, P) {\n");
 
   // body
-  for (u_long indentIndex = 0; indentIndex < settings.indent; indentIndex++)
-    strcat(string, "  ");
+  TS_push_indent_string(string, settings.indent);
+
   strcat(string, "var proto = {};\n");
-  for (u_long indentIndex = 0; indentIndex < settings.indent; indentIndex++)
-    strcat(string, "  ");
+
+  TS_push_indent_string(string, settings.indent);
+
   strcat(string, "proto['constructor'] = { value: P };\n");
 
   for (u_long childIndex = 0; childIndex < tsParserToken.childrenSize; childIndex++) {
@@ -415,13 +431,13 @@ TS_string_for_class_prototype(
     }
   }
 
-  for (u_long indentIndex = 0; indentIndex < settings.indent; indentIndex++)
-    strcat(string, "  ");
+  TS_push_indent_string(string, settings.indent);
+
   strcat(string, "C.prototype = Object.create(P.prototype, proto);\n");
 
   // end of function
-  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
-    strcat(string, "  ");
+  TS_push_indent_string(string, outputSettings.indent);
+
   strcat(string, "}(");
   strcat(string, data->name);
   strcat(string, ", ");
@@ -456,16 +472,18 @@ TS_string_for_class_constructor(
 
   string = (char *) calloc(sizeof(char), size);
 
-  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
-    strcat(string, "  ");
+  TS_push_indent_string(string, outputSettings.indent);
+
   strcat(string, "/* class */\n");
-  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
-    strcat(string, "  ");
+
+  TS_push_indent_string(string, outputSettings.indent);
+
   strcat(string, "function ");
   strcat(string, data->name);
   strcat(string, "() {\n");
-  for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
-    strcat(string, "  ");
+
+  TS_push_indent_string(string, outputSettings.indent);
+
   strcat(string, "}\n");
 
   return string;

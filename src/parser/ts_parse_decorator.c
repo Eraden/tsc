@@ -8,7 +8,7 @@ const TSParserToken TS_parse_decorator(TSFile *__attribute__((__unused__)) tsFil
   u_long movedBy = strlen(tsParseData->token);
 
   TSParserToken token;
-  token.tokenType = TS_COMPONENT;
+  token.tokenType = TS_DECORATOR;
   token.position = tsParseData->position;
   token.character = tsParseData->character;
   token.line = tsParseData->line;
@@ -21,4 +21,8 @@ const TSParserToken TS_parse_decorator(TSFile *__attribute__((__unused__)) tsFil
   tsParseData->character += movedBy;
   log_to_file("-> end %s\n", "component");
   return token;
+}
+
+void TS_free_decorator(const TSParserToken token) {
+  // TODO
 }

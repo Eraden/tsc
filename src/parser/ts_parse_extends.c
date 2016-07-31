@@ -57,3 +57,7 @@ TS_parse_extends(
   TS_TOKEN_END("extends");
   return token;
 }
+
+void TS_free_extends(const TSParserToken token) {
+  // TODO
+}
