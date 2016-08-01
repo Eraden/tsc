@@ -28,7 +28,15 @@ Suite *class_suite(void) {
 }
 
 
-int main(void) {
+int main(int argc, char **argv) {
+  enum print_output output_type = CK_NORMAL;
+  for (int i = 0; i < argc; i++) {
+    const char *v = argv[i];
+    if (strcmp(v, "--verbose") == 0) {
+      output_type = CK_VERBOSE;
+    }
+  }
+
   TS_set_log_level(TS_VERBOSITY_OFF);
   init_log();
 
@@ -39,7 +47,7 @@ int main(void) {
   s = class_suite();
   sr = srunner_create(s);
 
-  srunner_run_all(sr, CK_NORMAL);
+  srunner_run_all(sr, output_type);
   number_failed += srunner_ntests_failed(sr);
   srunner_free(sr);
 

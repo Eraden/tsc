@@ -11,7 +11,9 @@ TS_parse_class_method(
 ) {
   unsigned char proceed = 1;
   const char *tok;
+
   TSFunctionData *methodData = bodyToken->data;
+
   TSClassParseFlag parseFlag = TS_PARSE_CLASS_MEMBER_METHOD_ARGUMENTS;
 
   while (proceed) {
@@ -46,6 +48,11 @@ TS_parse_class_method(
         parseFlag = TS_PARSE_CLASS_MEMBER_METHOD_RETURN_TYPE;
         break;
       }
+      case ';': {
+        *movedBy += strlen(tok);
+        free((void *) tok);
+        break;
+      }
       case '}': {
         *movedBy += strlen(tok);
         free((void *) tok);
@@ -54,7 +61,9 @@ TS_parse_class_method(
       }
       default: {
         if (parseFlag == TS_PARSE_CLASS_MEMBER_METHOD_ARGUMENTS) {
-          //
+          *movedBy += strlen(tok);
+          free((void *) tok);
+          // TODO: Missing
         } else if (parseFlag == TS_PARSE_CLASS_MEMBER_METHOD_BODY) {
           tsParseData->token = tok;
           tsParseData->character += *movedBy;
@@ -70,14 +79,20 @@ TS_parse_class_method(
           bodyToken->children = newPointer;
           bodyToken->children[bodyToken->childrenSize] = t;
           bodyToken->childrenSize += 1;
+
+          *movedBy += strlen(tok);
+          free((void *) tok);
         } else /*if (parseFlag == TS_PARSE_CLASS_MEMBER_METHOD_RETURN_TYPE)*/ {
-          u_long size = strlen(tok) + 1;
+          u_long size = strlen(tok) + TS_STRING_END;
           if (methodData->returnType != NULL) size += strlen(methodData->returnType);
           char *newPointer = (char *) calloc(sizeof(char), size);
           if (methodData->returnType != NULL) strcpy(newPointer, methodData->returnType);
           if (methodData->returnType != NULL) free((void *) methodData->returnType);
           strcat(newPointer, tok);
           methodData->returnType = newPointer;
+
+          *movedBy += strlen(tok);
+          free((void *) tok);
         }
         break;
       }
@@ -105,6 +120,7 @@ TS_parse_class_member(
   bodyToken.children = NULL;
   bodyToken.childrenSize = 0;
   bodyToken.data = NULL;
+
   const char *name = NULL;
   const char *type = NULL;
   const char *value = NULL;
@@ -137,8 +153,11 @@ TS_parse_class_member(
         bodyToken.tokenType = TS_CLASS_METHOD;
 
         TSFunctionData *methodData = (TSFunctionData *) calloc(sizeof(TSFunctionData), 1);
+        methodData->arguments = NULL;
+        methodData->argumentsSize = 0;
         methodData->name = name;
         methodData->returnType = type;
+
         bodyToken.data = methodData;
 
         TS_parse_class_method(tsFile, tsParseData, movedBy, &bodyToken);
@@ -420,11 +439,9 @@ void TS_free_class(const TSParserToken token) {
 }
 
 void TS_free_class_field(const TSParserToken token) {
-  TS_free_children(token);
   TS_free_var(token);
 }
 
 void TS_free_class_method(const TSParserToken token) {
-  TS_free_children(token);
   TS_free_function(token);
 }

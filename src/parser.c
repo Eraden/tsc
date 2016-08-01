@@ -293,12 +293,11 @@ volatile const char *TS_getToken(FILE *stream) {
 const TSFile
 TS_parse_file(const char *fileName) {
   FILE *stream = fopen(fileName, "r");
+
   if (stream == NULL) {
-    TSFile tsFile;
-    tsFile.tokens = NULL;
-    tsFile.tokensSize = 0;
-    tsFile.file = fileName;
-    return tsFile;
+    fprintf(stderr, "Could not open file '%s' to read!\n", fileName);
+    fprintf(stderr, "  failure message: '%s'\n", strerror(errno));
+    exit(EXIT_FAILURE);
   }
 
   return TS_parse_stream(fileName, stream);

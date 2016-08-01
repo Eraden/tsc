@@ -53,21 +53,27 @@ START_TEST(parse_empty_else_condition_with_children)
 END_TEST
 
 START_TEST(parse_empty_else_condition_with_children_and_brackets)
-  {
-    const TSFile tsFile = build_ts_file("memory.ts", "else { return 10; }");
-    validate_ts_file(tsFile, 1, TS_ELSE);
+  const TSFile tsFile = build_ts_file("memory.ts", "else { return 10; }");
+  validate_ts_file(tsFile, 1, TS_ELSE);
 
-    const TSParserToken token = tsFile.tokens[0];
-    const TSIfData *data = token.data;
+  const TSParserToken token = tsFile.tokens[0];
+  const TSIfData *data = token.data;
 
-    ck_assert_ptr_ne(token.children, NULL);
-    ck_assert_int_eq(token.childrenSize, 1);
-    ck_assert(token.children[0].tokenType == TS_RETURN);
+  ck_assert_ptr_ne(token.children, NULL);
+  ck_assert_int_eq(token.childrenSize, 1);
+  ck_assert(token.children[0].tokenType == TS_RETURN);
 
-    ck_assert_ptr_eq(data, NULL);
+  ck_assert_ptr_eq(data, NULL);
 
-    TS_free_tsFile(tsFile);
-  }
+  TS_free_tsFile(tsFile);
+END_TEST
+
+START_TEST(parse_else_condition_without_end)
+  build_ts_file("memory.ts", "else");
+END_TEST
+
+START_TEST(parse_else_condition_with_bracket_without_end)
+  build_ts_file("memory.ts", "else {");
 END_TEST
 
 void parse_else_conditions_suite(Suite *suite) {
@@ -77,6 +83,9 @@ void parse_else_conditions_suite(Suite *suite) {
   tcase_add_test(tc_if_conditions, parse_empty_else_condition_with_brackets);
   tcase_add_test(tc_if_conditions, parse_empty_else_condition_with_children);
   tcase_add_test(tc_if_conditions, parse_empty_else_condition_with_children_and_brackets);
+
+  tcase_add_exit_test(tc_if_conditions, parse_else_condition_without_end, TS_PARSE_FAILURE_CODE);
+  tcase_add_exit_test(tc_if_conditions, parse_else_condition_with_bracket_without_end, TS_PARSE_FAILURE_CODE);
 
   suite_add_tcase(suite, tc_if_conditions);
 }

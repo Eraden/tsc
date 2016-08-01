@@ -3,8 +3,13 @@
 /**
  * TODO implement
  */
-const TSParserToken TS_parse_decorator(TSFile *__attribute__((__unused__)) tsFile, TSParseData *tsParseData) {
-  log_to_file("-> parsing as %s\n", "component");
+const TSParserToken
+__attribute__((section("parse-decorator")))
+TS_parse_decorator(
+    TSFile *__attribute__((__unused__)) tsFile,
+    TSParseData *tsParseData
+) {
+  TS_TOKEN_BEGIN("component");
   u_long movedBy = strlen(tsParseData->token);
 
   TSParserToken token;
@@ -19,10 +24,11 @@ const TSParserToken TS_parse_decorator(TSFile *__attribute__((__unused__)) tsFil
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
-  log_to_file("-> end %s\n", "component");
+  TS_TOKEN_END("component");
   return token;
 }
 
 void TS_free_decorator(const TSParserToken token) {
+  TS_free_children(token);
   // TODO
 }
