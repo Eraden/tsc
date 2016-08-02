@@ -143,7 +143,7 @@ TS_print_from_function(
 
   for (u_long index = 0; index < indent; index++)
     fprintf(outputSettings.stream, "%s", "  ");
-  fprintf(outputSettings.stream, "%s", "}");
+  fprintf(outputSettings.stream, "%s", "}\n");
 }
 
 // STRING
@@ -170,11 +170,11 @@ TS_output_measure_function_head(
       if (isSpread) {
         argSize = strlen("  /* spread */");
       }
-      if (i > 0 && isSpread == 0) size += sizeof(", ");
+      if (i > 0 && isSpread == 0) size += strlen(", ");
       size += argSize;
     }
   }
-  size += sizeof(") {\n");
+  size += strlen(") {\n");
   return size;
 }
 
@@ -371,13 +371,13 @@ TS_string_from_function(
   string = TS_string_for_function_head(tsFile, data, indent, size + 1);
   string = TS_string_for_function_body(tsFile, data, indent, string, &tsParserToken, outputSettings);
 
-  char *newPointer = (char *) calloc(sizeof(char), strlen(string) + (indent * 2) + strlen("}") + 1);
+  char *newPointer = (char *) calloc(sizeof(char), strlen(string) + (indent * 2) + strlen("}\n") + TS_STRING_END);
   strcpy(newPointer, string);
   free(string);
   string = newPointer;
 
   for (u_long index = 0; index < indent; index++) strcat(string, "  ");
-  strcat(string, "}");
+  strcat(string, "}\n");
   return string;
 }
 

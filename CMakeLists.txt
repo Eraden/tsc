@@ -17,9 +17,6 @@ SET(
     src/parser/ts_parse_default.c
     src/parser/ts_parse_return.c
     src/parser/ts_parse_local_variable.c
-    src/parser/ts_parse_let.c
-    src/parser/ts_parse_var.c
-    src/parser/ts_parse_const.c
     src/parser/ts_parse_decorator.c
     src/parser/ts_parse_import.c
     src/parser/ts_parse_export.c
@@ -75,7 +72,6 @@ SET(
     include/tsc/sys.h
     include/tsc/register.h
     include/tsc/output.h
-    include/tsc/parser/ts_variable.h
     include/tsc/parser.h
 )
 
@@ -131,9 +127,18 @@ ENDIF ()
 IF (Debug)
   ADD_DEFINITIONS(-DDebug=1)
 ENDIF ()
+ADD_DEFINITIONS(-DUNICODE)
+ADD_DEFINITIONS(-D_UNICODE)
+ADD_DEFINITIONS(-D_MBCS)
 
-add_library(tsparser ${PARSER_SOURCES})
-add_library(tsoutput ${OUTPUT_SOURCES})
+add_library(
+    tsparser
+    ${PARSER_SOURCES}
+)
+add_library(
+    tsoutput
+    ${OUTPUT_SOURCES}
+)
 
 ADD_EXECUTABLE(tsc ${SOURCE_FILES} src/main.c)
 ADD_EXECUTABLE(tsc_test ${TEST_SOURCES} tests/main.c)

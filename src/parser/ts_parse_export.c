@@ -21,9 +21,14 @@ const TSParserToken TS_parse_export(TSFile *__attribute__((__unused__)) tsFile, 
   const char *tok;
   while (proceed) {
     tok = (const char *) TS_getToken(tsParseData->stream);
+
     if (tok == NULL) {
-      break;
+      if (token.childrenSize == 1)
+        break;
+      else
+        ts_token_syntax_error("Unexpected end of stream while parsing `export` keyword.", tsFile, &token);
     }
+
     switch (tok[0]) {
       case ' ': {
         movedBy += strlen(tok);
@@ -50,17 +55,17 @@ const TSParserToken TS_parse_export(TSFile *__attribute__((__unused__)) tsFile, 
         if (token.childrenSize == 1) {
           TS_put_back(tsParseData->stream, tok);
           proceed = 0;
-          break;
+        } else {
+          movedBy += strlen(tok);
+
+          tsParseData->token = tok;
+          tsParseData->character += movedBy;
+          tsParseData->position += movedBy;
+          movedBy = 0;
+          TSParserToken child = TS_parse_ts_token(tsFile, tsParseData);
+
+          TS_push_child(&token, child);
         }
-
-        tsParseData->token = tok;
-        tsParseData->character += movedBy;
-        tsParseData->position += movedBy;
-        movedBy = 0;
-        TSParserToken child = TS_parse_ts_token(tsFile, tsParseData);
-
-        TS_push_child(&token, child);
-
         free((void *) tok);
         break;
       }

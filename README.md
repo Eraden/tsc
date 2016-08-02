@@ -2,6 +2,10 @@
 
 This is C typescript compiler. It can compile typescript file faster than normal tsc provided by Microsoft.
 
+## Pre-requirements
+
+* `libunistring-dev` for unicode support
+
 ## Build
 
 ```bash

@@ -1,6 +1,127 @@
 #include <tsc/parser.h>
 #include <tsc/register.h>
 
+static const TSParserToken
+__attribute__((visibility("hidden")))
+TS_parse_class_method_argument(
+    TSFile *__attribute__((__unused__)) tsFile,
+    TSParseData *tsParseData
+) {
+  u_long movedBy = 0;
+  volatile unsigned char proceed = 1;
+  const char *tok;
+  TSFunctionParseFlag parseFlag = TS_PARSE_FN_ARG_NAME;
+
+  TSParserToken argument;
+
+  TSLocalVariableData *argumentData = (TSLocalVariableData *) calloc(sizeof(TSLocalVariableData), 1);
+  argumentData->name = NULL;
+  argumentData->value = NULL;
+  argumentData->type = NULL;
+
+  argument.tokenType = TS_VAR;
+  argument.data = argumentData;
+  argument.visibility = TS_VISIBILITY_SCOPE;
+  argument.children = NULL;
+  argument.childrenSize = 0;
+
+  while (proceed) {
+    tok = (const char *) TS_getToken(tsParseData->stream);
+    if (tok == NULL) {
+      ts_token_syntax_error("Unexpected end of class method argument", tsFile, &argument);
+    }
+
+    switch (tok[0]) {
+      case ' ': {
+        movedBy += strlen(tok);
+        free((void *) tok);
+        break;
+      }
+      case '\n': {
+        movedBy += strlen(tok);
+        free((void *) tok);
+        tsParseData->position += movedBy;
+        tsParseData->character = 0;
+        tsParseData->line += 1;
+        movedBy = 0;
+        break;
+      }
+      case ')': {
+        proceed = 0;
+        TS_put_back(tsParseData->stream, tok);
+        free((void *) tok);
+        break;
+      }
+      case ',': {
+        proceed = 0;
+        movedBy += strlen(tok);
+        free((void *) tok);
+        break;
+      }
+      case '=': {
+        movedBy += strlen(tok);
+        free((void *) tok);
+
+        if (argumentData->name == NULL) {
+          ts_token_syntax_error("Assigning to argument without name", tsFile, &argument);
+        }
+        parseFlag = TS_PARSE_FN_ARG_VALUE;
+        break;
+      }
+      case ':': {
+        movedBy += strlen(tok);
+        free((void *) tok);
+
+        if (argumentData->name == NULL) {
+          ts_token_syntax_error("Declared argument type but argument has no name", tsFile, &argument);
+        }
+        if (argumentData->type != NULL) {
+          ts_token_syntax_error("Missing argument type after typing symbol", tsFile, &argument);
+        }
+        parseFlag = TS_PARSE_FN_ARG_TYPE;
+
+        break;
+      }
+      default: {
+        if (strcmp(tok, "private") == 0) {
+          argument.visibility = TS_VISIBILITY_PRIVATE;
+        } else if (strcmp(tok, "protected") == 0) {
+          argument.visibility = TS_VISIBILITY_PROTECTED;
+        } else if (strcmp(tok, "public") == 0) {
+          argument.visibility = TS_VISIBILITY_PUBLIC;
+        } else if (parseFlag == TS_PARSE_FN_ARG_NAME) {
+          u_long size = strlen(tok) + 1;
+          if (argumentData->name != NULL) size += strlen(argumentData->name);
+          char *newPointer = (char *) calloc(sizeof(char), size);
+          if (argumentData->name != NULL) strcpy(newPointer, argumentData->name);
+          if (argumentData->name != NULL) free((void *) argumentData->name);
+          strcat(newPointer, tok);
+          argumentData->name = newPointer;
+        } else if (parseFlag == TS_PARSE_FN_ARG_VALUE) {
+          u_long size = strlen(tok) + 1;
+          if (argumentData->value != NULL) size = size + strlen(argumentData->value) + strlen(" ");
+          char *newPointer = (char *) calloc(sizeof(char), size);
+          if (argumentData->value != NULL) strcpy(newPointer, argumentData->value);
+          if (argumentData->value != NULL) strcat(newPointer, " ");
+          if (argumentData->value) free((void *) argumentData->value);
+          strcat(newPointer, tok);
+          argumentData->value = newPointer;
+        } else /*if (parseFlag == TS_PARSE_FN_ARG_TYPE)*/ {
+          argumentData->type = TS_clone_string(tok);
+        }
+
+        movedBy += strlen(tok);
+        free((void *) tok);
+        break;
+      }
+    }
+  }
+
+  tsParseData->character += movedBy;
+  tsParseData->position += movedBy;
+  return argument;
+}
+
 static void
 __attribute__((visibility("hidden")))
 TS_parse_class_method(
@@ -61,9 +182,24 @@ TS_parse_class_method(
       }
       default: {
         if (parseFlag == TS_PARSE_CLASS_MEMBER_METHOD_ARGUMENTS) {
+          tsParseData->token = tok;
+          tsParseData->character += *movedBy;
+          tsParseData->position += *movedBy;
+          *movedBy = 0;
+
+          TSParserToken arg = TS_parse_class_method_argument(tsFile, tsParseData);
+
+          TSParserToken *newPointer = calloc(sizeof(TSParserToken), methodData->argumentsSize + 1);
+
+          if (methodData->arguments != NULL)
+            memcpy(newPointer, methodData->arguments, sizeof(TSParserToken) * methodData->argumentsSize);
+          if (methodData->arguments != NULL) free(methodData->arguments);
+          methodData->arguments = newPointer;
+          methodData->arguments[methodData->argumentsSize] = arg;
+          methodData->argumentsSize += 1;
+
           *movedBy += strlen(tok);
           free((void *) tok);
-          // TODO: Missing
         } else if (parseFlag == TS_PARSE_CLASS_MEMBER_METHOD_BODY) {
           tsParseData->token = tok;
           tsParseData->character += *movedBy;
@@ -147,8 +283,9 @@ TS_parse_class_member(
         break;
       }
       case '(': {
-        *movedBy += strlen(tok);
-        free((void *) tok);
+        if (name == NULL) {
+          ts_token_syntax_error("Missing class method name", tsFile, &bodyToken);
+        }
 
         bodyToken.tokenType = TS_CLASS_METHOD;
 

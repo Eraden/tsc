@@ -11,8 +11,10 @@
 #include <dirent.h>
 #include <assert.h>
 #include <errno.h>
+#include <wchar.h>
+#include <locale.h>
 
-#if defined __APPLE__
+#ifdef __APPLE__
 #include <unistd.h>
 #include <sys/stat.h>
 #else
