@@ -12,13 +12,13 @@ int main(int argc, const char **argv) {
 
   fclose(settings.stream);
 
-  fprintf(stdout, "\n// File: %s\n\n", tsFile.file);
-
-  if (TS_output_stream != NULL) {
-    TS_print_stream(&tsFile, TS_output_stream);
-  } else {
-    TS_print_stream(&tsFile, stdout);
-  }
+//  fprintf(stdout, "\n// File: %s\n\n", tsFile.file);
+//
+//  if (TS_output_stream != NULL) {
+//    TS_print_stream(&tsFile, TS_output_stream);
+//  } else {
+//    TS_print_stream(&tsFile, stdout);
+//  }
 
   TS_free_tsFile(tsFile);
 

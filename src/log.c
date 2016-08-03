@@ -53,7 +53,7 @@ void init_log() {
     log_to_file((wchar_t *) L"\n\n");
   } else {
     file = fopen("./log/info.log", "w");
-    if (!file) {
+    if (file == NULL) {
       io_panic((wchar_t *) L"Failed to open tsc.log for writing!\n");
     }
     time_t t = time(NULL);
@@ -61,7 +61,7 @@ void init_log() {
     fprintf(file, "%s\n", str);
     fclose(file);
     file = fopen("./log/error.log", "w");
-    if (!file) {
+    if (file == NULL) {
       io_panic((wchar_t *) L"Failed to open error.log for writing!\n");
     }
     fprintf(file, "%s\n", str);
@@ -76,7 +76,7 @@ log_to_file(
   if (TS_check_log_level(TS_VERBOSITY_DEBUG) == 0) return;
 
   FILE *file = fopen("./log/info.log", "a");
-  if (!file) {
+  if (file == NULL) {
     io_panic((wchar_t *) L"Failed to open info.log for appending!\n");
   }
   va_list ap_file;
@@ -85,12 +85,12 @@ log_to_file(
   va_end(ap_file);
   fclose(file);
 
-//  if (TS_check_log_level(TS_VERBOSITY_LOG) == 0) return;
-//  file = stdout;
-//  va_list ap_stdout;
-//  va_start(ap_stdout, msg);
-//  vfwprintf(file, msg, ap_stdout);
-//  va_end(ap_stdout);
+  if (TS_check_log_level(TS_VERBOSITY_LOG) == 0) return;
+  file = stdout;
+  va_list ap_stdout;
+  va_start(ap_stdout, msg);
+  vfwprintf(file, msg, ap_stdout);
+  va_end(ap_stdout);
 }
 
 void
@@ -100,7 +100,7 @@ log_error(
   if (TS_check_log_level(TS_VERBOSITY_ERROR) == 0) return;
 
   FILE *file = fopen("./log/error.log", "a");
-  if (!file) {
+  if (file == NULL) {
     io_panic((wchar_t *) L"Failed to open error.log for appending!\n");
   }
   va_list ap;

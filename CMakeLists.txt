@@ -52,18 +52,18 @@ SET(
     TEST_SOURCES
     ${SOURCE_FILES}
     tests/test.c
-    tests/parser/classes.c
-    tests/parser/class/multiple_instance_methods.c
-    tests/parser/class/multiple_instance_fields.c
+#    tests/parser/classes.c
+#    tests/parser/class/multiple_instance_methods.c
+#    tests/parser/class/multiple_instance_fields.c
     tests/parser/variables.c
     tests/parser/functions.c
-    tests/parser/if_conditions.c
-    tests/parser/else_conditions.c
-    tests/parser/return_keyword.c
-    tests/parser/parse_exports.c
-    tests/parser/inline_comment.c
-    tests/parser/multiline_comment.c
-    tests/parser/new_keyword.c
+#    tests/parser/if_conditions.c
+#    tests/parser/else_conditions.c
+#    tests/parser/return_keyword.c
+#    tests/parser/parse_exports.c
+#    tests/parser/inline_comment.c
+#    tests/parser/multiline_comment.c
+#    tests/parser/new_keyword.c
 )
 
 SET(
@@ -73,6 +73,7 @@ SET(
     include/tsc/register.h
     include/tsc/output.h
     include/tsc/parser.h
+    tests/ck_wcs_assert.h
 )
 
 include_directories(include)
@@ -128,9 +129,8 @@ ENDIF ()
 IF (Debug)
   ADD_DEFINITIONS(-DDebug=1)
 ENDIF ()
-ADD_DEFINITIONS(-DUNICODE)
-ADD_DEFINITIONS(-D_UNICODE)
-ADD_DEFINITIONS(-D_MBCS)
+
+ADD_DEFINITIONS(-DUNICODE -D_UNICODE -D_MBCS)
 
 add_library(
     tsparser
@@ -143,6 +143,8 @@ add_library(
 
 ADD_EXECUTABLE(tsc ${SOURCE_FILES} src/main.c)
 ADD_EXECUTABLE(tsc_test ${TEST_SOURCES} tests/main.c)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build)
 
 target_link_libraries(
     tsc

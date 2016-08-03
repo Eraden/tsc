@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
     }
   }
 
-  TS_set_log_level(TS_VERBOSITY_INFO);
+  TS_set_log_level(TS_VERBOSITY_OFF);
   init_log();
 
   Suite *s;

@@ -11,6 +11,8 @@ TS_clone_string(
 ) {
   wchar_t *clone = calloc(sizeof(wchar_t), wcslen(string) + TS_STRING_END);
   wcscpy(clone, string);
+
+//  printf("old (%ls) == new (%ls)\n", string, clone);
   return clone;
 }
 
@@ -142,7 +144,9 @@ TS_next_line(
 
 static u_short
 __attribute__((visibility("hidden")))
-TS_valid_char_for_token(wchar_t c) {
+TS_valid_char_for_token(
+    wchar_t c
+) {
   switch (c) {
     case L'@':
     case L'\'':
@@ -295,12 +299,17 @@ TS_getToken(
       }
       default: {
         if (TS_valid_char_for_token(prev)) {
-          u_long size = tok ? wcslen((const wchar_t *) tok) : 0;
-          volatile wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size + 1 + TS_STRING_END);
-          if (tok != NULL) wcscpy((wchar_t *) newPointer, (const wchar_t *) tok);
+
+//          if (tok != NULL) fprintf(stderr, "%ls %lc %i\n", (wchar_t *) tok, c, c);
+
+          const u_long size = tok != NULL ? wcslen((const wchar_t *) tok) : 0;
+          volatile wchar_t *newPointerForDefault = (wchar_t *) calloc(sizeof(wchar_t), size + 1 + TS_STRING_END);
+          if (tok != NULL) wcscpy((wchar_t *) newPointerForDefault, (const wchar_t *) tok);
           if (tok != NULL) free((void *) tok);
-          tok = newPointer;
+          tok = newPointerForDefault;
           tok[size] = c;
+
+//          if (tok != NULL) fprintf(stderr, "%ls %lc %i\n\n", (wchar_t *) tok, c, c);
         } else {
           ungetwc((wint_t) c, stream);
           log_to_file((wchar_t *) L"# token: '%ls' [default + else]\n", tok);
@@ -339,9 +348,10 @@ TS_parse_stream(
   tsFile.tokens = NULL;
   tsFile.tokensSize = 0;
   tsFile.file = file;
+  tsFile.stream = stream;
 
   TSParseData data;
-  data.line = 1;
+  data.line = 0;
   data.character = 0;
   data.position = 0;
   data.stream = stream;
@@ -365,6 +375,8 @@ TS_parse_stream(
 
     free((void *) tok);
   }
+  fclose(tsFile.stream);
+  tsFile.stream = NULL;
   return tsFile;
 }
 
@@ -451,7 +463,10 @@ TS_free_tsToken(
   }
 }
 
-void TS_free_children(const TSParserToken token) {
+void
+TS_free_children(
+    const TSParserToken token
+) {
   for (u_long childIndex = 0; childIndex < token.childrenSize; childIndex++) {
     TS_free_tsToken(token.children[childIndex]);
   }

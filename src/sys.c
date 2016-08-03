@@ -29,6 +29,7 @@ ts_token_syntax_error(
     const TSFile *tsFile,
     const TSParserToken *token
 ) {
+  fclose(tsFile->stream);
   ts_syntax_error(msg, tsFile->file, token->character, token->line);
 }
 
@@ -44,20 +45,35 @@ ts_syntax_error(
   exit(TS_PARSE_FAILURE_CODE);
 }
 
-void ts_log_position(const char *file, const u_long character, const u_long line) {
+void
+ts_log_position(
+    const char *file,
+    const u_long character,
+    const u_long line
+) {
   log_error((wchar_t *) L"      Position: %s:%lu:%lu [line:character]\n", file, line + 1, character);
 }
 
-void TS_set_log_level(TSVerbosity verbosity) {
+void
+TS_set_log_level(
+    TSVerbosity verbosity
+) {
   ts_current_log_level = verbosity;
 }
 
-unsigned char TS_check_log_level(TSVerbosity verbosity) {
+unsigned char
+TS_check_log_level(
+    TSVerbosity verbosity
+) {
   if (ts_current_log_level == TS_VERBOSITY_OFF) return 0;
   return (unsigned char) (ts_current_log_level >= verbosity ? 1 : 0);
 }
 
-const TSParserSettings TS_parse_arguments(int argc, const char **argv) {
+const TSParserSettings
+TS_parse_arguments(
+    int argc,
+    const char **argv
+) {
   const char *arg;
   TSParserSettings settings;
   settings.stream = NULL;
@@ -109,6 +125,9 @@ const TSParserSettings TS_parse_arguments(int argc, const char **argv) {
 
       settings.fileName = argv[++i];
       settings.stream = fopen(settings.fileName, "r");
+      if (settings.stream == NULL) {
+        io_panic((wchar_t *) L"Couldn't open source code file");
+      }
     } else if (strcmp(arg, "-c") == 0 || strcmp(arg, "--code") == 0) {
       if (i+1 >= argc) {
         fprintf(stderr, "Expecting code but no more arguments found");

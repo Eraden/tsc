@@ -112,7 +112,7 @@ TS_parse_function_argument(
         free((void *) tok);
 
         if (argumentData->name == NULL)
-          ts_token_syntax_error((wchar_t *) L"Found color but function argument has no name", tsFile, &argument);
+          ts_token_syntax_error((wchar_t *) L"Found colon but function argument has no name", tsFile, &argument);
 
         if (argumentData->type != NULL)
           ts_token_syntax_error((wchar_t *) L"Missing argument type after typing symbol", tsFile, &argument);
@@ -258,7 +258,12 @@ TS_parse_function_lookup_return_type(
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while looking for function return type", tsFile, token);
+      free((void *) tok);
+      ts_token_syntax_error(
+          (wchar_t *) L"Unexpected end of stream while looking for function return type",
+          tsFile,
+          token
+      );
     }
 
     switch (tok[0]) {
@@ -291,7 +296,11 @@ TS_parse_function_lookup_return_type(
         break;
       }
       default: {
-        ts_token_syntax_error((wchar_t *) L"Unexpected token while looking for function type", tsFile, token);
+        ts_token_syntax_error(
+            (wchar_t *) L"Unexpected token while looking for function type",
+            tsFile,
+            token
+        );
       }
     }
   }
@@ -302,8 +311,11 @@ TS_parse_function_lookup_return_type(
       tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
       if (tok == NULL) {
-        ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while looking for function return type", tsFile,
-                              token);
+        ts_token_syntax_error(
+            (wchar_t *) L"Unexpected end of stream while looking for function return type",
+            tsFile,
+            token
+        );
       }
 
       switch (tok[0]) {
@@ -322,6 +334,7 @@ TS_parse_function_lookup_return_type(
         }
         case L'{': {
           if (data->returnType == NULL) {
+            free((void *) tok);
             ts_token_syntax_error(
                 (const wchar_t *) L"Found colon but type wasn't declared while parsing function!",
                 tsFile,
@@ -334,19 +347,23 @@ TS_parse_function_lookup_return_type(
           break;
         }
         default: {
-          if (data->returnType != NULL)
+          if (data->returnType != NULL) {
+            free((void *) tok);
             ts_token_syntax_error(
                 (wchar_t *) L"Unexpected token while parsing function return type. Return type was already defined!",
                 tsFile,
                 token
             );
+          }
 
-          if (!TS_name_is_valid(tok))
+          if (!TS_name_is_valid(tok)) {
+            free((void *) tok);
             ts_token_syntax_error(
                 (wchar_t *) L"Invalid type name for function return type!",
                 tsFile,
                 token
             );
+          }
 
           data->returnType = TS_clone_string(tok);
           movedBy += wcslen(tok);
@@ -365,10 +382,10 @@ __attribute__((visibility("hidden")))
 TS_parse_function_body(
     TSFile *tsFile,
     TSParseData *tsParseData,
-    TSParserToken *token,
-    u_long *movedBy
+    TSParserToken *token
 ) {
   const wchar_t *tok = NULL;
+  u_long movedBy = 0;
   // move to bracket '{'
   volatile unsigned char proceed;
 
@@ -387,22 +404,22 @@ TS_parse_function_body(
     }
     switch (tok[0]) {
       case L'\n': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
 
         tsParseData->line += 1;
         tsParseData->character = 0;
-        tsParseData->position += *movedBy;
-        *movedBy = 0;
+        tsParseData->position += movedBy;
+        movedBy = 0;
         break;
       }
       case L' ': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
       case L'}': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         proceed = 0;
         break;
@@ -412,7 +429,7 @@ TS_parse_function_body(
 
         TSParserToken tsParserToken = TS_parse_ts_token(tsFile, tsParseData);
 
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         free((void *) tsParseData->token);
 
@@ -431,9 +448,16 @@ TS_parse_function_body(
       }
     }
   }
+
+  tsParseData->position += movedBy;
+  tsParseData->character += movedBy;
 }
 
-const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData) {
+const TSParserToken
+TS_parse_function(
+    TSFile *tsFile,
+    TSParseData *tsParseData
+) {
   TS_TOKEN_BEGIN("function");
   u_long movedBy = wcslen(tsParseData->token);
 
@@ -461,7 +485,11 @@ const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData) 
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing function", tsFile, &token);
+      ts_token_syntax_error(
+          (wchar_t *) L"Unexpected end of stream while parsing function",
+          tsFile,
+          &token
+      );
     }
 
     switch (tok[0]) {
@@ -480,10 +508,7 @@ const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData) 
         free((void *) tok);
         break;
       }
-      case L'(': {
-        proceed = 0;
-        TS_put_back(tsParseData->stream, tok);
-        free((void *) tok);
+      case L'{': {
         break;
       }
       default: {
@@ -491,7 +516,12 @@ const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData) 
           functionData->name = TS_clone_string(tok);
           free((void *) tok);
         } else {
-          ts_token_syntax_error((wchar_t *) L"Invalid function name", tsFile, &token);
+          free((void *) tok);
+          ts_token_syntax_error(
+              (wchar_t *) L"Invalid function name",
+              tsFile,
+              &token
+          );
         }
         proceed = 0;
         break;
@@ -501,7 +531,7 @@ const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData) 
 
   TS_parse_function_arguments(tsFile, tsParseData, &token);
   TS_parse_function_lookup_return_type(tsFile, tsParseData, &token);
-  TS_parse_function_body(tsFile, tsParseData, &token, &movedBy);
+  TS_parse_function_body(tsFile, tsParseData, &token);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
@@ -510,7 +540,10 @@ const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData) 
   return token;
 }
 
-void TS_free_function(const TSParserToken token) {
+void
+TS_free_function(
+    const TSParserToken token
+) {
   TS_free_children(token);
 
   TSFunctionData *data = token.data;

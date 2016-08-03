@@ -5,7 +5,7 @@
 
 #define TS_TOKEN_BEGIN(token) log_to_file(L"-> parsing as %s\n", token);
 #define TS_TOKEN_END(token) log_to_file(L"-> end %s\n", token);
-#define TS_STRING_END sizeof(wchar_t)
+#define TS_STRING_END 1
 
 typedef struct sTSParseData TSParseData;
 typedef struct sTSFunctionData TSFunctionData;
@@ -129,6 +129,7 @@ typedef struct sTSParserToken {
 
 typedef struct sTSFile {
   const char *file;
+  FILE *stream;
   TSParserToken *tokens;
   u_long tokensSize;
 } TSFile;

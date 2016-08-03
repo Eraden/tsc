@@ -258,7 +258,7 @@ START_TEST(parse_valid_functions)
   ck_assert_wstr_eq(argData->value, L"new Object");
 
   // example10
-  token = tsFile.tokens[0];
+  token = tsFile.tokens[9];
   data = token.data;
   ck_assert(token.tokenType == TS_FUNCTION);
   ck_assert_int_eq(token.childrenSize, 0);
@@ -271,6 +271,7 @@ START_TEST(parse_valid_functions)
   ck_assert_int_eq(data->argumentsSize, 0);
   ck_assert_ptr_eq(data->arguments, NULL);
 
+  TS_free_tsFile(tsFile);
 END_TEST
 
 START_TEST(parse_function_with_missing_return_type)
