@@ -2,7 +2,7 @@
 
 const TSParserToken TS_parse_return(TSFile *tsFile, TSParseData *tsParseData) {
   TS_TOKEN_BEGIN("return");
-  u_long movedBy = strlen(tsParseData->token);
+  u_long movedBy = wcslen(tsParseData->token);
 
   TSParserToken token;
   token.tokenType = TS_RETURN;
@@ -15,23 +15,23 @@ const TSParserToken TS_parse_return(TSFile *tsFile, TSParseData *tsParseData) {
   token.data = NULL;
 
   {
-    const char *tok;
+    const wchar_t *tok;
     volatile unsigned char proceed = 1;
     while (proceed) {
-      tok = (const char *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
       if (tok == NULL) {
         break;
       }
 
       switch (tok[0]) {
-        case ' ': {
-          movedBy += strlen(tok);
+        case L' ': {
+          movedBy += wcslen(tok);
           free((void *) tok);
           break;
         }
-        case '\n': {
-          movedBy += strlen(tok);
+        case L'\n': {
+          movedBy += wcslen(tok);
           tsParseData->position += movedBy;
           tsParseData->line += 1;
           tsParseData->character = 0;
@@ -40,7 +40,7 @@ const TSParserToken TS_parse_return(TSFile *tsFile, TSParseData *tsParseData) {
           free((void *) tok);
           break;
         }
-        case ';':
+        case L';':
         {
           proceed = 0;
           TS_put_back(tsParseData->stream, tok);

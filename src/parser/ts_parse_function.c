@@ -21,7 +21,7 @@ TS_parse_function_argument(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  const char *tok;
+  const wchar_t *tok;
   TSParserToken argument;
   u_long movedBy = 0;
 
@@ -43,20 +43,24 @@ TS_parse_function_argument(
   TSFunctionParseFlag parseFlag = TS_PARSE_FN_ARG_NAME;
 
   while (proceed) {
-    tok = (const char *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
-    log_to_file("current token for function argument: '%s'\n", tok);
+    log_to_file(
+        (wchar_t *) L"current token for function argument: '%ls'\n",
+        tok
+    );
+
     if (tok == NULL) {
-      ts_token_syntax_error("Unexpected end of function argument", tsFile, &argument);
+      ts_token_syntax_error((wchar_t *) L"Unexpected end of function argument", tsFile, &argument);
     }
 
     switch (tok[0]) {
-      case ' ': {
-        movedBy += strlen(tok);
+      case L' ': {
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
-      case '\n': {
+      case L'\n': {
         tsParseData->line += 1;
         tsParseData->character = 0;
         tsParseData->position += movedBy;
@@ -64,82 +68,93 @@ TS_parse_function_argument(
         free((void *) tok);
         break;
       }
-      case ')': {
+      case L')': {
         if (parseFlag == TS_PARSE_FN_ARG_VALUE && argumentData->value == NULL)
-          ts_token_syntax_error("Value for function argument is missing", tsFile, &argument);
+          ts_token_syntax_error((wchar_t *) L"Value for function argument is missing", tsFile, &argument);
+
         if (parseFlag == TS_PARSE_FN_ARG_TYPE && argumentData->type == NULL)
-          ts_token_syntax_error("Value for function argument is missing", tsFile, &argument);
+          ts_token_syntax_error((wchar_t *) L"Value for function argument is missing", tsFile, &argument);
+
         TS_put_back(tsParseData->stream, tok);
         free((void *) tok);
         proceed = 0;
         break;
       }
-      case '=': {
-        movedBy += strlen(tok);
+      case L'=': {
+        movedBy += wcslen(tok);
         free((void *) tok);
 
         if (argumentData->name == NULL) {
-          ts_token_syntax_error("Assigning to argument without name", tsFile, &argument);
+          ts_token_syntax_error((wchar_t *) L"Assigning to argument without name", tsFile, &argument);
         }
         parseFlag = TS_PARSE_FN_ARG_VALUE;
         break;
       }
-      case ',': {
-        movedBy += strlen(tok);
+      case L',': {
+        movedBy += wcslen(tok);
         free((void *) tok);
 
         if (parseFlag == TS_PARSE_FN_ARG_VALUE && argumentData->value == NULL)
-          ts_token_syntax_error("Value for function argument is missing", tsFile, &argument);
+          ts_token_syntax_error((wchar_t *) L"Value for function argument is missing", tsFile, &argument);
+
         if (parseFlag == TS_PARSE_FN_ARG_TYPE && argumentData->type == NULL)
-          ts_token_syntax_error("Value for function argument is missing", tsFile, &argument);
+          ts_token_syntax_error((wchar_t *) L"Value for function argument is missing", tsFile, &argument);
+
         if (argumentData->name == NULL)
-          ts_token_syntax_error("Declared argument as next but previous has no name", tsFile, &argument);
+          ts_token_syntax_error((wchar_t *) L"Declared argument as next but previous has no name", tsFile, &argument);
 
         proceed = 0;
 
         break;
       }
-      case ':': {
-        movedBy += strlen(tok);
+      case L':': {
+        movedBy += wcslen(tok);
         free((void *) tok);
 
         if (argumentData->name == NULL)
-          ts_token_syntax_error("Declared argument type but argument has no name", tsFile, &argument);
+          ts_token_syntax_error((wchar_t *) L"Found color but function argument has no name", tsFile, &argument);
+
         if (argumentData->type != NULL)
-          ts_token_syntax_error("Missing argument type after typing symbol", tsFile, &argument);
+          ts_token_syntax_error((wchar_t *) L"Missing argument type after typing symbol", tsFile, &argument);
         parseFlag = TS_PARSE_FN_ARG_TYPE;
 
         break;
       }
       default: {
-        if (strcmp(tok, "private") == 0) {
+        if (wcscmp(tok, (wchar_t *) L"private") == 0) {
           argument.visibility = TS_VISIBILITY_PRIVATE;
-        } else if (strcmp(tok, "protected") == 0) {
+
+        } else if (wcscmp(tok, (wchar_t *) L"protected") == 0) {
           argument.visibility = TS_VISIBILITY_PROTECTED;
-        } else if (strcmp(tok, "public") == 0) {
+
+        } else if (wcscmp(tok, (wchar_t *) L"public") == 0) {
           argument.visibility = TS_VISIBILITY_PUBLIC;
+
         } else if (parseFlag == TS_PARSE_FN_ARG_NAME) {
-          u_long size = strlen(tok) + 1;
-          if (argumentData->name != NULL) size += strlen(argumentData->name);
-          char *newPointer = (char *) calloc(sizeof(char), size);
-          if (argumentData->name != NULL) strcpy(newPointer, argumentData->name);
+          u_long size = wcslen(tok) + 1;
+          if (argumentData->name != NULL) size += wcslen(argumentData->name);
+          wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
+          if (argumentData->name != NULL) wcscpy(newPointer, argumentData->name);
           if (argumentData->name != NULL) free((void *) argumentData->name);
-          strcat(newPointer, tok);
+          wcscat(newPointer, tok);
           argumentData->name = newPointer;
+
         } else if (parseFlag == TS_PARSE_FN_ARG_VALUE) {
-          u_long size = strlen(tok) + TS_STRING_END;
-          if (argumentData->value != NULL) size = size + strlen(argumentData->value) + strlen(" ");
-          char *newPointer = (char *) calloc(sizeof(char), size);
-          if (argumentData->value != NULL) strcpy(newPointer, argumentData->value);
-          if (argumentData->value != NULL) strcat(newPointer, " ");
+          u_long size = wcslen(tok) + TS_STRING_END;
+          if (argumentData->value != NULL)
+            size = size + wcslen(argumentData->value) + wcslen((const wchar_t *) L" ");
+          wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
+          if (argumentData->value != NULL) wcscpy(newPointer, argumentData->value);
+          if (argumentData->value != NULL) wcscat(newPointer, (const wchar_t *) L" ");
           if (argumentData->value) free((void *) argumentData->value);
-          strcat(newPointer, tok);
+          wcscat(newPointer, tok);
           argumentData->value = newPointer;
+
         } else /*if (parseFlag == TS_PARSE_FN_ARG_TYPE)*/ {
           argumentData->type = TS_clone_string(tok);
         }
 
-        movedBy += strlen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
@@ -159,38 +174,38 @@ TS_parse_function_arguments(
     TSParseData *tsParseData,
     TSParserToken *token
 ) {
-  const char *tok;
+  const wchar_t *tok;
   u_long movedBy = 0;
   u_short hadStartBracket = 0;
   volatile unsigned char proceed = 1;
 
   while (proceed) {
-    tok = (const char *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      ts_token_syntax_error("Unexpected end of function argument", tsFile, token);
+      ts_token_syntax_error((wchar_t *) L"Unexpected end of function argument", tsFile, token);
     }
 
     if (!hadStartBracket) {
       if (tok[0] == '(') {
         hadStartBracket = 1;
-        movedBy += strlen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         continue;
 
       } else {
         free((void *) tok);
-        ts_token_syntax_error("Function arguments starts before bracket", tsFile, token);
+        ts_token_syntax_error((wchar_t *) L"Function arguments starts before bracket", tsFile, token);
       }
     }
 
     switch (tok[0]) {
-      case ' ': {
-        movedBy += strlen(tok);
+      case L' ': {
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
-      case '\n': {
+      case L'\n': {
         tsParseData->line += 1;
         tsParseData->character = 0;
         tsParseData->position += movedBy;
@@ -198,8 +213,8 @@ TS_parse_function_arguments(
         free((void *) tok);
         break;
       }
-      case ')': {
-        movedBy += strlen(tok);
+      case L')': {
+        movedBy += wcslen(tok);
         free((void *) tok);
         proceed = 0;
         break;
@@ -233,25 +248,26 @@ TS_parse_function_lookup_return_type(
     TSParserToken *token
 ) {
   TSFunctionData *data = token->data;
-  const char *tok;
+  const wchar_t *tok;
   u_long movedBy = 0;
-  volatile unsigned char proceed = 1;
+  volatile unsigned char proceed;
+  volatile unsigned char foundColon = 0;
 
   proceed = 1;
   while (proceed) {
-    tok = (const char *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      ts_token_syntax_error("Unexpected end of stream while looking for function return type", tsFile, token);
+      ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while looking for function return type", tsFile, token);
     }
 
     switch (tok[0]) {
-      case ' ': {
-        movedBy += strlen(tok);
+      case L' ': {
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
-      case '\n': {
+      case L'\n': {
         tsParseData->line += 1;
         tsParseData->character = 0;
         tsParseData->position += movedBy;
@@ -259,64 +275,84 @@ TS_parse_function_lookup_return_type(
         free((void *) tok);
         break;
       }
-      case ':': {
-        movedBy += strlen(tok);
+      case L':': {
+        movedBy += wcslen(tok);
+        free((void *) tok);
+        proceed = 0;
+        foundColon = 1;
+        break;
+      }
+      case L'{': {
+        movedBy += wcslen(tok);
+        tsParseData->position += movedBy;
+        tsParseData->character += movedBy;
         free((void *) tok);
         proceed = 0;
         break;
       }
-      case '{': {
-        movedBy += strlen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
-        free((void *) tok);
-        return;
-      }
       default: {
-        ts_token_syntax_error("Unexpected token while looking for function type", tsFile, token);
+        ts_token_syntax_error((wchar_t *) L"Unexpected token while looking for function type", tsFile, token);
       }
     }
   }
 
-  proceed = 1;
-  while (proceed) {
-    tok = (const char *) TS_getToken(tsParseData->stream);
+  if (foundColon == 1) {
+    proceed = 1;
+    while (proceed) {
+      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
-    if (tok == NULL) {
-      ts_token_syntax_error("Unexpected end of stream while looking for function return type", tsFile, token);
-    }
+      if (tok == NULL) {
+        ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while looking for function return type", tsFile,
+                              token);
+      }
 
-    switch (tok[0]) {
-      case ' ': {
-        movedBy += strlen(tok);
-        free((void *) tok);
-        break;
-      }
-      case '\n': {
-        tsParseData->line += 1;
-        tsParseData->character = 0;
-        tsParseData->position += movedBy;
-        movedBy = 0;
-        free((void *) tok);
-        break;
-      }
-      case '{': {
-        proceed = 0;
-        movedBy += strlen(tok);
-        free((void *) tok);
-        break;
-      }
-      default: {
-        if (data->returnType != NULL)
-          ts_token_syntax_error("Unexpected token while parsing function return type. Return type was already defined!",
-                                tsFile, token);
-        if (!TS_name_is_valid(tok))
-          ts_token_syntax_error("Invalid type name for function return type!", tsFile, token);
+      switch (tok[0]) {
+        case L' ': {
+          movedBy += wcslen(tok);
+          free((void *) tok);
+          break;
+        }
+        case L'\n': {
+          tsParseData->line += 1;
+          tsParseData->character = 0;
+          tsParseData->position += movedBy;
+          movedBy = 0;
+          free((void *) tok);
+          break;
+        }
+        case L'{': {
+          if (data->returnType == NULL) {
+            ts_token_syntax_error(
+                (const wchar_t *) L"Found colon but type wasn't declared while parsing function!",
+                tsFile,
+                token
+            );
+          }
+          proceed = 0;
+          movedBy += wcslen(tok);
+          free((void *) tok);
+          break;
+        }
+        default: {
+          if (data->returnType != NULL)
+            ts_token_syntax_error(
+                (wchar_t *) L"Unexpected token while parsing function return type. Return type was already defined!",
+                tsFile,
+                token
+            );
 
-        data->returnType = TS_clone_string(tok);
-        movedBy += strlen(tok);
-        free((void *) tok);
-        break;
+          if (!TS_name_is_valid(tok))
+            ts_token_syntax_error(
+                (wchar_t *) L"Invalid type name for function return type!",
+                tsFile,
+                token
+            );
+
+          data->returnType = TS_clone_string(tok);
+          movedBy += wcslen(tok);
+          free((void *) tok);
+          break;
+        }
       }
     }
   }
@@ -332,21 +368,26 @@ TS_parse_function_body(
     TSParserToken *token,
     u_long *movedBy
 ) {
-  const char *tok = NULL;
+  const wchar_t *tok = NULL;
   // move to bracket '{'
   volatile unsigned char proceed;
 
   proceed = 1;
 
   while (proceed) {
-    tok = (const char *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      ts_syntax_error("Unexpected end of function body", tsFile->file, tsParseData->character, tsParseData->line);
+      ts_syntax_error(
+          (wchar_t *) L"Unexpected end of function body",
+          tsFile->file,
+          tsParseData->character,
+          tsParseData->line
+      );
     }
     switch (tok[0]) {
-      case '\n': {
-        *movedBy += strlen(tok);
+      case L'\n': {
+        *movedBy += wcslen(tok);
         free((void *) tok);
 
         tsParseData->line += 1;
@@ -355,13 +396,13 @@ TS_parse_function_body(
         *movedBy = 0;
         break;
       }
-      case ' ': {
-        *movedBy += strlen(tok);
+      case L' ': {
+        *movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
-      case '}': {
-        *movedBy += strlen(tok);
+      case L'}': {
+        *movedBy += wcslen(tok);
         free((void *) tok);
         proceed = 0;
         break;
@@ -371,7 +412,7 @@ TS_parse_function_body(
 
         TSParserToken tsParserToken = TS_parse_ts_token(tsFile, tsParseData);
 
-        *movedBy += strlen(tok);
+        *movedBy += wcslen(tok);
         free((void *) tok);
         free((void *) tsParseData->token);
 
@@ -394,7 +435,7 @@ TS_parse_function_body(
 
 const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData) {
   TS_TOKEN_BEGIN("function");
-  u_long movedBy = strlen(tsParseData->token);
+  u_long movedBy = wcslen(tsParseData->token);
 
   TSParserToken token;
   token.tokenType = TS_FUNCTION;
@@ -413,19 +454,19 @@ const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData) 
   functionData->returnType = NULL;
   token.data = functionData;
 
-  const char *tok;
+  const wchar_t *tok;
   volatile unsigned char proceed = 1;
 
   while (proceed) {
-    tok = (const char *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      ts_token_syntax_error("Unexpected end of stream while parsing function", tsFile, &token);
+      ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing function", tsFile, &token);
     }
 
     switch (tok[0]) {
-      case '\n': {
-        movedBy += strlen(tok);
+      case L'\n': {
+        movedBy += wcslen(tok);
         free((void *) tok);
 
         tsParseData->line += 1;
@@ -434,12 +475,12 @@ const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData) 
         movedBy = 0;
         break;
       }
-      case ' ': {
-        movedBy += strlen(tok);
+      case L' ': {
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
-      case '(': {
+      case L'(': {
         proceed = 0;
         TS_put_back(tsParseData->stream, tok);
         free((void *) tok);
@@ -450,7 +491,7 @@ const TSParserToken TS_parse_function(TSFile *tsFile, TSParseData *tsParseData) 
           functionData->name = TS_clone_string(tok);
           free((void *) tok);
         } else {
-          ts_token_syntax_error("Invalid function name", tsFile, &token);
+          ts_token_syntax_error((wchar_t *) L"Invalid function name", tsFile, &token);
         }
         proceed = 0;
         break;

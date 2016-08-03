@@ -6,7 +6,7 @@ TS_parse_extends(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("extends");
-  u_long movedBy = strlen(tsParseData->token);
+  u_long movedBy = wcslen(tsParseData->token);
 
   TSParserToken token;
   token.tokenType = TS_EXTENDS;
@@ -18,21 +18,21 @@ TS_parse_extends(
   token.childrenSize = 0;
   token.data = NULL;
 
-  const char *tok;
+  const wchar_t *tok;
   unsigned char proceed = 1;
   while (proceed) {
-    tok = (const char *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error("Missing parent class name", tsFile, &token);
+      ts_token_syntax_error((wchar_t *) L"Missing parent class name", tsFile, &token);
     }
     switch (tok[0]) {
-      case ' ': {
-        movedBy += strlen(tok);
+      case L' ': {
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
-      case '\n': {
-        movedBy += strlen(tok);
+      case L'\n': {
+        movedBy += wcslen(tok);
         free((void *) tok);
         tsParseData->position += movedBy;
         tsParseData->character = 0;
@@ -42,7 +42,7 @@ TS_parse_extends(
       }
       default: {
         if (!TS_name_is_valid(tok)) {
-          ts_token_syntax_error("Invalid parent class name", tsFile, &token);
+          ts_token_syntax_error((wchar_t *) L"Invalid parent class name", tsFile, &token);
         }
         token.data = (void *) TS_clone_string(tok);
         proceed = 0;

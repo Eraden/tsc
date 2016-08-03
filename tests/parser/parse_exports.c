@@ -15,7 +15,7 @@ START_TEST(parse_export)
   TSClassData *data = classToken.data;
 
   ck_assert_ptr_ne(data, NULL);
-  ck_assert_str_eq(data->name, "A");
+  ck_assert_wstr_eq(data->name, L"A");;
 
   TS_free_tsFile(tsFile);
 END_TEST

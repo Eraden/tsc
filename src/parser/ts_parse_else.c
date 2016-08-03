@@ -3,43 +3,43 @@
 static void
 __attribute__(( visibility("hidden") ))
 TS_parse_else_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
-  log_to_file("->   parsing as %s body\n", "else");
-  const char *tok;
+  log_to_file(L"->   parsing as %s body\n", "else");
+  const wchar_t *tok;
   TSConditionBodyTermination termination = TS_ENDS_WITH_BRACKET;
 
   unsigned char proceed;
 
   proceed = 1;
   while (proceed) {
-    tok = (const char *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error("Unexpected end of else body", tsFile, token);
+      ts_token_syntax_error((wchar_t *) L"Unexpected end of else body", tsFile, token);
     }
 
     switch (tok[0]) {
-      case '\n': {
-        *movedBy += strlen(tok);
+      case L'\n': {
+        *movedBy += wcslen(tok);
         tsParseData->position += *movedBy;
         tsParseData->line += 1;
         tsParseData->character = 0;
         *movedBy = 0;
         break;
       }
-      case ' ': {
-        *movedBy += strlen(tok);
+      case L' ': {
+        *movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
-      case ';': {
-        *movedBy += strlen(tok);
+      case L';': {
+        *movedBy += wcslen(tok);
         free((void *) tok);
 
         return;
       }
-      case '{': {
+      case L'{': {
         proceed = 0;
         termination = TS_ENDS_WITH_BRACKET;
-        *movedBy += strlen(tok);
+        *movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
@@ -55,18 +55,18 @@ TS_parse_else_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *toke
 
   proceed = 1;
   while (proceed) {
-    tok = (const char *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error("Unexpected end of else body", tsFile, token);
+      ts_token_syntax_error((wchar_t *) L"Unexpected end of else body", tsFile, token);
     }
     switch (tok[0]) {
-      case ' ': {
-        *movedBy += strlen(tok);
+      case L' ': {
+        *movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
-      case '\n': {
-        *movedBy += strlen(tok);
+      case L'\n': {
+        *movedBy += wcslen(tok);
         free((void *) tok);
 
         tsParseData->position += *movedBy;
@@ -75,8 +75,8 @@ TS_parse_else_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *toke
         *movedBy = 0;
         break;
       }
-      case ';': {
-        *movedBy += strlen(tok);
+      case L';': {
+        *movedBy += wcslen(tok);
         free((void *) tok);
 
         if (termination == TS_ENDS_WITHOUT_BRACKET) {
@@ -84,9 +84,9 @@ TS_parse_else_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *toke
         }
         break;
       }
-      case '}': {
+      case L'}': {
         if (termination == TS_ENDS_WITH_BRACKET) {
-          *movedBy += strlen(tok);
+          *movedBy += wcslen(tok);
           free((void *) tok);
         } else {
           free((void *) tok);
@@ -118,12 +118,12 @@ TS_parse_else_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *toke
       }
     }
   }
-  log_to_file("->   done %s body\n", "else");
+  log_to_file(L"->   done %s body\n", "else");
 }
 
 const TSParserToken TS_parse_else(TSFile *tsFile, TSParseData *tsParseData) {
   TS_TOKEN_BEGIN("else");
-  u_long movedBy = strlen(tsParseData->token);
+  u_long movedBy = wcslen(tsParseData->token);
 
   TSParserToken token;
   token.tokenType = TS_ELSE;

@@ -5,7 +5,7 @@
  */
 const TSParserToken TS_parse_default(TSFile *__attribute__((__unused__)) tsFile, TSParseData *tsParseData) {
   TS_TOKEN_BEGIN("default");
-  u_long movedBy = strlen(tsParseData->token);
+  u_long movedBy = wcslen(tsParseData->token);
 
   TSParserToken token;
   token.tokenType = TS_DEFAULT;

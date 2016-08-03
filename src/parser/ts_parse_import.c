@@ -3,9 +3,13 @@
 /**
  * TODO implement
  */
-const TSParserToken TS_parse_import(TSFile *__attribute__((__unused__)) tsFile, TSParseData *tsParseData) {
-  log_to_file("-> parsing as %s\n", "import");
-  u_long movedBy = strlen(tsParseData->token);
+const TSParserToken
+TS_parse_import(
+    TSFile *__attribute__((__unused__)) tsFile,
+    TSParseData *tsParseData
+) {
+  TS_TOKEN_BEGIN("import");
+  u_long movedBy = wcslen(tsParseData->token);
 
   TSParserToken token;
   token.tokenType = TS_IMPORT;
@@ -19,7 +23,7 @@ const TSParserToken TS_parse_import(TSFile *__attribute__((__unused__)) tsFile, 
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
-  log_to_file("-> end %s\n", "import");
+  TS_TOKEN_END("import");
   return token;
 }
 

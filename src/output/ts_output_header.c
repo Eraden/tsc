@@ -2,35 +2,35 @@
 
 // STRING
 
-static const char *
+static const wchar_t *
 __attribute__(( visibility("hidden")))
 __attribute__(( section("output-header")))
 TS_output_header_symbol_polyfill() {
-  return "if (!('Symbol' in window)) {\n"
-      "  var symbolCounter = 0;\n"
-      "  function HiddenSymbol(description) { this.description = description; this.index = symbolCounter++; }\n"
-      "  HiddenSymbol.prototype.toString = function () { return \"@@Symbol(\" + (this.description || \"\") + this.index + \")\"; };\n"
-      "  window.Symbol = function (desc) {\n"
-      "    return new HiddenSymbol(desc);\n"
-      "  }\n"
-      "}\n"
-      "if (!('toStringTag' in window.Symbol)) window.Symbol.toStringTag = Symbol('Symbol.toStringTag');\n"
-      "if (!('iterator' in window.Symbol)) window.Symbol.iterator = Symbol('Symbol.iterator');\n";
+  return (const wchar_t *) L"if (!('Symbol' in window)) {\n"
+        "  var symbolCounter = 0;\n"
+        "  function HiddenSymbol(description) { this.description = description; this.index = symbolCounter++; }\n"
+        "  HiddenSymbol.prototype.toString = function () { return \"@@Symbol(\" + (this.description || \"\") + this.index + \")\"; };\n"
+        "  window.Symbol = function (desc) {\n"
+        "    return new HiddenSymbol(desc);\n"
+        "  }\n"
+        "}\n"
+        "if (!('toStringTag' in window.Symbol)) window.Symbol.toStringTag = Symbol('Symbol.toStringTag');\n"
+        "if (!('iterator' in window.Symbol)) window.Symbol.iterator = Symbol('Symbol.iterator');\n";
 }
 
-const char *
+const wchar_t *
 __attribute__((__malloc__))
 TS_output_header() {
-  char *string = NULL;
-  const char *symbolPolyfill = TS_output_header_symbol_polyfill();
+  wchar_t *string = NULL;
+  const wchar_t *symbolPolyfill = TS_output_header_symbol_polyfill();
   u_long size = TS_STRING_END +
-                strlen("(function (modules, window) {\n\n") +
-                strlen(symbolPolyfill) +
-                strlen("\n");
+                wcslen((wchar_t *) L"(function (modules, window) {\n\n") +
+                wcslen(symbolPolyfill) +
+                wcslen((wchar_t *) L"\n");
 
-  string = (char *) calloc(sizeof(char), size);
-  strcat(string, "(function (modules, window) {\n\n");
-  strcat(string, symbolPolyfill); // not allocated so ok to leave that way
-  strcat(string, "\n");
+  string = (wchar_t *) calloc(sizeof(wchar_t), size);
+  wcscat(string, (wchar_t *) L"(function (modules, window) {\n\n");
+  wcscat(string, symbolPolyfill); // not allocated so ok to leave that way
+  wcscat(string, (wchar_t *) L"\n");
   return string;
 }

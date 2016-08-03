@@ -23,30 +23,29 @@ static void __attribute__((visibility("hidden"))) TS_info_msg() {
   );
 }
 
-static const char *TS_str_to_lower(const char *str) {
-  if (str == NULL) return NULL;
-  const size_t l = strlen(str);
-  if (l == 0) return NULL;
-
-  char *lower = (char *) calloc(sizeof(char), strlen(str) + TS_STRING_END);
-  for (unsigned int i = 0; i < l; i++) {
-    lower[i] = (char) tolower(str[i]);
-  }
-  return lower;
-}
-
-void ts_token_syntax_error(const char *msg, const TSFile *tsFile, const TSParserToken *token) {
+void
+ts_token_syntax_error(
+    const wchar_t *msg,
+    const TSFile *tsFile,
+    const TSParserToken *token
+) {
   ts_syntax_error(msg, tsFile->file, token->character, token->line);
 }
 
-void ts_syntax_error(const char *msg, const char *file, const u_long line, const u_long character) {
-  log_error("Syntax error: %s\n", msg);
+void
+ts_syntax_error(
+    const wchar_t *msg,
+    const char *file,
+    const u_long line,
+    const u_long character
+) {
+  log_error((wchar_t *) L"Syntax error: %ls\n", msg);
   ts_log_position(file, line, character);
   exit(TS_PARSE_FAILURE_CODE);
 }
 
 void ts_log_position(const char *file, const u_long character, const u_long line) {
-  log_error("      Position: %s:%lu:%lu [line:character]\n", file, line + 1, character);
+  log_error((wchar_t *) L"      Position: %s:%lu:%lu [line:character]\n", file, line + 1, character);
 }
 
 void TS_set_log_level(TSVerbosity verbosity) {
@@ -59,7 +58,7 @@ unsigned char TS_check_log_level(TSVerbosity verbosity) {
 }
 
 const TSParserSettings TS_parse_arguments(int argc, const char **argv) {
-  const char *arg, *tmp;
+  const char *arg;
   TSParserSettings settings;
   settings.stream = NULL;
   settings.fileName = NULL;
@@ -69,8 +68,12 @@ const TSParserSettings TS_parse_arguments(int argc, const char **argv) {
 
     if (strcmp(arg, "-l") == 0 || strcmp(arg, "--level") == 0) {
       arg = argv[++i];
-      tmp = TS_str_to_lower(arg);
-      if (tmp == NULL) continue;
+      char *tmp = calloc(sizeof(char), strlen(arg));
+      strcpy(tmp, arg);
+      if (tmp == NULL) {
+        free(tmp);
+        continue;
+      }
 
       if (strcmp(tmp, "info") == 0) {
         TS_set_log_level(TS_VERBOSITY_INFO);

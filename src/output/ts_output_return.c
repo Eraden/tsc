@@ -16,7 +16,7 @@ ts_print_for_return_body(
     TSParserToken bodyToken = (*tsParserToken).children[childIndex];
 
     if (bodyToken.tokenType == TS_UNKNOWN) {
-      fprintf(settings.stream, "%s;\n", (char *) bodyToken.data);
+      fprintf(settings.stream, "%ls;\n", (wchar_t *) bodyToken.data);
     } else {
       TS_print_for_token(tsFile, bodyToken, settings);
     }
@@ -38,7 +38,7 @@ ts_print_for_return(
 
 // STRING
 
-static const char *
+static const wchar_t *
 __attribute(( visibility("hidden") ))
 __attribute__(( section("output-return") ))
 ts_string_for_return_body(
@@ -46,12 +46,12 @@ ts_string_for_return_body(
     const TSParserToken *tsParserToken,
     TSOutputSettings __attribute__((__weak__)) outputSettings
 ) {
-  char *returnBody = NULL;
+  wchar_t *returnBody = NULL;
   for (u_long childIndex = 0; childIndex < (*tsParserToken).childrenSize; childIndex++) {
     TSOutputSettings settings = outputSettings;
     settings.indent += 1;
     TSParserToken bodyToken = (*tsParserToken).children[childIndex];
-    const char *body = NULL;
+    const wchar_t *body = NULL;
 
     if (bodyToken.tokenType == TS_UNKNOWN) {
       body = bodyToken.data;
@@ -60,12 +60,12 @@ ts_string_for_return_body(
     }
 
     if (body != NULL) {
-      u_long size = TS_STRING_END + strlen(body) + strlen(";\n");
-      if (returnBody != NULL) size += strlen(returnBody);
-      char *newPointer = (char *) calloc(sizeof(char), size);
-      if (returnBody != NULL) strcpy(newPointer, returnBody);
-      strcat(newPointer, body);
-      strcat(newPointer, ";\n");
+      u_long size = TS_STRING_END + wcslen(body) + wcslen((wchar_t *) L";\n");
+      if (returnBody != NULL) size += wcslen(returnBody);
+      wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
+      if (returnBody != NULL) wcscpy(newPointer, returnBody);
+      wcscat(newPointer, body);
+      wcscat(newPointer, (wchar_t *) L";\n");
       free((void *) body);
       free(returnBody);
       returnBody = newPointer;
@@ -74,22 +74,25 @@ ts_string_for_return_body(
   return returnBody;
 }
 
-const char *
+const wchar_t *
 ts_string_for_return(
     const TSFile *tsFile,
     const TSParserToken tsParserToken,
     TSOutputSettings outputSettings
 ) {
-  char *string = calloc(sizeof(char), TS_STRING_END + sizeof("return ") + (2 * outputSettings.indent));
+  wchar_t *string = calloc(
+      sizeof(wchar_t),
+      TS_STRING_END + wcslen((const wchar_t *) L"return ") + (2 * outputSettings.indent)
+  );
   for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++)
-    strcat(string, "  ");
-  strcat(string, "return ");
+    wcscat(string, (wchar_t *) L"  ");
+  wcscat(string, (wchar_t *) L"return ");
 
-  const char *returnBody = ts_string_for_return_body(tsFile, &tsParserToken, outputSettings);
+  const wchar_t *returnBody = ts_string_for_return_body(tsFile, &tsParserToken, outputSettings);
   if (returnBody) {
-    char *newPointer = (char *) calloc(sizeof(char), strlen(string) + strlen(returnBody) + 1);
-    strcpy(newPointer, string);
-    strcat(newPointer, returnBody);
+    wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), wcslen(string) + wcslen(returnBody) + 1);
+    wcscpy(newPointer, string);
+    wcscat(newPointer, returnBody);
     free((void *) string);
     free((void *) returnBody);
     string = newPointer;

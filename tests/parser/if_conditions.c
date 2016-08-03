@@ -58,22 +58,22 @@ START_TEST(parse_empty_if_condition_conditions)
     const TSParserToken trueToken = data->conditions[5];
 
     ck_assert_ptr_ne(left.data, NULL);
-    ck_assert_str_eq(left.data, "1");
+    ck_assert_wstr_eq(left.data, L"1");;
 
     ck_assert_ptr_ne(eq.data, NULL);
-    ck_assert_str_eq(eq.data, "=");
+    ck_assert_wstr_eq(eq.data, L"=");;
 
     ck_assert_ptr_ne(right.data, NULL);
-    ck_assert_str_eq(right.data, "2");
+    ck_assert_wstr_eq(right.data, L"2");;
 
     ck_assert_ptr_ne(firstAmpersand.data, NULL);
-    ck_assert_str_eq(firstAmpersand.data, "&");
+    ck_assert_wstr_eq(firstAmpersand.data, L"&");;
 
     ck_assert_ptr_ne(secondAmpersand.data, NULL);
-    ck_assert_str_eq(secondAmpersand.data, "&");
+    ck_assert_wstr_eq(secondAmpersand.data, L"&");;
 
     ck_assert_ptr_ne(trueToken.data, NULL);
-    ck_assert_str_eq(trueToken.data, "true");
+    ck_assert_wstr_eq(trueToken.data, L"true");;
 
     TS_free_tsFile(tsFile);
   }

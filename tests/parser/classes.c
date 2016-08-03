@@ -14,7 +14,7 @@ START_TEST(parsing_empty_class)
     TSClassData *classData = classToken.data;
 
     ck_assert_ptr_ne(classData, NULL);
-    ck_assert_str_eq(classData->name, "Empty");
+    ck_assert_wstr_eq(classData->name, L"Empty");;
     ck_assert_int_eq(classToken.childrenSize, 0);
 
     TS_free_tsFile(tsFile);
@@ -45,7 +45,7 @@ START_TEST(parse_class_with_undefined_field)
 
     TSLocalVariableData *childData = childToken.data;
     ck_assert_ptr_ne(childData, NULL);
-    ck_assert_str_eq(childData->name, "field_1");
+    ck_assert_wstr_eq(childData->name, L"field_1");;
     ck_assert_ptr_eq(childData->type, NULL);
     ck_assert_ptr_eq(childData->value, NULL);
 
@@ -75,7 +75,7 @@ START_TEST(parse_class_with_private_field)
 
     TSLocalVariableData *childData = childToken.data;
     ck_assert_ptr_ne(childData, NULL);
-    ck_assert_str_eq(childData->name, "field_2");
+    ck_assert_wstr_eq(childData->name, L"field_2");;
     ck_assert_ptr_eq(childData->type, NULL);
     ck_assert_ptr_eq(childData->value, NULL);
 
@@ -105,7 +105,7 @@ START_TEST(parse_class_with_protected_field)
 
     TSLocalVariableData *childData = childToken.data;
     ck_assert_ptr_ne(childData, NULL);
-    ck_assert_str_eq(childData->name, "field_3");
+    ck_assert_wstr_eq(childData->name, L"field_3");;
     ck_assert_ptr_eq(childData->type, NULL);
     ck_assert_ptr_eq(childData->value, NULL);
 
@@ -135,7 +135,7 @@ START_TEST(parse_class_with_public_field)
 
     TSLocalVariableData *childData = childToken.data;
     ck_assert_ptr_ne(childData, NULL);
-    ck_assert_str_eq(childData->name, "field_4");
+    ck_assert_wstr_eq(childData->name, L"field_4");;
     ck_assert_ptr_eq(childData->type, NULL);
     ck_assert_ptr_eq(childData->value, NULL);
 
@@ -166,7 +166,7 @@ START_TEST(parse_class_with_undefined_method)
 
     TSFunctionData *methodData = childToken.data;
     ck_assert_ptr_ne(methodData, NULL);
-    ck_assert_str_eq(methodData->name, "method_1");
+    ck_assert_wstr_eq(methodData->name, L"method_1");;
     ck_assert_ptr_eq(methodData->arguments, NULL);
     ck_assert_int_eq(methodData->argumentsSize, 0);
     ck_assert_ptr_eq(methodData->returnType, NULL);
@@ -196,7 +196,7 @@ START_TEST(parse_class_with_private_method)
 
     TSFunctionData *methodData = childToken.data;
     ck_assert_ptr_ne(methodData, NULL);
-    ck_assert_str_eq(methodData->name, "method_2");
+    ck_assert_wstr_eq(methodData->name, L"method_2");;
     ck_assert_ptr_eq(methodData->arguments, NULL);
     ck_assert_int_eq(methodData->argumentsSize, 0);
     ck_assert_ptr_eq(methodData->returnType, NULL);
@@ -226,7 +226,7 @@ START_TEST(parse_class_with_protected_method)
 
     TSFunctionData *methodData = childToken.data;
     ck_assert_ptr_ne(methodData, NULL);
-    ck_assert_str_eq(methodData->name, "method_3");
+    ck_assert_wstr_eq(methodData->name, L"method_3");;
     ck_assert_ptr_eq(methodData->arguments, NULL);
     ck_assert_int_eq(methodData->argumentsSize, 0);
     ck_assert_ptr_eq(methodData->returnType, NULL);
@@ -256,7 +256,7 @@ START_TEST(parse_class_with_public_method)
 
     TSFunctionData *methodData = childToken.data;
     ck_assert_ptr_ne(methodData, NULL);
-    ck_assert_str_eq(methodData->name, "method_3");
+    ck_assert_wstr_eq(methodData->name, L"method_3");;
     ck_assert_ptr_eq(methodData->arguments, NULL);
     ck_assert_int_eq(methodData->argumentsSize, 0);
     ck_assert_ptr_eq(methodData->returnType, NULL);
@@ -287,7 +287,7 @@ START_TEST(parse_class_with_multiple_method)
 
   methodData = childToken.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_str_eq(methodData->name, "method_3");
+  ck_assert_wstr_eq(methodData->name, L"method_3");;
   ck_assert_ptr_eq(methodData->arguments, NULL);
   ck_assert_int_eq(methodData->argumentsSize, 0);
   ck_assert_ptr_eq(methodData->returnType, NULL);
@@ -318,7 +318,7 @@ START_TEST(parse_class_with_field_and_method)
 
   TSLocalVariableData *childData = childToken.data;
   ck_assert_ptr_ne(childData, NULL);
-  ck_assert_str_eq(childData->name, "field2");
+  ck_assert_wstr_eq(childData->name, L"field2");;
   ck_assert_ptr_eq(childData->type, NULL);
   ck_assert_ptr_eq(childData->value, NULL);
 
@@ -328,7 +328,7 @@ START_TEST(parse_class_with_field_and_method)
 
   TSFunctionData *methodData = childToken.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_str_eq(methodData->name, "bar");
+  ck_assert_wstr_eq(methodData->name, L"bar");;
   ck_assert_ptr_eq(methodData->arguments, NULL);
   ck_assert_int_eq(methodData->argumentsSize, 0);
   ck_assert_ptr_eq(methodData->returnType, NULL);

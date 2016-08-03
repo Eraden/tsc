@@ -9,9 +9,9 @@ void TS_print_indent(FILE *stream, const u_long indent) {
   }
 }
 
-void TS_push_indent_string(char *string, const u_long indent) {
+void TS_push_indent_string(wchar_t *string, const u_long indent) {
   for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
-    strcat(string, "  ");
+    wcscat(string, (const wchar_t *) L"  ");
 }
 
 void
@@ -96,7 +96,7 @@ TS_print_for_token(
 
 // STRING
 
-const char *
+const wchar_t *
 TS_string_for_token(
     const TSFile *tsFile,
     TSParserToken tsParserToken,
@@ -115,9 +115,9 @@ TS_string_for_token(
     case TS_FUNCTION:
       return TS_string_from_function(tsFile, tsParserToken, outputSettings);
     case TS_ARROW: {
-      char *tag = "=>";
-      char *s = (char *) calloc(sizeof(char), sizeof(tag) + 1);
-      strcat(s, tag);
+      wchar_t *tag = (wchar_t *) L"=>";
+      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
+      wcscat(s, tag);
       return s;
     }
     case TS_IF: {
@@ -130,45 +130,45 @@ TS_string_for_token(
       return ts_string_for_return(tsFile, tsParserToken, outputSettings);
     }
     case TS_DECORATOR: {
-      char *tag = "component";
-      char *s = (char *) calloc(sizeof(char), sizeof(tag) + 1);
-      strcat(s, tag);
+      wchar_t *tag = (wchar_t *) L"component";
+      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
+      wcscat(s, tag);
       return s;
     }
     case TS_IMPORT: {
-      char *tag = "import";
-      char *s = (char *) calloc(sizeof(char), sizeof(tag) + 1);
-      strcat(s, tag);
+      wchar_t *tag = (wchar_t *) L"import";
+      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
+      wcscat(s, tag);
       return s;
     }
     case TS_EXPORT: {
-      char *tag = "export";
-      char *s = (char *) calloc(sizeof(char), sizeof(tag) + 1);
-      strcat(s, tag);
+      wchar_t *tag = (wchar_t *) L"export";
+      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
+      wcscat(s, tag);
       return s;
     }
     case TS_DEFAULT: {
-      char *tag = "default";
-      char *s = (char *) calloc(sizeof(char), sizeof(tag) + 1);
-      strcat(s, tag);
+      wchar_t *tag = (wchar_t *) L"default";
+      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
+      wcscat(s, tag);
       return s;
     }
     case TS_SCOPE: {
-      char *tag = "unnamed scope";
-      char *s = (char *) calloc(sizeof(char), sizeof(tag) + 1);
-      strcat(s, tag);
+      wchar_t *tag = (wchar_t *) L"unnamed scope";
+      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
+      wcscat(s, tag);
       return s;
     }
     case TS_EXTENDS: {
-      char *tag = "extends";
-      char *s = (char *) calloc(sizeof(char), sizeof(tag) + 1);
-      strcat(s, tag);
+      wchar_t *tag = (wchar_t *) L"extends";
+      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
+      wcscat(s, tag);
       return s;
     }
     case TS_IMPLEMENTS: {
-      char *tag = "implements";
-      char *s = (char *) calloc(sizeof(char), sizeof(tag) + 1);
-      strcat(s, tag);
+      wchar_t *tag = (wchar_t *) L"implements";
+      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
+      wcscat(s, tag);
       return s;
     }
     case TS_CLASS_FIELD:
@@ -201,8 +201,8 @@ TS_print_stream(
   outputSettings.indent = 0;
   outputSettings.stream = stream;
 
-  const char *header = TS_output_header();
-  fprintf(stream, "%s", header);
+  const wchar_t *header = TS_output_header();
+  fprintf(stream, "%ls", header);
   fflush(stream);
   free((void *) header);
 
@@ -211,13 +211,13 @@ TS_print_stream(
     TS_print_for_token(tsFile, tsFile->tokens[i], outputSettings);
   }
 
-  const char *footer = TS_output_footer();
-  fprintf(stream, "%s", footer);
+  const wchar_t *footer = TS_output_footer();
+  fprintf(stream, "%ls", footer);
   fflush(stream);
   free((void *) footer);
 }
 
-const char *
+const wchar_t *
 __attribute__((__unused__))
 TS_generate_string_from_file(
     const TSFile *tsFile
@@ -226,36 +226,36 @@ TS_generate_string_from_file(
   TSOutputSettings outputSettings;
   outputSettings.indent = 0;
   outputSettings.stream = NULL;
-  char *string = NULL;
+  wchar_t *string = NULL;
 
   if (tsFile->tokens == NULL) {
     return NULL;
   }
 
-  const char *header = TS_output_header();
+  const wchar_t *header = TS_output_header();
 
   {
-    char *newPointer = (char *) calloc(sizeof(char), strlen(header) + 1);
-    strcpy(newPointer, header);
+    wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), wcslen(header) + 1);
+    wcscpy(newPointer, header);
     free((void *) header);
   }
   for (u_long i = 0; i < size; i++) {
-    const char *s = TS_string_for_token(tsFile, tsFile->tokens[i], outputSettings);
+    const wchar_t *s = TS_string_for_token(tsFile, tsFile->tokens[i], outputSettings);
     if (s != NULL) {
-      char *newPointer = calloc(sizeof(char), (string ? strlen(string) : 0) + strlen(s) + 1);
-      if (string != NULL) strcpy(newPointer, string);
+      wchar_t *newPointer = calloc(sizeof(wchar_t), (string ? wcslen(string) : 0) + wcslen(s) + 1);
+      if (string != NULL) wcscpy(newPointer, string);
       if (string != NULL) free(string);
-      strcat(newPointer, s);
+      wcscat(newPointer, s);
       string = newPointer;
       free((void *) s);
     }
   }
 
   {
-    const char *footer = TS_output_footer();
-    char *newPointer = (char *) calloc(sizeof(char), strlen(string) + strlen(footer) + 1);
-    strcpy(newPointer, string);
-    strcat(newPointer, footer);
+    const wchar_t *footer = TS_output_footer();
+    wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), wcslen(string) + wcslen(footer) + 1);
+    wcscpy(newPointer, string);
+    wcscat(newPointer, footer);
     free((void *) string);
     free((void *) footer);
     string = newPointer;

@@ -13,7 +13,7 @@ void TS_register_class(const TSFile *file, const TSParserToken token)
       const TSFile *tsFile = entry->tsFile;
       TSParserToken t = entry->classToken;
       TSClassData *data = t.data;
-      if (file == tsFile && strcmp(data->name, classData->name) == 0) {
+      if (file == tsFile && wcscmp(data->name, classData->name) == 0) {
         return;
       }
       entry = entry->next;
@@ -36,8 +36,8 @@ void TS_register_class(const TSFile *file, const TSParserToken token)
 const TSParserToken
 __attribute__(( __unused__ ))
 TS_find_class(
-    const char *__attribute__(( __unused__ )) file,
-    const char *__attribute__(( __unused__ )) name
+    const wchar_t *__attribute__(( __unused__ )) file,
+    const wchar_t *__attribute__(( __unused__ )) name
 )
 {
   TSRegisterEntry *entry = classRegister;

@@ -10,7 +10,7 @@ TS_parse_decorator(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("component");
-  u_long movedBy = strlen(tsParseData->token);
+  u_long movedBy = wcslen(tsParseData->token);
 
   TSParserToken token;
   token.tokenType = TS_DECORATOR;

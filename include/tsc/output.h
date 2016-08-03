@@ -10,11 +10,11 @@ typedef struct sTSOutputSettings {
   FILE *stream;
 } TSOutputSettings;
 
-const char *
+const wchar_t *
     __attribute__((__malloc__))
     TS_output_header();
 
-const char *
+const wchar_t *
     __attribute__((__malloc__))
     TS_output_footer();
 
@@ -25,7 +25,7 @@ void
     TSOutputSettings outputSettings
 );
 
-const char *
+const wchar_t *
     TS_string_from_function(
     const TSFile *tsFile,
     const TSParserToken tsParserToken,
@@ -39,7 +39,7 @@ void
     TSOutputSettings outputSettings
 );
 
-const char *
+const wchar_t *
     TS_string_for_if(
     const TSFile *tsFile,
     const TSParserToken tsParserToken,
@@ -53,7 +53,7 @@ void
     TSOutputSettings outputSettings
 );
 
-const char *
+const wchar_t *
     TS_string_from_var(
     const TSFile *tsFile,
     const TSParserToken tsParserToken,
@@ -67,7 +67,7 @@ void
     TSOutputSettings outputSettings
 );
 
-const char *
+const wchar_t *
     TS_string_for_token(
     const TSFile *tsFile,
     const TSParserToken tsParserToken,
@@ -81,7 +81,7 @@ void
     TSOutputSettings outputSettings
 );
 
-const char *
+const wchar_t *
     ts_string_for_return(
     const TSFile *tsFile,
     const TSParserToken tsParserToken,
@@ -95,7 +95,7 @@ void
     TSOutputSettings outputSettings
 );
 
-const char *
+const wchar_t *
     TS_string_for_else(
     const TSFile *tsFile,
     const TSParserToken tsParserToken,
@@ -109,14 +109,14 @@ void
     TSOutputSettings outputSettings
 );
 
-const char *
+const wchar_t *
     TS_string_for_class(
     const TSFile *tsFile,
     const TSParserToken tsParserToken,
     TSOutputSettings outputSettings
 );
 
-const char *
+const wchar_t *
     __attribute__((__used__))
     TS_generate_string_from_file(
     const TSFile *tsFile
@@ -130,4 +130,4 @@ __attribute__((__used__))
 );
 
 void TS_print_indent(FILE *stream, const u_long indent);
-void TS_push_indent_string(char *string, const u_long indent);
+void TS_push_indent_string(wchar_t *string, const u_long indent);

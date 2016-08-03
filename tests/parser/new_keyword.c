@@ -7,7 +7,7 @@ START_TEST(parse_new_keyword_with_end)
 
     TSParserToken token = tsFile.tokens[0];
     ck_assert_ptr_ne(token.data, NULL);
-    ck_assert_str_eq((char *) token.data, "Object");
+    ck_assert_wstr_eq(token.data, L"Object");;
 
     TS_free_tsFile(tsFile);
   }
@@ -20,7 +20,7 @@ START_TEST(parse_new_keyword_with_new_line)
 
     TSParserToken token = tsFile.tokens[0];
     ck_assert_ptr_ne(token.data, NULL);
-    ck_assert_str_eq(token.data, "Object");
+    ck_assert_wstr_eq(token.data, L"Object");;
 
     TS_free_tsFile(tsFile);
   }
@@ -33,7 +33,7 @@ START_TEST(parse_new_keyword_without_end)
 
     TSParserToken token = tsFile.tokens[0];
     ck_assert_ptr_ne(token.data, NULL);
-    ck_assert_str_eq(token.data, "Object");
+    ck_assert_wstr_eq(token.data, L"Object");;
 
     TS_free_tsFile(tsFile);
   }
@@ -46,7 +46,7 @@ START_TEST(parse_new_keyword_with_brackets)
 
     TSParserToken token = tsFile.tokens[0];
     ck_assert_ptr_ne(token.data, NULL);
-    ck_assert_str_eq(token.data, "Object()");
+    ck_assert_wstr_eq(token.data, L"Object()");;
 
     TS_free_tsFile(tsFile);
   }

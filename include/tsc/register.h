@@ -13,4 +13,4 @@ typedef struct sTSRegisterEntry {
 } TSRegisterEntry;
 
 void TS_register_class(const TSFile *tsFile, const TSParserToken token);
-const TSParserToken TS_find_class(const char *file, const char *name);
+const TSParserToken TS_find_class(const wchar_t *file, const wchar_t *name);
