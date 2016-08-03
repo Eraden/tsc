@@ -19,7 +19,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   child = token.children[childIndex++];
   ck_assert(child.visibility == TS_VISIBILITY_NONE);
   ck_assert(child.tokenType == TS_INLINE_COMMENT);
-  ck_assert_str_eq(child.data, " undefined first");
+  ck_assert_wstr_eq(child.data, L" undefined first");;
 
   // 1
   child = token.children[childIndex++];
@@ -27,7 +27,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_1");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_1");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -36,7 +36,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_1");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_1");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -45,7 +45,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_1");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_1");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -54,7 +54,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_1");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_1");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -64,7 +64,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_2");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_2");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -73,7 +73,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_2");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_2");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -82,7 +82,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_2");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_2");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -91,7 +91,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_2");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_2");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -101,7 +101,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_3");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_3");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -110,7 +110,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_3");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_3");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -119,7 +119,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_3");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_3");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -128,7 +128,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_3");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_3");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -138,7 +138,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_4");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_4");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -147,7 +147,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_4");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_4");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -156,7 +156,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_4");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_4");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -165,7 +165,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_4");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_4");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -175,7 +175,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_5");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_5");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -184,7 +184,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_5");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_5");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -193,7 +193,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_5");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_5");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -202,7 +202,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_5");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_5");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -212,7 +212,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_6");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_6");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -221,7 +221,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_6");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_6");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -230,7 +230,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_6");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_6");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -239,7 +239,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_6");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_6");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -254,7 +254,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_7");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_7");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -263,7 +263,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_7");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_7");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -272,7 +272,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_7");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_7");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -281,7 +281,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_7");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_7");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -291,7 +291,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_8");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_8");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -300,7 +300,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_8");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_8");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -309,7 +309,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_8");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_8");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -318,7 +318,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_8");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_8");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -328,7 +328,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_9");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_9");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -337,7 +337,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_9");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_9");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -346,7 +346,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_9");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_9");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -355,7 +355,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_9");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_9");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -365,7 +365,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_10");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_10");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -374,7 +374,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_10");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_10");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -383,7 +383,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_10");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_10");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -392,7 +392,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_10");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_10");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -402,7 +402,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_11");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_11");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -411,7 +411,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_11");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_11");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -420,7 +420,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_11");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_11");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -429,7 +429,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_11");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_11");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -439,7 +439,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_12");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_12");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -448,7 +448,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_12");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_12");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -457,7 +457,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_12");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_12");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -466,7 +466,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_12");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_12");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -475,7 +475,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.visibility == TS_VISIBILITY_NONE);
   ck_assert(child.tokenType == TS_INLINE_COMMENT);
   ck_assert_ptr_ne(child.data, NULL);
-  ck_assert_str_eq(child.data, " protected first");
+  ck_assert_wstr_eq(child.data, L" protected first");;
 
   // 13
   child = token.children[childIndex++];
@@ -483,7 +483,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_13");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_13");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -492,7 +492,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_13");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_13");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -501,7 +501,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_13");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_13");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -510,7 +510,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_13");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_13");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -520,7 +520,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_14");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_14");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -529,7 +529,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_14");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_14");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -538,7 +538,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_14");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_14");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -547,7 +547,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_14");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_14");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -557,7 +557,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_15");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_15");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -566,7 +566,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_15");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_15");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -575,7 +575,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_15");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_15");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -584,7 +584,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_15");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_15");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -594,7 +594,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_16");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_16");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -603,7 +603,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_16");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_16");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -612,7 +612,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_16");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_16");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -621,7 +621,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_16");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_16");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -631,7 +631,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_17");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_17");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -640,7 +640,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_17");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_17");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -649,7 +649,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_17");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_17");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -658,7 +658,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_17");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_17");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -668,7 +668,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_18");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_18");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -677,7 +677,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_18");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_18");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -686,7 +686,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_18");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_18");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -695,7 +695,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_18");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_18");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -704,7 +704,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.visibility == TS_VISIBILITY_NONE);
   ck_assert(child.tokenType == TS_INLINE_COMMENT);
   ck_assert_ptr_ne(child.data, NULL);
-  ck_assert_str_eq(child.data, " public first");
+  ck_assert_wstr_eq(child.data, L" public first");;
 
   // 19
   child = token.children[childIndex++];
@@ -712,7 +712,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_19");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_19");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -721,7 +721,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_19");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_19");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -730,7 +730,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_19");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_19");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -739,7 +739,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_19");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_19");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -749,7 +749,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_20");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_20");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -758,7 +758,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_20");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_20");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -767,7 +767,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_20");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_20");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -776,7 +776,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_20");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_20");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -786,7 +786,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_21");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_21");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -795,7 +795,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_21");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_21");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -804,7 +804,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_21");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_21");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -813,7 +813,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_21");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_21");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -823,7 +823,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_22");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_22");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -832,7 +832,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_22");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_22");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -841,7 +841,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_22");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_22");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -850,7 +850,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_22");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_22");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -860,7 +860,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_23");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_23");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -869,7 +869,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_23");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_23");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -878,7 +878,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_23");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_23");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -887,7 +887,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_23");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_23");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -897,7 +897,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "public_field_24");
+  ck_assert_wstr_eq(fieldData->name, L"public_field_24");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -906,7 +906,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "protected_field_24");
+  ck_assert_wstr_eq(fieldData->name, L"protected_field_24");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -915,7 +915,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "undefined_field_24");
+  ck_assert_wstr_eq(fieldData->name, L"undefined_field_24");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 
@@ -924,7 +924,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert(child.tokenType == TS_CLASS_FIELD);
   fieldData = child.data;
   ck_assert_ptr_ne(fieldData, NULL);
-  ck_assert_str_eq(fieldData->name, "private_field_24");
+  ck_assert_wstr_eq(fieldData->name, L"private_field_24");;
   ck_assert_ptr_eq(fieldData->type, NULL);
   ck_assert_ptr_eq(fieldData->value, NULL);
 

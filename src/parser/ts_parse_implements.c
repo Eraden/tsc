@@ -6,7 +6,7 @@ TS_parse_implements(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("implements");
-  u_long movedBy = strlen(tsParseData->token);
+  u_long movedBy = wcslen(tsParseData->token);
 
   TSParserToken token;
   token.tokenType = TS_IMPLEMENTS;

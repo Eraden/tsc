@@ -21,7 +21,7 @@ START_TEST(parse_inline_comment_with_spaces)
     TSParserToken token;
     token = tsFile.tokens[0];
     ck_assert_ptr_ne(token.data, NULL);
-    ck_assert_str_eq(token.data, "  ");
+    ck_assert_wstr_eq(token.data, L"  ");;
 
     TS_free_tsFile(tsFile);
   }
@@ -35,7 +35,7 @@ START_TEST(parse_inline_comment_without_spaces_and_with_word)
     TSParserToken token;
     token = tsFile.tokens[0];
     ck_assert_ptr_ne(token.data, NULL);
-    ck_assert_str_eq(token.data, "hello");
+    ck_assert_wstr_eq(token.data, L"hello");;
 
     TS_free_tsFile(tsFile);
   }
@@ -49,7 +49,7 @@ START_TEST(parse_inline_comment_with_spaces_and_with_word)
     TSParserToken token;
     token = tsFile.tokens[0];
     ck_assert_ptr_ne(token.data, NULL);
-    ck_assert_str_eq(token.data, " hello ");
+    ck_assert_wstr_eq(token.data, L" hello ");;
 
     TS_free_tsFile(tsFile);
   }
@@ -63,7 +63,7 @@ START_TEST(parse_inline_comment_with_space_and_with_word_and_newline)
     TSParserToken token;
     token = tsFile.tokens[0];
     ck_assert_ptr_ne(token.data, NULL);
-    ck_assert_str_eq(token.data, " hello");
+    ck_assert_wstr_eq(token.data, L" hello");;
 
     TS_free_tsFile(tsFile);
   }

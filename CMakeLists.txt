@@ -81,6 +81,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 enable_testing()
 find_package(Check REQUIRED)
+find_package (Threads)
 include_directories(${CHECK_INCLUDE_DIRS})
 
 MESSAGE(INFO " Compiler: ${CMAKE_C_COMPILER}")
@@ -115,12 +116,12 @@ MESSAGE(INFO " post address validation: ${VALIDATE_ADDRESS}")
 IF (CMAKE_BUILD_TYPE MATCHES "Debug" AND CMAKE_C_COMPILER MATCHES "clang")
   IF (VALIDATE_MEMORY MATCHES "TRUE")
     MESSAGE(INFO " Setting up memory sanitizer")
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=memory -fsanitize-memory-track-origins=2 -fno-omit-frame-pointer")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=memory -fsanitize-memory-track-origins=2 -fno-omit-frame-pointer")
   ENDIF ()
 
   IF (VALIDATE_ADDRESS MATCHES "TRUE")
     MESSAGE(INFO " Setting up address sanitizer")
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=address -fno-omit-frame-pointer")
   ENDIF()
 ENDIF ()
 
@@ -147,6 +148,7 @@ target_link_libraries(
     tsc
     tsparser
     tsoutput
+    ${CMAKE_THREAD_LIBS_INIT}
 )
 
 target_link_libraries(
@@ -154,6 +156,7 @@ target_link_libraries(
     tsparser
     tsoutput
     ${CHECK_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
 )
 
 FILE(COPY examples DESTINATION .)

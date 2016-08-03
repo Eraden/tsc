@@ -1,15 +1,15 @@
 #include <tsc/parser.h>
 
 static void TS_parse_scope_body(TSFile *tsFile, TSParseData *data, TSParserToken *token, u_long *movedBy) {
-  const char *tok;
+  const wchar_t *tok;
   while (1) {
-    tok = (const char *) TS_getToken(data->stream);
+    tok = (const wchar_t *) TS_getToken(data->stream);
     if (tok == NULL) {
-      ts_syntax_error("Unexpected end of scope", tsFile->file, token->character, token->line);
+      ts_syntax_error((const wchar_t *) L"Unexpected end of scope", tsFile->file, token->character, token->line);
     }
     switch (tok[0]) {
-      case '}': {
-        *movedBy += strlen(tok);
+      case L'}': {
+        *movedBy += wcslen(tok);
         free((void *) tok);
         return;
       }
@@ -34,7 +34,7 @@ static void TS_parse_scope_body(TSFile *tsFile, TSParseData *data, TSParserToken
 
 const TSParserToken TS_parse_scope(TSFile *tsFile, TSParseData *tsParseData) {
   TS_TOKEN_BEGIN("scope");
-  u_long movedBy = strlen(tsParseData->token);
+  u_long movedBy = wcslen(tsParseData->token);
 
   TSParserToken token;
   token.tokenType = TS_SCOPE;

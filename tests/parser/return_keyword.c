@@ -29,7 +29,7 @@ START_TEST(parse_return_number)
     TSParserToken child = returnToken.children[0];
     ck_assert(child.tokenType == TS_UNKNOWN);
     ck_assert_ptr_ne(child.data, NULL);
-    ck_assert_str_eq(child.data, "1");
+    ck_assert_wstr_eq(child.data, L"1");;
 
     TS_free_tsFile(tsFile);
   }
@@ -50,7 +50,7 @@ START_TEST(parse_return_object)
 //    TSParserToken child = returnToken.children[0];
 //    ck_assert(child.tokenType == TS_UNKNOWN);
 //    ck_assert_ptr_ne(child.data, NULL);
-//    ck_assert_str_eq(child.data, "{}");
+//    ck_assert_wstr_eq(child.data, L"{}");;
   }
 END_TEST
 
@@ -68,7 +68,7 @@ START_TEST(parse_return_true)
     TSParserToken child = returnToken.children[0];
     ck_assert(child.tokenType == TS_UNKNOWN);
     ck_assert_ptr_ne(child.data, NULL);
-    ck_assert_str_eq(child.data, "true");
+    ck_assert_wstr_eq(child.data, L"true");;
 
     TS_free_tsFile(tsFile);
   }
@@ -88,7 +88,7 @@ START_TEST(parse_return_false)
     TSParserToken child = returnToken.children[0];
     ck_assert(child.tokenType == TS_UNKNOWN);
     ck_assert_ptr_ne(child.data, NULL);
-    ck_assert_str_eq(child.data, "false");
+    ck_assert_wstr_eq(child.data, L"false");;
 
     TS_free_tsFile(tsFile);
   }
@@ -108,7 +108,7 @@ START_TEST(parse_return_new_object)
     TSParserToken child = returnToken.children[0];
     ck_assert(child.tokenType == TS_NEW);
     ck_assert_ptr_ne(child.data, NULL);
-    ck_assert_str_eq(child.data, "Object");
+    ck_assert_wstr_eq(child.data, L"Object");;
 
     TS_free_tsFile(tsFile);
   }

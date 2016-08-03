@@ -3,9 +3,9 @@
 #include <tsc/sys.h>
 #include <tsc/log.h>
 
-#define TS_TOKEN_BEGIN(token) log_to_file("-> parsing as %s\n", token);
-#define TS_TOKEN_END(token) log_to_file("-> end %s\n", token);
-#define TS_STRING_END sizeof(char)
+#define TS_TOKEN_BEGIN(token) log_to_file(L"-> parsing as %s\n", token);
+#define TS_TOKEN_END(token) log_to_file(L"-> end %s\n", token);
+#define TS_STRING_END sizeof(wchar_t)
 
 typedef struct sTSParseData TSParseData;
 typedef struct sTSFunctionData TSFunctionData;
@@ -77,23 +77,23 @@ typedef enum eTSConditionBodyTermination {
 
 typedef struct sTSKeyword {
   TSTokenType __attribute__((__unused__)) type;
-  const char *str;
+  const wchar_t *str;
   TS_token_build_fn callback;
 } TSKeyword;
 
 #define KEYWORDS_SIZE 19
 
 typedef struct sTSLocalVariableData {
-  const char *name;
-  const char *value;
-  const char *type;
+  const wchar_t *name;
+  const wchar_t *value;
+  const wchar_t *type;
 } TSLocalVariableData;
 
 typedef struct sTSFunctionData {
-  const char *name;
+  const wchar_t *name;
   TSParserToken *arguments;
   u_long argumentsSize;
-  const char *returnType;
+  const wchar_t *returnType;
 } TSFunctionData;
 
 typedef struct sTSIfData {
@@ -102,8 +102,8 @@ typedef struct sTSIfData {
 } TSIfData;
 
 typedef struct sTSClassData {
-  const char *name;
-  const char *parentClass;
+  const wchar_t *name;
+  const wchar_t *parentClass;
   TSParserToken *__attribute__((__unused__)) implementsInterfaces;
   u_long __attribute__((__unused__)) implementsInterfacesSize;
 } TSClassData;
@@ -112,7 +112,7 @@ typedef struct sTSParseData {
   u_long position;
   u_long line;
   u_long character;
-  const char *token;
+  const wchar_t *token;
   FILE *stream;
 } TSParseData;
 
@@ -133,9 +133,9 @@ typedef struct sTSFile {
   u_long tokensSize;
 } TSFile;
 
-void TS_put_back(FILE *stream, const char *value);
+void TS_put_back(FILE *stream, const wchar_t *value);
 
-unsigned char TS_name_is_valid(const char *name);
+unsigned char TS_name_is_valid(const wchar_t *name);
 
 void TS_push_child(TSParserToken *token, TSParserToken child);
 
@@ -204,9 +204,9 @@ TSParserToken TS_parse_ts_token(TSFile *tsFile, TSParseData *data);
 void TS_free_tsToken(const TSParserToken token);
 void TS_free_children(const TSParserToken token);
 
-volatile const char *TS_getToken(FILE *stream) __attribute__((__malloc__));
+volatile const wchar_t *TS_getToken(FILE *stream) __attribute__((__malloc__));
 
-const char *TS_clone_string(const char *string) __attribute__((__malloc__));
+const wchar_t *TS_clone_string(const wchar_t *string) __attribute__((__malloc__));
 
 const TSFile TS_parse_file(const char *fileName);
 

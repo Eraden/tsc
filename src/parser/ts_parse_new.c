@@ -7,7 +7,7 @@ TS_parse_new(
 ) {
   TS_TOKEN_BEGIN("new");
 
-  u_long movedBy = strlen(tsParseData->token);
+  u_long movedBy = wcslen(tsParseData->token);
 
   TSParserToken token;
   token.tokenType = TS_NEW;
@@ -20,27 +20,27 @@ TS_parse_new(
   token.data = NULL;
 
   volatile unsigned char proceed = 1;
-  const char *tok;
+  const wchar_t *tok;
   while (proceed) {
-    tok = (const char *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
       if (token.data == NULL)
-        ts_token_syntax_error("Unexpected end of stream while parsing `new` keyword.", tsFile, &token);
+        ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing `new` keyword.", tsFile, &token);
       else break;
     }
 
     switch (tok[0]) {
-      case ' ': {
-        movedBy += strlen(tok);
+      case L' ': {
+        movedBy += wcslen(tok);
         free((void *) tok);
 
         break;
       }
-      case '\n': {
+      case L'\n': {
         if (token.data == NULL) {
           free((void *) tok);
-          ts_token_syntax_error("Expecting class after `new` keyword. Found new line.", tsFile, &token);
+          ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found new line.", tsFile, &token);
         } else {
           proceed = 0;
           TS_put_back(tsParseData->stream, tok);
@@ -48,10 +48,10 @@ TS_parse_new(
         }
         break;
       }
-      case ';': {
+      case L';': {
         if (token.data == NULL) {
           free((void *) tok);
-          ts_token_syntax_error("Expecting class after `new` keyword. Found `;`.", tsFile, &token);
+          ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found `;`.", tsFile, &token);
         } else {
           proceed = 0;
           TS_put_back(tsParseData->stream, tok);
@@ -61,12 +61,12 @@ TS_parse_new(
         break;
       }
       default: {
-        u_long size = strlen(tok) + TS_STRING_END;
-        if (token.data != NULL) size += strlen(token.data);
-        char *newPointer = (char *) calloc(sizeof(char), size);
-        if (token.data != NULL) strcpy(newPointer, token.data);
+        u_long size = wcslen(tok) + TS_STRING_END;
+        if (token.data != NULL) size += wcslen(token.data);
+        wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
+        if (token.data != NULL) wcscpy(newPointer, token.data);
         if (token.data != NULL) free(token.data);
-        strcat(newPointer, tok);
+        wcscat(newPointer, tok);
         token.data = newPointer;
 
         free((void *) tok);

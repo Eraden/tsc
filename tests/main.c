@@ -16,19 +16,21 @@ Suite *class_suite(void) {
 
   parse_variables_suite(suite);
   parse_functions_suite(suite);
-  parse_if_conditions_suite(suite);
-  parse_else_conditions_suite(suite);
-  parse_classes_suite(suite);
-  parse_return_keyword_suite(suite);
-  parse_exports_suite(suite);
-  parse_inline_comment_suite(suite);
-  parse_multiline_comment_suite(suite);
-  parse_new_suite(suite);
+//  parse_if_conditions_suite(suite);
+//  parse_else_conditions_suite(suite);
+//  parse_classes_suite(suite);
+//  parse_return_keyword_suite(suite);
+//  parse_exports_suite(suite);
+//  parse_inline_comment_suite(suite);
+//  parse_multiline_comment_suite(suite);
+//  parse_new_suite(suite);
   return suite;
 }
 
 
 int main(int argc, char **argv) {
+  setlocale(LC_ALL, "");
+
   enum print_output output_type = CK_NORMAL;
   for (int i = 0; i < argc; i++) {
     const char *v = argv[i];
@@ -37,7 +39,7 @@ int main(int argc, char **argv) {
     }
   }
 
-  TS_set_log_level(TS_VERBOSITY_OFF);
+  TS_set_log_level(TS_VERBOSITY_INFO);
   init_log();
 
   Suite *s;

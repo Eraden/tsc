@@ -1,8 +1,12 @@
 #include <tsc/parser.h>
 
-const TSParserToken TS_parse_arrow(TSFile *__attribute__((__unused__)) tsFile, TSParseData *tsParseData) {
-  log_to_file("-> parsing as %s\n", "arrow");
-  u_long movedBy = strlen(tsParseData->token);
+const
+TSParserToken TS_parse_arrow(
+    TSFile *__attribute__((__unused__)) tsFile,
+    TSParseData *tsParseData
+) {
+  TS_TOKEN_BEGIN("arrow");
+  u_long movedBy = wcslen(tsParseData->token);
 
   TSParserToken token;
   token.tokenType = TS_ARROW;
@@ -17,10 +21,11 @@ const TSParserToken TS_parse_arrow(TSFile *__attribute__((__unused__)) tsFile, T
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
 
-  log_to_file("-> end %s\n", "arrow");
+  TS_TOKEN_END("arrow");
   return token;
 }
 
 void TS_free_arrow(const TSParserToken token) {
+  TS_free_children(token);
   // TODO
 }

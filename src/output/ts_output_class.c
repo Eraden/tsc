@@ -17,7 +17,7 @@ TS_print_for_class_method(
 
   fprintf(outputSettings.stream, "%s", "proto['");
   fflush(outputSettings.stream);
-  fprintf(outputSettings.stream, "%s", methodData->name);
+  fprintf(outputSettings.stream, "%ls", methodData->name);
   fprintf(outputSettings.stream, "%s", "'] = {\n");
   fflush(outputSettings.stream);
 
@@ -60,7 +60,7 @@ TS_print_for_class_field(
 
   fprintf(outputSettings.stream, "%s", "var SYMBOL_FOR_");
   fflush(outputSettings.stream);
-  fprintf(outputSettings.stream, "%s", fieldData->name);
+  fprintf(outputSettings.stream, "%ls", fieldData->name);
   fflush(outputSettings.stream);
   fprintf(outputSettings.stream, "%s", " = Symbol();\n");
   fflush(outputSettings.stream);
@@ -69,7 +69,7 @@ TS_print_for_class_field(
 
   fprintf(outputSettings.stream, "%s", "proto['");
   fflush(outputSettings.stream);
-  fprintf(outputSettings.stream, "%s", fieldData->name);
+  fprintf(outputSettings.stream, "%ls", fieldData->name);
   fflush(outputSettings.stream);
   fprintf(outputSettings.stream, "%s", "'] = {\n");
   fflush(outputSettings.stream);
@@ -80,19 +80,19 @@ TS_print_for_class_field(
   fprintf(outputSettings.stream, "%s", "get: function () { return this[SYMBOL_FOR_");
   fflush(outputSettings.stream);
 
-  fprintf(outputSettings.stream, "%s", fieldData->name);
+  fprintf(outputSettings.stream, "%ls", fieldData->name);
   fflush(outputSettings.stream);
 
   fprintf(outputSettings.stream, "%s", "] == void(0) ? ");
   fflush(outputSettings.stream);
 
-  fprintf(outputSettings.stream, "%s", fieldData->value ? fieldData->value : "null");
+  fprintf(outputSettings.stream, "%ls", fieldData->value ? fieldData->value : L"null");
   fflush(outputSettings.stream);
 
   fprintf(outputSettings.stream, "%s", " : this[SYMBOL_FOR_");
   fflush(outputSettings.stream);
 
-  fprintf(outputSettings.stream, "%s", fieldData->name);
+  fprintf(outputSettings.stream, "%ls", fieldData->name);
   fflush(outputSettings.stream);
 
   fprintf(outputSettings.stream, "%s", "]");
@@ -106,7 +106,7 @@ TS_print_for_class_field(
 
   fprintf(outputSettings.stream, "%s", "set: function (value) { return this[SYMBOL_FOR_");
   fflush(outputSettings.stream);
-  fprintf(outputSettings.stream, "%s", fieldData->name);
+  fprintf(outputSettings.stream, "%ls", fieldData->name);
   fflush(outputSettings.stream);
   fprintf(outputSettings.stream, "%s", "] = value; }\n");
   fflush(outputSettings.stream);
@@ -174,11 +174,11 @@ TS_print_for_class_prototype(
 
   fprintf(outputSettings.stream, "%s", "}(");
   fflush(outputSettings.stream);
-  fprintf(outputSettings.stream, "%s", data->name);
+  fprintf(outputSettings.stream, "%ls", (wchar_t *) data->name);
   fflush(outputSettings.stream);
   fprintf(outputSettings.stream, "%s", ", ");
   fflush(outputSettings.stream);
-  fprintf(outputSettings.stream, "%s", data->parentClass ? data->parentClass : "Object");
+  fprintf(outputSettings.stream, "%ls", (wchar_t *) data->parentClass ? data->parentClass : L"Object");
   fflush(outputSettings.stream);
   fprintf(outputSettings.stream, "%s", "));\n");
   fflush(outputSettings.stream);
@@ -206,7 +206,7 @@ TS_print_for_class_constructor(
 
   fprintf(outputSettings.stream, "%s", "function ");
   fflush(outputSettings.stream);
-  fprintf(outputSettings.stream, "%s", data->name);
+  fprintf(outputSettings.stream, "%ls", (wchar_t *) data->name);
   fflush(outputSettings.stream);
   fprintf(outputSettings.stream, "%s", "() {\n");
   fflush(outputSettings.stream);
@@ -231,7 +231,7 @@ TS_print_for_class(
 
 // STRING
 
-static const char *
+static const wchar_t *
 __attribute__(( visibility("hidden")))
 __attribute__(( section("output-class")))
 TS_string_for_class_method(
@@ -243,39 +243,39 @@ TS_string_for_class_method(
   const u_long methodIndent = outputSettings.indent + 1;
   (*methodSize) = TS_STRING_END +
                   (outputSettings.indent * 2) +
-                  sizeof("proto['") +
-                  sizeof(methodData->name) +
-                  sizeof("'] = {\n") +
+                  wcslen((const wchar_t *) L"proto['") +
+                  wcslen(methodData->name) +
+                  wcslen((wchar_t *) L"'] = {\n") +
                   (methodIndent * 2) +
-                  sizeof("value: function () {\n") +
+                  wcslen((wchar_t *) L"value: function () {\n") +
                   (methodIndent * 2) +
-                  sizeof("}\n") +
+                  wcslen((wchar_t *) L"}\n") +
                   (outputSettings.indent * 2) +
-                  sizeof("};\n");
+                  wcslen((wchar_t *) L"};\n");
 
-  char *methodString = (char *) calloc(sizeof(char), *methodSize);
-
-  TS_push_indent_string(methodString, outputSettings.indent);
-
-  strcat(methodString, "proto['");
-  strcat(methodString, methodData->name);
-  strcat(methodString, "'] = {\n");
-
-  TS_push_indent_string(methodString, methodIndent);
-
-  strcat(methodString, "value: function () {\n");
-
-  TS_push_indent_string(methodString, methodIndent);
-
-  strcat(methodString, "}\n");
+  wchar_t *methodString = (wchar_t *) calloc(sizeof(wchar_t), *methodSize);
 
   TS_push_indent_string(methodString, outputSettings.indent);
 
-  strcat(methodString, "};\n");
+  wcscat(methodString, (wchar_t *) L"proto['");
+  wcscat(methodString, methodData->name);
+  wcscat(methodString, (wchar_t *) L"'] = {\n");
+
+  TS_push_indent_string(methodString, methodIndent);
+
+  wcscat(methodString, (wchar_t *) L"value: function () {\n");
+
+  TS_push_indent_string(methodString, methodIndent);
+
+  wcscat(methodString, (wchar_t *) L"}\n");
+
+  TS_push_indent_string(methodString, outputSettings.indent);
+
+  wcscat(methodString, (wchar_t *) L"};\n");
   return methodString;
 }
 
-static const char *
+static const wchar_t *
 __attribute__(( visibility("hidden")))
 __attribute__(( section("output-class")))
 TS_string_for_class_field(
@@ -287,69 +287,69 @@ TS_string_for_class_field(
   const u_long fieldIndent = outputSettings.indent + 1;
   (*fieldSize) = TS_STRING_END +
                  (outputSettings.indent * 2) +
-                 strlen("var SYMBOL_FOR_") +
-                 strlen(fieldData->name) +
-                 strlen(" = Symbol();\n") +
-                 (outputSettings.indent * 2) +
-                 strlen("proto['") +
-                 strlen(fieldData->name) +
-                 strlen("'] = {\n") +
-                 (fieldIndent * 2) +
-                 strlen("get: function () { return this[SYMBOL_FOR_") +
-                 strlen(fieldData->name) +
-                 strlen("] == void(0) ? ") +
-                 strlen(fieldData->value ? fieldData->value : "null") +
-                 strlen(" : this[SYMBOL_FOR_") +
-                 strlen(fieldData->name) +
-                 strlen("]") +
-                 strlen("; },\n") +
-                 (fieldIndent * 2) +
-                 strlen("set: function (value) { return this[SYMBOL_FOR_") +
-                 strlen(fieldData->name) +
-                 strlen("] = value; }\n") +
-                 (outputSettings.indent * 2) +
-                 strlen("};\n");
+      wcslen((wchar_t *) L"var SYMBOL_FOR_") +
+      wcslen(fieldData->name) +
+      wcslen((wchar_t *) L" = Symbol();\n") +
+      (outputSettings.indent * 2) +
+      wcslen((wchar_t *) L"proto['") +
+      wcslen(fieldData->name) +
+      wcslen((wchar_t *) L"'] = {\n") +
+      (fieldIndent * 2) +
+      wcslen((wchar_t *) L"get: function () { return this[SYMBOL_FOR_") +
+      wcslen(fieldData->name) +
+      wcslen((wchar_t *) L"] == void(0) ? ") +
+      wcslen(fieldData->value ? (void *) fieldData->value : "null") +
+      wcslen((wchar_t *) L" : this[SYMBOL_FOR_") +
+      wcslen(fieldData->name) +
+      wcslen((wchar_t *) L"]") +
+      wcslen((wchar_t *) L"; },\n") +
+      (fieldIndent * 2) +
+      wcslen((wchar_t *) L"set: function (value) { return this[SYMBOL_FOR_") +
+      wcslen(fieldData->name) +
+      wcslen((wchar_t *) L"] = value; }\n") +
+      (outputSettings.indent * 2) +
+      wcslen((wchar_t *) L"};\n");
 
-  char *fieldString = (char *) calloc(sizeof(char), *fieldSize);
-
-  TS_push_indent_string(fieldString, outputSettings.indent);
-
-  strcat(fieldString, "var SYMBOL_FOR_");
-  strcat(fieldString, fieldData->name);
-  strcat(fieldString, " = Symbol();\n");
+  wchar_t *fieldString = (wchar_t *) calloc(sizeof(wchar_t), *fieldSize);
 
   TS_push_indent_string(fieldString, outputSettings.indent);
 
-  strcat(fieldString, "proto['");
-  strcat(fieldString, fieldData->name);
-  strcat(fieldString, "'] = {\n");
+  wcscat(fieldString, (wchar_t *) L"var SYMBOL_FOR_");
+  wcscat(fieldString, fieldData->name);
+  wcscat(fieldString, (wchar_t *) L" = Symbol();\n");
+
+  TS_push_indent_string(fieldString, outputSettings.indent);
+
+  wcscat(fieldString, (wchar_t *) L"proto['");
+  wcscat(fieldString, fieldData->name);
+  wcscat(fieldString, (wchar_t *) L"'] = {\n");
 
   // getter
   for (u_long indentIndex = 0; indentIndex < fieldIndent; indentIndex++)
-    strcat(fieldString, "  ");
-  strcat(fieldString, "get: function () { return this[SYMBOL_FOR_");
-  strcat(fieldString, fieldData->name);
-  strcat(fieldString, "] == void(0) ? ");
-  strcat(fieldString, fieldData->value ? fieldData->value : "null");
-  strcat(fieldString, " : this[SYMBOL_FOR_");
-  strcat(fieldString, fieldData->name);
-  strcat(fieldString, "]");
-  strcat(fieldString, "; },\n");
+    wcscat(fieldString, (wchar_t *) L"  ");
+  wcscat(fieldString, (wchar_t *) L"get: function () { return this[SYMBOL_FOR_");
+  wcscat(fieldString, fieldData->name);
+  wcscat(fieldString, (wchar_t *) L"] == void(0) ? ");
+  wcscat(fieldString, fieldData->value ? (void *) fieldData->value : "null");
+  wcscat(fieldString, (wchar_t *) L" : this[SYMBOL_FOR_");
+  wcscat(fieldString, fieldData->name);
+  wcscat(fieldString, (wchar_t *) L"]");
+  wcscat(fieldString, (wchar_t *) L"; },\n");
 
   // setter
   TS_push_indent_string(fieldString, fieldIndent);
 
-  strcat(fieldString, "set: function (value) { return this[SYMBOL_FOR_");
-  strcat(fieldString, fieldData->name);
-  strcat(fieldString, "] = value; }\n");
+  wcscat(fieldString, (wchar_t *) L"set: function (value) { return this[SYMBOL_FOR_");
+  wcscat(fieldString, fieldData->name);
+  wcscat(fieldString, (wchar_t *) L"] = value; }\n");
 
   TS_push_indent_string(fieldString, outputSettings.indent);
 
-  strcat(fieldString, "};\n");
+  wcscat(fieldString, (wchar_t *) L"};\n");
   return fieldString;
 }
 
-static const char *
+static const wchar_t *
 __attribute__(( visibility("hidden")))
 __attribute__(( section("output-class")))
 TS_string_for_class_prototype(
@@ -360,53 +360,53 @@ TS_string_for_class_prototype(
   const TSClassData *data = tsParserToken.data;
   TSOutputSettings settings = outputSettings;
   settings.indent += 1;
-  char *string = NULL;
+  wchar_t *string = NULL;
 
   u_long size = TS_STRING_END +
                 // begin function
                 (outputSettings.indent * 2) +
-                strlen("(function (C, P) {\n") +
+                wcslen((wchar_t *) L"(function (C, P) {\n") +
                 (settings.indent * 2) +
                 // body
-                strlen("var proto = {};\n") +
+                wcslen((wchar_t *) L"var proto = {};\n") +
                 (settings.indent * 2) +
-                strlen("proto['constructor'] = { value: P };\n") +
+                wcslen((wchar_t *) L"proto['constructor'] = { value: P };\n") +
                 (settings.indent * 2) +
-                strlen("C.prototype = Object.create(P.prototype, proto);\n") +
+                wcslen((wchar_t *) L"C.prototype = Object.create(P.prototype, proto);\n") +
                 // end of function
                 (outputSettings.indent * 2) +
-                strlen("}(") +
-                strlen(data->name) +
-                strlen(", ") +
-                strlen(data->parentClass ? data->parentClass : "Object") +
-                strlen("));\n");
+                wcslen((wchar_t *) L"}(") +
+                wcslen(data->name) +
+                wcslen((wchar_t *) L", ") +
+                wcslen(data->parentClass ? (void *) data->parentClass : "Object") +
+                wcslen((wchar_t *) L"));\n");
 
-  string = (char *) calloc(sizeof(char), size);
+  string = (wchar_t *) calloc(sizeof(wchar_t), size);
 
   // begin function
   TS_push_indent_string(string, outputSettings.indent);
 
-  strcat(string, "(function (C, P) {\n");
+  wcscat(string, (wchar_t *) L"(function (C, P) {\n");
 
   // body
   TS_push_indent_string(string, settings.indent);
 
-  strcat(string, "var proto = {};\n");
+  wcscat(string, (wchar_t *) L"var proto = {};\n");
 
   TS_push_indent_string(string, settings.indent);
 
-  strcat(string, "proto['constructor'] = { value: P };\n");
+  wcscat(string, (wchar_t *) L"proto['constructor'] = { value: P };\n");
 
   for (u_long childIndex = 0; childIndex < tsParserToken.childrenSize; childIndex++) {
     TSParserToken child = tsParserToken.children[childIndex];
     switch (child.tokenType) {
       case TS_CLASS_FIELD: {
         u_long fieldSize;
-        const char *fieldString = TS_string_for_class_field(settings, &child, &fieldSize);
+        const wchar_t *fieldString = TS_string_for_class_field(settings, &child, &fieldSize);
 
-        char *newPointer = (char *) calloc(sizeof(char), size + fieldSize - 1);
-        strcpy(newPointer, string);
-        strcat(newPointer, fieldString);
+        wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size + fieldSize - 1);
+        wcscpy(newPointer, string);
+        wcscat(newPointer, fieldString);
         free(string);
         free((void *) fieldString);
         string = newPointer;
@@ -415,11 +415,11 @@ TS_string_for_class_prototype(
       }
       case TS_CLASS_METHOD: {
         u_long methodSize;
-        const char *methodString = TS_string_for_class_method(settings, &child, &methodSize);
+        const wchar_t *methodString = TS_string_for_class_method(settings, &child, &methodSize);
 
-        char *newPointer = (char *) calloc(sizeof(char), size + methodSize - 1);
-        strcpy(newPointer, string);
-        strcat(newPointer, methodString);
+        wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size + methodSize - 1);
+        wcscpy(newPointer, string);
+        wcscat(newPointer, methodString);
         free(string);
         free((void *) methodString);
         string = newPointer;
@@ -433,21 +433,21 @@ TS_string_for_class_prototype(
 
   TS_push_indent_string(string, settings.indent);
 
-  strcat(string, "C.prototype = Object.create(P.prototype, proto);\n");
+  wcscat(string, (wchar_t *) L"C.prototype = Object.create(P.prototype, proto);\n");
 
   // end of function
   TS_push_indent_string(string, outputSettings.indent);
 
-  strcat(string, "}(");
-  strcat(string, data->name);
-  strcat(string, ", ");
-  strcat(string, data->parentClass ? data->parentClass : "Object");
-  strcat(string, "));\n");
+  wcscat(string, (wchar_t *) L"}(");
+  wcscat(string, data->name);
+  wcscat(string, (wchar_t *) L", ");
+  wcscat(string, data->parentClass ? (void *) data->parentClass : "Object");
+  wcscat(string, (wchar_t *) L"));\n");
 
   return string;
 }
 
-static const char *
+static const wchar_t *
 __attribute__(( visibility("hidden")))
 __attribute__(( section("output-class")))
 TS_string_for_class_constructor(
@@ -457,39 +457,39 @@ TS_string_for_class_constructor(
 ) {
   const TSClassData *data = tsParserToken.data;
   const u_long __attribute__((__unused__)) indent = outputSettings.indent + 1;
-  char *string = NULL;
+  wchar_t *string = NULL;
 
   u_long size = 0;
   size = TS_STRING_END +
-         (outputSettings.indent * 2 * sizeof(char)) +
-         strlen("/* class */\n") +
-         (outputSettings.indent * 2 * sizeof(char)) +
-         strlen("function ") +
-         strlen(data->name) +
-         strlen("() {\n") +
-         (outputSettings.indent * 2 * sizeof(char)) +
-         strlen("}\n");
+         (outputSettings.indent * 2 * sizeof(wchar_t)) +
+         wcslen((wchar_t *) L"/* class */\n") +
+         (outputSettings.indent * 2 * sizeof(wchar_t)) +
+         wcslen((wchar_t *) L"function ") +
+         wcslen(data->name) +
+         wcslen((wchar_t *) L"() {\n") +
+         (outputSettings.indent * 2 * sizeof(wchar_t)) +
+         wcslen((wchar_t *) L"}\n");
 
-  string = (char *) calloc(sizeof(char), size);
-
-  TS_push_indent_string(string, outputSettings.indent);
-
-  strcat(string, "/* class */\n");
+  string = (wchar_t *) calloc(sizeof(wchar_t), size);
 
   TS_push_indent_string(string, outputSettings.indent);
 
-  strcat(string, "function ");
-  strcat(string, data->name);
-  strcat(string, "() {\n");
+  wcscat(string, (wchar_t *) L"/* class */\n");
 
   TS_push_indent_string(string, outputSettings.indent);
 
-  strcat(string, "}\n");
+  wcscat(string, (wchar_t *) L"function ");
+  wcscat(string, data->name);
+  wcscat(string, (wchar_t *) L"() {\n");
+
+  TS_push_indent_string(string, outputSettings.indent);
+
+  wcscat(string, (wchar_t *) L"}\n");
 
   return string;
 }
 
-const char *
+const wchar_t *
 __attribute__(( section("output-class")))
 TS_string_for_class(
     const TSFile *__attribute__(( __unused__ )) tsFile,
@@ -497,24 +497,24 @@ TS_string_for_class(
     TSOutputSettings outputSettings
 ) {
   if (tsParserToken.data == NULL) return NULL;
-  char *string = NULL;
+  wchar_t *string = NULL;
 
   {
-    const char *constructorString = TS_string_for_class_constructor(tsFile, tsParserToken, outputSettings);
+    const wchar_t *constructorString = TS_string_for_class_constructor(tsFile, tsParserToken, outputSettings);
     if (constructorString != NULL) {
-      char *newPointer = (char *) calloc(sizeof(char), TS_STRING_END + strlen(constructorString));
-      strcat(newPointer, constructorString);
+      wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), TS_STRING_END + wcslen(constructorString));
+      wcscat(newPointer, constructorString);
       free((void *) constructorString);
       string = newPointer;
     }
   }
 
   {
-    const char *prototypeString = TS_string_for_class_prototype(tsFile, tsParserToken, outputSettings);
+    const wchar_t *prototypeString = TS_string_for_class_prototype(tsFile, tsParserToken, outputSettings);
     if (prototypeString != NULL) {
-      char *newPointer = (char *) calloc(sizeof(char), TS_STRING_END + strlen(string) + strlen(prototypeString));
-      strcpy(newPointer, string);
-      strcat(newPointer, prototypeString);
+      wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), TS_STRING_END + wcslen(string) + wcslen(prototypeString));
+      wcscpy(newPointer, string);
+      wcscat(newPointer, prototypeString);
       free(string);
       free((void *) prototypeString);
       string = newPointer;
