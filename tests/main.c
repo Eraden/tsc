@@ -16,7 +16,7 @@ Suite *class_suite(void) {
 
   parse_variables_suite(suite);
   parse_functions_suite(suite);
-//  parse_if_conditions_suite(suite);
+  parse_if_conditions_suite(suite);
 //  parse_else_conditions_suite(suite);
 //  parse_classes_suite(suite);
 //  parse_return_keyword_suite(suite);

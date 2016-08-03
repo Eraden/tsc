@@ -91,6 +91,8 @@ TS_print_for_token(
     case TS_MULTILINE_COMMENT: {
       break;
     }
+    case TS_CONDITION:break;
+    case TS_ARGUMENT:break;
   }
 }
 

@@ -2,11 +2,12 @@
 
 static void
 __attribute__(( visibility("hidden") ))
-TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
-  log_to_file(L"->   parsing as %s body\n", "if");
+TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token) {
+  log_to_file((wchar_t *) L"->   parsing as %s body\n", "if");
   const wchar_t *tok;
   TSConditionBodyTermination termination = TS_ENDS_WITHOUT_BRACKET;
 
+  u_long movedBy = 0;
   volatile unsigned char proceed = 1;
   while (proceed) {
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
@@ -16,30 +17,30 @@ TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token,
 
     switch (tok[0]) {
       case L' ': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
 
-        tsParseData->position += *movedBy;
+        tsParseData->position += movedBy;
         tsParseData->line += 1;
         tsParseData->character = 0;
-        *movedBy = 0;
+        movedBy = 0;
         termination = TS_ENDS_WITHOUT_BRACKET;
         break;
       }
       case L';': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         if (termination == TS_ENDS_WITHOUT_BRACKET) {
           return;
         }
       }
       case L'{': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
 
         termination = TS_ENDS_WITH_BRACKET;
@@ -60,36 +61,35 @@ TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token,
   proceed = 1;
   while (proceed) {
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
-    log_to_file(L"(collecting if child nodes) current token: '%s'\n", tok);
     if (tok == NULL) {
       ts_token_syntax_error((wchar_t *) L"Unexpected end of if body while collecting child nodes", tsFile, token);
     }
     switch (tok[0]) {
       case L' ': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        *movedBy += wcslen(tok);
-        tsParseData->position += *movedBy;
+        movedBy += wcslen(tok);
+        tsParseData->position += movedBy;
         tsParseData->line += 1;
         tsParseData->character = 0;
-        *movedBy = 0;
+        movedBy = 0;
         break;
       }
       case L'}': {
         if (termination != TS_ENDS_WITH_BRACKET) {
           ts_token_syntax_error((wchar_t *) L"Unexpected end bracket for if during collecting child nodes. Starting one was not declared", tsFile, token);
         }
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
 
         proceed = 0;
         break;
       }
       case L';': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
 
         if (termination == TS_ENDS_WITHOUT_BRACKET) {
@@ -98,11 +98,10 @@ TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token,
         break;
       }
       default: {
-        log_to_file(L"(collecting if child nodes) [default] token: '%s'\n", tok);
         tsParseData->token = tok;
-        tsParseData->character += *movedBy;
-        tsParseData->position += *movedBy;
-        *movedBy = 0;
+        tsParseData->character += movedBy;
+        tsParseData->position += movedBy;
+        movedBy = 0;
 
         TSParserToken t = TS_parse_ts_token(tsFile, tsParseData);
         TS_push_child(token, t);
@@ -112,13 +111,17 @@ TS_parse_if_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token,
       }
     }
   }
-  log_to_file(L"%s\n", "(collecting if child nodes) done");
-  log_to_file(L"->   done %s body\n", "if");
+
+  tsParseData->position += movedBy;
+  tsParseData->character += movedBy;
+
+  log_to_file((wchar_t *) L"->   done %s body\n", "if");
 }
 
 static void
 __attribute__(( visibility("hidden") ))
-TS_parse_if_condition(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
+TS_parse_if_conditions(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token) {
+  u_long movedBy = 0;
   const wchar_t *tok;
   TSIfData *data = (TSIfData *) token->data;
   volatile unsigned char proceed = 1;
@@ -129,20 +132,20 @@ TS_parse_if_condition(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *t
     }
     switch (tok[0]) {
       case L' ': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        *movedBy += wcslen(tok);
-        tsParseData->position += *movedBy;
+        movedBy += wcslen(tok);
+        tsParseData->position += movedBy;
         tsParseData->line += 1;
         tsParseData->character = 0;
-        *movedBy = 0;
+        movedBy = 0;
         break;
       }
       case L'(': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         proceed = 0;
         break;
@@ -162,32 +165,40 @@ TS_parse_if_condition(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *t
     }
     switch (tok[0]) {
       case L' ': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
 
-        tsParseData->position += *movedBy;
+        tsParseData->position += movedBy;
         tsParseData->line += 1;
         tsParseData->character = 0;
-        *movedBy = 0;
+        movedBy = 0;
         break;
       }
       case L')': {
-        *movedBy += wcslen(tok);
+        if (data->conditionsSize == 0) {
+          free((void *) tok);
+          ts_token_syntax_error(
+              (const wchar_t *) L"Unexpected end of `if`. No condition given!",
+              tsFile,
+              token
+          );
+        }
+        movedBy += wcslen(tok);
         free((void *) tok);
         proceed = 0;
         break;
       }
       default: {
         TSParserToken t;
-        t.tokenType = TS_UNKNOWN;
+        t.tokenType = TS_CONDITION;
         t.visibility = TS_VISIBILITY_PUBLIC;
-        t.position = tsParseData->position + *movedBy;
-        t.character = tsParseData->character + *movedBy;
+        t.position = tsParseData->position + movedBy;
+        t.character = tsParseData->character + movedBy;
         t.line = tsParseData->line;
         t.data = (void *) TS_clone_string(tok);
         t.childrenSize = 0;
@@ -201,12 +212,14 @@ TS_parse_if_condition(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *t
         data->conditions[data->conditionsSize] = t;
         data->conditionsSize += 1;
 
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
     }
   }
+  tsParseData->position += movedBy;
+  tsParseData->character += movedBy;
 }
 
 const TSParserToken TS_parse_if(TSFile *tsFile, TSParseData *tsParseData) {
@@ -226,8 +239,8 @@ const TSParserToken TS_parse_if(TSFile *tsFile, TSParseData *tsParseData) {
   data->conditionsSize = 0;
   token.data = data;
 
-  TS_parse_if_condition(tsFile, tsParseData, &token, &movedBy);
-  TS_parse_if_body(tsFile, tsParseData, &token, &movedBy);
+  TS_parse_if_conditions(tsFile, tsParseData, &token);
+  TS_parse_if_body(tsFile, tsParseData, &token);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;

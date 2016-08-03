@@ -37,6 +37,8 @@ typedef enum eTSTokenType {
   TS_CLASS_METHOD = 0x19,
   TS_INLINE_COMMENT = 0x20,
   TS_MULTILINE_COMMENT = 0x21,
+  TS_CONDITION = 0x22,
+  TS_ARGUMENT = 0x23,
   TS_UNKNOWN = 0x0,
 } __attribute__ ((__packed__)) TSTokenType;
 

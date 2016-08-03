@@ -52,12 +52,12 @@ SET(
     TEST_SOURCES
     ${SOURCE_FILES}
     tests/test.c
+    tests/parser/variables.c
+    tests/parser/functions.c
+    tests/parser/if_conditions.c
 #    tests/parser/classes.c
 #    tests/parser/class/multiple_instance_methods.c
 #    tests/parser/class/multiple_instance_fields.c
-    tests/parser/variables.c
-    tests/parser/functions.c
-#    tests/parser/if_conditions.c
 #    tests/parser/else_conditions.c
 #    tests/parser/return_keyword.c
 #    tests/parser/parse_exports.c
@@ -164,3 +164,6 @@ target_link_libraries(
 FILE(COPY examples DESTINATION .)
 
 ADD_TEST(NAME CheckTsc COMMAND ./tsc_test)
+ADD_TEST(NAME Variables COMMAND ./tsc -f ./examples/variables/valid.ts)
+ADD_TEST(NAME Functions COMMAND ./tsc -f ./examples/functions/valid.ts)
+ADD_TEST(NAME IfConditions COMMAND ./tsc -f ./examples/if/valid.ts)

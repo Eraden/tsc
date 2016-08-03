@@ -177,6 +177,7 @@ TS_valid_char_for_token(
       return 1;
   }
 }
+volatile int outOfScope = 0;
 
 volatile const wchar_t *
 TS_getToken(
@@ -239,6 +240,62 @@ TS_getToken(
           return tok;
         }
       }
+      case L'-':
+      case L'+':
+      case L'|':
+      case L'&': {
+        if (tok == NULL || (tok[0] == c && prev == c && wcslen((const wchar_t *) tok) == 1)) {
+          const size_t size = tok == NULL ? 1 : wcslen((const wchar_t *) tok) + 1;
+
+          wchar_t *newPointer = calloc(sizeof(wchar_t), size + TS_STRING_END);
+          if (tok != NULL) wcscpy(newPointer, (const void *) tok);
+          if (tok != NULL) free((void *) tok);
+
+          newPointer[0] = c;
+          if (size == 2) newPointer[1] = c;
+          prev = c;
+
+          tok = newPointer;
+          wchar_t next = (wchar_t) fgetwc(stream);
+
+          ungetwc((wint_t) next, stream);
+
+          if (next != c) return tok;
+        } else {
+          ungetwc((wint_t) c, stream);
+          log_to_file((wchar_t *) L"# token: '%ls' [single token + else]\n", tok);
+          return tok;
+        }
+        break;
+      }
+      case L'=': {
+        if (outOfScope++ > 30) exit(6);
+        if (tok == NULL || (tok[0] == c && prev == c)) {
+          const size_t size = tok == NULL ? 1 : wcslen((const wchar_t *) tok) + 1;
+
+          wchar_t *newPointer = calloc(sizeof(wchar_t), size + TS_STRING_END);
+          if (tok != NULL) wcscpy(newPointer, (const void *) tok);
+          if (tok != NULL) free((void *) tok);
+
+          newPointer[0] = c;
+          if (size == 2) newPointer[1] = c;
+          if (size == 3) newPointer[2] = c;
+          prev = c;
+
+          tok = newPointer;
+          wchar_t next = (wchar_t) fgetwc(stream);
+
+          ungetwc((wint_t) next, stream);
+
+          if (next != c) return tok;
+          if (size == 3) return tok;
+        } else {
+          ungetwc((wint_t) c, stream);
+          log_to_file((wchar_t *) L"# token: '%ls' [single token + else]\n", tok);
+          return tok;
+        }
+        break;
+      }
       case L'@':
       case L'\'':
       case L'"':
@@ -248,14 +305,9 @@ TS_getToken(
       case L')':
       case L',':
       case L'.':
-      case L'=':
       case L':':
       case L';':
-      case L'+':
-      case L'-':
       case L'!':
-      case L'|':
-      case L'&':
       case L'#':
       case L'\\':
       case L'%':
@@ -299,9 +351,6 @@ TS_getToken(
       }
       default: {
         if (TS_valid_char_for_token(prev)) {
-
-//          if (tok != NULL) fprintf(stderr, "%ls %lc %i\n", (wchar_t *) tok, c, c);
-
           const u_long size = tok != NULL ? wcslen((const wchar_t *) tok) : 0;
           volatile wchar_t *newPointerForDefault = (wchar_t *) calloc(sizeof(wchar_t), size + 1 + TS_STRING_END);
           if (tok != NULL) wcscpy((wchar_t *) newPointerForDefault, (const wchar_t *) tok);
@@ -309,7 +358,6 @@ TS_getToken(
           tok = newPointerForDefault;
           tok[size] = c;
 
-//          if (tok != NULL) fprintf(stderr, "%ls %lc %i\n\n", (wchar_t *) tok, c, c);
         } else {
           ungetwc((wint_t) c, stream);
           log_to_file((wchar_t *) L"# token: '%ls' [default + else]\n", tok);
@@ -460,6 +508,8 @@ TS_free_tsToken(
     case TS_UNKNOWN:
       TS_free_unknown(token);
       break;
+    case TS_CONDITION:break;
+    case TS_ARGUMENT:break;
   }
 }
 
