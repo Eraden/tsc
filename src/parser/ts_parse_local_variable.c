@@ -80,10 +80,16 @@ TS_parse_local_variable_body(
       }
       default: {
         if (parseFlag == TS_PARSE_VARIABLE_NAME) {
+          log_to_file(
+              (wchar_t *) L"%s", "Setting name of local variable\n"
+          );
           data->name = TS_clone_string(tok);
           *movedBy += wcslen(tok);
           free((void *) tok);
           parseFlag = TS_PARSE_VARIABLE_NONE;
+          log_to_file(
+              (wchar_t *) L"    Local variable current name: '%s'\n", data->name
+          );
 
         } else if (parseFlag == TS_PARSE_VARIABLE_VALUE) {
           log_to_file(
@@ -106,7 +112,7 @@ TS_parse_local_variable_body(
 
         } else if (parseFlag == TS_PARSE_VARIABLE_TYPE) {
           log_to_file(
-              (wchar_t *) L"%s", "Setting type for local variable\n"
+              (wchar_t *) L"%s", "Setting type of local variable\n"
           );
           u_long size = TS_STRING_END + wcslen(tok);
           if (data->type) size += wcslen(data->type);

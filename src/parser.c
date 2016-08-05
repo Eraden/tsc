@@ -219,7 +219,7 @@ TS_getToken(
       }
       case L'/': {
         if (tok == NULL) {
-          wchar_t next = (wchar_t) fgetc(stream);
+          wchar_t next = (wchar_t) fgetwc(stream);
           switch (next) {
             case L'*':
             case L'/':
@@ -520,7 +520,7 @@ TS_free_children(
   for (u_long childIndex = 0; childIndex < token.childrenSize; childIndex++) {
     TS_free_tsToken(token.children[childIndex]);
   }
-  if (token.childrenSize > 0) free(token.children);
+  if (token.children != NULL) free(token.children);
 }
 
 void
@@ -530,5 +530,5 @@ TS_free_tsFile(
   for (u_long index = 0; index < tsFile.tokensSize; index++) {
     TS_free_tsToken(tsFile.tokens[index]);
   }
-  if (tsFile.tokensSize > 0) free(tsFile.tokens);
+  if (tsFile.tokens != NULL) free(tsFile.tokens);
 }

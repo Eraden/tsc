@@ -1,20 +1,23 @@
 #include "./multiple_instance_fields.h"
 
-static void
-__attribute__((visibility("hidden")))
-parse_class_with_complex_fields(int __attribute__((unused)) c) {
-  tcase_fn_start ("parse_class_with_complex_fields", __FILE__, __LINE__);
-  TSFile tsFile = TS_parse_file("./examples/class_with_multiple_fields.ts");
+START_TEST(parse_class_with_complex_fields)
+  TSFile tsFile = TS_parse_file("./examples/class/class_with_multiple_fields.ts");
 
-  validate_ts_file(tsFile, 1, TS_CLASS);
+  ck_assert_ulong_eq(tsFile.tokensSize, 1);
+  ck_assert_ptr_ne(tsFile.tokens, NULL);
 
-  TSParserToken token = tsFile.tokens[0];
-
-  ck_assert_int_eq(token.childrenSize, (24 * 4) + 4);
-
+  TSParserToken token;
   TSParserToken child;
-  u_long childIndex = 0;
   TSLocalVariableData *fieldData;
+  u_long childIndex = 0;
+
+  token = tsFile.tokens[0];
+
+  ck_assert(token.tokenType == TS_CLASS);
+  u_long validChildrenSize = (24 * 4) + 4;
+  u_long size = token.childrenSize;
+//  printf("%lu == %lu\n\n", validChildrenSize, token.childrenSize);
+  ck_assert_ulong_eq(size, validChildrenSize);
 
   child = token.children[childIndex++];
   ck_assert(child.visibility == TS_VISIBILITY_NONE);
@@ -929,7 +932,7 @@ parse_class_with_complex_fields(int __attribute__((unused)) c) {
   ck_assert_ptr_eq(fieldData->value, NULL);
 
   TS_free_tsFile(tsFile);
-}
+END_TEST
 
 void parse_class_with_multiple_instance_fields_suite(TCase *tc_class) {
   tcase_add_test(tc_class, parse_class_with_complex_fields);

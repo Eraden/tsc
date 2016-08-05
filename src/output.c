@@ -185,6 +185,8 @@ TS_string_for_token(
       break;
     case TS_MULTILINE_COMMENT:
       break;
+    case TS_CONDITION:break;
+    case TS_ARGUMENT:break;
   }
   return NULL;
 }

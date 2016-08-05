@@ -55,15 +55,15 @@ SET(
     tests/parser/variables.c
     tests/parser/functions.c
     tests/parser/if_conditions.c
-#    tests/parser/classes.c
-#    tests/parser/class/multiple_instance_methods.c
-#    tests/parser/class/multiple_instance_fields.c
-#    tests/parser/else_conditions.c
-#    tests/parser/return_keyword.c
-#    tests/parser/parse_exports.c
-#    tests/parser/inline_comment.c
-#    tests/parser/multiline_comment.c
-#    tests/parser/new_keyword.c
+    tests/parser/else_conditions.c
+    tests/parser/classes.c
+    tests/parser/class/multiple_instance_methods.c
+    tests/parser/class/multiple_instance_fields.c
+    #    tests/parser/return_keyword.c
+    #    tests/parser/parse_exports.c
+    #    tests/parser/inline_comment.c
+    #    tests/parser/multiline_comment.c
+    #    tests/parser/new_keyword.c
 )
 
 SET(
@@ -82,7 +82,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 enable_testing()
 find_package(Check REQUIRED)
-find_package (Threads)
+find_package(Threads)
 include_directories(${CHECK_INCLUDE_DIRS})
 
 MESSAGE(INFO " Compiler: ${CMAKE_C_COMPILER}")
@@ -109,7 +109,7 @@ ELSEIF (VALIDATE_MEMORY MATCHES "TRUE")
 ELSEIF (VALIDATE_ADDRESS MATCHES "TRUE")
   SET(VALIDATE_MEMORY "FALSE")
   SET(VALIDATE_ADDRESS "TRUE")
-ENDIF()
+ENDIF ()
 
 MESSAGE(INFO " post memory validation: ${VALIDATE_MEMORY}")
 MESSAGE(INFO " post address validation: ${VALIDATE_ADDRESS}")
@@ -123,7 +123,7 @@ IF (CMAKE_BUILD_TYPE MATCHES "Debug" AND CMAKE_C_COMPILER MATCHES "clang")
   IF (VALIDATE_ADDRESS MATCHES "TRUE")
     MESSAGE(INFO " Setting up address sanitizer")
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=address -fno-omit-frame-pointer")
-  ENDIF()
+  ENDIF ()
 ENDIF ()
 
 IF (Debug)
@@ -166,4 +166,7 @@ FILE(COPY examples DESTINATION .)
 ADD_TEST(NAME CheckTsc COMMAND ./tsc_test)
 ADD_TEST(NAME Variables COMMAND ./tsc -f ./examples/variables/valid.ts)
 ADD_TEST(NAME Functions COMMAND ./tsc -f ./examples/functions/valid.ts)
-ADD_TEST(NAME IfConditions COMMAND ./tsc -f ./examples/if/valid.ts)
+ADD_TEST(NAME If_blocks COMMAND ./tsc -f ./examples/if/valid.ts)
+ADD_TEST(NAME If_else_blocks COMMAND ./tsc -f ./examples/else/valid.ts)
+ADD_TEST(NAME Class_fields COMMAND ./tsc -f ./examples/class/class_with_multiple_fields.ts)
+ADD_TEST(NAME Class_methods COMMAND ./tsc -f ./examples/class/class_with_multiple_methods.ts)

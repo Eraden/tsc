@@ -1,10 +1,7 @@
 #include "./multiple_instance_methods.h"
 
-static void
-__attribute__((visibility("hidden")))
-parse_class_with_complex_methods(int __attribute__((unused)) c) {
-  tcase_fn_start ("parse_class_with_complex_methods", __FILE__, __LINE__);
-  TSFile tsFile = TS_parse_file("./examples/class_with_multiple_methods.ts");
+START_TEST(parse_class_with_complex_methods)
+  TSFile tsFile = TS_parse_file("./examples/class/class_with_multiple_methods.ts");
 
   ck_assert_int_eq(tsFile.tokensSize, 1);
 
@@ -930,7 +927,7 @@ parse_class_with_complex_methods(int __attribute__((unused)) c) {
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
   TS_free_tsFile(tsFile);
-}
+END_TEST
 
 void parse_class_with_multiple_instance_methods_suite(TCase *tc_class) {
   tcase_add_test(tc_class, parse_class_with_complex_methods);

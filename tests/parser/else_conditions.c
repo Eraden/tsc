@@ -1,91 +1,85 @@
 #include "./if_conditions.h"
 
-START_TEST(parse_empty_else_condition)
-  {
-    const TSFile tsFile = build_ts_file("memory.ts", "else;");
-    validate_ts_file(tsFile, 1, TS_ELSE);
+START_TEST(parse_valid_else_condition)
+  TSFile tsFile = TS_parse_file("./examples/else/valid.ts");
 
-    const TSParserToken token = tsFile.tokens[0];
-    const void *data = token.data;
+  ck_assert_int_eq(tsFile.tokensSize, 4);
 
-    ck_assert_ptr_eq(token.children, NULL);
-    ck_assert_int_eq(token.childrenSize, 0);
+  TSParserToken token, child, retValue;
 
-    ck_assert_ptr_eq(data, NULL);
-
-    TS_free_tsFile(tsFile);
-  }
-END_TEST
-
-START_TEST(parse_empty_else_condition_with_brackets)
-  {
-    const TSFile tsFile = build_ts_file("memory.ts", "else {}");
-    validate_ts_file(tsFile, 1, TS_ELSE);
-
-    const TSParserToken token = tsFile.tokens[0];
-    const TSIfData *data = token.data;
-
-    ck_assert_ptr_eq(token.children, NULL);
-    ck_assert_int_eq(token.childrenSize, 0);
-
-    ck_assert_ptr_eq(data, NULL);
-
-    TS_free_tsFile(tsFile);
-  }
-END_TEST
-
-START_TEST(parse_empty_else_condition_with_children)
-  {
-    const TSFile tsFile = build_ts_file("memory.ts", "else return 10;");
-    validate_ts_file(tsFile, 1, TS_ELSE);
-
-    const TSParserToken token = tsFile.tokens[0];
-    const TSIfData *data = token.data;
-
-    ck_assert_ptr_ne(token.children, NULL);
-    ck_assert_int_eq(token.childrenSize, 1);
-    ck_assert(token.children[0].tokenType == TS_RETURN);
-
-    ck_assert_ptr_eq(data, NULL);
-
-    TS_free_tsFile(tsFile);
-  }
-END_TEST
-
-START_TEST(parse_empty_else_condition_with_children_and_brackets)
-  const TSFile tsFile = build_ts_file("memory.ts", "else { return 10; }");
-  validate_ts_file(tsFile, 1, TS_ELSE);
-
-  const TSParserToken token = tsFile.tokens[0];
-  const TSIfData *data = token.data;
-
-  ck_assert_ptr_ne(token.children, NULL);
+  // 1
+  token = tsFile.tokens[0];
+  ck_assert(token.tokenType == TS_IF);
   ck_assert_int_eq(token.childrenSize, 1);
-  ck_assert(token.children[0].tokenType == TS_RETURN);
+  ck_assert_ptr_ne(token.children, NULL);
+  token = token.children[0];
+  ck_assert(token.tokenType == TS_ELSE);
+  ck_assert_int_eq(token.childrenSize, 0);
+  ck_assert_ptr_eq(token.children, NULL);
 
-  ck_assert_ptr_eq(data, NULL);
+  // 2
+  token = tsFile.tokens[1];
+  ck_assert(token.tokenType == TS_IF);
+  ck_assert_int_eq(token.childrenSize, 1);
+  ck_assert_ptr_ne(token.children, NULL);
+  token = token.children[0];
+  ck_assert(token.tokenType == TS_ELSE);
+  ck_assert_int_eq(token.childrenSize, 1);
+  ck_assert_ptr_ne(token.children, NULL);
 
-  TS_free_tsFile(tsFile);
-END_TEST
+  child = token.children[0];
+  ck_assert(child.tokenType == TS_RETURN);
+  ck_assert_int_eq(child.childrenSize, 1);
+  ck_assert_ptr_ne(child.children, NULL);
+  retValue = child.children[0];
+  ck_assert(retValue.tokenType == TS_UNKNOWN);
+  ck_assert_ptr_ne(retValue.data, NULL);
+  ck_assert_wstr_eq(retValue.data, L"10");
 
-START_TEST(parse_else_condition_without_end)
-  build_ts_file("memory.ts", "else");
-END_TEST
+  // 3
+  token = tsFile.tokens[2];
+  ck_assert(token.tokenType == TS_IF);
+  ck_assert_int_eq(token.childrenSize, 1);
+  ck_assert_ptr_ne(token.children, NULL);
+  token = token.children[0];
+  ck_assert(token.tokenType == TS_ELSE);
+  ck_assert_int_eq(token.childrenSize, 0);
+  ck_assert_ptr_eq(token.children, NULL);
 
-START_TEST(parse_else_condition_with_bracket_without_end)
-  build_ts_file("memory.ts", "else {");
+  // 4
+  token = tsFile.tokens[3];
+  ck_assert(token.tokenType == TS_IF);
+  ck_assert_int_eq(token.childrenSize, 1);
+  ck_assert_ptr_ne(token.children, NULL);
+  token = token.children[0];
+  ck_assert(token.tokenType == TS_ELSE);
+  ck_assert_int_eq(token.childrenSize, 2);
+  ck_assert_ptr_ne(token.children, NULL);
+
+  TSParserToken val = token.children[0];
+  TSLocalVariableData *data = val.data;
+  ck_assert(val.tokenType == TS_VAR);
+  ck_assert_ptr_ne(val.data, NULL);
+  ck_assert_ptr_ne(data->name, NULL);
+  ck_assert_wstr_eq(data->name, L"variable");
+  ck_assert_ptr_eq(data->type, NULL);
+  ck_assert_ptr_ne(data->value, NULL);
+  ck_assert_wstr_eq(data->value, L"30");
+
+  child = token.children[1];
+  ck_assert(child.tokenType == TS_RETURN);
+  ck_assert_int_eq(child.childrenSize, 1);
+  ck_assert_ptr_ne(child.children, NULL);
+  retValue = child.children[0];
+  ck_assert(retValue.tokenType == TS_UNKNOWN);
+  ck_assert_ptr_ne(retValue.data, NULL);
+  ck_assert_wstr_eq(retValue.data, L"20");
 END_TEST
 
 void parse_else_conditions_suite(Suite *suite) {
   TCase *tc_if_conditions = tcase_create("Else Conditions");
 
-  tcase_add_test(tc_if_conditions, parse_empty_else_condition);
-  tcase_add_test(tc_if_conditions, parse_empty_else_condition_with_brackets);
-  tcase_add_test(tc_if_conditions, parse_empty_else_condition_with_children);
-  tcase_add_test(tc_if_conditions, parse_empty_else_condition_with_children_and_brackets);
-
-  tcase_add_exit_test(tc_if_conditions, parse_else_condition_without_end, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_if_conditions, parse_else_condition_with_bracket_without_end, TS_PARSE_FAILURE_CODE);
+  tcase_add_test(tc_if_conditions, parse_valid_else_condition);
 
   suite_add_tcase(suite, tc_if_conditions);
 }

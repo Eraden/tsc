@@ -1,6 +1,79 @@
 #include <tsc/parser.h>
 #include <tsc/register.h>
 
+static void
+__attribute__((visibility("hidden")))
+TS_parse_class_head(
+    TSFile *__attribute__((__unused__)) tsFile,
+    TSParseData *tsParseData,
+    TSParserToken *token
+) {
+  TSClassData *data = (TSClassData *) token->data;
+  u_long movedBy = 0;
+  unsigned char proceed = 1;
+  const wchar_t *tok;
+  while (proceed) {
+    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    if (tok == NULL) {
+      ts_token_syntax_error((wchar_t *) L"Unexpected end of class header", tsFile, token);
+    }
+    switch (tok[0]) {
+      case L' ': {
+        movedBy += wcslen(tok);
+        free((void *) tok);
+        break;
+      }
+      case L'\n': {
+        movedBy += wcslen(tok);
+        free((void *) tok);
+        tsParseData->position += movedBy;
+        tsParseData->character = 0;
+        tsParseData->line += 1;
+        movedBy = 0;
+        break;
+      }
+      case L'{': {
+        movedBy += wcslen(tok);
+        free((void *) tok);
+        proceed = 0;
+        break;
+      }
+      default: {
+        tsParseData->position += movedBy;
+        tsParseData->character += movedBy;
+        tsParseData->token = tok;
+        movedBy = 0;
+
+        TSParserToken t = TS_parse_ts_token(tsFile, tsParseData);
+        free((void *) tok);
+
+        switch (t.tokenType) {
+          case TS_EXTENDS: {
+            if (data->parentClass != NULL) {
+              ts_token_syntax_error((wchar_t *) L"Unexpected parent name. Class can have only one parent", tsFile,
+                                    token);
+            }
+            data->parentClass = t.data;
+            break;
+          }
+          case TS_IMPLEMENTS: {
+            break;
+          }
+          case TS_UNKNOWN: {
+            free(t.data);
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      }
+    }
+  }
+  tsParseData->position += movedBy;
+  tsParseData->character += movedBy;
+}
+
 static const TSParserToken
 __attribute__((visibility("hidden")))
 TS_parse_class_method_argument(
@@ -130,9 +203,9 @@ __attribute__((visibility("hidden")))
 TS_parse_class_method(
     TSFile *__attribute__((__unused__)) tsFile,
     TSParseData *tsParseData,
-    u_long *movedBy,
     TSParserToken *bodyToken
 ) {
+  u_long movedBy = 0;
   unsigned char proceed = 1;
   const wchar_t *tok;
 
@@ -148,22 +221,22 @@ TS_parse_class_method(
 
     switch (tok[0]) {
       case L' ': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
-        tsParseData->position += *movedBy;
+        tsParseData->position += movedBy;
         tsParseData->character = 0;
         tsParseData->line += 1;
-        *movedBy = 0;
+        movedBy = 0;
         break;
       }
       case L'{':
       case L')': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         parseFlag = TS_PARSE_CLASS_MEMBER_METHOD_BODY;
         break;
@@ -173,12 +246,12 @@ TS_parse_class_method(
         break;
       }
       case L';': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
       case L'}': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         proceed = 0;
         break;
@@ -186,9 +259,9 @@ TS_parse_class_method(
       default: {
         if (parseFlag == TS_PARSE_CLASS_MEMBER_METHOD_ARGUMENTS) {
           tsParseData->token = tok;
-          tsParseData->character += *movedBy;
-          tsParseData->position += *movedBy;
-          *movedBy = 0;
+          tsParseData->character += movedBy;
+          tsParseData->position += movedBy;
+          movedBy = 0;
 
           TSParserToken arg = TS_parse_class_method_argument(tsFile, tsParseData);
 
@@ -201,13 +274,13 @@ TS_parse_class_method(
           methodData->arguments[methodData->argumentsSize] = arg;
           methodData->argumentsSize += 1;
 
-          *movedBy += wcslen(tok);
+          movedBy += wcslen(tok);
           free((void *) tok);
         } else if (parseFlag == TS_PARSE_CLASS_MEMBER_METHOD_BODY) {
           tsParseData->token = tok;
-          tsParseData->character += *movedBy;
-          tsParseData->position += *movedBy;
-          *movedBy = 0;
+          tsParseData->character += movedBy;
+          tsParseData->position += movedBy;
+          movedBy = 0;
 
           TSParserToken t = TS_parse_ts_token(tsFile, tsParseData);
 
@@ -219,7 +292,7 @@ TS_parse_class_method(
           bodyToken->children[bodyToken->childrenSize] = t;
           bodyToken->childrenSize += 1;
 
-          *movedBy += wcslen(tok);
+          movedBy += wcslen(tok);
           free((void *) tok);
         } else /*if (parseFlag == TS_PARSE_CLASS_MEMBER_METHOD_RETURN_TYPE)*/ {
           u_long size = wcslen(tok) + TS_STRING_END;
@@ -230,22 +303,24 @@ TS_parse_class_method(
           wcscat(newPointer, tok);
           methodData->returnType = newPointer;
 
-          *movedBy += wcslen(tok);
+          movedBy += wcslen(tok);
           free((void *) tok);
         }
         break;
       }
     }
   }
+  tsParseData->position += movedBy;
+  tsParseData->character += movedBy;
 }
 
 static TSParserToken
 __attribute__((visibility("hidden")))
 TS_parse_class_member(
     TSFile *tsFile,
-    TSParseData *tsParseData,
-    u_long *movedBy
+    TSParseData *tsParseData
 ) {
+  u_long movedBy = 0;
   volatile unsigned char proceed = 1;
   const wchar_t *tok;
   TSClassParseFlag parseFlag = TS_PARSE_CLASS_MEMBER_NAME;
@@ -266,28 +341,37 @@ TS_parse_class_member(
 
   while (proceed) {
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+
     if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Unexpected end of class member", tsFile, &bodyToken);
+      ts_token_syntax_error(
+          (wchar_t *) L"Unexpected end of class member",
+          tsFile,
+          &bodyToken
+      );
     }
 
     switch (tok[0]) {
       case L' ': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
-        tsParseData->position += *movedBy;
+        tsParseData->position += movedBy;
         tsParseData->character = 0;
         tsParseData->line += 1;
-        *movedBy = 0;
+        movedBy = 0;
         break;
       }
       case L'(': {
         if (name == NULL) {
-          ts_token_syntax_error((wchar_t *) L"Missing class method name", tsFile, &bodyToken);
+          ts_token_syntax_error(
+              (wchar_t *) L"Missing class method name",
+              tsFile,
+              &bodyToken
+          );
         }
 
         bodyToken.tokenType = TS_CLASS_METHOD;
@@ -300,27 +384,27 @@ TS_parse_class_member(
 
         bodyToken.data = methodData;
 
-        TS_parse_class_method(tsFile, tsParseData, movedBy, &bodyToken);
+        TS_parse_class_method(tsFile, tsParseData, &bodyToken);
 
         proceed = 0;
         break;
       }
       case L'=': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
 
         parseFlag = TS_PARSE_CLASS_MEMBER_VALUE;
         break;
       }
       case L':': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
 
         parseFlag = TS_PARSE_CLASS_MEMBER_TYPE;
         break;
       }
       case L';': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
 
         TSLocalVariableData *fieldData = (TSLocalVariableData *) calloc(sizeof(TSLocalVariableData), 1);
@@ -344,9 +428,7 @@ TS_parse_class_member(
           bodyToken.visibility = TS_VISIBILITY_PRIVATE;
 
         } else if (parseFlag == TS_PARSE_CLASS_MEMBER_NAME) {
-          wchar_t *tmp = (wchar_t *) calloc(sizeof(wchar_t), wcslen(tok) + TS_STRING_END);
-          wcscpy(tmp, tok);
-          name = tmp;
+          name = TS_clone_string(tok);
           parseFlag = TS_PARSE_CLASS_MEMBER_TYPE;
 
         } else if (parseFlag == TS_PARSE_CLASS_MEMBER_TYPE) {
@@ -367,83 +449,16 @@ TS_parse_class_member(
           if (value == NULL) free((void *) value);
           value = newPointer;
         }
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
     }
   }
+  tsParseData->position += movedBy;
+  tsParseData->character += movedBy;
+
   return bodyToken;
-}
-
-static void
-__attribute__((visibility("hidden")))
-TS_parse_class_head(
-    TSFile *__attribute__((__unused__)) tsFile,
-    TSParseData *tsParseData,
-    TSParserToken *token,
-    u_long *movedBy
-) {
-  TSClassData *data = (TSClassData *) token->data;
-  unsigned char proceed = 1;
-  const wchar_t *tok;
-  while (proceed) {
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
-    if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Unexpected end of class header", tsFile, token);
-    }
-    switch (tok[0]) {
-      case L' ': {
-        *movedBy += wcslen(tok);
-        free((void *) tok);
-        break;
-      }
-      case L'\n': {
-        *movedBy += wcslen(tok);
-        free((void *) tok);
-        tsParseData->position += *movedBy;
-        tsParseData->character = 0;
-        tsParseData->line += 1;
-        *movedBy = 0;
-        break;
-      }
-      case L'{': {
-        *movedBy += wcslen(tok);
-        free((void *) tok);
-        proceed = 0;
-        break;
-      }
-      default: {
-        tsParseData->position += *movedBy;
-        tsParseData->character += *movedBy;
-        tsParseData->token = tok;
-        *movedBy = 0;
-
-        TSParserToken t = TS_parse_ts_token(tsFile, tsParseData);
-        free((void *) tok);
-
-        switch (t.tokenType) {
-          case TS_EXTENDS: {
-            if (data->parentClass != NULL) {
-              ts_token_syntax_error((wchar_t *) L"Unexpected parent name. Class can have only one parent", tsFile, token);
-            }
-            data->parentClass = t.data;
-            break;
-          }
-          case TS_IMPLEMENTS: {
-            break;
-          }
-          case TS_UNKNOWN: {
-            free(t.data);
-            break;
-          }
-          default: {
-            break;
-          }
-        }
-      }
-    }
-  }
 }
 
 static void
@@ -451,37 +466,40 @@ __attribute__((visibility("hidden")))
 TS_parse_class_body(
     TSFile *tsFile,
     TSParseData *tsParseData,
-    TSParserToken *token,
-    u_long *movedBy
+    TSParserToken *token
 ) {
-
+  u_long movedBy = 0;
   volatile unsigned char proceed = 1;
   const wchar_t *tok;
 
   while (proceed) {
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Unexpected end of class member", tsFile, token);
+      ts_token_syntax_error(
+          (wchar_t *) L"Unexpected end of class member",
+          tsFile,
+          token
+      );
     }
 
     switch (tok[0]) {
       case L' ': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
 
-        tsParseData->position += *movedBy;
+        tsParseData->position += movedBy;
         tsParseData->character = 0;
         tsParseData->line += 1;
-        *movedBy = 0;
+        movedBy = 0;
         break;
       }
       case L'}': {
-        *movedBy += wcslen(tok);
+        movedBy += wcslen(tok);
         free((void *) tok);
 
         proceed = 0;
@@ -489,9 +507,9 @@ TS_parse_class_body(
       }
       default: {
         tsParseData->token = tok;
-        tsParseData->character += *movedBy;
-        tsParseData->position += *movedBy;
-        *movedBy = 0;
+        tsParseData->character += movedBy;
+        tsParseData->position += movedBy;
+        movedBy = 0;
 
         TSParserToken child = TS_parse_ts_token(tsFile, tsParseData);
         free((void *) tok);
@@ -500,7 +518,7 @@ TS_parse_class_body(
           TS_put_back(tsParseData->stream, child.data);
           free(child.data);
 
-          child = TS_parse_class_member(tsFile, tsParseData, movedBy);
+          child = TS_parse_class_member(tsFile, tsParseData);
         }
 
         TSParserToken *newPointer = (TSParserToken *) calloc(sizeof(TSParserToken), token->childrenSize + 1);
@@ -514,9 +532,12 @@ TS_parse_class_body(
       }
     }
   }
+  tsParseData->position += movedBy;
+  tsParseData->character += movedBy;
 }
 
-const TSParserToken TS_parse_class(
+const TSParserToken
+TS_parse_class(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
@@ -544,22 +565,35 @@ const TSParserToken TS_parse_class(
   while (proceed) {
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Missing class name", tsFile, &token);
+      ts_token_syntax_error(
+          (wchar_t *) L"Missing class name",
+          tsFile,
+          &token
+      );
     }
     if (tok[0] != ' ') {
       if (!TS_name_is_valid(tok)) {
-        ts_token_syntax_error((wchar_t *) L"Invalid class name", tsFile, &token);
+        ts_token_syntax_error(
+            (wchar_t *) L"Invalid class name",
+            tsFile,
+            &token
+        );
       }
       data->name = TS_clone_string(tok);
+      log_to_file(
+          (wchar_t *) L"Setting class name as: '%ls'\n",
+          data->name
+      );
       proceed = 0;
     }
+    movedBy += wcslen(tok);
     free((void *) tok);
   }
 
 //  TS_register_class(tsFile, token);
 
-  TS_parse_class_head(tsFile, tsParseData, &token, &movedBy);
-  TS_parse_class_body(tsFile, tsParseData, &token, &movedBy);
+  TS_parse_class_head(tsFile, tsParseData, &token);
+  TS_parse_class_body(tsFile, tsParseData, &token);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
