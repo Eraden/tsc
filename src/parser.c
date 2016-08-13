@@ -1,8 +1,15 @@
 #include <tsc/parser.h>
 
-static void TS_append_ts_parser_token(TSFile *tsFile, TSParserToken token);
+static void 
+TS_append_ts_parser_token(
+  TSFile *tsFile,
+  TSParserToken token
+);
 
-static void TS_next_line(TSParseData *data);
+static void 
+TS_next_line(
+  TSParseData *data
+);
 
 const wchar_t *
 __attribute__((__malloc__))
@@ -12,8 +19,23 @@ TS_clone_string(
   wchar_t *clone = calloc(sizeof(wchar_t), wcslen(string) + TS_STRING_END);
   wcscpy(clone, string);
 
-//  printf("old (%ls) == new (%ls)\n", string, clone);
   return clone;
+}
+
+TSParserToken
+TS_build_parser_token(
+  TSTokenType tokenType
+) {
+  TSParserToken token;
+  token.tokenType = tokenType;
+//  token.position = tsParseData->position;
+//  token.character = tsParseData->character;
+//  token.line = tsParseData->line;
+  token.visibility = TS_VISIBILITY_SCOPE;
+  token.children = NULL;
+  token.childrenSize = 0;
+  token.data = NULL;
+  return token;
 }
 
 static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {

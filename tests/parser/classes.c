@@ -233,24 +233,21 @@ END_TEST
 
 // Errors
 
-//START_TEST(parse_class_with_invalid_name)
-//  tcase_fn_start("parse_class_with_invalid_name", __FILE__, __LINE__);
-//  build_ts_file("memory.ts", "class %&^$%$& {}");
-//END_TEST
-//
-//START_TEST(parse_class_without_name)
-//  tcase_fn_start("parse_class_without_name", __FILE__, __LINE__);
-//  build_ts_file("memory.ts", "class  {}");
-//END_TEST
-//
-//START_TEST(parse_class_with_multiple_parents)
-//  tcase_fn_start("parse_class_with_multiple_parents", __FILE__, __LINE__);
-//  build_ts_file("memory.ts", "class C extends A extends B {}");
-//END_TEST
-//
-//START_TEST(parse_class_member_without_ending)
-//  build_ts_file("memory.ts", "class C { field");
-//END_TEST
+START_TEST(parse_class_with_invalid_name)
+  TS_parse_file("./examples/class/invalid_class_name");
+END_TEST
+
+START_TEST(parse_class_without_name)
+  TS_parse_file("./examples/class/missing_class_name");
+END_TEST
+
+START_TEST(parse_class_with_multiple_super_class)
+  TS_parse_file("./examples/class/multiple_super_class");
+END_TEST
+
+START_TEST(parse_class_member_without_ending)
+  TS_parse_file("./examples/class/missing_class_ending");
+END_TEST
 
 void parse_classes_suite(Suite *suite) {
   TCase *tc_class = tcase_create("Class");
@@ -259,10 +256,10 @@ void parse_classes_suite(Suite *suite) {
   parse_class_with_multiple_instance_fields_suite(tc_class);
   parse_class_with_multiple_instance_methods_suite(tc_class);
 
-//  tcase_add_exit_test(tc_class, parse_class_with_invalid_name, TS_PARSE_FAILURE_CODE);
-//  tcase_add_exit_test(tc_class, parse_class_without_name, TS_PARSE_FAILURE_CODE);
-//  tcase_add_exit_test(tc_class, parse_class_with_multiple_parents, TS_PARSE_FAILURE_CODE);
-//  tcase_add_exit_test(tc_class, parse_class_member_without_ending, TS_PARSE_FAILURE_CODE);
+  tcase_add_exit_test(tc_class, parse_class_with_invalid_name, TS_PARSE_FAILURE_CODE);
+  tcase_add_exit_test(tc_class, parse_class_without_name, TS_PARSE_FAILURE_CODE);
+  tcase_add_exit_test(tc_class, parse_class_with_multiple_super_class, TS_PARSE_FAILURE_CODE);
+  tcase_add_exit_test(tc_class, parse_class_member_without_ending, TS_PARSE_FAILURE_CODE);
 
   suite_add_tcase(suite, tc_class);
 }

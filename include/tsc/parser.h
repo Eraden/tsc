@@ -119,14 +119,14 @@ typedef struct sTSParseData {
 } TSParseData;
 
 typedef struct sTSParserToken {
-  u_long position;
+  TSTokenType tokenType;
   u_long line;
   u_long character;
-  TSTokenType tokenType;
+  u_long position;
   u_long childrenSize;
   TSParserToken *children;
-  void *data;
   TSVisibility visibility;
+  void *data;
 } TSParserToken;
 
 typedef struct sTSFile {
@@ -135,6 +135,8 @@ typedef struct sTSFile {
   TSParserToken *tokens;
   u_long tokensSize;
 } TSFile;
+
+TSParserToken TS_build_parser_token(TSTokenType tokenType);
 
 void TS_put_back(FILE *stream, const wchar_t *value);
 

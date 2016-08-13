@@ -168,5 +168,15 @@ ADD_TEST(NAME Variables COMMAND ./tsc -f ./examples/variables/valid.ts)
 ADD_TEST(NAME Functions COMMAND ./tsc -f ./examples/functions/valid.ts)
 ADD_TEST(NAME If_blocks COMMAND ./tsc -f ./examples/if/valid.ts)
 ADD_TEST(NAME If_else_blocks COMMAND ./tsc -f ./examples/else/valid.ts)
+
 ADD_TEST(NAME Class_fields COMMAND ./tsc -f ./examples/class/class_with_multiple_fields.ts)
 ADD_TEST(NAME Class_methods COMMAND ./tsc -f ./examples/class/class_with_multiple_methods.ts)
+ADD_TEST(NAME Class_with_invalid_name COMMAND ./tsc -f ./examples/class/invalid_class_name)
+ADD_TEST(NAME Class_with_missing_ending COMMAND ./tsc -f ./examples/class/missing_class_ending)
+
+SET_TESTS_PROPERTIES(
+    Class_with_invalid_name
+    Class_with_missing_ending
+    PROPERTIES
+    WILL_FAIL TRUE
+)
