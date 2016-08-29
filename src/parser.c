@@ -219,7 +219,7 @@ TS_getToken(
       }
       case L'*': {
         if (tok == NULL) {
-          wchar_t next = (wchar_t) fgetc(stream);
+          wchar_t next = (wchar_t) fgetwc(stream);
           switch (next) {
             case L'/':
               break;

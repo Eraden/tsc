@@ -26,7 +26,7 @@ TSParserToken TS_parse_multiline_comment(
     if (tok == NULL) {
       ts_token_syntax_error((wchar_t *) L"Unexpected end of multiline comment", tsFile, &token);
     }
-    if (wcslen(tok) == 2 && tok[0] == '*' && tok[1] == '/') {
+    if (wcslen(tok) == 2 && tok[0] == L'*' && tok[1] == L'/') {
       proceed = 0;
       movedBy += wcslen(tok);
       free((void *) tok);

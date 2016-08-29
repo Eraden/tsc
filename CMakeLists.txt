@@ -61,8 +61,8 @@ SET(
     tests/parser/class/multiple_instance_fields.c
     #    tests/parser/return_keyword.c
     #    tests/parser/parse_exports.c
-    #    tests/parser/inline_comment.c
-    #    tests/parser/multiline_comment.c
+    tests/parser/inline_comment.c
+    tests/parser/multiline_comment.c
     #    tests/parser/new_keyword.c
 )
 
