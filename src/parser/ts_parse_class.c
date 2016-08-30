@@ -358,11 +358,11 @@ TS_parse_class_member(
       }
       case L'\n': {
         movedBy += wcslen(tok);
-        free((void *) tok);
         tsParseData->position += movedBy;
         tsParseData->character = 0;
         tsParseData->line += 1;
         movedBy = 0;
+        free((void *) tok);
         break;
       }
       case L'(': {
@@ -387,25 +387,23 @@ TS_parse_class_member(
         TS_parse_class_method(tsFile, tsParseData, &bodyToken);
 
         proceed = 0;
+        free((void *) tok);
         break;
       }
       case L'=': {
         movedBy += wcslen(tok);
-        free((void *) tok);
-
         parseFlag = TS_PARSE_CLASS_MEMBER_VALUE;
+        free((void *) tok);
         break;
       }
       case L':': {
         movedBy += wcslen(tok);
-        free((void *) tok);
-
         parseFlag = TS_PARSE_CLASS_MEMBER_TYPE;
+        free((void *) tok);
         break;
       }
       case L';': {
         movedBy += wcslen(tok);
-        free((void *) tok);
 
         TSLocalVariableData *fieldData = (TSLocalVariableData *) calloc(sizeof(TSLocalVariableData), 1);
         fieldData->name = name;
@@ -415,6 +413,7 @@ TS_parse_class_member(
         bodyToken.tokenType = TS_CLASS_FIELD;
 
         proceed = 0;
+        free((void *) tok);
         break;
       }
       default: {

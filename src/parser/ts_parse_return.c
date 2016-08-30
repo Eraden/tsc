@@ -1,6 +1,10 @@
 #include <tsc/parser.h>
 
-const TSParserToken TS_parse_return(TSFile *tsFile, TSParseData *tsParseData) {
+const TSParserToken
+TS_parse_return(
+    TSFile *tsFile,
+    TSParseData *tsParseData
+) {
   TS_TOKEN_BEGIN("return");
   u_long movedBy = wcslen(tsParseData->token);
 
@@ -66,6 +70,9 @@ const TSParserToken TS_parse_return(TSFile *tsFile, TSParseData *tsParseData) {
   return token;
 }
 
-void TS_free_return(const TSParserToken token) {
+void
+TS_free_return(
+    const TSParserToken token
+) {
   TS_free_children(token);
 }

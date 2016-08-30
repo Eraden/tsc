@@ -84,6 +84,7 @@ TS_parse_if_body(
         tsParseData->line += 1;
         tsParseData->character = 0;
         movedBy = 0;
+        free((void *) tok);
         break;
       }
       case L'}': {
@@ -268,6 +269,7 @@ TS_lookup_else(
         tsParseData->line += 1;
         tsParseData->character = 0;
         movedBy = 0;
+        free((void *) tok);
         break;
       }
       default: {

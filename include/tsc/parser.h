@@ -116,6 +116,7 @@ typedef struct sTSParseData {
   u_long character;
   const wchar_t *token;
   FILE *stream;
+//  TSParserToken parentToken;
 } TSParseData;
 
 typedef struct sTSParserToken {
@@ -126,6 +127,7 @@ typedef struct sTSParserToken {
   u_long childrenSize;
   TSParserToken *children;
   TSVisibility visibility;
+//  TSParserToken *parent;
   void *data;
 } TSParserToken;
 

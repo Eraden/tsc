@@ -17,7 +17,7 @@ START_TEST(parse_class_with_complex_methods)
   child = token.children[childIndex++];
   ck_assert(child.visibility == TS_VISIBILITY_NONE);
   ck_assert(child.tokenType == TS_INLINE_COMMENT);
-  ck_assert_wstr_eq(child.data, L" undefined first");;
+  ck_assert_wstr_eq(child.data, L" undefined first");
 
   // 1
   child = token.children[childIndex++];
@@ -25,7 +25,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_1");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_1");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -34,7 +34,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_1");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_1");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -43,7 +43,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_1");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_1");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -52,7 +52,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_1");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_1");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -62,7 +62,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_2");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_2");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -71,7 +71,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_2");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_2");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -80,7 +80,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_2");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_2");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -89,7 +89,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_2");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_2");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -99,7 +99,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_3");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_3");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -108,7 +108,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_3");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_3");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -117,7 +117,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_3");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_3");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -126,7 +126,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_3");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_3");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -136,7 +136,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_4");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_4");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -145,7 +145,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_4");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_4");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -154,7 +154,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_4");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_4");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -163,7 +163,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_4");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_4");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -173,7 +173,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_5");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_5");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -182,7 +182,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_5");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_5");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -191,7 +191,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_5");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_5");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -200,7 +200,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_5");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_5");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -210,7 +210,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_6");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_6");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -219,7 +219,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_6");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_6");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -228,7 +228,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_6");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_6");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -237,7 +237,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_6");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_6");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -252,7 +252,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_7");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_7");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -261,7 +261,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_7");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_7");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -270,7 +270,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_7");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_7");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -279,7 +279,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_7");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_7");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -289,7 +289,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_8");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_8");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -298,7 +298,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_8");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_8");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -307,7 +307,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_8");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_8");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -316,7 +316,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_8");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_8");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -326,7 +326,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_9");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_9");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -335,7 +335,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_9");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_9");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -344,7 +344,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_9");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_9");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -353,7 +353,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_9");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_9");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -363,7 +363,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_10");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_10");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -372,7 +372,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_10");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_10");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -381,7 +381,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_10");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_10");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -390,7 +390,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_10");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_10");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -400,7 +400,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_11");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_11");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -409,7 +409,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_11");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_11");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -418,7 +418,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_11");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_11");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -427,7 +427,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_11");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_11");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -437,7 +437,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_12");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_12");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -446,7 +446,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_12");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_12");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -455,7 +455,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_12");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_12");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -464,7 +464,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_12");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_12");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -473,7 +473,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.visibility == TS_VISIBILITY_NONE);
   ck_assert(child.tokenType == TS_INLINE_COMMENT);
   ck_assert_ptr_ne(child.data, NULL);
-  ck_assert_wstr_eq(child.data, L" protected first");;
+  ck_assert_wstr_eq(child.data, L" protected first");
 
   // 13
   child = token.children[childIndex++];
@@ -481,7 +481,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_13");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_13");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -490,7 +490,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_13");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_13");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -499,7 +499,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_13");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_13");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -508,7 +508,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_13");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_13");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -518,7 +518,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_14");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_14");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -527,7 +527,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_14");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_14");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -536,7 +536,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_14");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_14");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -545,7 +545,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_14");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_14");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -555,7 +555,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_15");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_15");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -564,7 +564,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_15");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_15");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -573,7 +573,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_15");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_15");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -582,7 +582,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_15");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_15");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -592,7 +592,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_16");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_16");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -601,7 +601,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_16");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_16");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -610,7 +610,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_16");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_16");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -619,7 +619,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_16");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_16");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -629,7 +629,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_17");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_17");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -638,7 +638,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_17");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_17");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -647,7 +647,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_17");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_17");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -656,7 +656,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_17");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_17");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -666,7 +666,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_18");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_18");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -675,7 +675,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_18");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_18");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -684,7 +684,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_18");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_18");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -693,7 +693,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_18");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_18");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -702,7 +702,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.visibility == TS_VISIBILITY_NONE);
   ck_assert(child.tokenType == TS_INLINE_COMMENT);
   ck_assert_ptr_ne(child.data, NULL);
-  ck_assert_wstr_eq(child.data, L" public first");;
+  ck_assert_wstr_eq(child.data, L" public first");
 
   // 19
   child = token.children[childIndex++];
@@ -710,7 +710,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_19");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_19");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -719,7 +719,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_19");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_19");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -728,7 +728,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_19");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_19");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -737,7 +737,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_19");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_19");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -747,7 +747,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_20");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_20");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -756,7 +756,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_20");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_20");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -765,7 +765,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_20");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_20");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -774,7 +774,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_20");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_20");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -784,7 +784,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_21");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_21");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -793,7 +793,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_21");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_21");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -802,7 +802,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_21");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_21");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -811,7 +811,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_21");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_21");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -821,7 +821,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_22");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_22");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -830,7 +830,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_22");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_22");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -839,7 +839,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_22");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_22");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -848,7 +848,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_22");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_22");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -858,7 +858,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_23");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_23");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -867,7 +867,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_23");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_23");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -876,7 +876,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_23");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_23");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -885,7 +885,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_23");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_23");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -895,7 +895,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"public_method_24");;
+  ck_assert_wstr_eq(methodData->name, L"public_method_24");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -904,7 +904,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"protected_method_24");;
+  ck_assert_wstr_eq(methodData->name, L"protected_method_24");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -913,7 +913,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"undefined_method_24");;
+  ck_assert_wstr_eq(methodData->name, L"undefined_method_24");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 
@@ -922,7 +922,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert(child.tokenType == TS_CLASS_METHOD);
   methodData = child.data;
   ck_assert_ptr_ne(methodData, NULL);
-  ck_assert_wstr_eq(methodData->name, L"private_method_24");;
+  ck_assert_wstr_eq(methodData->name, L"private_method_24");
   ck_assert_ptr_eq(methodData->returnType, NULL);
   ck_assert_ptr_eq(methodData->arguments, NULL);
 

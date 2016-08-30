@@ -19,10 +19,10 @@ Suite *class_suite(void) {
   parse_if_conditions_suite(suite);
   parse_else_conditions_suite(suite);
   parse_classes_suite(suite);
-//  parse_return_keyword_suite(suite);
-//  parse_exports_suite(suite);
+  parse_exports_suite(suite);
   parse_inline_comment_suite(suite);
   parse_multiline_comment_suite(suite);
+  parse_return_keyword_suite(suite);
 //  parse_new_suite(suite);
   return suite;
 }

@@ -33,19 +33,21 @@ TS_parse_extends(
       }
       case L'\n': {
         movedBy += wcslen(tok);
-        free((void *) tok);
         tsParseData->position += movedBy;
         tsParseData->character = 0;
         tsParseData->line += 1;
         movedBy = 0;
+        free((void *) tok);
         break;
       }
       default: {
         if (!TS_name_is_valid(tok)) {
+          free((void *) tok);
           ts_token_syntax_error((wchar_t *) L"Invalid parent class name", tsFile, &token);
         }
         token.data = (void *) TS_clone_string(tok);
         proceed = 0;
+        free((void *) tok);
         break;
       }
     }

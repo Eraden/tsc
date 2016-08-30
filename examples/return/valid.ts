@@ -1,4 +1,5 @@
 function a() {
+  return;
 }
 
 function b() {
@@ -7,4 +8,12 @@ function b() {
 
 function c() {
   return new Object();
+}
+
+function d() {
+  return true;
+}
+
+function e() {
+  return false;
 }

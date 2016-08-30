@@ -1,10 +1,7 @@
-var a = 1;
-
-export a;
-export function b() {
+export function a() {
 }
 
-export var c = 2;
-export const d = 3;
+export var b = 2;
+export const c = 3;
 export class ExportedClass {
 }

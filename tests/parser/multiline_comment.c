@@ -27,6 +27,7 @@ START_TEST(parse_valid_multiline_comment)
   ck_assert_ptr_ne(token.data, NULL);
   ck_assert_wstr_eq(token.data, L" Single line comment ");
 
+  TS_free_tsFile(tsFile);
 END_TEST
 
 START_TEST(parse_miltiline_comment_with_no_ending)

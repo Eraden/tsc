@@ -431,7 +431,6 @@ TS_parse_function_body(
 
         movedBy += wcslen(tok);
         free((void *) tok);
-        free((void *) tsParseData->token);
 
         if (tsParserToken.tokenType != TS_UNKNOWN) {
           u_long size = token->childrenSize + 1;
