@@ -24,6 +24,7 @@ SET(
     src/parser/ts_parse_new.c
     src/parser/ts_parse_inline_comment.c
     src/parser/ts_parse_multiline_comment.c
+    src/parser/ts_parse_caller.c
     src/parser.c
 )
 
@@ -63,7 +64,7 @@ SET(
     tests/parser/parse_exports.c
     tests/parser/inline_comment.c
     tests/parser/multiline_comment.c
-    #    tests/parser/new_keyword.c
+    tests/parser/new_keyword.c
 )
 
 SET(
@@ -135,7 +136,7 @@ IF (Debug)
   ADD_DEFINITIONS(-DDebug=1)
 ENDIF ()
 
-ADD_DEFINITIONS(-DUNICODE -D_UNICODE -D_MBCS)
+ADD_DEFINITIONS(-Wstrict-prototypes -Wall -DUNICODE -D_UNICODE -D_MBCS)
 
 add_library(
     tsparser

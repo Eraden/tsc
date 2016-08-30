@@ -5,7 +5,7 @@ START_TEST(parse_valid_functions)
 
   ck_assert_int_eq(tsFile.tokensSize, 10);
 
-  TSParserToken token, arg, child;
+  TSParserToken token, arg;
   TSFunctionData *data;
   TSLocalVariableData *argData;
 

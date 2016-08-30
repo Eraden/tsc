@@ -93,6 +93,7 @@ TS_print_for_token(
     }
     case TS_CONDITION:break;
     case TS_ARGUMENT:break;
+    case TS_CALLER:break;
   }
 }
 
@@ -187,6 +188,7 @@ TS_string_for_token(
       break;
     case TS_CONDITION:break;
     case TS_ARGUMENT:break;
+    case TS_CALLER:break;
   }
   return NULL;
 }

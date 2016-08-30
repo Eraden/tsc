@@ -79,15 +79,15 @@ TS_parse_arguments(
   settings.stream = NULL;
   settings.fileName = NULL;
 
-  for (unsigned int i = 0; i < argc; i++) {
+  for (int i = 0; i < argc; i++) {
     arg = argv[i];
+//    printf("program argument: '%s'\n", arg);
 
     if (strcmp(arg, "-l") == 0 || strcmp(arg, "--level") == 0) {
       arg = argv[++i];
-      char *tmp = calloc(sizeof(char), strlen(arg));
+      char *tmp = calloc(sizeof(char), strlen(arg) + TS_STRING_END);
       strcpy(tmp, arg);
       if (tmp == NULL) {
-        free(tmp);
         continue;
       }
 

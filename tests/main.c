@@ -23,7 +23,7 @@ Suite *class_suite(void) {
   parse_inline_comment_suite(suite);
   parse_multiline_comment_suite(suite);
   parse_return_keyword_suite(suite);
-//  parse_new_suite(suite);
+  parse_new_suite(suite);
   return suite;
 }
 

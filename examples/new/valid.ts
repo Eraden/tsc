@@ -1,3 +1,3 @@
-new Object;
-new Object();
-new Object(1,2,3);
+new String;
+new Function();
+new Array(1,2,3);

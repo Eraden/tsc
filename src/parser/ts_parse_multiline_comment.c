@@ -2,7 +2,7 @@
 
 const
 TSParserToken TS_parse_multiline_comment(
-    TSFile __attribute__((__unused__)) *tsFile,
+    TSFile *tsFile,
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("Multiline token");

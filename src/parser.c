@@ -1,14 +1,14 @@
 #include <tsc/parser.h>
 
-static void 
+static void
 TS_append_ts_parser_token(
-  TSFile *tsFile,
-  TSParserToken token
+    TSFile *tsFile,
+    TSParserToken token
 );
 
-static void 
+static void
 TS_next_line(
-  TSParseData *data
+    TSParseData *data
 );
 
 const wchar_t *
@@ -24,7 +24,7 @@ TS_clone_string(
 
 TSParserToken
 TS_build_parser_token(
-  TSTokenType tokenType
+    TSTokenType tokenType
 ) {
   TSParserToken token;
   token.tokenType = tokenType;
@@ -39,25 +39,25 @@ TS_build_parser_token(
 }
 
 static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
-    TS_VAR,               (wchar_t *) L"var",         TS_parse_var,
-    TS_LET,               (wchar_t *) L"let",         TS_parse_let,
-    TS_CONST,             (wchar_t *) L"const",       TS_parse_const,
-    TS_CLASS,             (wchar_t *) L"class",       TS_parse_class,
-    TS_FUNCTION,          (wchar_t *) L"function",    TS_parse_function,
-    TS_ARROW,             (wchar_t *) L"=>",          TS_parse_arrow,
-    TS_IF,                (wchar_t *) L"if",          TS_parse_if,
-    TS_ELSE,              (wchar_t *) L"else",        TS_parse_else,
-    TS_RETURN,            (wchar_t *) L"return",      TS_parse_return,
-    TS_DECORATOR,         (wchar_t *) L"@",           TS_parse_decorator,
-    TS_IMPORT,            (wchar_t *) L"import",      TS_parse_import,
-    TS_EXPORT,            (wchar_t *) L"export",      TS_parse_export,
-    TS_DEFAULT,           (wchar_t *) L"default",     TS_parse_default,
-    TS_SCOPE,             (wchar_t *) L"{",           TS_parse_scope,
-    TS_EXTENDS,           (wchar_t *) L"extends",     TS_parse_extends,
-    TS_IMPLEMENTS,        (wchar_t *) L"implements",  TS_parse_implements,
-    TS_NEW,               (wchar_t *) L"new",         TS_parse_new,
-    TS_INLINE_COMMENT,    (wchar_t *) L"//",          TS_parse_inline_comment,
-    TS_MULTILINE_COMMENT, (wchar_t *) L"/*",          TS_parse_multiline_comment,
+    {TS_VAR,               (wchar_t *) L"var",        TS_parse_var},
+    {TS_LET,               (wchar_t *) L"let",        TS_parse_let},
+    {TS_CONST,             (wchar_t *) L"const",      TS_parse_const},
+    {TS_CLASS,             (wchar_t *) L"class",      TS_parse_class},
+    {TS_FUNCTION,          (wchar_t *) L"function",   TS_parse_function},
+    {TS_ARROW,             (wchar_t *) L"=>",         TS_parse_arrow},
+    {TS_IF,                (wchar_t *) L"if",         TS_parse_if},
+    {TS_ELSE,              (wchar_t *) L"else",       TS_parse_else},
+    {TS_RETURN,            (wchar_t *) L"return",     TS_parse_return},
+    {TS_DECORATOR,         (wchar_t *) L"@",          TS_parse_decorator},
+    {TS_IMPORT,            (wchar_t *) L"import",     TS_parse_import},
+    {TS_EXPORT,            (wchar_t *) L"export",     TS_parse_export},
+    {TS_DEFAULT,           (wchar_t *) L"default",    TS_parse_default},
+    {TS_SCOPE,             (wchar_t *) L"{",          TS_parse_scope},
+    {TS_EXTENDS,           (wchar_t *) L"extends",    TS_parse_extends},
+    {TS_IMPLEMENTS,        (wchar_t *) L"implements", TS_parse_implements},
+    {TS_NEW,               (wchar_t *) L"new",        TS_parse_new},
+    {TS_INLINE_COMMENT,    (wchar_t *) L"//",         TS_parse_inline_comment},
+    {TS_MULTILINE_COMMENT, (wchar_t *) L"/*",         TS_parse_multiline_comment},
 };
 
 void TS_put_back(FILE *stream, const wchar_t *value) {
@@ -199,7 +199,6 @@ TS_valid_char_for_token(
       return 1;
   }
 }
-volatile int outOfScope = 0;
 
 volatile const wchar_t *
 TS_getToken(
@@ -326,7 +325,8 @@ TS_getToken(
           if (size == 3) return tok;
         } else {
           ungetwc((wint_t) c, stream);
-          log_to_file((wchar_t *) L"# Putting back since token ('%ls') exists and contains invalid characters...\n", tok);
+          log_to_file((wchar_t *) L"# Putting back since token ('%ls') exists and contains invalid characters...\n",
+                      tok);
           return tok;
         }
         break;
@@ -401,7 +401,9 @@ TS_getToken(
 
         } else {
           ungetwc((wint_t) c, stream);
-          log_to_file((wchar_t *) L"# previous character isn't valid for token, putting current char back and returning token '%ls'\n", tok);
+          log_to_file(
+              (wchar_t *) L"# previous character isn't valid for token, putting current char back and returning token '%ls'\n",
+              tok);
           return tok;
         }
       }
@@ -561,6 +563,9 @@ TS_free_tsToken(
     case TS_ARGUMENT:
     case TS_UNKNOWN:
       TS_free_unknown(token);
+      break;
+    case TS_CALLER:
+      TS_free_caller(token);
       break;
   }
 }

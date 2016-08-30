@@ -2,7 +2,7 @@
 
 const TSParserToken
 TS_parse_new(
-    TSFile __attribute((__unused__)) *tsFile,
+    TSFile *tsFile,
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("new");
@@ -38,7 +38,7 @@ TS_parse_new(
         break;
       }
       case L'\n': {
-        if (token.data == NULL) {
+        if (token.childrenSize == 0) {
           free((void *) tok);
           ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found new line.", tsFile, &token);
         } else {
@@ -49,7 +49,7 @@ TS_parse_new(
         break;
       }
       case L';': {
-        if (token.data == NULL) {
+        if (token.childrenSize == 0) {
           free((void *) tok);
           ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found `;`.", tsFile, &token);
         } else {
@@ -61,13 +61,9 @@ TS_parse_new(
         break;
       }
       default: {
-        u_long size = wcslen(tok) + TS_STRING_END;
-        if (token.data != NULL) size += wcslen(token.data);
-        wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
-        if (token.data != NULL) wcscpy(newPointer, token.data);
-        if (token.data != NULL) free(token.data);
-        wcscat(newPointer, tok);
-        token.data = newPointer;
+        tsParseData->token = tok;
+        TSParserToken caller = TS_parse_caller(tsFile, tsParseData);
+        TS_push_child(&token, caller);
 
         free((void *) tok);
         break;

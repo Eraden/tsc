@@ -9,6 +9,7 @@
 
 typedef struct sTSParseData TSParseData;
 typedef struct sTSFunctionData TSFunctionData;
+typedef struct sTSCallerData TSCallerData;
 typedef struct sTSKeyword TSKeyword;
 typedef struct sTSParserToken TSParserToken;
 typedef struct sTSFile TSFile;
@@ -39,6 +40,7 @@ typedef enum eTSTokenType {
   TS_MULTILINE_COMMENT = 0x21,
   TS_CONDITION = 0x22,
   TS_ARGUMENT = 0x23,
+  TS_CALLER = 0x24,
   TS_UNKNOWN = 0x0,
 } __attribute__ ((__packed__)) TSTokenType;
 
@@ -206,6 +208,10 @@ void TS_free_inline_comment(const TSParserToken token);
 
 const TSParserToken TS_parse_multiline_comment(TSFile *tsFile, TSParseData *tsParseData);
 void TS_free_multiline_comment(const TSParserToken token);
+
+const TSParserToken TS_parse_caller_argument(TSFile *tsFile, TSParseData *tsParseData);
+const TSParserToken TS_parse_caller(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_caller(const TSParserToken token);
 
 TSParserToken TS_parse_ts_token(TSFile *tsFile, TSParseData *data);
 void TS_free_tsToken(const TSParserToken token);
