@@ -16,7 +16,7 @@ TS_parse_local_variable_body(
   data->name = NULL;
   data->value = NULL;
   data->type = NULL;
-  token->data = data;
+  token->variableData = data;
 
   while (process) {
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
@@ -80,21 +80,20 @@ TS_parse_local_variable_body(
       }
       default: {
         if (parseFlag == TS_PARSE_VARIABLE_NAME) {
-          log_to_file(
-              (wchar_t *) L"%s", "Setting name of local variable\n"
-          );
+          log_to_file((wchar_t *) L"Setting name of local variable\n");
+          if (TS_is_keyword(tok)) {
+            ts_token_syntax_error(
+                (const wchar_t *) L"Local variable name cannot use reserved word", tsFile, token
+            );
+          }
           data->name = TS_clone_string(tok);
           *movedBy += wcslen(tok);
           free((void *) tok);
           parseFlag = TS_PARSE_VARIABLE_NONE;
-          log_to_file(
-              (wchar_t *) L"    Local variable current name: '%s'\n", data->name
-          );
+          log_to_file((wchar_t *) L"    Local variable current name: '%s'\n", data->name);
 
         } else if (parseFlag == TS_PARSE_VARIABLE_VALUE) {
-          log_to_file(
-              (wchar_t *) L"%s", "Setting value for local variable\n"
-          );
+          log_to_file((wchar_t *) L"%s", "Setting value for local variable\n");
 
           u_long size = TS_STRING_END + wcslen(tok);
           if (data->value) size += wcslen(data->value);
@@ -103,9 +102,7 @@ TS_parse_local_variable_body(
           if (data->value != NULL) free((void *) data->value);
           wcscat(newPointer, tok);
           data->value = newPointer;
-          log_to_file(
-              (wchar_t *) L"    Local variable current value: '%s'\n", data->value
-          );
+          log_to_file((wchar_t *) L"    Local variable current value: '%s'\n", data->value);
 
           *movedBy += wcslen(tok);
           free((void *) tok);
@@ -143,7 +140,7 @@ TS_parse_local_variable_body(
   }
 }
 
-const TSParserToken
+TSParserToken *
 TS_parse_var(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -151,26 +148,18 @@ TS_parse_var(
   TS_TOKEN_BEGIN("var");
   u_long movedBy = wcslen(tsParseData->token);
 
-  TSParserToken token;
-  token.tokenType = TS_VAR;
-  token.character = tsParseData->character;
-  token.line = tsParseData->line;
-  token.position = tsParseData->position;
-  token.visibility = TS_VISIBILITY_SCOPE;
-  token.children = NULL;
-  token.childrenSize = 0;
-  token.data = NULL;
-
-  TS_parse_local_variable_body(tsFile, tsParseData, &token, &movedBy);
+  TSParserToken *token = TS_build_parser_token(TS_VAR, tsParseData);
+  TS_parse_local_variable_body(tsFile, tsParseData, token, &movedBy);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+  tsParseData->parentTSToken = token->parent;
 
   TS_TOKEN_END("var");
   return token;
 }
 
-const TSParserToken
+TSParserToken *
 TS_parse_let(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -179,26 +168,18 @@ TS_parse_let(
 
   u_long movedBy = wcslen(tsParseData->token);
 
-  TSParserToken token;
-  token.tokenType = TS_LET;
-  token.position = tsParseData->position;
-  token.character = tsParseData->character;
-  token.line = tsParseData->line;
-  token.visibility = TS_VISIBILITY_SCOPE;
-  token.children = NULL;
-  token.childrenSize = 0;
-  token.data = NULL;
-
-  TS_parse_local_variable_body(tsFile, tsParseData, &token, &movedBy);
+  TSParserToken *token = TS_build_parser_token(TS_LET, tsParseData);
+  TS_parse_local_variable_body(tsFile, tsParseData, token, &movedBy);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+  tsParseData->parentTSToken = token->parent;
 
   TS_TOKEN_END("let");
   return token;
 }
 
-const TSParserToken
+TSParserToken *
 TS_parse_const(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -206,20 +187,12 @@ TS_parse_const(
   TS_TOKEN_BEGIN("const");
   u_long movedBy = wcslen(tsParseData->token);
 
-  TSParserToken token;
-  token.tokenType = TS_CONST;
-  token.position = tsParseData->position;
-  token.character = tsParseData->character;
-  token.line = tsParseData->line;
-  token.visibility = TS_VISIBILITY_SCOPE;
-  token.children = NULL;
-  token.childrenSize = 0;
-  token.data = NULL;
-
-  TS_parse_local_variable_body(tsFile, tsParseData, &token, &movedBy);
+  TSParserToken *token = TS_build_parser_token(TS_CONST, tsParseData);
+  TS_parse_local_variable_body(tsFile, tsParseData, token, &movedBy);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+  tsParseData->parentTSToken = token->parent;
 
   TS_TOKEN_END("const");
   return token;
@@ -227,11 +200,12 @@ TS_parse_const(
 
 void
 TS_free_var(
-    TSParserToken token
+    TSParserToken *token
 ) {
   TS_free_children(token);
 
-  TSLocalVariableData *data = token.data;
+  TSLocalVariableData *data = token->variableData;
+  free(token);
   if (data == NULL) return;
   if (data->name != NULL) free((void *) data->name);
   if (data->type != NULL) free((void *) data->type);
@@ -241,9 +215,10 @@ TS_free_var(
 
 void
 TS_free_let(
-    TSParserToken token
+    TSParserToken *token
 ) {
-  TSLocalVariableData *data = token.data;
+  TSLocalVariableData *data = token->variableData;
+  free(token);
   if (data == NULL) return;
   if (data->name != NULL) free((void *) data->name);
   if (data->type != NULL) free((void *) data->type);
@@ -253,13 +228,13 @@ TS_free_let(
 
 void
 TS_free_const(
-    TSParserToken token
+    TSParserToken *token
 ) {
-  TSLocalVariableData *data = token.data;
+  TSLocalVariableData *data = token->variableData;
+  free(token);
   if (data == NULL) return;
   if (data->name != NULL) free((void *) data->name);
   if (data->type != NULL) free((void *) data->type);
   if (data->value != NULL) free((void *) data->value);
-
   free(data);
 }

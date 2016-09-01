@@ -3,19 +3,15 @@
 /**
  * TODO implement
  */
-const TSParserToken TS_parse_export(TSFile *__attribute__((__unused__)) tsFile, TSParseData *tsParseData) {
+TSParserToken *
+TS_parse_export(
+    TSFile *tsFile,
+    TSParseData *tsParseData
+) {
   TS_TOKEN_BEGIN("export");
   u_long movedBy = wcslen(tsParseData->token);
 
-  TSParserToken token;
-  token.tokenType = TS_EXPORT;
-  token.position = tsParseData->position;
-  token.character = tsParseData->character;
-  token.line = tsParseData->line;
-  token.visibility = TS_VISIBILITY_SCOPE;
-  token.children = NULL;
-  token.childrenSize = 0;
-  token.data = NULL;
+  TSParserToken *token = TS_build_parser_token(TS_EXPORT, tsParseData);
 
   volatile unsigned char proceed = 1;
   const wchar_t *tok;
@@ -23,10 +19,10 @@ const TSParserToken TS_parse_export(TSFile *__attribute__((__unused__)) tsFile, 
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      if (token.childrenSize == 1)
+      if (token->childrenSize == 1)
         break;
       else
-        ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing `export` keyword.", tsFile, &token);
+        ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing `export` keyword.", tsFile, token);
     }
 
     switch (tok[0]) {
@@ -36,8 +32,8 @@ const TSParserToken TS_parse_export(TSFile *__attribute__((__unused__)) tsFile, 
         break;
       }
       case L'\n': {
-        if (token.childrenSize == 0) {
-          ts_token_syntax_error((wchar_t *) L"Expecting expression after `export` keyword. Found new line.", tsFile, &token);
+        if (token->childrenSize == 0) {
+          ts_token_syntax_error((wchar_t *) L"Expecting expression after `export` keyword. Found new line.", tsFile, token);
         } else {
           proceed = 0;
           TS_put_back(tsParseData->stream, tok);
@@ -52,7 +48,7 @@ const TSParserToken TS_parse_export(TSFile *__attribute__((__unused__)) tsFile, 
         break;
       }
       default: {
-        if (token.childrenSize == 1) {
+        if (token->childrenSize == 1) {
           TS_put_back(tsParseData->stream, tok);
           proceed = 0;
         } else {
@@ -62,9 +58,9 @@ const TSParserToken TS_parse_export(TSFile *__attribute__((__unused__)) tsFile, 
           tsParseData->character += movedBy;
           tsParseData->position += movedBy;
           movedBy = 0;
-          TSParserToken child = TS_parse_ts_token(tsFile, tsParseData);
+          TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
 
-          TS_push_child(&token, child);
+          TS_push_child(token, child);
         }
         free((void *) tok);
         break;
@@ -74,10 +70,15 @@ const TSParserToken TS_parse_export(TSFile *__attribute__((__unused__)) tsFile, 
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+  tsParseData->parentTSToken = token->parent;
   TS_TOKEN_END("export");
   return token;
 }
 
-void TS_free_export(const TSParserToken token) {
+void
+TS_free_export(
+    TSParserToken *token
+) {
   TS_free_children(token);
+  free(token);
 }

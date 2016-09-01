@@ -26,7 +26,7 @@ TS_print_for_class_method(
   fprintf(outputSettings.stream, "%s", "value: function () {\n");
   fflush(outputSettings.stream);
 
-  TSParserToken body;
+  TSParserToken *body;
   for (u_long bodyIndex = 0; bodyIndex < child->childrenSize; bodyIndex++) {
     body = child->children[bodyIndex];
     TSOutputSettings settings = outputSettings;
@@ -122,10 +122,10 @@ __attribute__(( visibility("hidden")))
 __attribute__(( section("output-class")))
 TS_print_for_class_prototype(
     const TSFile *__attribute__(( __unused__ )) tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings __attribute__((__weak__)) outputSettings
 ) {
-  const TSClassData *data = tsParserToken.data;
+  const TSClassData *data = tsParserToken->data;
   TSOutputSettings settings = outputSettings;
   settings.indent += 1;
 
@@ -148,15 +148,15 @@ TS_print_for_class_prototype(
   fprintf(outputSettings.stream, "%s", "proto['constructor'] = { value: P };\n");
   fflush(outputSettings.stream);
 
-  for (u_long childIndex = 0; childIndex < tsParserToken.childrenSize; childIndex++) {
-    TSParserToken child = tsParserToken.children[childIndex];
-    switch (child.tokenType) {
+  for (u_long childIndex = 0; childIndex < tsParserToken->childrenSize; childIndex++) {
+    TSParserToken *child = tsParserToken->children[childIndex];
+    switch (child->tokenType) {
       case TS_CLASS_FIELD: {
-        TS_print_for_class_field(tsFile, settings, &child);
+        TS_print_for_class_field(tsFile, settings, child);
         break;
       }
       case TS_CLASS_METHOD: {
-        TS_print_for_class_method(tsFile, settings, &child);
+        TS_print_for_class_method(tsFile, settings, child);
         break;
       }
       default:
@@ -189,10 +189,10 @@ __attribute__(( visibility("hidden")))
 __attribute__(( section("output-class")))
 TS_print_for_class_constructor(
     const TSFile *__attribute__(( __unused__ )) tsFile,
-    const TSParserToken tsParserToken,
+    const TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
-  const TSClassData *data = tsParserToken.data;
+  const TSClassData *data = tsParserToken->data;
   const u_long __attribute__((__unused__)) indent = outputSettings.indent + 1;
 
   for (u_long indentIndex = 0; indentIndex < outputSettings.indent; indentIndex++) {
@@ -221,10 +221,10 @@ void
 __attribute__(( section("output-class")))
 TS_print_for_class(
     const TSFile *__attribute__(( __unused__ )) tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
-  if (tsParserToken.data == NULL) return;
+  if (tsParserToken->data == NULL) return;
   TS_print_for_class_constructor(tsFile, tsParserToken, outputSettings);
   TS_print_for_class_prototype(tsFile, tsParserToken, outputSettings);
 }
@@ -287,28 +287,28 @@ TS_string_for_class_field(
   const u_long fieldIndent = outputSettings.indent + 1;
   (*fieldSize) = TS_STRING_END +
                  (outputSettings.indent * 2) +
-      wcslen((wchar_t *) L"var SYMBOL_FOR_") +
-      wcslen(fieldData->name) +
-      wcslen((wchar_t *) L" = Symbol();\n") +
-      (outputSettings.indent * 2) +
-      wcslen((wchar_t *) L"proto['") +
-      wcslen(fieldData->name) +
-      wcslen((wchar_t *) L"'] = {\n") +
-      (fieldIndent * 2) +
-      wcslen((wchar_t *) L"get: function () { return this[SYMBOL_FOR_") +
-      wcslen(fieldData->name) +
-      wcslen((wchar_t *) L"] == void(0) ? ") +
-      wcslen(fieldData->value ? (void *) fieldData->value : "null") +
-      wcslen((wchar_t *) L" : this[SYMBOL_FOR_") +
-      wcslen(fieldData->name) +
-      wcslen((wchar_t *) L"]") +
-      wcslen((wchar_t *) L"; },\n") +
-      (fieldIndent * 2) +
-      wcslen((wchar_t *) L"set: function (value) { return this[SYMBOL_FOR_") +
-      wcslen(fieldData->name) +
-      wcslen((wchar_t *) L"] = value; }\n") +
-      (outputSettings.indent * 2) +
-      wcslen((wchar_t *) L"};\n");
+                 wcslen((wchar_t *) L"var SYMBOL_FOR_") +
+                 wcslen(fieldData->name) +
+                 wcslen((wchar_t *) L" = Symbol();\n") +
+                 (outputSettings.indent * 2) +
+                 wcslen((wchar_t *) L"proto['") +
+                 wcslen(fieldData->name) +
+                 wcslen((wchar_t *) L"'] = {\n") +
+                 (fieldIndent * 2) +
+                 wcslen((wchar_t *) L"get: function () { return this[SYMBOL_FOR_") +
+                 wcslen(fieldData->name) +
+                 wcslen((wchar_t *) L"] == void(0) ? ") +
+                 wcslen(fieldData->value ? (void *) fieldData->value : "null") +
+                 wcslen((wchar_t *) L" : this[SYMBOL_FOR_") +
+                 wcslen(fieldData->name) +
+                 wcslen((wchar_t *) L"]") +
+                 wcslen((wchar_t *) L"; },\n") +
+                 (fieldIndent * 2) +
+                 wcslen((wchar_t *) L"set: function (value) { return this[SYMBOL_FOR_") +
+                 wcslen(fieldData->name) +
+                 wcslen((wchar_t *) L"] = value; }\n") +
+                 (outputSettings.indent * 2) +
+                 wcslen((wchar_t *) L"};\n");
 
   wchar_t *fieldString = (wchar_t *) calloc(sizeof(wchar_t), *fieldSize);
 
@@ -354,10 +354,10 @@ __attribute__(( visibility("hidden")))
 __attribute__(( section("output-class")))
 TS_string_for_class_prototype(
     const TSFile *__attribute__(( __unused__ )) tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings __attribute__((__weak__)) outputSettings
 ) {
-  const TSClassData *data = tsParserToken.data;
+  const TSClassData *data = tsParserToken->data;
   TSOutputSettings settings = outputSettings;
   settings.indent += 1;
   wchar_t *string = NULL;
@@ -397,12 +397,12 @@ TS_string_for_class_prototype(
 
   wcscat(string, (wchar_t *) L"proto['constructor'] = { value: P };\n");
 
-  for (u_long childIndex = 0; childIndex < tsParserToken.childrenSize; childIndex++) {
-    TSParserToken child = tsParserToken.children[childIndex];
-    switch (child.tokenType) {
+  for (u_long childIndex = 0; childIndex < tsParserToken->childrenSize; childIndex++) {
+    TSParserToken *child = tsParserToken->children[childIndex];
+    switch (child->tokenType) {
       case TS_CLASS_FIELD: {
         u_long fieldSize;
-        const wchar_t *fieldString = TS_string_for_class_field(settings, &child, &fieldSize);
+        const wchar_t *fieldString = TS_string_for_class_field(settings, child, &fieldSize);
 
         wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size + fieldSize - 1);
         wcscpy(newPointer, string);
@@ -415,7 +415,7 @@ TS_string_for_class_prototype(
       }
       case TS_CLASS_METHOD: {
         u_long methodSize;
-        const wchar_t *methodString = TS_string_for_class_method(settings, &child, &methodSize);
+        const wchar_t *methodString = TS_string_for_class_method(settings, child, &methodSize);
 
         wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size + methodSize - 1);
         wcscpy(newPointer, string);
@@ -452,10 +452,10 @@ __attribute__(( visibility("hidden")))
 __attribute__(( section("output-class")))
 TS_string_for_class_constructor(
     const TSFile *__attribute__(( __unused__ )) tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
-  const TSClassData *data = tsParserToken.data;
+  const TSClassData *data = tsParserToken->data;
   const u_long __attribute__((__unused__)) indent = outputSettings.indent + 1;
   wchar_t *string = NULL;
 
@@ -493,10 +493,10 @@ const wchar_t *
 __attribute__(( section("output-class")))
 TS_string_for_class(
     const TSFile *__attribute__(( __unused__ )) tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
-  if (tsParserToken.data == NULL) return NULL;
+  if (tsParserToken->data == NULL) return NULL;
   wchar_t *string = NULL;
 
   {
@@ -512,7 +512,8 @@ TS_string_for_class(
   {
     const wchar_t *prototypeString = TS_string_for_class_prototype(tsFile, tsParserToken, outputSettings);
     if (prototypeString != NULL) {
-      wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), TS_STRING_END + wcslen(string) + wcslen(prototypeString));
+      wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t),
+                                               TS_STRING_END + wcslen(string) + wcslen(prototypeString));
       wcscpy(newPointer, string);
       wcscat(newPointer, prototypeString);
       free(string);

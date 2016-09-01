@@ -4,28 +4,28 @@ START_TEST(parse_valid_multiline_comment)
   TSFile tsFile = TS_parse_file("./examples/multiline_comment/valid.ts");
   ck_assert_uint_eq(tsFile.tokensSize, 3);
 
-  TSParserToken token;
+  TSParserToken *token;
 
   token = tsFile.tokens[0];
-  ck_assert(token.tokenType == TS_MULTILINE_COMMENT);
-  ck_assert_uint_eq(token.childrenSize, 0);
-  ck_assert_ptr_eq(token.children, NULL);
-  ck_assert_ptr_ne(token.data, NULL);
-  ck_assert_wstr_eq(token.data, L"\nNormal comment\n");
+  ck_assert(token->tokenType == TS_MULTILINE_COMMENT);
+  ck_assert_uint_eq(token->childrenSize, 0);
+  ck_assert_ptr_eq(token->children, NULL);
+  ck_assert_ptr_ne(token->name, NULL);
+  ck_assert_wstr_eq(token->name, L"\nNormal comment\n");
 
   token = tsFile.tokens[1];
-  ck_assert(token.tokenType == TS_MULTILINE_COMMENT);
-  ck_assert_uint_eq(token.childrenSize, 0);
-  ck_assert_ptr_eq(token.children, NULL);
-  ck_assert_ptr_ne(token.data, NULL);
-  ck_assert_wstr_eq(token.data, L"*\nDoc comment\n");
+  ck_assert(token->tokenType == TS_MULTILINE_COMMENT);
+  ck_assert_uint_eq(token->childrenSize, 0);
+  ck_assert_ptr_eq(token->children, NULL);
+  ck_assert_ptr_ne(token->name, NULL);
+  ck_assert_wstr_eq(token->name, L"*\nDoc comment\n");
 
   token = tsFile.tokens[2];
-  ck_assert(token.tokenType == TS_MULTILINE_COMMENT);
-  ck_assert_uint_eq(token.childrenSize, 0);
-  ck_assert_ptr_eq(token.children, NULL);
-  ck_assert_ptr_ne(token.data, NULL);
-  ck_assert_wstr_eq(token.data, L" Single line comment ");
+  ck_assert(token->tokenType == TS_MULTILINE_COMMENT);
+  ck_assert_uint_eq(token->childrenSize, 0);
+  ck_assert_ptr_eq(token->children, NULL);
+  ck_assert_ptr_ne(token->name, NULL);
+  ck_assert_wstr_eq(token->name, L" Single line comment ");
 
   TS_free_tsFile(tsFile);
 END_TEST

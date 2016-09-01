@@ -175,12 +175,19 @@ ADD_TEST(NAME Functions COMMAND ./tsc -f ./examples/functions/valid.ts)
 ADD_TEST(NAME If_blocks COMMAND ./tsc -f ./examples/if/valid.ts)
 ADD_TEST(NAME If_else_blocks COMMAND ./tsc -f ./examples/else/valid.ts)
 
+ADD_TEST(NAME VarNameIsReservedName COMMAND ./tsc -f ./examples/variables/var_name_reserved_word)
+ADD_TEST(NAME LetNameIsReservedName COMMAND ./tsc -f ./examples/variables/let_name_reserved_word)
+ADD_TEST(NAME ConstNameIsReservedName COMMAND ./tsc -f ./examples/variables/const_name_reserved_word)
+
 ADD_TEST(NAME Class_fields COMMAND ./tsc -f ./examples/class/class_with_multiple_fields.ts)
 ADD_TEST(NAME Class_methods COMMAND ./tsc -f ./examples/class/class_with_multiple_methods.ts)
 ADD_TEST(NAME Class_with_invalid_name COMMAND ./tsc -f ./examples/class/invalid_class_name)
 ADD_TEST(NAME Class_with_missing_ending COMMAND ./tsc -f ./examples/class/missing_class_ending)
 
 SET_TESTS_PROPERTIES(
+    VarNameIsReservedName
+    LetNameIsReservedName
+    ConstNameIsReservedName
     Class_with_invalid_name
     Class_with_missing_ending
     PROPERTIES

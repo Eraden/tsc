@@ -13,10 +13,10 @@ ts_print_for_return_body(
   for (u_long childIndex = 0; childIndex < (*tsParserToken).childrenSize; childIndex++) {
     TSOutputSettings settings = outputSettings;
     settings.indent += 1;
-    TSParserToken bodyToken = (*tsParserToken).children[childIndex];
+    TSParserToken *bodyToken = tsParserToken->children[childIndex];
 
-    if (bodyToken.tokenType == TS_UNKNOWN) {
-      fprintf(settings.stream, "%ls;\n", (wchar_t *) bodyToken.data);
+    if (bodyToken->tokenType == TS_UNKNOWN) {
+      fprintf(settings.stream, "%ls;\n", (wchar_t *) bodyToken->data);
     } else {
       TS_print_for_token(tsFile, bodyToken, settings);
     }
@@ -26,14 +26,14 @@ ts_print_for_return_body(
 void
 ts_print_for_return(
     const TSFile *tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings __attribute__((__weak__)) outputSettings
 ) {
   TS_print_indent(outputSettings.stream, outputSettings.indent);
 
   fprintf(outputSettings.stream, "%s", "return ");
 
-  ts_print_for_return_body(tsFile, &tsParserToken, outputSettings);
+  ts_print_for_return_body(tsFile, tsParserToken, outputSettings);
 }
 
 // STRING
@@ -50,11 +50,11 @@ ts_string_for_return_body(
   for (u_long childIndex = 0; childIndex < (*tsParserToken).childrenSize; childIndex++) {
     TSOutputSettings settings = outputSettings;
     settings.indent += 1;
-    TSParserToken bodyToken = (*tsParserToken).children[childIndex];
+    TSParserToken *bodyToken = tsParserToken->children[childIndex];
     const wchar_t *body = NULL;
 
-    if (bodyToken.tokenType == TS_UNKNOWN) {
-      body = bodyToken.data;
+    if (bodyToken->tokenType == TS_UNKNOWN) {
+      body = bodyToken->data;
     } else {
       body = TS_string_for_token(tsFile, bodyToken, settings);
     }
@@ -77,7 +77,7 @@ ts_string_for_return_body(
 const wchar_t *
 ts_string_for_return(
     const TSFile *tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
   wchar_t *string = calloc(
@@ -88,7 +88,7 @@ ts_string_for_return(
     wcscat(string, (wchar_t *) L"  ");
   wcscat(string, (wchar_t *) L"return ");
 
-  const wchar_t *returnBody = ts_string_for_return_body(tsFile, &tsParserToken, outputSettings);
+  const wchar_t *returnBody = ts_string_for_return_body(tsFile, tsParserToken, outputSettings);
   if (returnBody) {
     wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), wcslen(string) + wcslen(returnBody) + 1);
     wcscpy(newPointer, string);

@@ -1,50 +1,84 @@
 #include <tsc/register.h>
 
-static TSRegisterEntry *
-    __attribute__(( visibility("hidden") ))
-    classRegister = NULL;
+static pthread_mutex_t
+__attribute__(( visibility("hidden")))
+    REGISTER_MUTEX_LOCK;
 
-void TS_register_class(const TSFile *file, const TSParserToken token)
-{
-  {
-    TSRegisterEntry *entry = classRegister;
-    TSClassData *classData = token.data;
-    while (entry != NULL) {
-      const TSFile *tsFile = entry->tsFile;
-      TSParserToken t = entry->classToken;
-      TSClassData *data = t.data;
-      if (file == tsFile && wcscmp(data->name, classData->name) == 0) {
-        return;
-      }
-      entry = entry->next;
-    }
+static TSRegisterEntry **
+    __attribute__(( visibility("hidden")))
+    TS_REGISTER = NULL;
+
+static u_long
+__attribute__(( visibility("hidden")))
+    TS_REGISTER_SIZE = 0;
+
+TSRegisterEntry *TS_register_file(TSFile *tsFile) {
+  TSRegisterEntry *entry = calloc(sizeof(TSRegisterEntry), 1);
+  entry->tsFile = tsFile;
+  entry->classList = NULL;
+  entry->listSize = 0;
+
+  pthread_mutex_lock(&REGISTER_MUTEX_LOCK);
+
+  TSRegisterEntry **newPointer = calloc(sizeof(TSRegisterEntry *), TS_REGISTER_SIZE + 1);
+  if (TS_REGISTER) {
+    memcpy(newPointer, TS_REGISTER, sizeof(TSRegisterEntry *) * TS_REGISTER_SIZE);
+    free(TS_REGISTER);
   }
-  {
-    TSRegisterEntry *entry = (TSRegisterEntry *) calloc(sizeof(TSRegisterEntry), 1);
-    entry->tsFile = file;
-    entry->classToken = token;
-    if (classRegister == NULL) {
-      classRegister = entry;
-    } else {
-      TSRegisterEntry *current = classRegister;
-      while (current->next) current = current->next;
-      current->next = entry;
-    }
-  }
+  TS_REGISTER = newPointer;
+
+  TS_REGISTER[TS_REGISTER_SIZE] = entry;
+  TS_REGISTER_SIZE += 1;
+
+  pthread_mutex_unlock(&REGISTER_MUTEX_LOCK);
+  return entry;
 }
 
-const TSParserToken
+void TS_register_class(TSFile *file, TSParserToken *token) {
+  TSRegisterEntry *entry = NULL;
+  for (u_long entryIndex = 0; entryIndex < TS_REGISTER_SIZE; entryIndex++) {
+    TSRegisterEntry *current = TS_REGISTER[entryIndex];
+    if (current->tsFile == file) {
+      entry = current;
+      break;
+    }
+  }
+  if (!entry) entry = TS_register_file(file);
+  TSParserToken **newPointer = calloc(sizeof(TSParserToken *), entry->listSize + 1);
+  if (entry->classList) {
+    memcpy(newPointer, entry->classList, entry->listSize);
+    free(entry->classList);
+  }
+  entry->classList = newPointer;
+  entry->classList[entry->listSize] = token;
+  entry->listSize += 1;
+}
+
+TSParserToken *
 __attribute__(( __unused__ ))
 TS_find_class(
-    const wchar_t *__attribute__(( __unused__ )) file,
-    const wchar_t *__attribute__(( __unused__ )) name
-)
-{
-  TSRegisterEntry *entry = classRegister;
-  while (entry) {
-    entry = entry->next;
+    const wchar_t *file,
+    const wchar_t *name
+) {
+  for (u_long entryIndex = 0; entryIndex < TS_REGISTER_SIZE; entryIndex++) {
+    TSRegisterEntry *entry = TS_REGISTER[entryIndex];
+    if (wcscmp(entry->tsFile->file, file) == 0) {
+      for (u_long clsIndex = 0; clsIndex < entry->listSize; clsIndex++) {
+        TSParserToken *cls = entry->classList[clsIndex];
+        if (wcscmp(cls->classData->name, name) == 0) {
+          return cls;
+        }
+      }
+    }
   }
-  TSParserToken t;
-  t.tokenType = TS_UNKNOWN;
-  return t;
+  return NULL;
+}
+
+void TS_destroy_register() {
+  for (u_long i = 0; i < TS_REGISTER_SIZE; i++) {
+    TSRegisterEntry *entry = TS_REGISTER[i];
+    free(entry->classList);
+    free(entry);
+  }
+  free(TS_REGISTER);
 }

@@ -17,10 +17,10 @@ void TS_push_indent_string(wchar_t *string, const u_long indent) {
 void
 TS_print_for_token(
     const TSFile *tsFile,
-    TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
-  switch (tsParserToken.tokenType) {
+  switch (tsParserToken->tokenType) {
     case TS_VAR:
       TS_print_from_var(tsFile, tsParserToken, outputSettings);
       break;
@@ -102,10 +102,10 @@ TS_print_for_token(
 const wchar_t *
 TS_string_for_token(
     const TSFile *tsFile,
-    TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
-  switch (tsParserToken.tokenType) {
+  switch (tsParserToken->tokenType) {
     case TS_VAR:
       return TS_string_from_var(tsFile, tsParserToken, outputSettings);
     case TS_LET:

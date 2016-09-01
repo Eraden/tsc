@@ -7,11 +7,11 @@ __attribute(( visibility("hidden")))
 __attribute__(( section("output-else")))
 ts_print_for_else_body(
     const TSFile *tsFile,
-    const TSParserToken *tsParserToken,
+    TSParserToken *tsParserToken,
     const TSOutputSettings outputSettings
 ) {
   for (u_long bodyIndex = 0; bodyIndex < (*tsParserToken).childrenSize; bodyIndex++) {
-    TSParserToken bodyToken = (*tsParserToken).children[bodyIndex];
+    TSParserToken *bodyToken = tsParserToken->children[bodyIndex];
     TSOutputSettings settings = outputSettings;
     settings.indent += 1;
     TS_print_for_token(tsFile, bodyToken, settings);
@@ -22,7 +22,7 @@ void
 __attribute__(( section("output-else")))
 TS_print_for_else(
     const TSFile *tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
   const u_long indent = outputSettings.indent;
@@ -32,7 +32,7 @@ TS_print_for_else(
   fprintf(outputSettings.stream, "%s", "else {\n");
   fflush(outputSettings.stream);
 
-  ts_print_for_else_body(tsFile, &tsParserToken, outputSettings);
+  ts_print_for_else_body(tsFile, tsParserToken, outputSettings);
 
   TS_print_indent(outputSettings.stream, indent);
 
@@ -46,12 +46,12 @@ __attribute(( visibility("hidden")))
 __attribute__(( section("output-else")))
 ts_string_for_else_body(
     const TSFile *tsFile,
-    const TSParserToken *tsParserToken,
+    TSParserToken *tsParserToken,
     const TSOutputSettings outputSettings
 ) {
   wchar_t *ifBody = NULL;
   for (u_long bodyIndex = 0; bodyIndex < (*tsParserToken).childrenSize; bodyIndex++) {
-    TSParserToken bodyToken = (*tsParserToken).children[bodyIndex];
+    TSParserToken *bodyToken = tsParserToken->children[bodyIndex];
     TSOutputSettings settings = outputSettings;
     settings.indent += 1;
     const wchar_t *childString = TS_string_for_token(tsFile, bodyToken, settings);
@@ -75,7 +75,7 @@ const wchar_t *
 __attribute__(( section("output-else")))
 TS_string_for_else(
     const TSFile *tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
   const u_long indent = outputSettings.indent;
@@ -86,7 +86,7 @@ TS_string_for_else(
   wcscat(string, (wchar_t *) L"else {\n");
 
   {
-    const wchar_t *elseBody = ts_string_for_else_body(tsFile, &tsParserToken, outputSettings);
+    const wchar_t *elseBody = ts_string_for_else_body(tsFile, tsParserToken, outputSettings);
     wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), TS_STRING_END + wcslen(string) + wcslen(elseBody));
     wcscpy(newPointer, string);
     wcscat(newPointer, elseBody);

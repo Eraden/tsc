@@ -5,33 +5,33 @@ START_TEST(parse_valid_inline_comment)
   
   ck_assert_uint_eq(tsFile.tokensSize, 4);
   
-  TSParserToken token;
+  TSParserToken *token;
   
   token = tsFile.tokens[0];
-  ck_assert(token.tokenType == TS_INLINE_COMMENT);
-  ck_assert_uint_eq(token.childrenSize, 0);
-  ck_assert_ptr_eq(token.children, NULL);
-  ck_assert_ptr_ne(token.data, NULL);
-  ck_assert_wstr_eq(token.data, L" Filled");
+  ck_assert(token->tokenType == TS_INLINE_COMMENT);
+  ck_assert_uint_eq(token->childrenSize, 0);
+  ck_assert_ptr_eq(token->children, NULL);
+  ck_assert_ptr_ne(token->name, NULL);
+  ck_assert_wstr_eq(token->name, L" Filled");
   
   token = tsFile.tokens[1];
-  ck_assert(token.tokenType == TS_INLINE_COMMENT);
-  ck_assert_uint_eq(token.childrenSize, 0);
-  ck_assert_ptr_eq(token.children, NULL);
-  ck_assert_ptr_ne(token.data, NULL);
-  ck_assert_wstr_eq(token.data, L"  ");
+  ck_assert(token->tokenType == TS_INLINE_COMMENT);
+  ck_assert_uint_eq(token->childrenSize, 0);
+  ck_assert_ptr_eq(token->children, NULL);
+  ck_assert_ptr_ne(token->name, NULL);
+  ck_assert_wstr_eq(token->name, L"  ");
   
   token = tsFile.tokens[2];
-  ck_assert(token.tokenType == TS_INLINE_COMMENT);
-  ck_assert_uint_eq(token.childrenSize, 0);
-  ck_assert_ptr_eq(token.children, NULL);
-  ck_assert_ptr_eq(token.data, NULL);
+  ck_assert(token->tokenType == TS_INLINE_COMMENT);
+  ck_assert_uint_eq(token->childrenSize, 0);
+  ck_assert_ptr_eq(token->children, NULL);
+  ck_assert_ptr_eq(token->name, NULL);
 
   token = tsFile.tokens[3];
-  ck_assert(token.tokenType == TS_INLINE_COMMENT);
-  ck_assert_uint_eq(token.childrenSize, 0);
-  ck_assert_ptr_eq(token.children, NULL);
-  ck_assert_ptr_eq(token.data, NULL);
+  ck_assert(token->tokenType == TS_INLINE_COMMENT);
+  ck_assert_uint_eq(token->childrenSize, 0);
+  ck_assert_ptr_eq(token->children, NULL);
+  ck_assert_ptr_eq(token->name, NULL);
   
   TS_free_tsFile(tsFile);
 END_TEST

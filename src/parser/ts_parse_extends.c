@@ -1,29 +1,21 @@
 #include <tsc/parser.h>
 
-const TSParserToken
+TSParserToken *
 TS_parse_extends(
-    TSFile *__attribute__((__unused__)) tsFile,
+    TSFile *tsFile,
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("extends");
   u_long movedBy = wcslen(tsParseData->token);
 
-  TSParserToken token;
-  token.tokenType = TS_EXTENDS;
-  token.position = tsParseData->position;
-  token.character = tsParseData->character;
-  token.line = tsParseData->line;
-  token.visibility = TS_VISIBILITY_SCOPE;
-  token.children = NULL;
-  token.childrenSize = 0;
-  token.data = NULL;
+  TSParserToken *token = TS_build_parser_token(TS_EXTENDS, tsParseData);
 
   const wchar_t *tok;
   unsigned char proceed = 1;
   while (proceed) {
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Missing parent class name", tsFile, &token);
+      ts_token_syntax_error((wchar_t *) L"Missing parent class name", tsFile, token);
     }
     switch (tok[0]) {
       case L' ': {
@@ -43,9 +35,9 @@ TS_parse_extends(
       default: {
         if (!TS_name_is_valid(tok)) {
           free((void *) tok);
-          ts_token_syntax_error((wchar_t *) L"Invalid parent class name", tsFile, &token);
+          ts_token_syntax_error((wchar_t *) L"Invalid parent class name", tsFile, token);
         }
-        token.data = (void *) TS_clone_string(tok);
+        token->data = (void *) TS_clone_string(tok);
         proceed = 0;
         free((void *) tok);
         break;
@@ -55,11 +47,15 @@ TS_parse_extends(
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+  tsParseData->parentTSToken = token->parent;
 
   TS_TOKEN_END("extends");
   return token;
 }
 
-void TS_free_extends(const TSParserToken token) {
-  // TODO
+void
+TS_free_extends(
+    TSParserToken *token
+) {
+  free(token);
 }

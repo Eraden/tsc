@@ -6,11 +6,11 @@ void
 __attribute__(( section("output-var")))
 TS_print_from_var(
     const TSFile *__attribute__((__unused__)) tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings __attribute__((__weak__)) outputSettings
 ) {
   const u_long indent = outputSettings.indent;
-  const TSLocalVariableData *data = tsParserToken.data;
+  const TSLocalVariableData *data = tsParserToken->data;
   if (data->name == NULL) return;
 
   for (u_long i = 0, l = indent; i < l; i++)
@@ -30,11 +30,11 @@ const wchar_t *
 __attribute__(( section("output-var")))
 TS_string_from_var(
     const TSFile *__attribute__((__unused__)) tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings __attribute__((__weak__)) outputSettings
 ) {
   const u_long indent = outputSettings.indent;
-  const TSLocalVariableData *data = tsParserToken.data;
+  const TSLocalVariableData *data = tsParserToken->data;
   if (data->name == NULL) return NULL;
 
   const u_long size = TS_STRING_END +

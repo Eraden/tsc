@@ -13,6 +13,7 @@
 #include <errno.h>
 #include <wchar.h>
 #include <locale.h>
+#include <pthread.h>
 
 #ifdef __APPLE__
 #include <unistd.h>
@@ -48,8 +49,7 @@ typedef struct sTSParserSettings {
 void TS_set_log_level(TSVerbosity verbosity);
 unsigned char TS_check_log_level(TSVerbosity verbosity);
 
-void ts_syntax_error(const wchar_t *msg, const char *file, const u_long character, const u_long line) __attribute__((noreturn));
 void ts_token_syntax_error(const wchar_t *msg, const struct sTSFile *tsFile, const struct sTSParserToken *token) __attribute__((noreturn));
-void ts_log_position(const char *file, const u_long character, const u_long line);
+void ts_log_position(const wchar_t *file, const u_long character, const u_long line);
 
 const TSParserSettings TS_parse_arguments(int argc, const char **argv);

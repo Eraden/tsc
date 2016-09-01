@@ -18,9 +18,9 @@ TS_print_for_function_head(
 
   TSLocalVariableData *arg;
   for (u_long argumentIndex = 0, l = data->argumentsSize; argumentIndex < l; argumentIndex++) {
-    TSParserToken tsArgumentToken = data->arguments[argumentIndex];
-    if (tsArgumentToken.tokenType == TS_VAR && tsArgumentToken.data != NULL) {
-      arg = tsArgumentToken.data;
+    TSParserToken *tsArgumentToken = data->arguments[argumentIndex];
+    if (tsArgumentToken->tokenType == TS_VAR && tsArgumentToken->data != NULL) {
+      arg = tsArgumentToken->data;
       u_long argSize = sizeof(arg->name) + 1;
       u_char isSpread = (u_char) (argSize > 3 && arg->name[0] == '.' && arg->name[1] == '.' && arg->name[2] == '.');
       if (isSpread) {
@@ -104,13 +104,13 @@ TS_print_for_function_body(
   TSLocalVariableData *arg;
   volatile u_char hadSpread = 0;
   for (u_long argumentIndex = 0; argumentIndex < data->argumentsSize; argumentIndex++) {
-    TSParserToken tsArgumentToken = data->arguments[argumentIndex];
-    if (tsArgumentToken.tokenType == TS_VAR && tsArgumentToken.data != NULL) {
-      arg = tsArgumentToken.data;
+    TSParserToken *tsArgumentToken = data->arguments[argumentIndex];
+    if (tsArgumentToken->tokenType == TS_VAR && tsArgumentToken->data != NULL) {
+      arg = tsArgumentToken->data;
       u_long argSize = sizeof(arg->name);
       u_char isSpread = (u_char) (argSize > 3 && arg->name[0] == '.' && arg->name[1] == '.' && arg->name[2] == '.');
       if (isSpread && hadSpread) {
-        ts_syntax_error((wchar_t *) L"Spread argument declared twice!", tsFile->file, tsParserToken->character, tsParserToken->line);
+        ts_token_syntax_error((wchar_t *) L"Spread argument declared twice!", tsFile, tsParserToken);
       }
       if (!hadSpread) hadSpread = isSpread;
       if (isSpread) {
@@ -132,14 +132,14 @@ void
 __attribute__(( section("output-function")))
 TS_print_from_function(
     const TSFile *tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
   const u_long indent = outputSettings.indent;
-  const TSFunctionData *data = tsParserToken.data;
+  const TSFunctionData *data = tsParserToken->data;
   if (data == NULL) return;
   TS_print_for_function_head(tsFile, data, indent, outputSettings);
-  TS_print_for_function_body(tsFile, data, indent, &tsParserToken, outputSettings);
+  TS_print_for_function_body(tsFile, data, indent, tsParserToken, outputSettings);
 
   for (u_long index = 0; index < indent; index++)
     fprintf(outputSettings.stream, "%s", "  ");
@@ -162,9 +162,9 @@ TS_output_measure_function_head(
   size += sizeof("(");
   TSLocalVariableData *arg;
   for (u_long i = 0, l = data->argumentsSize; i < l; i++) {
-    TSParserToken tsArgumentToken = data->arguments[i];
-    if (tsArgumentToken.tokenType == TS_VAR && tsArgumentToken.data != NULL) {
-      arg = tsArgumentToken.data;
+    TSParserToken *tsArgumentToken = data->arguments[i];
+    if (tsArgumentToken->tokenType == TS_VAR && tsArgumentToken->data != NULL) {
+      arg = tsArgumentToken->data;
       u_long argSize = sizeof(arg->name);
       u_char isSpread = (u_char) (argSize > 3 && arg->name[0] == '.' && arg->name[1] == '.' && arg->name[2] == '.');
       if (isSpread) {
@@ -195,9 +195,9 @@ TS_string_for_function_head(
 
   TSLocalVariableData *arg;
   for (u_long argumentIndex = 0, l = data->argumentsSize; argumentIndex < l; argumentIndex++) {
-    TSParserToken tsArgumentToken = data->arguments[argumentIndex];
-    if (tsArgumentToken.tokenType == TS_VAR && tsArgumentToken.data != NULL) {
-      arg = tsArgumentToken.data;
+    TSParserToken *tsArgumentToken = data->arguments[argumentIndex];
+    if (tsArgumentToken->tokenType == TS_VAR && tsArgumentToken->data != NULL) {
+      arg = tsArgumentToken->data;
       u_long argSize = sizeof(arg->name);
       u_char isSpread = (u_char) (argSize > 3 && arg->name[0] == '.' && arg->name[1] == '.' && arg->name[2] == '.');
       if (isSpread) {
@@ -310,13 +310,13 @@ TS_string_for_function_body(
   TSLocalVariableData *arg;
   volatile u_char hadSpread = 0;
   for (u_long argumentIndex = 0; argumentIndex < data->argumentsSize; argumentIndex++) {
-    TSParserToken tsArgumentToken = data->arguments[argumentIndex];
-    if (tsArgumentToken.tokenType == TS_VAR && tsArgumentToken.data != NULL) {
-      arg = tsArgumentToken.data;
+    TSParserToken *tsArgumentToken = data->arguments[argumentIndex];
+    if (tsArgumentToken->tokenType == TS_VAR && tsArgumentToken->data != NULL) {
+      arg = tsArgumentToken->data;
       u_long argSize = sizeof(arg->name);
       u_char isSpread = (u_char) (argSize > 3 && arg->name[0] == '.' && arg->name[1] == '.' && arg->name[2] == '.');
       if (isSpread && hadSpread) {
-        ts_syntax_error((wchar_t *) L"Spread argument declared twice!", tsFile->file, tsParserToken->character, tsParserToken->line);
+        ts_token_syntax_error((wchar_t *) L"Spread argument declared twice!", tsFile, tsParserToken);
       }
       if (!hadSpread) hadSpread = isSpread;
       if (isSpread) {
@@ -360,16 +360,16 @@ const wchar_t *
 __attribute__(( section("output-function")))
 TS_string_from_function(
     const TSFile *tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
   const u_long indent = outputSettings.indent;
-  const TSFunctionData *data = tsParserToken.data;
+  const TSFunctionData *data = tsParserToken->data;
   if (data == NULL) return NULL;
   wchar_t *string = NULL;
   u_long size = TS_output_measure_function_head(tsFile, indent, data);
   string = TS_string_for_function_head(tsFile, data, indent, size + 1);
-  string = TS_string_for_function_body(tsFile, data, indent, string, &tsParserToken, outputSettings);
+  string = TS_string_for_function_body(tsFile, data, indent, string, tsParserToken, outputSettings);
 
   wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), wcslen(string) + (indent * 2) + wcslen((wchar_t *) L"}\n") + TS_STRING_END);
   wcscpy(newPointer, string);

@@ -1,19 +1,13 @@
 #include <tsc/parser.h>
 
-const TSParserToken
+TSParserToken *
 TS_parse_caller_argument(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TSParserToken token;
-  token.tokenType = TS_ARGUMENT;
-  token.position = tsParseData->position;
-  token.character = tsParseData->character;
-  token.line = tsParseData->line;
-  token.visibility = TS_VISIBILITY_SCOPE;
-  token.children = NULL;
-  token.childrenSize = 0;
-  token.data = (void *) TS_clone_string(tsParseData->token);
+  TSParserToken *token = TS_build_parser_token(TS_ARGUMENT, tsParseData);
+  token->visibility = TS_VISIBILITY_SCOPE;
+  token->name = (void *) TS_clone_string(tsParseData->token);
 
   volatile unsigned char proceed = 1;
   const wchar_t *tok;
@@ -23,8 +17,8 @@ TS_parse_caller_argument(
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      if (token.data == NULL)
-        ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing caller arguments.", tsFile, &token);
+      if (token->data == NULL)
+        ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing caller arguments.", tsFile, token);
       else break;
     }
 
@@ -55,12 +49,12 @@ TS_parse_caller_argument(
       }
       default: {
         u_long size = wcslen(tok) + 1 + TS_STRING_END;
-        if (token.data != NULL) size += wcslen(token.data);
+        if (token->data != NULL) size += wcslen(token->data);
         wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
-        if (token.data != NULL) wcscpy(newPointer, token.data);
-        if (token.data != NULL) free(token.data);
+        if (token->data != NULL) wcscpy(newPointer, token->data);
+        if (token->data != NULL) free(token->data);
         wcscat(newPointer, tok);
-        token.data = newPointer;
+        token->data = newPointer;
 
         free((void *) tok);
         break;
@@ -70,23 +64,19 @@ TS_parse_caller_argument(
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+  tsParseData->parentTSToken = token->parent;
   return token;
 }
 
-const TSParserToken
+TSParserToken *
 TS_parse_caller(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TSParserToken token;
-  token.tokenType = TS_CALLER;
-  token.position = tsParseData->position;
-  token.character = tsParseData->character;
-  token.line = tsParseData->line;
-  token.visibility = TS_VISIBILITY_SCOPE;
-  token.children = NULL;
-  token.childrenSize = 0;
-  token.data = (void *) TS_clone_string(tsParseData->token);
+  TS_TOKEN_BEGIN("caller")
+  TSParserToken *token = TS_build_parser_token(TS_CALLER, tsParseData);
+  token->visibility = TS_VISIBILITY_SCOPE;
+  token->name = (void *) TS_clone_string(tsParseData->token);
 
   volatile unsigned char proceed = 1;
   const wchar_t *tok;
@@ -96,8 +86,8 @@ TS_parse_caller(
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      if (token.data == NULL)
-        ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing caller arguments.", tsFile, &token);
+      if (token->data == NULL)
+        ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing caller arguments.", tsFile, token);
       else break;
     }
 
@@ -141,8 +131,8 @@ TS_parse_caller(
       default: {
         movedBy += wcslen(tok);
         tsParseData->token = tok;
-        TSParserToken arg = TS_parse_caller_argument(tsFile, tsParseData);
-        TS_push_child(&token, arg);
+        TSParserToken *arg = TS_parse_caller_argument(tsFile, tsParseData);
+        TS_push_child(token, arg);
         free((void *) tok);
         break;
       }
@@ -151,13 +141,16 @@ TS_parse_caller(
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+  tsParseData->parentTSToken = token->parent;
+  TS_TOKEN_END("caller")
   return token;
 }
 
 void
 TS_free_caller(
-    const TSParserToken token
+    TSParserToken *token
 ) {
   TS_free_children(token);
-  if (token.data) free(token.data);
+  if (token->data) free(token->data);
+  free((void *) token);
 }

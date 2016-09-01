@@ -1,9 +1,10 @@
 #include <tsc/parser.h>
+#include <tsc/register.h>
 
 static void
 TS_append_ts_parser_token(
     TSFile *tsFile,
-    TSParserToken token
+    TSParserToken *token
 );
 
 static void
@@ -22,19 +23,22 @@ TS_clone_string(
   return clone;
 }
 
-TSParserToken
+TSParserToken *
 TS_build_parser_token(
-    TSTokenType tokenType
+    TSTokenType tokenType,
+    TSParseData *tsParseData
 ) {
-  TSParserToken token;
-  token.tokenType = tokenType;
-//  token.position = tsParseData->position;
-//  token.character = tsParseData->character;
-//  token.line = tsParseData->line;
-  token.visibility = TS_VISIBILITY_SCOPE;
-  token.children = NULL;
-  token.childrenSize = 0;
-  token.data = NULL;
+  TSParserToken *token = TS_NEW_TOKEN;
+  token->tokenType = tokenType;
+  token->position = tsParseData->position;
+  token->character = tsParseData->character;
+  token->line = tsParseData->line;
+  token->visibility = TS_VISIBILITY_SCOPE;
+  token->children = NULL;
+  token->childrenSize = 0;
+  token->parent = tsParseData->parentTSToken;
+  token->data = NULL;
+  tsParseData->parentTSToken = token;
   return token;
 }
 
@@ -59,6 +63,14 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     {TS_INLINE_COMMENT,    (wchar_t *) L"//",         TS_parse_inline_comment},
     {TS_MULTILINE_COMMENT, (wchar_t *) L"/*",         TS_parse_multiline_comment},
 };
+
+unsigned char TS_is_keyword(const wchar_t *str) {
+  for (unsigned short int i = 0; i < KEYWORDS_SIZE; i++) {
+    TSKeyword kw = TS_KEYWORDS[i];
+    if (wcscmp(kw.str, str) == 0) return 1;
+  }
+  return 0;
+}
 
 void TS_put_back(FILE *stream, const wchar_t *value) {
   for (long i = wcslen(value) - 1; i >= 0; --i) {
@@ -106,11 +118,11 @@ TS_name_is_valid(
 void
 TS_push_child(
     TSParserToken *token,
-    TSParserToken child
+    TSParserToken *child
 ) {
   log_to_file((wchar_t *) L"%s\n", "Pushing new TSParserToken child to TSParserToken parent");
-  TSParserToken *newPointer = (TSParserToken *) calloc(sizeof(TSParserToken), token->childrenSize + 1);
-  if (token->children != NULL) memcpy(newPointer, token->children, sizeof(TSParserToken) * token->childrenSize);
+  TSParserToken **newPointer = (TSParserToken **) calloc(sizeof(TSParserToken *), token->childrenSize + 1);
+  if (token->children != NULL) memcpy(newPointer, token->children, sizeof(TSParserToken *) * token->childrenSize);
   if (token->children != NULL) free(token->children);
   token->children = newPointer;
   token->children[token->childrenSize] = child;
@@ -121,17 +133,17 @@ TS_push_child(
 static void
 TS_append_ts_parser_token(
     TSFile *tsFile,
-    TSParserToken token
+    TSParserToken *token
 ) {
-  TSParserToken *newPointer = (TSParserToken *) calloc(sizeof(TSParserToken), tsFile->tokensSize + 1);
-  if (tsFile->tokens != NULL) memcpy(newPointer, tsFile->tokens, sizeof(TSParserToken) * tsFile->tokensSize);
+  TSParserToken **newPointer = (TSParserToken **) calloc(sizeof(TSParserToken *), tsFile->tokensSize + 1);
+  if (tsFile->tokens != NULL) memcpy(newPointer, tsFile->tokens, sizeof(TSParserToken *) * tsFile->tokensSize);
   if (tsFile->tokens != NULL) free(tsFile->tokens);
   tsFile->tokens = newPointer;
   tsFile->tokens[tsFile->tokensSize] = token;
   tsFile->tokensSize += 1;
 }
 
-TSParserToken
+TSParserToken *
 TS_parse_ts_token(
     TSFile *tsFile,
     TSParseData *data
@@ -140,18 +152,18 @@ TS_parse_ts_token(
     TSKeyword k = TS_KEYWORDS[i];
     if (wcscmp(data->token, k.str) == 0) {
       log_to_file((wchar_t *) L"  -  data->token = \"%ls\"\n  -  k.str = \"%ls\"\n", data->token, k.str);
-      TSParserToken token = k.callback(tsFile, data);
+      TSParserToken *token = k.callback(tsFile, data);
       return token;
     }
   }
-  TSParserToken t;
-  t.data = (void *) TS_clone_string(data->token);
-  t.children = NULL;
-  t.childrenSize = 0;
-  t.line = data->line;
-  t.character = data->character;
-  t.position = data->position;
-  t.tokenType = TS_UNKNOWN;
+  TSParserToken *t = calloc(sizeof(TSParserToken), 1);
+  t->data = (void *) TS_clone_string(data->token);
+  t->children = NULL;
+  t->childrenSize = 0;
+  t->line = data->line;
+  t->character = data->character;
+  t->position = data->position;
+  t->tokenType = TS_UNKNOWN;
   return t;
 }
 
@@ -435,28 +447,22 @@ TS_parse_stream(
     const char *file,
     FILE *stream
 ) {
+  wchar_t buffer[2048];
+  size_t size = mbstowcs(buffer, file, 2048);
   TSFile tsFile;
   tsFile.tokens = NULL;
   tsFile.tokensSize = 0;
-  tsFile.file = file;
   tsFile.stream = stream;
-
-//  TSParserToken global;
-//  global.tokenType = TS_SCOPE;
-//  global.position = 0;
-//  global.character = 0;
-//  global.line = 0;
-//  global.visibility = TS_VISIBILITY_SCOPE;
-//  global.children = NULL;
-//  global.childrenSize = 0;
-//  global.data = NULL;
+  wchar_t filename[size];
+  wcscpy(filename, buffer);
+  tsFile.file = filename;
 
   TSParseData data;
   data.line = 0;
   data.character = 0;
   data.position = 0;
   data.stream = stream;
-//  data.parentToken = global;
+  data.parentTSToken = NULL;
 
   const wchar_t *tok;
   while (1) {
@@ -467,11 +473,11 @@ TS_parse_stream(
     if (data.token[0] == '\n') {
       TS_next_line(&data);
     } else {
-      TSParserToken token = TS_parse_ts_token(&tsFile, &data);
-      if (token.tokenType != TS_UNKNOWN) {
+      TSParserToken *token = TS_parse_ts_token(&tsFile, &data);
+      if (token->tokenType != TS_UNKNOWN) {
         TS_append_ts_parser_token(&tsFile, token);
       } else {
-        free(token.data);
+        TS_free_tsToken(token);
       }
     }
 
@@ -479,23 +485,26 @@ TS_parse_stream(
   }
   fclose(tsFile.stream);
   tsFile.stream = NULL;
+  TS_destroy_register();
+
   return tsFile;
 }
 
 void
 TS_free_unknown(
-    const TSParserToken token
+    TSParserToken *token
 ) {
   TS_free_children(token);
 
-  if (token.data) free(token.data);
+  if (token->data) free(token->data);
+  free(token);
 }
 
 void
 TS_free_tsToken(
-    const TSParserToken token
+    TSParserToken *token
 ) {
-  switch (token.tokenType) {
+  switch (token->tokenType) {
     case TS_VAR:
       TS_free_var(token);
       break;
@@ -572,12 +581,12 @@ TS_free_tsToken(
 
 void
 TS_free_children(
-    const TSParserToken token
+    TSParserToken *token
 ) {
-  for (u_long childIndex = 0; childIndex < token.childrenSize; childIndex++) {
-    TS_free_tsToken(token.children[childIndex]);
+  for (u_long childIndex = 0; childIndex < token->childrenSize; childIndex++) {
+    TS_free_tsToken(token->children[childIndex]);
   }
-  if (token.children != NULL) free(token.children);
+  if (token->children != NULL) free(token->children);
 }
 
 void

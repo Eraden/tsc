@@ -37,3 +37,5 @@ class ClassWithFieldAndMethod {
   foo;
   bar() {}
 }
+
+const TEST = class {};

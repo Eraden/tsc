@@ -8,7 +8,9 @@ FILE *TS_output_stream = NULL;
 
 static TSVerbosity __attribute__((visibility("hidden"))) ts_current_log_level = TS_VERBOSITY_ERROR;
 
-static void __attribute__((visibility("hidden"))) TS_info_msg() {
+static void
+__attribute__((visibility("hidden")))
+TS_info_msg() {
   printf(
       "Native TypeScript Compiler\n"
           "Version: %i.%i.%i\n"
@@ -23,6 +25,19 @@ static void __attribute__((visibility("hidden"))) TS_info_msg() {
   );
 }
 
+static void
+__attribute__((visibility("hidden")))
+ts_syntax_error(
+    const wchar_t *msg,
+    const wchar_t *file,
+    const u_long line,
+    const u_long character
+) {
+  log_error((wchar_t *) L"Syntax error: %ls\n", msg);
+  ts_log_position(file, line, character);
+  exit(TS_PARSE_FAILURE_CODE);
+}
+
 void
 ts_token_syntax_error(
     const wchar_t *msg,
@@ -33,21 +48,10 @@ ts_token_syntax_error(
   ts_syntax_error(msg, tsFile->file, token->character, token->line);
 }
 
-void
-ts_syntax_error(
-    const wchar_t *msg,
-    const char *file,
-    const u_long line,
-    const u_long character
-) {
-  log_error((wchar_t *) L"Syntax error: %ls\n", msg);
-  ts_log_position(file, line, character);
-  exit(TS_PARSE_FAILURE_CODE);
-}
 
 void
 ts_log_position(
-    const char *file,
+    const wchar_t *file,
     const u_long character,
     const u_long line
 ) {
@@ -118,7 +122,7 @@ TS_parse_arguments(
       );
       exit(EXIT_SUCCESS);
     } else if (strcmp(arg, "-f") == 0 || strcmp(arg, "--file") == 0) {
-      if (i+1 >= argc) {
+      if (i + 1 >= argc) {
         fprintf(stderr, "Expecting file name but no more arguments found");
         exit(EXIT_FAILURE);
       }
@@ -129,7 +133,7 @@ TS_parse_arguments(
         io_panic((wchar_t *) L"Couldn't open source code file");
       }
     } else if (strcmp(arg, "-c") == 0 || strcmp(arg, "--code") == 0) {
-      if (i+1 >= argc) {
+      if (i + 1 >= argc) {
         fprintf(stderr, "Expecting code but no more arguments found");
         exit(EXIT_FAILURE);
       }
@@ -138,7 +142,7 @@ TS_parse_arguments(
       settings.stream = fmemopen((void *) arg, strlen(arg), "r");
       settings.fileName = "(code eval)";
     } else if (strcmp(arg, "-o") == 0 || strcmp(arg, "--out") == 0) {
-      if (i+1 >= argc) {
+      if (i + 1 >= argc) {
         fprintf(stderr, "Expecting file name but no more arguments found");
         exit(EXIT_FAILURE);
       }

@@ -7,11 +7,11 @@ __attribute(( visibility("hidden")))
 __attribute__(( section("output-if")))
 ts_print_for_if_body(
     const TSFile *tsFile,
-    const TSParserToken *tsParserToken,
+    TSParserToken *tsParserToken,
     const TSOutputSettings outputSettings
 ) {
   for (u_long bodyIndex = 0; bodyIndex < (*tsParserToken).childrenSize; bodyIndex++) {
-    TSParserToken bodyToken = (*tsParserToken).children[bodyIndex];
+    TSParserToken *bodyToken = (*tsParserToken).children[bodyIndex];
     TSOutputSettings settings = outputSettings;
     settings.indent += 1;
     TS_print_for_token(tsFile, bodyToken, settings);
@@ -27,8 +27,8 @@ ts_print_for_if_condition(
     const TSOutputSettings outputSettings
 ) {
   for (u_long conditionIndex = 0; conditionIndex < data->conditionsSize; conditionIndex++) {
-    const TSParserToken conditionToken = data->conditions[conditionIndex];
-    const wchar_t *value = (wchar_t *) conditionToken.data;
+    TSParserToken *conditionToken = data->conditions[conditionIndex];
+    const wchar_t *value = (wchar_t *) conditionToken->data;
     fprintf(outputSettings.stream, "%ls", value);
   }
 }
@@ -36,11 +36,11 @@ ts_print_for_if_condition(
 void
 TS_print_for_if(
     const TSFile *tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
   const u_long indent = outputSettings.indent;
-  const TSIfData *data = tsParserToken.data;
+  const TSIfData *data = tsParserToken->data;
   if (!data) return;
 
   for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
@@ -51,7 +51,7 @@ TS_print_for_if(
 
   fprintf(outputSettings.stream, "%s", ") {\n");
 
-  ts_print_for_if_body(tsFile, &tsParserToken, outputSettings);
+  ts_print_for_if_body(tsFile, tsParserToken, outputSettings);
 
   for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
     fprintf(outputSettings.stream, "%s", "  ");
@@ -65,12 +65,12 @@ __attribute(( visibility("hidden")))
 __attribute__(( section("output-if")))
 ts_string_for_if_body(
     const TSFile *tsFile,
-    const TSParserToken *tsParserToken,
+    TSParserToken *tsParserToken,
     const TSOutputSettings outputSettings
 ) {
   wchar_t *ifBody = NULL;
   for (u_long bodyIndex = 0; bodyIndex < (*tsParserToken).childrenSize; bodyIndex++) {
-    TSParserToken bodyToken = (*tsParserToken).children[bodyIndex];
+    TSParserToken *bodyToken = (*tsParserToken).children[bodyIndex];
     TSOutputSettings settings = outputSettings;
     settings.indent += 1;
     const wchar_t *childString = TS_string_for_token(tsFile, bodyToken, settings);
@@ -101,8 +101,8 @@ ts_string_for_if_condition(
 ) {
   wchar_t *string = NULL;
   for (u_long conditionIndex = 0; conditionIndex < data->conditionsSize; conditionIndex++) {
-    const TSParserToken conditionToken = data->conditions[conditionIndex];
-    const wchar_t *value = (wchar_t *) conditionToken.data;
+    TSParserToken *conditionToken = data->conditions[conditionIndex];
+    const wchar_t *value = (wchar_t *) conditionToken->data;
 
     u_long size = wcslen(value) + TS_STRING_END;
     if (string != NULL) size += wcslen(string);
@@ -116,9 +116,14 @@ ts_string_for_if_condition(
   return string;
 }
 
-const wchar_t *TS_string_for_if(const TSFile *tsFile, const TSParserToken tsParserToken, TSOutputSettings outputSettings) {
+const wchar_t *
+TS_string_for_if(
+    const TSFile *tsFile,
+    TSParserToken *tsParserToken,
+    TSOutputSettings outputSettings
+) {
   const u_long indent = outputSettings.indent;
-  const TSIfData *data = tsParserToken.data;
+  const TSIfData *data = tsParserToken->data;
   if (!data) return NULL;
 
   wchar_t *string = (wchar_t *) calloc(sizeof(wchar_t), wcslen((const wchar_t *) L"if (") + (indent * 2) + 1);
@@ -146,7 +151,7 @@ const wchar_t *TS_string_for_if(const TSFile *tsFile, const TSParserToken tsPars
   }
 
   {
-    const wchar_t *ifBody = ts_string_for_if_body(tsFile, &tsParserToken, outputSettings);
+    const wchar_t *ifBody = ts_string_for_if_body(tsFile, tsParserToken, outputSettings);
     wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), wcslen(string) + wcslen(ifBody) + 1);
     wcscpy(newPointer, string);
     wcscat(newPointer, ifBody);

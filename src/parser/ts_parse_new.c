@@ -1,6 +1,6 @@
 #include <tsc/parser.h>
 
-const TSParserToken
+TSParserToken *
 TS_parse_new(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -9,15 +9,7 @@ TS_parse_new(
 
   u_long movedBy = wcslen(tsParseData->token);
 
-  TSParserToken token;
-  token.tokenType = TS_NEW;
-  token.position = tsParseData->position;
-  token.character = tsParseData->character;
-  token.line = tsParseData->line;
-  token.visibility = TS_VISIBILITY_SCOPE;
-  token.children = NULL;
-  token.childrenSize = 0;
-  token.data = NULL;
+  TSParserToken *token = TS_build_parser_token(TS_NEW, tsParseData);
 
   volatile unsigned char proceed = 1;
   const wchar_t *tok;
@@ -25,8 +17,8 @@ TS_parse_new(
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      if (token.data == NULL)
-        ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing `new` keyword.", tsFile, &token);
+      if (token->data == NULL)
+        ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing `new` keyword.", tsFile, token);
       else break;
     }
 
@@ -38,9 +30,9 @@ TS_parse_new(
         break;
       }
       case L'\n': {
-        if (token.childrenSize == 0) {
+        if (token->childrenSize == 0) {
           free((void *) tok);
-          ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found new line.", tsFile, &token);
+          ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found new line.", tsFile, token);
         } else {
           proceed = 0;
           TS_put_back(tsParseData->stream, tok);
@@ -49,9 +41,9 @@ TS_parse_new(
         break;
       }
       case L';': {
-        if (token.childrenSize == 0) {
+        if (token->childrenSize == 0) {
           free((void *) tok);
-          ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found `;`.", tsFile, &token);
+          ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found `;`.", tsFile, token);
         } else {
           proceed = 0;
           TS_put_back(tsParseData->stream, tok);
@@ -62,8 +54,8 @@ TS_parse_new(
       }
       default: {
         tsParseData->token = tok;
-        TSParserToken caller = TS_parse_caller(tsFile, tsParseData);
-        TS_push_child(&token, caller);
+        TSParserToken *caller = TS_parse_caller(tsFile, tsParseData);
+        TS_push_child(token, caller);
 
         free((void *) tok);
         break;
@@ -73,13 +65,18 @@ TS_parse_new(
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+  tsParseData->parentTSToken = token->parent;
 
   TS_TOKEN_END("new");
   return token;
 }
 
-void TS_free_new(const TSParserToken token) {
+void
+TS_free_new(
+    TSParserToken *token
+) {
   TS_free_children(token);
 
-  if (token.data) free(token.data);
+  if (token->data) free(token->data);
+  free(token);
 }

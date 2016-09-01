@@ -2,8 +2,13 @@
 
 static void
 __attribute__(( visibility("hidden") ))
-TS_parse_else_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *token, u_long *movedBy) {
-  log_to_file(L"->   parsing as %s body\n", "else");
+TS_parse_else_body(
+    TSFile *tsFile,
+    TSParseData *tsParseData,
+    TSParserToken *token,
+    u_long *movedBy
+) {
+  log_to_file((wchar_t *) L"->   parsing as %s body\n", "else");
   const wchar_t *tok;
   TSConditionBodyTermination termination = TS_ENDS_WITH_BRACKET;
 
@@ -100,14 +105,14 @@ TS_parse_else_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *toke
         tsParseData->character += *movedBy;
         tsParseData->position += *movedBy;
         *movedBy = 0;
-        TSParserToken t = TS_parse_ts_token(tsFile, tsParseData);
+        TSParserToken *t = TS_parse_ts_token(tsFile, tsParseData);
         if (token->children == NULL) {
-          token->children = (TSParserToken *) calloc(sizeof(TSParserToken), 1);
+          token->children = (TSParserToken **) calloc(sizeof(TSParserToken *), 1);
           token->children[0] = t;
           token->childrenSize = 1;
         } else {
-          TSParserToken *newPointer = (TSParserToken *) calloc(sizeof(TSParserToken), token->childrenSize + 1);
-          memcpy(newPointer, token->children, token->childrenSize * sizeof(TSParserToken));
+          TSParserToken **newPointer = (TSParserToken **) calloc(sizeof(TSParserToken *), token->childrenSize + 1);
+          memcpy(newPointer, token->children, token->childrenSize * sizeof(TSParserToken *));
           free(token->children);
           token->children = newPointer;
           token->children[token->childrenSize] = t;
@@ -118,31 +123,31 @@ TS_parse_else_body(TSFile *tsFile, TSParseData *tsParseData, TSParserToken *toke
       }
     }
   }
-  log_to_file(L"->   done %s body\n", "else");
+  log_to_file((wchar_t *) L"->   done %s body\n", "else");
 }
 
-const TSParserToken TS_parse_else(TSFile *tsFile, TSParseData *tsParseData) {
+TSParserToken *
+TS_parse_else(
+    TSFile *tsFile,
+    TSParseData *tsParseData
+) {
   TS_TOKEN_BEGIN("else");
   u_long movedBy = wcslen(tsParseData->token);
 
-  TSParserToken token;
-  token.tokenType = TS_ELSE;
-  token.position = tsParseData->position;
-  token.character = tsParseData->character;
-  token.line = tsParseData->line;
-  token.visibility = TS_VISIBILITY_SCOPE;
-  token.children = NULL;
-  token.childrenSize = 0;
-  token.data = NULL;
-
-  TS_parse_else_body(tsFile, tsParseData, &token, &movedBy);
+  TSParserToken *token = TS_build_parser_token(TS_ELSE, tsParseData);
+  TS_parse_else_body(tsFile, tsParseData, token, &movedBy);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+  tsParseData->parentTSToken = token->parent;
   TS_TOKEN_END("else");
   return token;
 }
 
-void TS_free_else(const TSParserToken token) {
+void
+TS_free_else(
+    TSParserToken *token
+) {
   TS_free_children(token);
+  free(token);
 }

@@ -7,14 +7,14 @@ START_TEST(parse_valid_variables)
 
   ck_assert_int_eq(tsFile.tokensSize, 12);
 
-  TSParserToken token;
+  TSParserToken *token;
   TSLocalVariableData *data;
 
   // var
   token = tsFile.tokens[0];
-  data = token.data;
+  data = token->variableData;
 
-  ck_assert(token.tokenType == TS_VAR);
+  ck_assert(token->tokenType == TS_VAR);
   ck_assert_ptr_ne(data, NULL);
   ck_assert_ptr_ne(data->name, NULL);
   ck_assert_wstr_eq(data->name, L"a");;
@@ -22,9 +22,9 @@ START_TEST(parse_valid_variables)
   ck_assert_ptr_eq(data->value, NULL);
 
   token = tsFile.tokens[1];
-  data = token.data;
+  data = token->data;
 
-  ck_assert(token.tokenType == TS_VAR);
+  ck_assert(token->tokenType == TS_VAR);
   ck_assert_ptr_ne(data, NULL);
   ck_assert_ptr_ne(data->name, NULL);
   ck_assert_wstr_eq(data->name, L"b");;
@@ -33,9 +33,9 @@ START_TEST(parse_valid_variables)
   ck_assert_ptr_eq(data->value, NULL);
 
   token = tsFile.tokens[2];
-  data = token.data;
+  data = token->data;
 
-  ck_assert(token.tokenType == TS_VAR);
+  ck_assert(token->tokenType == TS_VAR);
   ck_assert_ptr_ne(data, NULL);
   ck_assert_ptr_ne(data->name, NULL);
   ck_assert_wstr_eq(data->name, L"c");;
@@ -44,9 +44,9 @@ START_TEST(parse_valid_variables)
   ck_assert_ptr_eq(data->type, NULL);
 
   token = tsFile.tokens[3];
-  data = token.data;
+  data = token->data;
 
-  ck_assert(token.tokenType == TS_VAR);
+  ck_assert(token->tokenType == TS_VAR);
   ck_assert_ptr_ne(data, NULL);
   ck_assert_ptr_ne(data->name, NULL);
   ck_assert_wstr_eq(data->name, L"d");;
@@ -57,9 +57,9 @@ START_TEST(parse_valid_variables)
 
   // let
   token = tsFile.tokens[4];
-  data = token.data;
+  data = token->data;
 
-  ck_assert(token.tokenType == TS_LET);
+  ck_assert(token->tokenType == TS_LET);
   ck_assert_ptr_ne(data, NULL);
   ck_assert_ptr_ne(data->name, NULL);
   ck_assert_wstr_eq(data->name, L"e");;
@@ -67,9 +67,9 @@ START_TEST(parse_valid_variables)
   ck_assert_ptr_eq(data->value, NULL);
 
   token = tsFile.tokens[5];
-  data = token.data;
+  data = token->data;
 
-  ck_assert(token.tokenType == TS_LET);
+  ck_assert(token->tokenType == TS_LET);
   ck_assert_ptr_ne(data, NULL);
   ck_assert_ptr_ne(data->name, NULL);
   ck_assert_wstr_eq(data->name, L"f");;
@@ -78,9 +78,9 @@ START_TEST(parse_valid_variables)
   ck_assert_ptr_eq(data->value, NULL);
 
   token = tsFile.tokens[6];
-  data = token.data;
+  data = token->data;
 
-  ck_assert(token.tokenType == TS_LET);
+  ck_assert(token->tokenType == TS_LET);
   ck_assert_ptr_ne(data, NULL);
   ck_assert_ptr_ne(data->name, NULL);
   ck_assert_wstr_eq(data->name, L"g");;
@@ -89,9 +89,9 @@ START_TEST(parse_valid_variables)
   ck_assert_ptr_eq(data->type, NULL);
 
   token = tsFile.tokens[7];
-  data = token.data;
+  data = token->data;
 
-  ck_assert(token.tokenType == TS_LET);
+  ck_assert(token->tokenType == TS_LET);
   ck_assert_ptr_ne(data, NULL);
   ck_assert_ptr_ne(data->name, NULL);
   ck_assert_wstr_eq(data->name, L"h");;
@@ -102,9 +102,9 @@ START_TEST(parse_valid_variables)
 
   // const
   token = tsFile.tokens[8];
-  data = token.data;
+  data = token->data;
 
-  ck_assert(token.tokenType == TS_CONST);
+  ck_assert(token->tokenType == TS_CONST);
   ck_assert_ptr_ne(data, NULL);
   ck_assert_ptr_ne(data->name, NULL);
   ck_assert_wstr_eq(data->name, L"i");;
@@ -112,9 +112,9 @@ START_TEST(parse_valid_variables)
   ck_assert_ptr_eq(data->value, NULL);
 
   token = tsFile.tokens[9];
-  data = token.data;
+  data = token->data;
 
-  ck_assert(token.tokenType == TS_CONST);
+  ck_assert(token->tokenType == TS_CONST);
   ck_assert_ptr_ne(data, NULL);
   ck_assert_ptr_ne(data->name, NULL);
   ck_assert_wstr_eq(data->name, L"j");;
@@ -123,9 +123,9 @@ START_TEST(parse_valid_variables)
   ck_assert_ptr_eq(data->value, NULL);
 
   token = tsFile.tokens[10];
-  data = token.data;
+  data = token->data;
 
-  ck_assert(token.tokenType == TS_CONST);
+  ck_assert(token->tokenType == TS_CONST);
   ck_assert_ptr_ne(data, NULL);
   ck_assert_ptr_ne(data->name, NULL);
   ck_assert_wstr_eq(data->name, L"k");;
@@ -134,9 +134,9 @@ START_TEST(parse_valid_variables)
   ck_assert_ptr_eq(data->type, NULL);
 
   token = tsFile.tokens[11];
-  data = token.data;
+  data = token->data;
 
-  ck_assert(token.tokenType == TS_CONST);
+  ck_assert(token->tokenType == TS_CONST);
   ck_assert_ptr_ne(data, NULL);
   ck_assert_ptr_ne(data->name, NULL);
   ck_assert_wstr_eq(data->name, L"l");;
@@ -160,6 +160,18 @@ START_TEST(parse_var_value_without_expression)
   TS_parse_file("./examples/variables/missing_value");
 END_TEST
 
+START_TEST(parse_var_with_reserved_word_as_name)
+  TS_parse_file("./examples/variables/var_name_reserved_word");
+END_TEST
+
+START_TEST(parse_let_with_reserved_word_as_name)
+  TS_parse_file("./examples/variables/let_name_reserved_word");
+END_TEST
+
+START_TEST(parse_const_with_reserved_word_as_name)
+  TS_parse_file("./examples/variables/const_name_reserved_word");
+END_TEST
+
 void parse_variables_suite(Suite *suite) {
   TCase *tc_variables = tcase_create("Variables");
 
@@ -168,6 +180,9 @@ void parse_variables_suite(Suite *suite) {
   tcase_add_exit_test(tc_variables, parse_var_no_name, TS_PARSE_FAILURE_CODE);
   tcase_add_exit_test(tc_variables, parse_var_type_without_name, TS_PARSE_FAILURE_CODE);
   tcase_add_exit_test(tc_variables, parse_var_value_without_expression, TS_PARSE_FAILURE_CODE);
+  tcase_add_exit_test(tc_variables, parse_var_with_reserved_word_as_name, TS_PARSE_FAILURE_CODE);
+  tcase_add_exit_test(tc_variables, parse_let_with_reserved_word_as_name, TS_PARSE_FAILURE_CODE);
+  tcase_add_exit_test(tc_variables, parse_const_with_reserved_word_as_name, TS_PARSE_FAILURE_CODE);
 
   suite_add_tcase(suite, tc_variables);
 }
