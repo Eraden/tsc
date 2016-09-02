@@ -20,7 +20,10 @@ else
   echo "  done"
 fi
 
+echo "$(which cmake)"
 export PATH="/usr/local/bin:$PATH"
+echo "$(which cmake)"
+echo "$PATH"
 
 if [[ "$(cmake --version | grep -E '[0-9]+.[0-9]+.[0-9]+' | sed 's/[a-z ]//gi')" == "3.6.1" ]]
 then
