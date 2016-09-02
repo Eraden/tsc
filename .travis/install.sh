@@ -3,7 +3,7 @@
 mkdir -p build
 mkdir -p tmp
 
-if [ "$(cmake --version | grep -E '[0-9]+.[0-9]+.[0-9]+' | sed 's/[a-z ]//gi')" -eq "3.6.1" ]
+if [[ "$(cmake --version | grep -E '[0-9]+.[0-9]+.[0-9]+' | sed 's/[a-z ]//gi')" == "3.6.1" ]]
 then
   echo "Valid cmake"
 else
@@ -20,11 +20,10 @@ else
   echo "  done"
 fi
 
-if [ "$(cmake --version | grep -E '[0-9]+.[0-9]+.[0-9]+' | sed 's/[a-z ]//gi')" -ne "3.6.1" ]
+export PATH="/usr/local/bin:$PATH"
+
+if [[ "$(cmake --version | grep -E '[0-9]+.[0-9]+.[0-9]+' | sed 's/[a-z ]//gi')" == "3.6.1" ]]
 then
   echo "Failed to install cmake"
   exit 1
 fi
-
-sudo apt-get update -qq
-sudo apt-get upgrade -y
