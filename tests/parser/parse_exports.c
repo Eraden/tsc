@@ -1,30 +1,30 @@
 #include "./parse_exports.h"
 
 START_TEST(parse_valid_export)
-  TSFile tsFile = TS_parse_file("./examples/export/valid.ts");
-  ck_assert_uint_eq(tsFile.tokensSize, 4);
+  TSFile *tsFile = TS_parse_file("./examples/export/valid.ts");
+  ck_assert_uint_eq(tsFile->tokensSize, 4);
 
   TSParserToken *token, *exported;
 
-  token = tsFile.tokens[0];
+  token = tsFile->tokens[0];
   ck_assert(token->tokenType == TS_EXPORT);
   ck_assert_uint_eq(token->childrenSize, 1);
   exported = token->children[0];
   ck_assert(exported->tokenType == TS_FUNCTION);
 
-  token = tsFile.tokens[1];
+  token = tsFile->tokens[1];
   ck_assert(token->tokenType == TS_EXPORT);
   ck_assert_uint_eq(token->childrenSize, 1);
   exported = token->children[0];
   ck_assert(exported->tokenType == TS_VAR);
 
-  token = tsFile.tokens[2];
+  token = tsFile->tokens[2];
   ck_assert(token->tokenType == TS_EXPORT);
   ck_assert_uint_eq(token->childrenSize, 1);
   exported = token->children[0];
   ck_assert(exported->tokenType == TS_CONST);
 
-  token = tsFile.tokens[3];
+  token = tsFile->tokens[3];
   ck_assert(token->tokenType == TS_EXPORT);
   ck_assert_uint_eq(token->childrenSize, 1);
   exported = token->children[0];

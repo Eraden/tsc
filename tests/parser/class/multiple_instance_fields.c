@@ -1,17 +1,17 @@
 #include "./multiple_instance_fields.h"
 
 START_TEST(parse_class_with_complex_fields)
-  TSFile tsFile = TS_parse_file("./examples/class/class_with_multiple_fields.ts");
+  TSFile *tsFile = TS_parse_file("./examples/class/class_with_multiple_fields.ts");
 
-  ck_assert_ulong_eq(tsFile.tokensSize, 1);
-  ck_assert_ptr_ne(tsFile.tokens, NULL);
+  ck_assert_ulong_eq(tsFile->tokensSize, 1);
+  ck_assert_ptr_ne(tsFile->tokens, NULL);
 
   TSParserToken *token;
   TSParserToken *child;
   TSLocalVariableData *fieldData;
   u_long childIndex = 0;
 
-  token = tsFile.tokens[0];
+  token = tsFile->tokens[0];
 
   ck_assert(token->tokenType == TS_CLASS);
   u_long validChildrenSize = (24 * 4) + 4;

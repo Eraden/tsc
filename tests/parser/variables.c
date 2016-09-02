@@ -3,15 +3,15 @@
 // const
 
 START_TEST(parse_valid_variables)
-  TSFile tsFile = TS_parse_file("./examples/variables/valid.ts");
+  TSFile *tsFile = TS_parse_file("./examples/variables/valid.ts");
 
-  ck_assert_int_eq(tsFile.tokensSize, 12);
+  ck_assert_int_eq(tsFile->tokensSize, 12);
 
   TSParserToken *token;
   TSLocalVariableData *data;
 
   // var
-  token = tsFile.tokens[0];
+  token = tsFile->tokens[0];
   data = token->variableData;
 
   ck_assert(token->tokenType == TS_VAR);
@@ -21,7 +21,7 @@ START_TEST(parse_valid_variables)
   ck_assert_ptr_eq(data->type, NULL);
   ck_assert_ptr_eq(data->value, NULL);
 
-  token = tsFile.tokens[1];
+  token = tsFile->tokens[1];
   data = token->data;
 
   ck_assert(token->tokenType == TS_VAR);
@@ -32,7 +32,7 @@ START_TEST(parse_valid_variables)
   ck_assert_wstr_eq(data->type, L"number");;
   ck_assert_ptr_eq(data->value, NULL);
 
-  token = tsFile.tokens[2];
+  token = tsFile->tokens[2];
   data = token->data;
 
   ck_assert(token->tokenType == TS_VAR);
@@ -43,7 +43,7 @@ START_TEST(parse_valid_variables)
   ck_assert_wstr_eq(data->value, L"1");;
   ck_assert_ptr_eq(data->type, NULL);
 
-  token = tsFile.tokens[3];
+  token = tsFile->tokens[3];
   data = token->data;
 
   ck_assert(token->tokenType == TS_VAR);
@@ -56,7 +56,7 @@ START_TEST(parse_valid_variables)
   ck_assert_wstr_eq(data->type, L"number");;
 
   // let
-  token = tsFile.tokens[4];
+  token = tsFile->tokens[4];
   data = token->data;
 
   ck_assert(token->tokenType == TS_LET);
@@ -66,7 +66,7 @@ START_TEST(parse_valid_variables)
   ck_assert_ptr_eq(data->type, NULL);
   ck_assert_ptr_eq(data->value, NULL);
 
-  token = tsFile.tokens[5];
+  token = tsFile->tokens[5];
   data = token->data;
 
   ck_assert(token->tokenType == TS_LET);
@@ -77,7 +77,7 @@ START_TEST(parse_valid_variables)
   ck_assert_wstr_eq(data->type, L"number");;
   ck_assert_ptr_eq(data->value, NULL);
 
-  token = tsFile.tokens[6];
+  token = tsFile->tokens[6];
   data = token->data;
 
   ck_assert(token->tokenType == TS_LET);
@@ -88,7 +88,7 @@ START_TEST(parse_valid_variables)
   ck_assert_wstr_eq(data->value, L"3");;
   ck_assert_ptr_eq(data->type, NULL);
 
-  token = tsFile.tokens[7];
+  token = tsFile->tokens[7];
   data = token->data;
 
   ck_assert(token->tokenType == TS_LET);
@@ -101,7 +101,7 @@ START_TEST(parse_valid_variables)
   ck_assert_wstr_eq(data->type, L"number");;
 
   // const
-  token = tsFile.tokens[8];
+  token = tsFile->tokens[8];
   data = token->data;
 
   ck_assert(token->tokenType == TS_CONST);
@@ -111,7 +111,7 @@ START_TEST(parse_valid_variables)
   ck_assert_ptr_eq(data->type, NULL);
   ck_assert_ptr_eq(data->value, NULL);
 
-  token = tsFile.tokens[9];
+  token = tsFile->tokens[9];
   data = token->data;
 
   ck_assert(token->tokenType == TS_CONST);
@@ -122,7 +122,7 @@ START_TEST(parse_valid_variables)
   ck_assert_wstr_eq(data->type, L"number");;
   ck_assert_ptr_eq(data->value, NULL);
 
-  token = tsFile.tokens[10];
+  token = tsFile->tokens[10];
   data = token->data;
 
   ck_assert(token->tokenType == TS_CONST);
@@ -133,7 +133,7 @@ START_TEST(parse_valid_variables)
   ck_assert_wstr_eq(data->value, L"5");;
   ck_assert_ptr_eq(data->type, NULL);
 
-  token = tsFile.tokens[11];
+  token = tsFile->tokens[11];
   data = token->data;
 
   ck_assert(token->tokenType == TS_CONST);

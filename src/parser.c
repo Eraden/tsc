@@ -12,7 +12,7 @@ TS_next_line(
     TSParseData *data
 );
 
-const wchar_t *
+wchar_t *
 __attribute__((__malloc__))
 TS_clone_string(
     const wchar_t *string
@@ -429,7 +429,7 @@ TS_getToken(
   return tok;
 }
 
-const TSFile
+TSFile *
 TS_parse_file(const char *fileName) {
   FILE *stream = fopen(fileName, "r");
 
@@ -442,20 +442,21 @@ TS_parse_file(const char *fileName) {
   return TS_parse_stream(fileName, stream);
 }
 
-const TSFile
+TSFile *
 TS_parse_stream(
     const char *file,
     FILE *stream
 ) {
   wchar_t buffer[2048];
   size_t size = mbstowcs(buffer, file, 2048);
-  TSFile tsFile;
-  tsFile.tokens = NULL;
-  tsFile.tokensSize = 0;
-  tsFile.stream = stream;
-  wchar_t filename[size];
+  TSFile *tsFile = calloc(sizeof(TSFile), 1);
+  tsFile->tokens = NULL;
+  tsFile->tokensSize = 0;
+  tsFile->stream = stream;
+  wchar_t *filename = calloc(sizeof(wchar_t), size);
   wcscpy(filename, buffer);
-  tsFile.file = filename;
+  tsFile->file = filename;
+  TS_register_file(tsFile);
 
   TSParseData data;
   data.line = 0;
@@ -473,9 +474,9 @@ TS_parse_stream(
     if (data.token[0] == '\n') {
       TS_next_line(&data);
     } else {
-      TSParserToken *token = TS_parse_ts_token(&tsFile, &data);
+      TSParserToken *token = TS_parse_ts_token(tsFile, &data);
       if (token->tokenType != TS_UNKNOWN) {
-        TS_append_ts_parser_token(&tsFile, token);
+        TS_append_ts_parser_token(tsFile, token);
       } else {
         TS_free_tsToken(token);
       }
@@ -483,9 +484,8 @@ TS_parse_stream(
 
     free((void *) tok);
   }
-  fclose(tsFile.stream);
-  tsFile.stream = NULL;
-  TS_destroy_register();
+  fclose(tsFile->stream);
+  tsFile->stream = NULL;
 
   return tsFile;
 }
@@ -591,10 +591,12 @@ TS_free_children(
 
 void
 TS_free_tsFile(
-    const TSFile tsFile
+    const TSFile *tsFile
 ) {
-  for (u_long index = 0; index < tsFile.tokensSize; index++) {
-    TS_free_tsToken(tsFile.tokens[index]);
+  for (u_long index = 0; index < tsFile->tokensSize; index++) {
+    TS_free_tsToken(tsFile->tokens[index]);
   }
-  if (tsFile.tokens != NULL) free(tsFile.tokens);
+  if (tsFile->file) free(tsFile->file);
+  if (tsFile->tokens != NULL) free(tsFile->tokens);
+  free((void *) tsFile);
 }

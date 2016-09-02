@@ -22,7 +22,6 @@ TS_parse_function_argument(
     TSParseData *tsParseData
 ) {
   const wchar_t *tok;
-  TSParserToken *argument = TS_NEW_TOKEN;
   u_long movedBy = 0;
 
   TSLocalVariableData *argumentData = (TSLocalVariableData *) calloc(sizeof(TSLocalVariableData), 1);
@@ -30,14 +29,8 @@ TS_parse_function_argument(
   argumentData->value = NULL;
   argumentData->type = NULL;
 
-  argument->character = tsParseData->character;
-  argument->position = tsParseData->position;
-  argument->line = tsParseData->line;
-  argument->tokenType = TS_VAR;
+  TSParserToken *argument = TS_build_parser_token(TS_ARGUMENT, tsParseData);
   argument->data = argumentData;
-  argument->visibility = TS_VISIBILITY_SCOPE;
-  argument->children = NULL;
-  argument->childrenSize = 0;
 
   volatile unsigned char proceed = 1;
   TSFunctionParseFlag parseFlag = TS_PARSE_FN_ARG_NAME;
@@ -163,6 +156,7 @@ TS_parse_function_argument(
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+  tsParseData->parentTSToken = argument->parent;
 
   return argument;
 }
@@ -498,13 +492,51 @@ TS_parse_function(
         free((void *) tok);
         break;
       }
-      case L'{': {
+      case L'(': {
+        if (token->name) {
+          proceed = 0;
+          TS_put_back(tsFile->stream, tok);
+          free((void *) tok);
+          break;
+        }
+        else if (token->parent) {
+          proceed = 0;
+          TS_put_back(tsFile->stream, tok);
+          free((void *) tok);
+
+          switch (token->parent->tokenType) {
+            case TS_RETURN: {
+              break;
+            }
+            case TS_CONST:
+            case TS_LET:
+            case TS_VAR: {
+              token->name = TS_clone_string(token->parent->name);
+              break;
+            }
+            default: {
+              ts_token_syntax_error(
+                  (const wchar_t *) L"Missing function name",
+                  tsFile,
+                  token
+              );
+            }
+          }
+        } else {
+          free((void *) tok);
+          ts_token_syntax_error(
+              (const wchar_t *) L"Missing function name",
+              tsFile,
+              token
+          );
+        }
         break;
       }
       default: {
         if (TS_name_is_valid(tok)) {
           functionData->name = TS_clone_string(tok);
           free((void *) tok);
+          proceed = 0;
         } else {
           free((void *) tok);
           ts_token_syntax_error(
@@ -513,7 +545,6 @@ TS_parse_function(
               token
           );
         }
-        proceed = 0;
         break;
       }
     }

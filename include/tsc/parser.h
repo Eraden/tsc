@@ -160,6 +160,8 @@ void TS_push_child(TSParserToken *token, TSParserToken *child);
 
 void TS_free_unknown(TSParserToken *token);
 
+TSParserToken *TS_parse_argument(TSFile *tsFile, TSParseData *tsParseData);
+
 TSParserToken *TS_parse_var(TSFile *tsFile, TSParseData *tsParseData);
 void TS_free_var(TSParserToken *token);
 
@@ -229,10 +231,10 @@ void TS_free_children(TSParserToken *token);
 
 volatile const wchar_t *TS_getToken(FILE *stream) __attribute__((__malloc__));
 
-const wchar_t *TS_clone_string(const wchar_t *string) __attribute__((__malloc__));
+wchar_t *TS_clone_string(const wchar_t *string) __attribute__((__malloc__));
 
-const TSFile TS_parse_file(const char *fileName);
+TSFile *TS_parse_file(const char *fileName);
 
-const TSFile TS_parse_stream(const char *file, FILE *stream);
+TSFile *TS_parse_stream(const char *file, FILE *stream);
 
-void TS_free_tsFile(const TSFile tsFile);
+void TS_free_tsFile(const TSFile *tsFile);

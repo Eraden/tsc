@@ -1,26 +1,26 @@
 #include "./multiline_comment.h"
 
 START_TEST(parse_valid_multiline_comment)
-  TSFile tsFile = TS_parse_file("./examples/multiline_comment/valid.ts");
-  ck_assert_uint_eq(tsFile.tokensSize, 3);
+  TSFile *tsFile = TS_parse_file("./examples/multiline_comment/valid.ts");
+  ck_assert_uint_eq(tsFile->tokensSize, 3);
 
   TSParserToken *token;
 
-  token = tsFile.tokens[0];
+  token = tsFile->tokens[0];
   ck_assert(token->tokenType == TS_MULTILINE_COMMENT);
   ck_assert_uint_eq(token->childrenSize, 0);
   ck_assert_ptr_eq(token->children, NULL);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"\nNormal comment\n");
 
-  token = tsFile.tokens[1];
+  token = tsFile->tokens[1];
   ck_assert(token->tokenType == TS_MULTILINE_COMMENT);
   ck_assert_uint_eq(token->childrenSize, 0);
   ck_assert_ptr_eq(token->children, NULL);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"*\nDoc comment\n");
 
-  token = tsFile.tokens[2];
+  token = tsFile->tokens[2];
   ck_assert(token->tokenType == TS_MULTILINE_COMMENT);
   ck_assert_uint_eq(token->childrenSize, 0);
   ck_assert_ptr_eq(token->children, NULL);

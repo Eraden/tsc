@@ -7,9 +7,10 @@
 #include "./parser/else_conditions.h"
 #include "./parser/return_keyword.h"
 #include "./parser/parse_exports.h"
-#include "parser/inline_comment.h"
-#include "parser/multiline_comment.h"
-#include "parser/new_keyword.h"
+#include "./parser/inline_comment.h"
+#include "./parser/multiline_comment.h"
+#include "./parser/new_keyword.h"
+#include "./parser/parse_decorator.h"
 
 Suite *class_suite(void) {
   Suite *suite = suite_create("Parser");
@@ -24,6 +25,7 @@ Suite *class_suite(void) {
   parse_multiline_comment_suite(suite);
   parse_return_keyword_suite(suite);
   parse_new_suite(suite);
+  parse_decorator_suite(suite);
   return suite;
 }
 

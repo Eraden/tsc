@@ -1,11 +1,11 @@
 #include "./multiple_instance_methods.h"
 
 START_TEST(parse_class_with_complex_methods)
-  TSFile tsFile = TS_parse_file("./examples/class/class_with_multiple_methods.ts");
+  TSFile *tsFile = TS_parse_file("./examples/class/class_with_multiple_methods.ts");
 
-  ck_assert_int_eq(tsFile.tokensSize, 1);
+  ck_assert_int_eq(tsFile->tokensSize, 1);
 
-  TSParserToken *token = tsFile.tokens[0];
+  TSParserToken *token = tsFile->tokens[0];
   ck_assert(token->tokenType == TS_CLASS);
 
   ck_assert_int_eq(token->childrenSize, (24 * 4) + 4);

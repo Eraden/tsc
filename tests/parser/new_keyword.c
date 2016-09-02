@@ -1,13 +1,13 @@
 #include "./new_keyword.h"
 
 START_TEST(parse_valid_new_keyword)
-  TSFile tsFile = TS_parse_file("./examples/new/valid.ts");
-  ck_assert_uint_eq(tsFile.tokensSize, 3);
-  ck_assert_ptr_ne(tsFile.tokens, NULL);
+  TSFile *tsFile = TS_parse_file("./examples/new/valid.ts");
+  ck_assert_uint_eq(tsFile->tokensSize, 3);
+  ck_assert_ptr_ne(tsFile->tokens, NULL);
 
   TSParserToken *token, *caller, *arg;
 
-  token = tsFile.tokens[0];
+  token = tsFile->tokens[0];
   ck_assert(token->tokenType == TS_NEW);
   ck_assert_uint_eq(token->childrenSize, 1);
   ck_assert_ptr_ne(token->children, NULL);
@@ -18,7 +18,7 @@ START_TEST(parse_valid_new_keyword)
   ck_assert_uint_eq(caller->childrenSize, 0);
   ck_assert_ptr_eq(caller->children, NULL);
 
-  token = tsFile.tokens[1];
+  token = tsFile->tokens[1];
   ck_assert(token->tokenType == TS_NEW);
   ck_assert_uint_eq(token->childrenSize, 1);
   ck_assert_ptr_ne(token->children, NULL);
@@ -29,7 +29,7 @@ START_TEST(parse_valid_new_keyword)
   ck_assert_uint_eq(caller->childrenSize, 0);
   ck_assert_ptr_eq(caller->children, NULL);
 
-  token = tsFile.tokens[2];
+  token = tsFile->tokens[2];
   ck_assert(token->tokenType == TS_NEW);
   ck_assert_uint_eq(token->childrenSize, 1);
   ck_assert_ptr_ne(token->children, NULL);

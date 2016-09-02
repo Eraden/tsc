@@ -1,33 +1,33 @@
 #include "./inline_comment.h"
 
 START_TEST(parse_valid_inline_comment)
-  TSFile tsFile = TS_parse_file("./examples/inline_comment/valid.ts");
+  TSFile *tsFile = TS_parse_file("./examples/inline_comment/valid.ts");
   
-  ck_assert_uint_eq(tsFile.tokensSize, 4);
+  ck_assert_uint_eq(tsFile->tokensSize, 4);
   
   TSParserToken *token;
   
-  token = tsFile.tokens[0];
+  token = tsFile->tokens[0];
   ck_assert(token->tokenType == TS_INLINE_COMMENT);
   ck_assert_uint_eq(token->childrenSize, 0);
   ck_assert_ptr_eq(token->children, NULL);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L" Filled");
   
-  token = tsFile.tokens[1];
+  token = tsFile->tokens[1];
   ck_assert(token->tokenType == TS_INLINE_COMMENT);
   ck_assert_uint_eq(token->childrenSize, 0);
   ck_assert_ptr_eq(token->children, NULL);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"  ");
   
-  token = tsFile.tokens[2];
+  token = tsFile->tokens[2];
   ck_assert(token->tokenType == TS_INLINE_COMMENT);
   ck_assert_uint_eq(token->childrenSize, 0);
   ck_assert_ptr_eq(token->children, NULL);
   ck_assert_ptr_eq(token->name, NULL);
 
-  token = tsFile.tokens[3];
+  token = tsFile->tokens[3];
   ck_assert(token->tokenType == TS_INLINE_COMMENT);
   ck_assert_uint_eq(token->childrenSize, 0);
   ck_assert_ptr_eq(token->children, NULL);

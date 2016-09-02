@@ -65,6 +65,7 @@ SET(
     tests/parser/inline_comment.c
     tests/parser/multiline_comment.c
     tests/parser/new_keyword.c
+    tests/parser/parse_decorator.c
 )
 
 SET(
@@ -74,7 +75,7 @@ SET(
     include/tsc/register.h
     include/tsc/output.h
     include/tsc/parser.h
-    tests/ck_wcs_assert.h
+    tests/support/ck_wcs_assert.h
 )
 
 include_directories(include)
@@ -168,28 +169,39 @@ target_link_libraries(
 )
 
 FILE(COPY examples DESTINATION .)
-
-ADD_TEST(NAME CheckTsc COMMAND ./tsc_test)
-ADD_TEST(NAME Variables COMMAND ./tsc -f ./examples/variables/valid.ts)
 ADD_TEST(NAME Functions COMMAND ./tsc -f ./examples/functions/valid.ts)
+
 ADD_TEST(NAME If_blocks COMMAND ./tsc -f ./examples/if/valid.ts)
 ADD_TEST(NAME If_else_blocks COMMAND ./tsc -f ./examples/else/valid.ts)
 
-ADD_TEST(NAME VarNameIsReservedName COMMAND ./tsc -f ./examples/variables/var_name_reserved_word)
-ADD_TEST(NAME LetNameIsReservedName COMMAND ./tsc -f ./examples/variables/let_name_reserved_word)
-ADD_TEST(NAME ConstNameIsReservedName COMMAND ./tsc -f ./examples/variables/const_name_reserved_word)
+ADD_TEST(NAME Variables COMMAND ./tsc -f ./examples/variables/valid.ts)
+ADD_TEST(NAME Var_name_is_reserved_name COMMAND ./tsc -f ./examples/variables/var_name_reserved_word)
+ADD_TEST(NAME Let_name_is_reserved_name COMMAND ./tsc -f ./examples/variables/let_name_reserved_word)
+ADD_TEST(NAME Const_name_is_reserved_name COMMAND ./tsc -f ./examples/variables/const_name_reserved_word)
+
+ADD_TEST(NAME Decorator_valid COMMAND ./tsc -f ./examples/decorator/valid.ts)
+ADD_TEST(NAME Decorator_invalid_character COMMAND ./tsc -f ./examples/decorator/invalid_character)
+ADD_TEST(NAME Decorator_missing_name COMMAND ./tsc -f ./examples/decorator/missing_name)
+ADD_TEST(NAME Decorator_unexpected_end_of_stream COMMAND ./tsc -f ./examples/decorator/unexpected_end_of_stream)
+ADD_TEST(NAME Decorator_unexpected_keyword COMMAND ./tsc -f ./examples/decorator/unexpected_keyword)
 
 ADD_TEST(NAME Class_fields COMMAND ./tsc -f ./examples/class/class_with_multiple_fields.ts)
 ADD_TEST(NAME Class_methods COMMAND ./tsc -f ./examples/class/class_with_multiple_methods.ts)
 ADD_TEST(NAME Class_with_invalid_name COMMAND ./tsc -f ./examples/class/invalid_class_name)
 ADD_TEST(NAME Class_with_missing_ending COMMAND ./tsc -f ./examples/class/missing_class_ending)
 
+ADD_TEST(NAME CheckTsc COMMAND ./tsc_test)
+
 SET_TESTS_PROPERTIES(
-    VarNameIsReservedName
-    LetNameIsReservedName
-    ConstNameIsReservedName
+    Var_name_is_reserved_name
+    Let_name_is_reserved_name
+    Const_name_is_reserved_name
     Class_with_invalid_name
     Class_with_missing_ending
+    Decorator_invalid_character
+    Decorator_missing_name
+    Decorator_unexpected_end_of_stream
+    Decorator_unexpected_keyword
     PROPERTIES
     WILL_FAIL TRUE
 )

@@ -3,17 +3,17 @@
 #include "class/multiple_instance_fields.h"
 
 START_TEST(parse_valid_classes_file)
-  TSFile tsFile = TS_parse_file("./examples/class/valid.ts");
+  TSFile *tsFile = TS_parse_file("./examples/class/valid.ts");
 
   TSParserToken *classToken;
   TSParserToken *childToken;
   TSClassData *classData;
   TSFunctionData *methodData;
 
-  ck_assert_int_eq(tsFile.tokensSize, 11);
+  ck_assert_int_eq(tsFile->tokensSize, 11);
 
   // 1
-  classToken = tsFile.tokens[0];
+  classToken = tsFile->tokens[0];
 
   ck_assert(classToken->tokenType == TS_CLASS);
   classData = classToken->classData;
@@ -24,7 +24,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert_int_eq(classToken->childrenSize, 0);
 
   // 2
-  classToken = tsFile.tokens[1];
+  classToken = tsFile->tokens[1];
 
   ck_assert(classToken->tokenType == TS_CLASS);
   classData = classToken->classData;
@@ -45,7 +45,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert_ptr_eq(childData->value, NULL);
 
   // 3
-  classToken = tsFile.tokens[2];
+  classToken = tsFile->tokens[2];
 
   ck_assert(classToken->tokenType == TS_CLASS);
   classData = classToken->data;
@@ -66,7 +66,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert_ptr_eq(childData->value, NULL);
 
   // 4
-  classToken = tsFile.tokens[3];
+  classToken = tsFile->tokens[3];
 
   ck_assert(classToken->tokenType == TS_CLASS);
   classData = classToken->data;
@@ -87,7 +87,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert_ptr_eq(childData->value, NULL);
 
   // 5
-  classToken = tsFile.tokens[4];
+  classToken = tsFile->tokens[4];
 
   ck_assert(classToken->tokenType == TS_CLASS);
   classData = classToken->data;
@@ -108,7 +108,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert_ptr_eq(childData->value, NULL);
 
   // 6
-  classToken = tsFile.tokens[5];
+  classToken = tsFile->tokens[5];
 
   ck_assert(classToken->tokenType == TS_CLASS);
   classData = classToken->data;
@@ -130,7 +130,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert_ptr_eq(methodData->returnType, NULL);
 
   // 7
-  classToken = tsFile.tokens[6];
+  classToken = tsFile->tokens[6];
 
   ck_assert(classToken->tokenType == TS_CLASS);
   classData = classToken->data;
@@ -152,7 +152,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert_ptr_eq(methodData->returnType, NULL);
 
   // 8
-  classToken = tsFile.tokens[7];
+  classToken = tsFile->tokens[7];
 
   ck_assert(classToken->tokenType == TS_CLASS);
   classData = classToken->data;
@@ -174,7 +174,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert_ptr_eq(methodData->returnType, NULL);
 
   // 9
-  classToken = tsFile.tokens[8];
+  classToken = tsFile->tokens[8];
 
   ck_assert(classToken->tokenType == TS_CLASS);
   classData = classToken->data;
@@ -196,7 +196,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert_ptr_eq(methodData->returnType, NULL);
 
   // 10
-  classToken = tsFile.tokens[9];
+  classToken = tsFile->tokens[9];
 
   ck_assert(classToken->tokenType == TS_CLASS);
   classData = classToken->data;
@@ -228,7 +228,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert_ptr_eq(methodData->returnType, NULL);
 
   // 11
-  TSParserToken *token = tsFile.tokens[10];
+  TSParserToken *token = tsFile->tokens[10];
   ck_assert(token->tokenType == TS_CONST);
   ck_assert_ptr_ne(token->variableData, NULL);
   ck_assert_ptr_ne(token->variableData->name, NULL);

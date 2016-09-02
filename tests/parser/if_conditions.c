@@ -1,14 +1,14 @@
 #include "./if_conditions.h"
 
 START_TEST(parse_valid_if_condition)
-  TSFile tsFile = TS_parse_file("./examples/if/valid.ts");
+  TSFile *tsFile = TS_parse_file("./examples/if/valid.ts");
 
-  ck_assert_int_eq(tsFile.tokensSize, 5);
+  ck_assert_int_eq(tsFile->tokensSize, 5);
 
   TSParserToken *token, *cond, *child;
   TSIfData *data;
 
-  token = tsFile.tokens[0];
+  token = tsFile->tokens[0];
   data = token->ifData;
   ck_assert(token->tokenType == TS_IF);
   ck_assert_ptr_ne(data, NULL);
@@ -19,7 +19,7 @@ START_TEST(parse_valid_if_condition)
   ck_assert_int_eq(token->childrenSize, 0);
   ck_assert_ptr_eq(token->children, NULL);
 
-  token = tsFile.tokens[1];
+  token = tsFile->tokens[1];
   data = token->ifData;
   ck_assert(token->tokenType == TS_IF);
   ck_assert_ptr_ne(data, NULL);
@@ -30,7 +30,7 @@ START_TEST(parse_valid_if_condition)
   ck_assert_int_eq(token->childrenSize, 0);
   ck_assert_ptr_eq(token->children, NULL);
 
-  token = tsFile.tokens[2];
+  token = tsFile->tokens[2];
   data = token->data;
   ck_assert(token->tokenType == TS_IF);
   ck_assert_ptr_ne(data, NULL);
@@ -53,7 +53,7 @@ START_TEST(parse_valid_if_condition)
   ck_assert_int_eq(token->childrenSize, 0);
   ck_assert_ptr_eq(token->children, NULL);
 
-  token = tsFile.tokens[3];
+  token = tsFile->tokens[3];
   data = token->data;
   ck_assert(token->tokenType == TS_IF);
   ck_assert_ptr_ne(data, NULL);
@@ -68,7 +68,7 @@ START_TEST(parse_valid_if_condition)
   ck_assert_ptr_eq(child->data, NULL);
   ck_assert_int_eq(child->childrenSize, 1);
 
-  token = tsFile.tokens[4];
+  token = tsFile->tokens[4];
   data = token->data;
   ck_assert(token->tokenType == TS_IF);
   ck_assert_ptr_ne(data, NULL);

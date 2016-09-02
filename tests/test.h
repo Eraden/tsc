@@ -10,7 +10,7 @@
 #include <tsc/parser.h>
 #include <tsc/output.h>
 
-#include "./ck_wcs_assert.h"
+#include "support/ck_wcs_assert.h"
 
-TSFile build_ts_file(const char *fileName, const char *content);
-void validate_ts_file(const TSFile tsFile, const int size, const TSTokenType validType);
+TSFile *build_ts_file(const char *fileName, const char *content);
+void validate_ts_file(const TSFile *tsFile, const int size, const TSTokenType validType);
