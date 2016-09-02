@@ -1,5 +1,16 @@
+sudo: required
+dist: trusty
 language: c
 compiler: clang
+addons:
+  apt:
+    sources:
+    # add PPAs with more up-to-date toolchains
+    - ubuntu-toolchain-r-test
+    - llvm-toolchain-precise-3.8
+    packages:
+    # install toolchains
+    - clang-3.8
 branches:
   except:
     - legacy
@@ -9,4 +20,15 @@ git:
 before_install:
   - sudo apt-get update -qq
 script: mkdir -p build && cd build && cmake -DCMAKE_C_COMPILER=$(which clang) .. && make -j4 && ctest && ./tsc_test
+matrix:
+  include:
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+          packages:
+            - clang-3.8
+      env: COMPILER=clang++-3.8
 
