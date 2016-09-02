@@ -2,18 +2,14 @@ sudo: required
 dist: xenial
 language: c
 compiler: clang
-group:
-  - devel
-  - stable
+group: stable
 addons:
   apt:
     sources:
-    # add PPAs with more up-to-date toolchains
     - ubuntu-toolchain-r-test
     - llvm-toolchain-precise-3.8
     - sourceline: 'deb http://ppa.launchpad.net/george-edison55/cmake-3.x/ubuntu xenial main'
     packages:
-    # install toolchains
     - clang-3.8
     - cmake
 branches:
@@ -23,14 +19,9 @@ branches:
 git:
   depth: 3
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install cmake
+  - bash ./.travis/install.sh
 script:
-  - echo "$(apt-cache show cmake)"
-  - mkdir -p build
-  - cd build
-  - cmake ..
-  - make -j4
+  - bash ./.travis/build.sh
   - ctest
   - ./tsc_test
 matrix:
