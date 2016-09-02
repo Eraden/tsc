@@ -19,7 +19,13 @@ git:
   depth: 3
 before_install:
   - sudo apt-get update -qq
-script: mkdir -p build && cd build && cmake -DCMAKE_C_COMPILER=$(which clang) .. && make -j4 && ctest && ./tsc_test
+script:
+  - mkdir -p build
+  - cd build
+  - cmake -DCMAKE_C_COMPILER=$(which clang) ..
+  - make -j4 
+  - ctest
+  - ./tsc_test
 matrix:
   include:
     - compiler: clang
