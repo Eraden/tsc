@@ -11,9 +11,13 @@ else
   wget https://cmake.org/files/v3.6/cmake-3.6.1.tar.gz
   tar -xvf cmake-3.6.1.tar.gz &> /dev/null
   cd cmake-3.6.1
+  echo "Configure cmake..."
   ./configure &> /dev/null
+  echo "Building cmake..."
   make -j 4 &> /dev/null
+  echo "Installing cmake..."
   sudo make install
+  echo "  done"
 fi
 
 if [ "$(cmake --version)" -ne "3.6.1" ]
