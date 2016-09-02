@@ -1,5 +1,5 @@
 #include <tsc/parser.h>
-#include <tsc/output.h>
+#include <tsc/register.h>
 
 int main(int argc, const char **argv) {
   setlocale(LC_ALL, "");
@@ -8,19 +8,11 @@ int main(int argc, const char **argv) {
 
   init_log();
 
-  TSFile tsFile = TS_parse_stream(settings.fileName, settings.stream);
-
-  fclose(settings.stream);
-
-  fprintf(stdout, "\n// File: %s\n\n", tsFile.file);
-
-  if (TS_output_stream != NULL) {
-    TS_print_stream(&tsFile, TS_output_stream);
-  } else {
-    TS_print_stream(&tsFile, stdout);
-  }
+  const TSFile *tsFile = TS_parse_stream(settings.fileName, settings.stream);
 
   TS_free_tsFile(tsFile);
+
+  TS_destroy_register();
 
   return 0;
 }

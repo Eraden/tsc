@@ -1,30 +1,27 @@
 #include <tsc/parser.h>
 
-const TSParserToken
+TSParserToken *
 TS_parse_implements(
     TSFile *__attribute__((__unused__)) tsFile,
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("implements");
-  u_long movedBy = strlen(tsParseData->token);
+  u_long movedBy = wcslen(tsParseData->token);
 
-  TSParserToken token;
-  token.tokenType = TS_IMPLEMENTS;
-  token.position = tsParseData->position;
-  token.character = tsParseData->character;
-  token.line = tsParseData->line;
-  token.visibility = TS_VISIBILITY_SCOPE;
-  token.children = NULL;
-  token.childrenSize = 0;
-  token.data = NULL;
+  TSParserToken *token = TS_build_parser_token(TS_IMPLEMENTS, tsParseData);
+  token->data = NULL;
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+  tsParseData->parentTSToken = token->parent;
 
   TS_TOKEN_END("implements");
   return token;
 }
 
-void TS_free_implements(const TSParserToken token) {
-  // TODO
+void
+TS_free_implements(
+    TSParserToken *token
+) {
+  free(token);
 }

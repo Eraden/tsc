@@ -7,9 +7,10 @@
 #include "./parser/else_conditions.h"
 #include "./parser/return_keyword.h"
 #include "./parser/parse_exports.h"
-#include "parser/inline_comment.h"
-#include "parser/multiline_comment.h"
-#include "parser/new_keyword.h"
+#include "./parser/inline_comment.h"
+#include "./parser/multiline_comment.h"
+#include "./parser/new_keyword.h"
+#include "./parser/parse_decorator.h"
 
 Suite *class_suite(void) {
   Suite *suite = suite_create("Parser");
@@ -19,25 +20,30 @@ Suite *class_suite(void) {
   parse_if_conditions_suite(suite);
   parse_else_conditions_suite(suite);
   parse_classes_suite(suite);
-  parse_return_keyword_suite(suite);
   parse_exports_suite(suite);
   parse_inline_comment_suite(suite);
   parse_multiline_comment_suite(suite);
+  parse_return_keyword_suite(suite);
   parse_new_suite(suite);
+  parse_decorator_suite(suite);
   return suite;
 }
 
 
 int main(int argc, char **argv) {
+  setlocale(LC_ALL, "");
+
   enum print_output output_type = CK_NORMAL;
+  TSVerbosity tscVerbose = TS_VERBOSITY_OFF;
   for (int i = 0; i < argc; i++) {
     const char *v = argv[i];
     if (strcmp(v, "--verbose") == 0) {
       output_type = CK_VERBOSE;
+      tscVerbose = TS_VERBOSITY_INFO;
     }
   }
 
-  TS_set_log_level(TS_VERBOSITY_OFF);
+  TS_set_log_level(tscVerbose);
   init_log();
 
   Suite *s;

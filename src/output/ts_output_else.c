@@ -7,11 +7,11 @@ __attribute(( visibility("hidden")))
 __attribute__(( section("output-else")))
 ts_print_for_else_body(
     const TSFile *tsFile,
-    const TSParserToken *tsParserToken,
+    TSParserToken *tsParserToken,
     const TSOutputSettings outputSettings
 ) {
   for (u_long bodyIndex = 0; bodyIndex < (*tsParserToken).childrenSize; bodyIndex++) {
-    TSParserToken bodyToken = (*tsParserToken).children[bodyIndex];
+    TSParserToken *bodyToken = tsParserToken->children[bodyIndex];
     TSOutputSettings settings = outputSettings;
     settings.indent += 1;
     TS_print_for_token(tsFile, bodyToken, settings);
@@ -22,7 +22,7 @@ void
 __attribute__(( section("output-else")))
 TS_print_for_else(
     const TSFile *tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
   const u_long indent = outputSettings.indent;
@@ -32,7 +32,7 @@ TS_print_for_else(
   fprintf(outputSettings.stream, "%s", "else {\n");
   fflush(outputSettings.stream);
 
-  ts_print_for_else_body(tsFile, &tsParserToken, outputSettings);
+  ts_print_for_else_body(tsFile, tsParserToken, outputSettings);
 
   TS_print_indent(outputSettings.stream, indent);
 
@@ -41,65 +41,65 @@ TS_print_for_else(
 
 // STRING
 
-static const char *
+static const wchar_t *
 __attribute(( visibility("hidden")))
 __attribute__(( section("output-else")))
 ts_string_for_else_body(
     const TSFile *tsFile,
-    const TSParserToken *tsParserToken,
+    TSParserToken *tsParserToken,
     const TSOutputSettings outputSettings
 ) {
-  char *ifBody = NULL;
+  wchar_t *ifBody = NULL;
   for (u_long bodyIndex = 0; bodyIndex < (*tsParserToken).childrenSize; bodyIndex++) {
-    TSParserToken bodyToken = (*tsParserToken).children[bodyIndex];
+    TSParserToken *bodyToken = tsParserToken->children[bodyIndex];
     TSOutputSettings settings = outputSettings;
     settings.indent += 1;
-    const char *childString = TS_string_for_token(tsFile, bodyToken, settings);
+    const wchar_t *childString = TS_string_for_token(tsFile, bodyToken, settings);
     if (childString == NULL) {
       continue;
     }
-    u_long size = TS_STRING_END + strlen(childString);
+    u_long size = TS_STRING_END + wcslen(childString);
     if (ifBody != NULL) {
-      size += strlen(ifBody) + strlen(childString);
+      size += wcslen(ifBody) + wcslen(childString);
     }
-    char *newPointer = (char *) calloc(sizeof(char), size);
-    if (ifBody != NULL) strcpy(newPointer, ifBody);
-    strcat(newPointer, childString);
+    wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
+    if (ifBody != NULL) wcscpy(newPointer, ifBody);
+    wcscat(newPointer, childString);
     if (ifBody != NULL) free(ifBody);
     ifBody = newPointer;
   }
   return ifBody;
 }
 
-const char *
+const wchar_t *
 __attribute__(( section("output-else")))
 TS_string_for_else(
     const TSFile *tsFile,
-    const TSParserToken tsParserToken,
+    TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
   const u_long indent = outputSettings.indent;
 
-  char *string = (char *) calloc(sizeof(char), TS_STRING_END + sizeof("else {\n") + (indent * 2));
+  wchar_t *string = (wchar_t *) calloc(sizeof(wchar_t), TS_STRING_END + sizeof("else {\n") + (indent * 2));
   for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
-    strcat(string, "  ");
-  strcat(string, "else {\n");
+    wcscat(string, (wchar_t *) L"  ");
+  wcscat(string, (wchar_t *) L"else {\n");
 
   {
-    const char *elseBody = ts_string_for_else_body(tsFile, &tsParserToken, outputSettings);
-    char *newPointer = (char *) calloc(sizeof(char), TS_STRING_END + strlen(string) + strlen(elseBody));
-    strcpy(newPointer, string);
-    strcat(newPointer, elseBody);
+    const wchar_t *elseBody = ts_string_for_else_body(tsFile, tsParserToken, outputSettings);
+    wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), TS_STRING_END + wcslen(string) + wcslen(elseBody));
+    wcscpy(newPointer, string);
+    wcscat(newPointer, elseBody);
     free((void *) string);
     free((void *) elseBody);
     string = newPointer;
   }
 
   {
-    char *newPointer = (char *) calloc(sizeof(char), TS_STRING_END + strlen(string) + (indent * 2) + strlen("}\n"));
-    strcpy(newPointer, string);
-    for (u_long indentIndex = 0; indentIndex < indent; indentIndex++) strcat(newPointer, "  ");
-    strcat(newPointer, "}\n");
+    wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), TS_STRING_END + wcslen(string) + (indent * 2) + wcslen((wchar_t *) L"}\n"));
+    wcscpy(newPointer, string);
+    for (u_long indentIndex = 0; indentIndex < indent; indentIndex++) wcscat(newPointer, (wchar_t *) L"  ");
+    wcscat(newPointer, (wchar_t *) L"}\n");
     free(string);
     string = newPointer;
   }

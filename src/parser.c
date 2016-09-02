@@ -1,72 +1,111 @@
 #include <tsc/parser.h>
+#include <tsc/register.h>
 
-static void TS_append_ts_parser_token(TSFile *tsFile, TSParserToken token);
+static void
+TS_append_ts_parser_token(
+    TSFile *tsFile,
+    TSParserToken *token
+);
 
-static void TS_next_line(TSParseData *data);
+static void
+TS_next_line(
+    TSParseData *data
+);
 
-const char *
+wchar_t *
 __attribute__((__malloc__))
 TS_clone_string(
-    const char *string
+    const wchar_t *string
 ) {
-  char *clone = calloc(sizeof(char), strlen(string) + TS_STRING_END);
-  strcpy(clone, string);
+  wchar_t *clone = calloc(sizeof(wchar_t), wcslen(string) + TS_STRING_END);
+  wcscpy(clone, string);
+
   return clone;
 }
 
+TSParserToken *
+TS_build_parser_token(
+    TSTokenType tokenType,
+    TSParseData *tsParseData
+) {
+  TSParserToken *token = TS_NEW_TOKEN;
+  token->tokenType = tokenType;
+  token->position = tsParseData->position;
+  token->character = tsParseData->character;
+  token->line = tsParseData->line;
+  token->visibility = TS_VISIBILITY_SCOPE;
+  token->children = NULL;
+  token->childrenSize = 0;
+  token->parent = tsParseData->parentTSToken;
+  token->data = NULL;
+  tsParseData->parentTSToken = token;
+  return token;
+}
+
 static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
-    TS_VAR, "var", TS_parse_var,
-    TS_LET, "let", TS_parse_let,
-    TS_CONST, "const", TS_parse_const,
-    TS_CLASS, "class", TS_parse_class,
-    TS_FUNCTION, "function", TS_parse_function,
-    TS_ARROW, "=>", TS_parse_arrow,
-    TS_IF, "if", TS_parse_if,
-    TS_ELSE, "else", TS_parse_else,
-    TS_RETURN, "return", TS_parse_return,
-    TS_DECORATOR, "@", TS_parse_decorator,
-    TS_IMPORT, "import", TS_parse_import,
-    TS_EXPORT, "export", TS_parse_export,
-    TS_DEFAULT, "default", TS_parse_default,
-    TS_SCOPE, "{", TS_parse_scope,
-    TS_EXTENDS, "extends", TS_parse_extends,
-    TS_IMPLEMENTS, "implements", TS_parse_implements,
-    TS_NEW, "new", TS_parse_new,
-    TS_INLINE_COMMENT, "//", TS_parse_inline_comment,
-    TS_MULTILINE_COMMENT, "/*", TS_parse_multiline_comment,
+    {TS_VAR,               (wchar_t *) L"var",        TS_parse_var},
+    {TS_LET,               (wchar_t *) L"let",        TS_parse_let},
+    {TS_CONST,             (wchar_t *) L"const",      TS_parse_const},
+    {TS_CLASS,             (wchar_t *) L"class",      TS_parse_class},
+    {TS_FUNCTION,          (wchar_t *) L"function",   TS_parse_function},
+    {TS_ARROW,             (wchar_t *) L"=>",         TS_parse_arrow},
+    {TS_IF,                (wchar_t *) L"if",         TS_parse_if},
+    {TS_ELSE,              (wchar_t *) L"else",       TS_parse_else},
+    {TS_RETURN,            (wchar_t *) L"return",     TS_parse_return},
+    {TS_DECORATOR,         (wchar_t *) L"@",          TS_parse_decorator},
+    {TS_IMPORT,            (wchar_t *) L"import",     TS_parse_import},
+    {TS_EXPORT,            (wchar_t *) L"export",     TS_parse_export},
+    {TS_DEFAULT,           (wchar_t *) L"default",    TS_parse_default},
+    {TS_SCOPE,             (wchar_t *) L"{",          TS_parse_scope},
+    {TS_EXTENDS,           (wchar_t *) L"extends",    TS_parse_extends},
+    {TS_IMPLEMENTS,        (wchar_t *) L"implements", TS_parse_implements},
+    {TS_NEW,               (wchar_t *) L"new",        TS_parse_new},
+    {TS_INLINE_COMMENT,    (wchar_t *) L"//",         TS_parse_inline_comment},
+    {TS_MULTILINE_COMMENT, (wchar_t *) L"/*",         TS_parse_multiline_comment},
 };
 
-void TS_put_back(FILE *stream, const char *value) {
-  for (long i = strlen(value) - 1; i >= 0; --i) {
-    ungetc(value[i], stream);
+unsigned char TS_is_keyword(const wchar_t *str) {
+  for (unsigned short int i = 0; i < KEYWORDS_SIZE; i++) {
+    TSKeyword kw = TS_KEYWORDS[i];
+    if (wcscmp(kw.str, str) == 0) return 1;
+  }
+  return 0;
+}
+
+void TS_put_back(FILE *stream, const wchar_t *value) {
+  for (long i = wcslen(value) - 1; i >= 0; --i) {
+    ungetwc((wint_t) value[i], stream);
   }
 }
 
-unsigned char TS_name_is_valid(const char *name) {
-  char c;
-  for (u_long i = 0, l = strlen(name); i < l; i++) {
+unsigned char
+TS_name_is_valid(
+    const wchar_t *name
+) {
+  wchar_t c;
+  for (u_long i = 0, l = wcslen(name); i < l; i++) {
     c = name[i];
     switch (c) {
-      case '@':
-      case '\'':
-      case '"':
-      case '{':
-      case '}':
-      case '(':
-      case ')':
-      case ',':
-      case '.':
-      case '=':
-      case ':':
-      case ';':
-      case '+':
-      case '-':
-      case '/':
-      case '*':
-      case '\\':
-      case '%':
-      case '\n':
-      case ' ': {
+      case L'@':
+      case L'\'':
+      case L'"':
+      case L'{':
+      case L'}':
+      case L'(':
+      case L')':
+      case L',':
+      case L'.':
+      case L'=':
+      case L':':
+      case L';':
+      case L'+':
+      case L'-':
+      case L'/':
+      case L'*':
+      case L'\\':
+      case L'%':
+      case L'\n':
+      case L' ': {
         return 0;
       }
       default:
@@ -76,207 +115,307 @@ unsigned char TS_name_is_valid(const char *name) {
   return 1;
 }
 
-void TS_push_child(TSParserToken *token, TSParserToken child) {
-  log_to_file("%s\n", "Pushing new TSParserToken child to TSParserToken parent");
-  TSParserToken *newPointer = (TSParserToken *) calloc(sizeof(TSParserToken), token->childrenSize + 1);
-  if (token->children != NULL) memcpy(newPointer, token->children, sizeof(TSParserToken) * token->childrenSize);
+void
+TS_push_child(
+    TSParserToken *token,
+    TSParserToken *child
+) {
+  log_to_file((wchar_t *) L"%s\n", "Pushing new TSParserToken child to TSParserToken parent");
+  TSParserToken **newPointer = (TSParserToken **) calloc(sizeof(TSParserToken *), token->childrenSize + 1);
+  if (token->children != NULL) memcpy(newPointer, token->children, sizeof(TSParserToken *) * token->childrenSize);
   if (token->children != NULL) free(token->children);
   token->children = newPointer;
   token->children[token->childrenSize] = child;
   token->childrenSize += 1;
-  log_to_file("    size increased to: %lu\n", token->childrenSize);
+  log_to_file((wchar_t *) L"    size increased to: %lu\n", token->childrenSize);
 }
 
-static void TS_append_ts_parser_token(TSFile *tsFile, TSParserToken token) {
-  TSParserToken *newPointer = (TSParserToken *) calloc(sizeof(TSParserToken), tsFile->tokensSize + 1);
-  if (tsFile->tokens != NULL) memcpy(newPointer, tsFile->tokens, sizeof(TSParserToken) * tsFile->tokensSize);
+static void
+TS_append_ts_parser_token(
+    TSFile *tsFile,
+    TSParserToken *token
+) {
+  TSParserToken **newPointer = (TSParserToken **) calloc(sizeof(TSParserToken *), tsFile->tokensSize + 1);
+  if (tsFile->tokens != NULL) memcpy(newPointer, tsFile->tokens, sizeof(TSParserToken *) * tsFile->tokensSize);
   if (tsFile->tokens != NULL) free(tsFile->tokens);
   tsFile->tokens = newPointer;
   tsFile->tokens[tsFile->tokensSize] = token;
   tsFile->tokensSize += 1;
 }
 
-TSParserToken TS_parse_ts_token(TSFile *tsFile, TSParseData *data) {
+TSParserToken *
+TS_parse_ts_token(
+    TSFile *tsFile,
+    TSParseData *data
+) {
   for (u_short i = 0; i < KEYWORDS_SIZE; i++) {
     TSKeyword k = TS_KEYWORDS[i];
-    if (strcmp(data->token, k.str) == 0) {
-      log_to_file("  -  data->token = \"%s\"\n  -  k.str = \"%s\"\n", data->token, k.str);
-      TSParserToken token = k.callback(tsFile, data);
+    if (wcscmp(data->token, k.str) == 0) {
+      log_to_file((wchar_t *) L"  -  data->token = \"%ls\"\n  -  k.str = \"%ls\"\n", data->token, k.str);
+      TSParserToken *token = k.callback(tsFile, data);
       return token;
     }
   }
-  TSParserToken t;
-  t.data = (void *) TS_clone_string(data->token);
-  t.children = NULL;
-  t.childrenSize = 0;
-  t.line = data->line;
-  t.character = data->character;
-  t.position = data->position;
-  t.tokenType = TS_UNKNOWN;
+  TSParserToken *t = calloc(sizeof(TSParserToken), 1);
+  t->data = (void *) TS_clone_string(data->token);
+  t->children = NULL;
+  t->childrenSize = 0;
+  t->line = data->line;
+  t->character = data->character;
+  t->position = data->position;
+  t->tokenType = TS_UNKNOWN;
   return t;
 }
 
-static void TS_next_line(TSParseData *data) {
+static void
+TS_next_line(
+    TSParseData *data
+) {
   data->position += 1;
   data->line += 1;
   data->character = 0;
 }
 
-static u_short TS_valid_char_for_token(char c) {
+static u_short
+__attribute__((visibility("hidden")))
+TS_valid_char_for_token(
+    wchar_t c
+) {
   switch (c) {
-    case '@':
-    case '\'':
-    case '"':
-    case '{':
-    case '}':
-    case '(':
-    case ')':
-    case ',':
-    case '.':
-    case '=':
-    case ':':
-    case ';':
-    case '+':
-    case '-':
-    case '/':
-    case '*':
-    case '!':
-    case '|':
-    case '&':
-    case '#':
-    case '\\':
-    case '%':
-    case '\n':
-    case ' ':
+    case L'@':
+    case L'\'':
+    case L'"':
+    case L'{':
+    case L'}':
+    case L'(':
+    case L')':
+    case L',':
+    case L'.':
+    case L'=':
+    case L':':
+    case L';':
+    case L'+':
+    case L'-':
+    case L'/':
+    case L'*':
+    case L'!':
+    case L'|':
+    case L'&':
+    case L'#':
+    case L'\\':
+    case L'%':
+    case L'\n':
+    case L' ':
       return 0;
     default:
       return 1;
   }
 }
 
-volatile const char *TS_getToken(FILE *stream) {
-  volatile char *tok = NULL;
-  volatile char prev = 0;
-  volatile char c = 0;
+volatile const wchar_t *
+TS_getToken(
+    FILE *stream
+) {
+  volatile wchar_t *tok = NULL;
+  volatile wchar_t prev = 0;
+  volatile wchar_t c = 0;
 
   while (!feof(stream)) {
-    c = (char) fgetc(stream);
+    c = (wchar_t) fgetwc(stream);
     switch (c) {
+//      case WEOF:
       case -1:
       case 0: {
         return tok;
       }
-      case '*': {
+      case L'*': {
+        log_to_file(
+            (wchar_t *) L"# '*' character, checking it is end of multiline token...\n"
+        );
         if (tok == NULL) {
-          char next = (char) fgetc(stream);
+          log_to_file(
+              (wchar_t *) L"# tok is NULL\n"
+          );
+          wchar_t next = (wchar_t) fgetwc(stream);
           switch (next) {
-            case '/':
+            case L'/':
               break;
             default: {
-              ungetc(next, stream);
+              ungetwc((wint_t) next, stream);
               next = 0;
               break;
             }
           }
-          tok = (char *) calloc(sizeof(char), (next != 0 ? 2 : 1) + TS_STRING_END);
+          tok = (wchar_t *) calloc(sizeof(wchar_t), (next != 0 ? 2 : 1) + TS_STRING_END);
           tok[0] = c;
           if (next != 0) tok[1] = next;
           return tok;
         } else {
-          ungetc(c, stream);
-          log_to_file("# token: '%s' [single token + else]\n", tok);
+          ungetwc((wint_t) c, stream);
+          log_to_file((wchar_t *) L"# tok isn't null, putting back and returning token\n", tok);
           return tok;
         }
       }
-      case '/': {
+      case L'/': {
+        log_to_file(
+            (wchar_t *) L"# Comment character...\n"
+        );
         if (tok == NULL) {
-          char next = (char) fgetc(stream);
+          wchar_t next = (wchar_t) fgetwc(stream);
           switch (next) {
-            case '*':
-            case '/':
+            case L'*':
+            case L'/':
               break;
             default: {
-              ungetc(next, stream);
+              ungetwc((wint_t) next, stream);
               next = 0;
               break;
             }
           }
-          tok = (char *) calloc(sizeof(char), (next != 0 ? 2 : 1) + TS_STRING_END);
+          tok = (wchar_t *) calloc(sizeof(wchar_t), (next != 0 ? 2 : 1) + TS_STRING_END);
           tok[0] = c;
           if (next != 0) tok[1] = next;
+          log_to_file((wchar_t *) L"# Returning comment token...\n");
           return tok;
         } else {
-          ungetc(c, stream);
-          log_to_file("# token: '%s' [single token + else]\n", tok);
+          ungetwc((wint_t) c, stream);
+          log_to_file((wchar_t *) L"# Putting back and returning token since token is '%ls'...\n", tok);
           return tok;
         }
       }
-      case '@':
-      case '\'':
-      case '"':
-      case '{':
-      case '}':
-      case '(':
-      case ')':
-      case ',':
-      case '.':
-      case '=':
-      case ':':
-      case ';':
-      case '+':
-      case '-':
-      case '!':
-      case '|':
-      case '&':
-      case '#':
-      case '\\':
-      case '%':
-      case '\n': {
+      case L'-':
+      case L'+':
+      case L'|':
+      case L'&': {
+        log_to_file(
+            (wchar_t *) L"# Arithmetic character...\n"
+        );
+        if (tok == NULL || (tok[0] == c && prev == c && wcslen((const wchar_t *) tok) == 1)) {
+          const size_t size = tok == NULL ? 1 : wcslen((const wchar_t *) tok) + 1;
+
+          wchar_t *newPointer = calloc(sizeof(wchar_t), size + TS_STRING_END);
+          if (tok != NULL) wcscpy(newPointer, (const void *) tok);
+          if (tok != NULL) free((void *) tok);
+
+          newPointer[0] = c;
+          if (size == 2) newPointer[1] = c;
+          prev = c;
+
+          tok = newPointer;
+          wchar_t next = (wchar_t) fgetwc(stream);
+
+          ungetwc((wint_t) next, stream);
+
+          if (next != c) return tok;
+        } else {
+          ungetwc((wint_t) c, stream);
+          log_to_file((wchar_t *) L"# token: '%ls' [single token + else]\n", tok);
+          return tok;
+        }
+        break;
+      }
+      case L'=': {
+        log_to_file((wchar_t *) L"# '=' character building token...\n");
+        if (tok == NULL || (tok[0] == c && prev == c)) {
+          const size_t size = tok == NULL ? 1 : wcslen((const wchar_t *) tok) + 1;
+
+          wchar_t *newPointer = calloc(sizeof(wchar_t), size + TS_STRING_END);
+          if (tok != NULL) wcscpy(newPointer, (const void *) tok);
+          if (tok != NULL) free((void *) tok);
+
+          newPointer[0] = c;
+          if (size == 2) newPointer[1] = c;
+          if (size == 3) newPointer[2] = c;
+          prev = c;
+
+          tok = newPointer;
+          wchar_t next = (wchar_t) fgetwc(stream);
+
+          ungetwc((wint_t) next, stream);
+
+          if (next != c) return tok;
+          if (size == 3) return tok;
+        } else {
+          ungetwc((wint_t) c, stream);
+          log_to_file((wchar_t *) L"# Putting back since token ('%ls') exists and contains invalid characters...\n",
+                      tok);
+          return tok;
+        }
+        break;
+      }
+      case L'@':
+      case L'\'':
+      case L'"':
+      case L'{':
+      case L'}':
+      case L'(':
+      case L')':
+      case L',':
+      case L'.':
+      case L':':
+      case L';':
+      case L'!':
+      case L'#':
+      case L'\\':
+      case L'%':
+      case L'\n': {
+        log_to_file((wchar_t *) L"# Special character '%lc', tok is '%ls'\n", c, tok);
         if (tok == NULL) {
-          tok = (char *) calloc(sizeof(char), 1 + TS_STRING_END);
+          tok = (wchar_t *) calloc(sizeof(wchar_t), 1 + TS_STRING_END);
           tok[0] = c;
           return tok;
         } else {
-          ungetc(c, stream);
-          log_to_file("# token: '%s' [single token + else]\n", tok);
+          ungetwc((wint_t) c, stream);
+          log_to_file((wchar_t *) L"# Putting back since token already exists!\n", tok);
           return tok;
         }
       }
-      case ' ': {
+      case L' ': {
         if (tok == NULL) {
-          tok = (char *) calloc(sizeof(char), 1 + TS_STRING_END);
+          log_to_file((wchar_t *) L"# parse space, tok is NULL\n");
+          tok = (wchar_t *) calloc(sizeof(wchar_t), 1 + TS_STRING_END);
           tok[0] = c;
           prev = c;
           break;
+
         } else if (tok[0] == ' ') {
-          u_long size = strlen((const char *) tok);
-          volatile char *newPointer = calloc(sizeof(char), size + 1 + TS_STRING_END);
-          strcpy((char *) newPointer, (const char *) tok);
+          u_long size = wcslen((const wchar_t *) tok);
+          volatile wchar_t *newPointer = calloc(sizeof(wchar_t), size + 1 + TS_STRING_END);
+          wcscpy((wchar_t *) newPointer, (const wchar_t *) tok);
           free((void *) tok);
           tok = newPointer;
           tok[size] = c;
           prev = c;
           break;
-        } else if (strlen((const char *) tok) == 0) {
+
+        } else if (wcslen((const wchar_t *) tok) == 0) {
+          log_to_file((wchar_t *) L"# parse space, tok is empty\n");
           free((void *) tok);
           return NULL;
+
         } else {
-          ungetc(c, stream);
-          log_to_file("# token: '%s' [white + else]\n", tok);
+          ungetwc((wint_t) c, stream);
+          log_to_file((wchar_t *) L"# parse space, tok exists and isn't empty, token: '%ls'\n", tok);
           return tok;
         }
       }
       default: {
         if (TS_valid_char_for_token(prev)) {
-          u_long size = tok ? strlen((const char *) tok) : 0;
-          volatile char *newPointer = (char *) calloc(sizeof(char), size + 1 + TS_STRING_END);
-          if (tok != NULL) strcpy((char *) newPointer, (const char *) tok);
+          log_to_file(
+              (wchar_t *) L"-- parse default, prev was '%lc' and is valid for token, token is: '%ls'\n", prev, tok
+          );
+          const u_long size = tok ? wcslen((const wchar_t *) tok) : 0;
+          volatile wchar_t *newPointerForDefault = (wchar_t *) calloc(sizeof(wchar_t), size + 1 + TS_STRING_END);
+          if (tok != NULL) wcscat((wchar_t *) newPointerForDefault, (const wchar_t *) tok);
           if (tok != NULL) free((void *) tok);
-          tok = newPointer;
+          tok = newPointerForDefault;
           tok[size] = c;
+
         } else {
-          ungetc(c, stream);
-          log_to_file("# token: '%s' [default + else]\n", tok);
+          ungetwc((wint_t) c, stream);
+          log_to_file(
+              (wchar_t *) L"# previous character isn't valid for token, putting current char back and returning token '%ls'\n",
+              tok);
           return tok;
         }
       }
@@ -286,11 +425,11 @@ volatile const char *TS_getToken(FILE *stream) {
     free((void *) tok);
     return NULL;
   }
-  log_to_file("# token: '%s' [done return]\n", tok);
+  log_to_file((wchar_t *) L"# token: '%ls' [done return]\n", tok);
   return tok;
 }
 
-const TSFile
+TSFile *
 TS_parse_file(const char *fileName) {
   FILE *stream = fopen(fileName, "r");
 
@@ -303,53 +442,69 @@ TS_parse_file(const char *fileName) {
   return TS_parse_stream(fileName, stream);
 }
 
-const TSFile
+TSFile *
 TS_parse_stream(
     const char *file,
     FILE *stream
 ) {
-  TSFile tsFile;
-  tsFile.tokens = NULL;
-  tsFile.tokensSize = 0;
-  tsFile.file = file;
+  wchar_t buffer[2048];
+  size_t size = mbstowcs(buffer, file, 2048);
+  TSFile *tsFile = calloc(sizeof(TSFile), 1);
+  tsFile->tokens = NULL;
+  tsFile->tokensSize = 0;
+  tsFile->stream = stream;
+  wchar_t *filename = calloc(sizeof(wchar_t), size);
+  wcscpy(filename, buffer);
+  tsFile->file = filename;
+  TS_register_file(tsFile);
 
   TSParseData data;
-  data.line = 1;
+  data.line = 0;
   data.character = 0;
   data.position = 0;
   data.stream = stream;
+  data.parentTSToken = NULL;
 
-  const char *tok;
+  const wchar_t *tok;
   while (1) {
-    tok = (const char *) TS_getToken(stream);
+    tok = (const wchar_t *) TS_getToken(stream);
     if (tok == NULL) break;
 
     data.token = tok;
     if (data.token[0] == '\n') {
       TS_next_line(&data);
     } else {
-      TSParserToken token = TS_parse_ts_token(&tsFile, &data);
-      if (token.tokenType != TS_UNKNOWN) {
-        TS_append_ts_parser_token(&tsFile, token);
+      TSParserToken *token = TS_parse_ts_token(tsFile, &data);
+      if (token->tokenType != TS_UNKNOWN) {
+        TS_append_ts_parser_token(tsFile, token);
       } else {
-        free(token.data);
+        TS_free_tsToken(token);
       }
     }
 
     free((void *) tok);
   }
+  fclose(tsFile->stream);
+  tsFile->stream = NULL;
+
   return tsFile;
 }
 
-void TS_free_unknown(const TSParserToken token) {
+void
+TS_free_unknown(
+    TSParserToken *token
+) {
   TS_free_children(token);
 
-  if (token.data) free(token.data);
+  if (token->data) free(token->data);
+  free(token);
 }
 
 void
-TS_free_tsToken(const TSParserToken token) {
-  switch (token.tokenType) {
+TS_free_tsToken(
+    TSParserToken *token
+) {
+  switch (token->tokenType) {
     case TS_VAR:
       TS_free_var(token);
       break;
@@ -413,25 +568,35 @@ TS_free_tsToken(const TSParserToken token) {
     case TS_MULTILINE_COMMENT:
       TS_free_multiline_comment(token);
       break;
+    case TS_CONDITION:
+    case TS_ARGUMENT:
     case TS_UNKNOWN:
       TS_free_unknown(token);
+      break;
+    case TS_CALLER:
+      TS_free_caller(token);
       break;
   }
 }
 
-void TS_free_children(const TSParserToken token) {
-  for (u_long childIndex = 0; childIndex < token.childrenSize; childIndex++) {
-    TS_free_tsToken(token.children[childIndex]);
+void
+TS_free_children(
+    TSParserToken *token
+) {
+  for (u_long childIndex = 0; childIndex < token->childrenSize; childIndex++) {
+    TS_free_tsToken(token->children[childIndex]);
   }
-  if (token.childrenSize > 0) free(token.children);
+  if (token->children != NULL) free(token->children);
 }
 
 void
 TS_free_tsFile(
-    const TSFile tsFile
+    const TSFile *tsFile
 ) {
-  for (u_long index = 0; index < tsFile.tokensSize; index++) {
-    TS_free_tsToken(tsFile.tokens[index]);
+  for (u_long index = 0; index < tsFile->tokensSize; index++) {
+    TS_free_tsToken(tsFile->tokens[index]);
   }
-  if (tsFile.tokensSize > 0) free(tsFile.tokens);
+  if (tsFile->file) free(tsFile->file);
+  if (tsFile->tokens != NULL) free(tsFile->tokens);
+  free((void *) tsFile);
 }

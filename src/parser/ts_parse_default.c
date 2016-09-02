@@ -3,26 +3,26 @@
 /**
  * TODO implement
  */
-const TSParserToken TS_parse_default(TSFile *__attribute__((__unused__)) tsFile, TSParseData *tsParseData) {
+TSParserToken *
+TS_parse_default(
+    TSFile *__attribute__((__unused__)) tsFile,
+    TSParseData *tsParseData
+) {
   TS_TOKEN_BEGIN("default");
-  u_long movedBy = strlen(tsParseData->token);
+  u_long movedBy = wcslen(tsParseData->token);
 
-  TSParserToken token;
-  token.tokenType = TS_DEFAULT;
-  token.position = tsParseData->position;
-  token.character = tsParseData->character;
-  token.line = tsParseData->line;
-  token.visibility = TS_VISIBILITY_SCOPE;
-  token.children = NULL;
-  token.childrenSize = 0;
-  token.data = NULL;
+  TSParserToken *token = TS_build_parser_token(TS_DEFAULT, tsParseData);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
+  tsParseData->parentTSToken = token->parent;
   TS_TOKEN_END("default");
   return token;
 }
 
-void TS_free_default(const TSParserToken token) {
-  // TODO
+void
+TS_free_default(
+    TSParserToken *token
+) {
+  free(token);
 }
