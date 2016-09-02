@@ -2,7 +2,9 @@ sudo: required
 dist: xenial
 language: c
 compiler: clang
-group: devel
+group:
+  - devel
+  - stable
 addons:
   apt:
     sources:
