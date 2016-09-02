@@ -8,9 +8,12 @@ addons:
     # add PPAs with more up-to-date toolchains
     - ubuntu-toolchain-r-test
     - llvm-toolchain-precise-3.8
+    - george-edison55/cmake-3.x
     packages:
     # install toolchains
     - clang-3.8
+    - cmake
+    - cmake-data
 branches:
   except:
     - legacy
@@ -22,7 +25,7 @@ before_install:
 script:
   - mkdir -p build
   - cd build
-  - cmake -DCMAKE_C_COMPILER=$(which clang) ..
+  - cmake ..
   - make -j4 
   - ctest
   - ./tsc_test
