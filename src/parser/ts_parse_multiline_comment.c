@@ -46,8 +46,8 @@ TS_parse_multiline_comment(
 
 void
 TS_free_multiline_comment(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   if (token->data != NULL) free(token->data);
-  free(token);
+  free((void *) token);
 }

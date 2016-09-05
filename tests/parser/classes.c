@@ -125,8 +125,8 @@ START_TEST(parse_valid_classes_file)
   methodData = childToken->data;
   ck_assert_ptr_ne(methodData, NULL);
   ck_assert_wstr_eq(methodData->name, L"method_1");
-  ck_assert_ptr_eq(methodData->arguments, NULL);
-  ck_assert_int_eq(methodData->argumentsSize, 0);
+  ck_assert_ptr_eq(childToken->children, NULL);
+  ck_assert_uint_eq(childToken->childrenSize, 0);
   ck_assert_ptr_eq(methodData->returnType, NULL);
 
   // 7
@@ -147,8 +147,8 @@ START_TEST(parse_valid_classes_file)
   methodData = childToken->data;
   ck_assert_ptr_ne(methodData, NULL);
   ck_assert_wstr_eq(methodData->name, L"method_2");;
-  ck_assert_ptr_eq(methodData->arguments, NULL);
-  ck_assert_int_eq(methodData->argumentsSize, 0);
+  ck_assert_ptr_eq(childToken->children, NULL);
+  ck_assert_uint_eq(childToken->childrenSize, 0);
   ck_assert_ptr_eq(methodData->returnType, NULL);
 
   // 8
@@ -169,8 +169,8 @@ START_TEST(parse_valid_classes_file)
   methodData = childToken->data;
   ck_assert_ptr_ne(methodData, NULL);
   ck_assert_wstr_eq(methodData->name, L"method_3");
-  ck_assert_ptr_eq(methodData->arguments, NULL);
-  ck_assert_int_eq(methodData->argumentsSize, 0);
+  ck_assert_ptr_eq(childToken->children, NULL);
+  ck_assert_uint_eq(childToken->childrenSize, 0);
   ck_assert_ptr_eq(methodData->returnType, NULL);
 
   // 9
@@ -191,8 +191,8 @@ START_TEST(parse_valid_classes_file)
   methodData = childToken->data;
   ck_assert_ptr_ne(methodData, NULL);
   ck_assert_wstr_eq(methodData->name, L"method_4");
-  ck_assert_ptr_eq(methodData->arguments, NULL);
-  ck_assert_int_eq(methodData->argumentsSize, 0);
+  ck_assert_ptr_eq(childToken->children, NULL);
+  ck_assert_uint_eq(childToken->childrenSize, 0);
   ck_assert_ptr_eq(methodData->returnType, NULL);
 
   // 10
@@ -223,8 +223,8 @@ START_TEST(parse_valid_classes_file)
   methodData = childToken->data;
   ck_assert_ptr_ne(methodData, NULL);
   ck_assert_wstr_eq(methodData->name, L"bar");
-  ck_assert_ptr_eq(methodData->arguments, NULL);
-  ck_assert_int_eq(methodData->argumentsSize, 0);
+  ck_assert_ptr_eq(childToken->children, NULL);
+  ck_assert_uint_eq(childToken->childrenSize, 0);
   ck_assert_ptr_eq(methodData->returnType, NULL);
 
   // 11

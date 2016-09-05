@@ -22,7 +22,7 @@ TS_parse_default(
 
 void
 TS_free_default(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
-  free(token);
+  free((void *) token);
 }

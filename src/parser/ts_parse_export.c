@@ -77,8 +77,8 @@ TS_parse_export(
 
 void
 TS_free_export(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   TS_free_children(token);
-  free(token);
+  free((void *) token);
 }

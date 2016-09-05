@@ -21,7 +21,7 @@ TS_parse_implements(
 
 void
 TS_free_implements(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
-  free(token);
+  free((void *) token);
 }

@@ -318,12 +318,12 @@ TS_parse_if(
 
 void
 TS_free_if(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   TS_free_children(token);
 
   TSIfData *data = token->ifData;
-  free(token);
+  free((void *) token);
   if (data == NULL) return;
 
   if (data->conditions) {

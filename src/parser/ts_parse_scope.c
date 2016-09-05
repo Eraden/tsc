@@ -70,7 +70,7 @@ TS_parse_scope(
 
 void
 TS_free_scope(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
-  free(token);
+  free((void *) token);
 }

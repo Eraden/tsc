@@ -55,7 +55,7 @@ TS_parse_extends(
 
 void
 TS_free_extends(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
-  free(token);
+  free((void *) token);
 }

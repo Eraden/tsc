@@ -68,8 +68,8 @@ TS_parse_return(
 
 void
 TS_free_return(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   TS_free_children(token);
-  free(token);
+  free((void *) token);
 }

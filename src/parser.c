@@ -72,8 +72,8 @@ unsigned char TS_is_keyword(const wchar_t *str) {
   return 0;
 }
 
-void TS_put_back(FILE *stream, const wchar_t *value) {
-  for (long i = wcslen(value) - 1; i >= 0; --i) {
+void TS_put_back(FILE *stream, volatile const wchar_t *value) {
+  for (long i = wcslen((const wchar_t *) value) - 1; i >= 0; --i) {
     ungetwc((wint_t) value[i], stream);
   }
 }
@@ -216,6 +216,8 @@ volatile const wchar_t *
 TS_getToken(
     FILE *stream
 ) {
+  if (stream == NULL) return NULL;
+
   volatile wchar_t *tok = NULL;
   volatile wchar_t prev = 0;
   volatile wchar_t c = 0;
@@ -436,7 +438,6 @@ TS_parse_file(const char *fileName) {
   if (stream == NULL) {
     fprintf(stderr, "Could not open file '%s' to read!\n", fileName);
     fprintf(stderr, "  failure message: '%s'\n", strerror(errno));
-    exit(EXIT_FAILURE);
   }
 
   return TS_parse_stream(fileName, stream);
@@ -447,15 +448,18 @@ TS_parse_stream(
     const char *file,
     FILE *stream
 ) {
-  wchar_t buffer[2048];
-  size_t size = mbstowcs(buffer, file, 2048);
+  char full_path[4096];
+  realpath(file, full_path);
+  wchar_t buffer[4096];
+  size_t size = mbstowcs(buffer, full_path, 4096);
   TSFile *tsFile = calloc(sizeof(TSFile), 1);
   tsFile->tokens = NULL;
   tsFile->tokensSize = 0;
   tsFile->stream = stream;
-  wchar_t *filename = calloc(sizeof(wchar_t), size);
+  wchar_t *filename = calloc(sizeof(wchar_t), size + 1);
   wcscpy(filename, buffer);
   tsFile->file = filename;
+  tsFile->sanity = stream ? TS_FILE_VALID : TS_FILE_NOT_FOUND;
   TS_register_file(tsFile);
 
   TSParseData data;
@@ -465,8 +469,14 @@ TS_parse_stream(
   data.stream = stream;
   data.parentTSToken = NULL;
 
+  if (tsFile->sanity != TS_FILE_VALID)
+    return tsFile;
+
   const wchar_t *tok;
   while (1) {
+    if (tsFile->sanity != TS_FILE_VALID)
+      return tsFile;
+
     tok = (const wchar_t *) TS_getToken(stream);
     if (tok == NULL) break;
 
@@ -492,17 +502,17 @@ TS_parse_stream(
 
 void
 TS_free_unknown(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   TS_free_children(token);
 
   if (token->data) free(token->data);
-  free(token);
+  free((void *) token);
 }
 
 void
 TS_free_tsToken(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   switch (token->tokenType) {
     case TS_VAR:
@@ -568,8 +578,10 @@ TS_free_tsToken(
     case TS_MULTILINE_COMMENT:
       TS_free_multiline_comment(token);
       break;
-    case TS_CONDITION:
     case TS_ARGUMENT:
+      TS_free_argument(token);
+      break;
+    case TS_CONDITION:
     case TS_UNKNOWN:
       TS_free_unknown(token);
       break;
@@ -581,7 +593,7 @@ TS_free_tsToken(
 
 void
 TS_free_children(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   for (u_long childIndex = 0; childIndex < token->childrenSize; childIndex++) {
     TS_free_tsToken(token->children[childIndex]);

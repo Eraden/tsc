@@ -16,7 +16,6 @@ START_TEST(parse_class_with_complex_fields)
   ck_assert(token->tokenType == TS_CLASS);
   u_long validChildrenSize = (24 * 4) + 4;
   u_long size = token->childrenSize;
-//  printf("%lu == %lu\n\n", validChildrenSize, token->childrenSize);
   ck_assert_ulong_eq(size, validChildrenSize);
 
   child = token->children[childIndex++];

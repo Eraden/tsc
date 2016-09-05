@@ -73,10 +73,10 @@ TS_parse_new(
 
 void
 TS_free_new(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   TS_free_children(token);
 
   if (token->data) free(token->data);
-  free(token);
+  free((void *) token);
 }

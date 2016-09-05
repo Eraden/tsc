@@ -20,7 +20,7 @@ TS_parse_arrow(
 
 void
 TS_free_arrow(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   TS_free_children(token);
   free((void *) token);

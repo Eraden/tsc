@@ -146,8 +146,8 @@ TS_parse_else(
 
 void
 TS_free_else(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   TS_free_children(token);
-  free(token);
+  free((void *) token);
 }

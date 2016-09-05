@@ -52,8 +52,8 @@ TS_parse_inline_comment(
 
 void
 TS_free_inline_comment(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   if (token->content != NULL) free(token->content);
-  free(token);
+  free((void *) token);
 }

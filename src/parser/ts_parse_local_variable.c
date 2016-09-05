@@ -200,12 +200,12 @@ TS_parse_const(
 
 void
 TS_free_var(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   TS_free_children(token);
 
   TSLocalVariableData *data = token->variableData;
-  free(token);
+  free((void *) token);
   if (data == NULL) return;
   if (data->name != NULL) free((void *) data->name);
   if (data->type != NULL) free((void *) data->type);
@@ -215,10 +215,10 @@ TS_free_var(
 
 void
 TS_free_let(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   TSLocalVariableData *data = token->variableData;
-  free(token);
+  free((void *) token);
   if (data == NULL) return;
   if (data->name != NULL) free((void *) data->name);
   if (data->type != NULL) free((void *) data->type);
@@ -228,10 +228,10 @@ TS_free_let(
 
 void
 TS_free_const(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   TSLocalVariableData *data = token->variableData;
-  free(token);
+  free((void *) token);
   if (data == NULL) return;
   if (data->name != NULL) free((void *) data->name);
   if (data->type != NULL) free((void *) data->type);

@@ -35,17 +35,21 @@ ts_syntax_error(
 ) {
   log_error((wchar_t *) L"Syntax error: %ls\n", msg);
   ts_log_position(file, line, character);
-  exit(TS_PARSE_FAILURE_CODE);
 }
 
 void
+__attribute__((__noreturn__))
 ts_token_syntax_error(
     const wchar_t *msg,
-    const TSFile *tsFile,
+    TSFile *tsFile,
     const TSParserToken *token
 ) {
+  tsFile->sanity = TS_FILE_SYNTAX_ERROR;
   fclose(tsFile->stream);
   ts_syntax_error(msg, tsFile->file, token->character, token->line);
+  TS_free_tsToken(token);
+  TS_free_tsFile(tsFile);
+  exit(TS_PARSE_FAILURE_CODE);
 }
 
 
@@ -55,7 +59,7 @@ ts_log_position(
     const u_long character,
     const u_long line
 ) {
-  log_error((wchar_t *) L"      Position: %s:%lu:%lu [line:character]\n", file, line + 1, character);
+  log_error((wchar_t *) L"      Position: %ls:%lu:%lu [file:line:character]\n", file, line + 1, character);
 }
 
 void

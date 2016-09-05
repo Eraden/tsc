@@ -114,9 +114,9 @@ TS_parse_decorator(
 
 void
 TS_free_decorator(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   TS_free_children(token);
   if (token->name) free(token->name);
-  free(token);
+  free((void *) token);
 }

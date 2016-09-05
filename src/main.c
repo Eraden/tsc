@@ -14,5 +14,10 @@ int main(int argc, const char **argv) {
 
   TS_destroy_register();
 
-  return 0;
+  if (tsFile->sanity == TS_FILE_VALID)
+    return 0;
+  else if (tsFile->sanity == TS_FILE_SYNTAX_ERROR)
+    return TS_PARSE_FAILURE_CODE;
+  else
+    return 1;
 }

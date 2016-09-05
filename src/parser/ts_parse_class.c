@@ -101,127 +101,6 @@ TS_parse_class_head(
   tsParseData->character += movedBy;
 }
 
-static TSParserToken *
-__attribute__((visibility("hidden")))
-TS_parse_class_method_argument(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  u_long movedBy = 0;
-  volatile unsigned char proceed = 1;
-  const wchar_t *tok;
-  TSFunctionParseFlag parseFlag = TS_PARSE_FN_ARG_NAME;
-
-  TSLocalVariableData *argumentData = (TSLocalVariableData *) calloc(sizeof(TSLocalVariableData), 1);
-  argumentData->name = NULL;
-  argumentData->value = NULL;
-  argumentData->type = NULL;
-
-  TSParserToken *argument = TS_build_parser_token(TS_ARGUMENT, tsParseData);
-  argument->data = argumentData;
-  argument->visibility = TS_VISIBILITY_SCOPE;
-
-  while (proceed) {
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
-    if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Unexpected end of class method argument", tsFile, argument);
-    }
-
-    switch (tok[0]) {
-      case L' ': {
-        movedBy += wcslen(tok);
-        free((void *) tok);
-        break;
-      }
-      case L'\n': {
-        movedBy += wcslen(tok);
-        free((void *) tok);
-        tsParseData->position += movedBy;
-        tsParseData->character = 0;
-        tsParseData->line += 1;
-        movedBy = 0;
-        break;
-      }
-      case L')': {
-        proceed = 0;
-        TS_put_back(tsParseData->stream, tok);
-        free((void *) tok);
-        break;
-      }
-      case L',': {
-        proceed = 0;
-        movedBy += wcslen(tok);
-        free((void *) tok);
-        break;
-      }
-      case L'=': {
-        movedBy += wcslen(tok);
-        free((void *) tok);
-
-        if (argumentData->name == NULL) {
-          ts_token_syntax_error((wchar_t *) L"Assigning to argument without name", tsFile, argument);
-        }
-        parseFlag = TS_PARSE_FN_ARG_VALUE;
-        break;
-      }
-      case L':': {
-        movedBy += wcslen(tok);
-        free((void *) tok);
-
-        if (argumentData->name == NULL) {
-          ts_token_syntax_error((wchar_t *) L"Declared argument type but argument has no name", tsFile, argument);
-        }
-        if (argumentData->type != NULL) {
-          ts_token_syntax_error((wchar_t *) L"Missing argument type after typing symbol", tsFile, argument);
-        }
-        parseFlag = TS_PARSE_FN_ARG_TYPE;
-
-        break;
-      }
-      default: {
-        if (wcscmp(tok, (const wchar_t *) L"private") == 0) {
-          argument->visibility = TS_VISIBILITY_PRIVATE;
-        } else if (wcscmp(tok, (const wchar_t *) L"protected") == 0) {
-          argument->visibility = TS_VISIBILITY_PROTECTED;
-        } else if (wcscmp(tok, (const wchar_t *) L"public") == 0) {
-          argument->visibility = TS_VISIBILITY_PUBLIC;
-        } else if (parseFlag == TS_PARSE_FN_ARG_NAME) {
-          u_long size = wcslen(tok) + 1;
-          if (argumentData->name != NULL) size += wcslen(argumentData->name);
-          wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
-          if (argumentData->name != NULL) wcscpy(newPointer, argumentData->name);
-          if (argumentData->name != NULL) free((void *) argumentData->name);
-          wcscat(newPointer, tok);
-          argumentData->name = newPointer;
-        } else if (parseFlag == TS_PARSE_FN_ARG_VALUE) {
-          u_long size = wcslen(tok) + 1;
-          if (argumentData->value != NULL)
-            size = size + wcslen(argumentData->value) + wcslen((const wchar_t *) L" ");
-          wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
-          if (argumentData->value != NULL)
-            wcscpy(newPointer, argumentData->value);
-          if (argumentData->value != NULL)
-            wcscat(newPointer, (const wchar_t *) L" ");
-          if (argumentData->value) free((void *) argumentData->value);
-          wcscat(newPointer, tok);
-          argumentData->value = newPointer;
-        } else /*if (parseFlag == TS_PARSE_FN_ARG_TYPE)*/ {
-          argumentData->type = TS_clone_string(tok);
-        }
-
-        movedBy += wcslen(tok);
-        free((void *) tok);
-        break;
-      }
-    }
-  }
-
-  tsParseData->character += movedBy;
-  tsParseData->position += movedBy;
-  tsParseData->parentTSToken = argument->parent;
-  return argument;
-}
-
 static void
 __attribute__((visibility("hidden")))
 TS_parse_class_method(
@@ -287,16 +166,17 @@ TS_parse_class_method(
           tsParseData->position += movedBy;
           movedBy = 0;
 
-          TSParserToken *arg = TS_parse_class_method_argument(tsFile, tsParseData);
+          TSParserToken *arg = TS_parse_argument(tsFile, tsParseData);
 
-          TSParserToken **newPointer = calloc(sizeof(TSParserToken *), methodData->argumentsSize + 1);
+          TSParserToken **newPointer = calloc(sizeof(TSParserToken *), bodyToken->childrenSize + 1);
 
-          if (methodData->arguments != NULL)
-            memcpy(newPointer, methodData->arguments, sizeof(TSParserToken *) * methodData->argumentsSize);
-          if (methodData->arguments != NULL) free(methodData->arguments);
-          methodData->arguments = newPointer;
-          methodData->arguments[methodData->argumentsSize] = arg;
-          methodData->argumentsSize += 1;
+          if (bodyToken->children != NULL) {
+            memcpy(newPointer, bodyToken->children, sizeof(TSParserToken *) * bodyToken->childrenSize);
+            free(bodyToken->children);
+          }
+          bodyToken->children = newPointer;
+          bodyToken->children[bodyToken->childrenSize] = arg;
+          bodyToken->childrenSize += 1;
 
           movedBy += wcslen(tok);
           free((void *) tok);
@@ -394,8 +274,6 @@ TS_parse_class_member(
         bodyToken->tokenType = TS_CLASS_METHOD;
 
         TSFunctionData *methodData = (TSFunctionData *) calloc(sizeof(TSFunctionData), 1);
-        methodData->arguments = NULL;
-        methodData->argumentsSize = 0;
         methodData->name = name;
         methodData->returnType = type;
 
@@ -675,7 +553,7 @@ TS_parse_class(
 
 void
 TS_free_class(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   TS_free_children(token);
   TSClassData *data = token->classData;
@@ -689,14 +567,14 @@ TS_free_class(
 
 void
 TS_free_class_field(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   TS_free_var(token);
 }
 
 void
 TS_free_class_method(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
   TS_free_function(token);
 }

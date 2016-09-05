@@ -5,6 +5,7 @@ PROJECT(tsc)
 
 SET(
     PARSER_SOURCES
+    src/parser/ts_parse_argument.c
     src/parser/ts_parse_arrow.c
     src/parser/ts_parse_class.c
     src/parser/ts_parse_extends.c

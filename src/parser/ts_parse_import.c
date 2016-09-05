@@ -22,7 +22,7 @@ TS_parse_import(
 
 void
 TS_free_import(
-    TSParserToken *token
+    const TSParserToken *token
 ) {
-  free(token);
+  free((void *) token);
 }
