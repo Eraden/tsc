@@ -17,6 +17,7 @@ SET(
     src/parser/ts_parse_switch.c
     src/parser/ts_parse_case.c
     src/parser/ts_parse_default.c
+    src/parser/ts_parse_break.c
     src/parser/ts_parse_return.c
     src/parser/ts_parse_local_variable.c
     src/parser/ts_parse_decorator.c
@@ -55,18 +56,18 @@ SET(
     TEST_SOURCES
     ${SOURCE_FILES}
     tests/test.c
-    tests/parser/variables.c
-    tests/parser/functions.c
-    tests/parser/if_conditions.c
-    tests/parser/else_conditions.c
+    tests/parser/parse_variables.c
+    tests/parser/parse_function.c
+    tests/parser/parse_if.c
+    tests/parser/parse_else.c
     tests/parser/classes.c
     tests/parser/class/multiple_instance_methods.c
     tests/parser/class/multiple_instance_fields.c
-    tests/parser/return_keyword.c
+    tests/parser/parse_return.c
     tests/parser/parse_exports.c
-    tests/parser/inline_comment.c
-    tests/parser/multiline_comment.c
-    tests/parser/new_keyword.c
+    tests/parser/parse_inline_comment.c
+    tests/parser/parse_multiline_comment.c
+    tests/parser/parse_new.c
     tests/parser/parse_decorator.c
     tests/parser/parse_switch.c
 )

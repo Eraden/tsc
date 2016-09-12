@@ -1,4 +1,4 @@
-#include "./return_keyword.h"
+#include "parse_return.h"
 
 START_TEST(parse_valid_return)
   TSFile *tsFile = TS_parse_file("./examples/return/valid.ts");

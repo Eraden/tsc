@@ -64,6 +64,7 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     {TS_MULTILINE_COMMENT, (wchar_t *) L"/*",         TS_parse_multiline_comment},
     {TS_SWITCH,            (wchar_t *) L"switch",     TS_parse_switch},
     {TS_CASE,              (wchar_t *) L"case",       TS_parse_case},
+    {TS_BREAK,             (wchar_t *) L"break",      TS_parse_break},
 };
 
 unsigned char TS_is_keyword(const wchar_t *str) {
@@ -603,6 +604,9 @@ TS_free_tsToken(
       break;
     case TS_CASE:
       TS_free_case(token);
+      break;
+    case TS_BREAK:
+      TS_free_break(token);
       break;
   }
 }

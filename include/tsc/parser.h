@@ -26,33 +26,34 @@ typedef enum eTSFileSanity {
 }  __attribute__ ((__packed__)) TSFileSanity;
 
 typedef enum eTSTokenType {
-  TS_VAR = 0x1,
-  TS_LET = 0x2,
-  TS_CONST = 0x3,
-  TS_CLASS = 0x4,
-  TS_FUNCTION = 0x5,
-  TS_ARROW = 0x6,
-  TS_IF = 0x7,
-  TS_ELSE = 0x8,
-  TS_RETURN = 0x9,
-  TS_DECORATOR = 0x10,
-  TS_IMPORT = 0x11,
-  TS_EXPORT = 0x12,
-  TS_DEFAULT = 0x13,
-  TS_SCOPE = 0x14,
-  TS_EXTENDS = 0x15,
-  TS_IMPLEMENTS = 0x16,
-  TS_NEW = 0x17,
-  TS_CLASS_FIELD = 0x18,
-  TS_CLASS_METHOD = 0x19,
-  TS_INLINE_COMMENT = 0x20,
-  TS_MULTILINE_COMMENT = 0x21,
-  TS_CONDITION = 0x22,
-  TS_ARGUMENT = 0x23,
-  TS_CALLER = 0x24,
-  TS_SWITCH = 0x25,
-  TS_CASE = 0x26,
-  TS_UNKNOWN = 0x0,
+  TS_VAR = 1,
+  TS_LET = 2,
+  TS_CONST = 3,
+  TS_CLASS = 4,
+  TS_FUNCTION = 5,
+  TS_ARROW = 6,
+  TS_IF = 7,
+  TS_ELSE = 8,
+  TS_RETURN = 9,
+  TS_DECORATOR = 10,
+  TS_IMPORT = 11,
+  TS_EXPORT = 12,
+  TS_DEFAULT = 13,
+  TS_SCOPE = 14,
+  TS_EXTENDS = 15,
+  TS_IMPLEMENTS = 16,
+  TS_NEW = 17,
+  TS_CLASS_FIELD = 18,
+  TS_CLASS_METHOD = 19,
+  TS_INLINE_COMMENT = 20,
+  TS_MULTILINE_COMMENT = 21,
+  TS_CONDITION = 22,
+  TS_ARGUMENT = 23,
+  TS_CALLER = 24,
+  TS_SWITCH = 25,
+  TS_CASE = 26,
+  TS_BREAK = 27,
+  TS_UNKNOWN = 0,
 } __attribute__ ((__packed__)) TSTokenType;
 
 typedef enum sTSParseArgumentFlag {
@@ -96,7 +97,7 @@ typedef struct sTSKeyword {
   TS_token_build_fn callback;
 } TSKeyword;
 
-#define KEYWORDS_SIZE 21
+#define KEYWORDS_SIZE 22
 
 typedef struct sTSLocalVariableData {
   const wchar_t *name;
@@ -178,6 +179,9 @@ void TS_free_switch(const TSParserToken *token);
 
 TSParserToken *TS_parse_case(TSFile *tsFile, TSParseData *tsParseData);
 void TS_free_case(const TSParserToken *token);
+
+TSParserToken *TS_parse_break(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_break(const TSParserToken *token);
 
 TSParserToken *TS_parse_argument(TSFile *tsFile, TSParseData *tsParseData);
 void TS_free_argument(const TSParserToken *token);

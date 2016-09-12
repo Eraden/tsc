@@ -1,4 +1,4 @@
-#include "./inline_comment.h"
+#include "parse_inline_comment.h"
 
 START_TEST(parse_valid_inline_comment)
   TSFile *tsFile = TS_parse_file("./examples/inline_comment/valid.ts");

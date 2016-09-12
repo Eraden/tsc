@@ -1,4 +1,4 @@
-#include "./if_conditions.h"
+#include "parse_if.h"
 
 START_TEST(parse_valid_else_condition)
   TSFile *tsFile = TS_parse_file("./examples/else/valid.ts");

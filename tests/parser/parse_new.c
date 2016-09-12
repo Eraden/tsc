@@ -1,4 +1,4 @@
-#include "./new_keyword.h"
+#include "parse_new.h"
 
 START_TEST(parse_valid_new_keyword)
   TSFile *tsFile = TS_parse_file("./examples/new/valid.ts");

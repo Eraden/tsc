@@ -181,7 +181,6 @@ TS_parse_switch_body(
             break;
           }
           default: {
-            fprintf(stderr, "%i\n", child->tokenType);
             ts_token_syntax_error(
                 (const wchar_t *) L"Unexpected token while parsing switch body",
                 tsFile,
@@ -262,11 +261,8 @@ TS_parse_switch(
 
   TS_parse_switch_skip_to_body(tsFile, tsParseData);
 
-  volatile unsigned long failure = 0;
-
   while (1) {
     TS_LOOP_SANITY_CHECK(tsFile)
-    if (failure++ > 2) exit(100);
 
     child = TS_parse_switch_body(tsFile, tsParseData);
     if (child == NULL) break;

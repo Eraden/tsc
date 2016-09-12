@@ -1,4 +1,4 @@
-#include "./multiline_comment.h"
+#include "parse_multiline_comment.h"
 
 START_TEST(parse_valid_multiline_comment)
   TSFile *tsFile = TS_parse_file("./examples/multiline_comment/valid.ts");

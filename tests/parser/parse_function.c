@@ -1,4 +1,4 @@
-#include "./functions.h"
+#include "parse_function.h"
 
 START_TEST(parse_valid_functions)
   TSFile *tsFile = TS_parse_file("./examples/functions/valid.ts");
