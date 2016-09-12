@@ -103,7 +103,7 @@ TS_parse_decorator(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TS_TOKEN_BEGIN("component");
+  TS_TOKEN_BEGIN("decorator");
   u_long movedBy = wcslen(tsParseData->token);
 
   TSParserToken *token = TS_build_parser_token(TS_DECORATOR, tsParseData);
@@ -119,7 +119,7 @@ TS_parse_decorator(
 
   // parse
   tsParseData->parentTSToken = token->parent;
-  TS_TOKEN_END("component");
+  TS_TOKEN_END("decorator");
   return token;
 }
 

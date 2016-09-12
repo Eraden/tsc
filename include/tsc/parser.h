@@ -4,7 +4,9 @@
 #include <tsc/log.h>
 
 #define TS_TOKEN_BEGIN(token) log_to_file(L"-> parsing as %s\n", token);
+#define TS_TOKEN_SECTION_BEGIN(token) log_to_file(L"    -> parsing as %s\n", token);
 #define TS_TOKEN_END(token) log_to_file(L"-> end %s\n", token);
+#define TS_TOKEN_SECTION_END(token) log_to_file(L"    -> end %s\n", token);
 #define TS_STRING_END 1
 #define TS_NEW_TOKEN calloc(sizeof(TSParserToken), 1)
 #define TS_LOOP_SANITY_CHECK(file) if (file->sanity != TS_FILE_VALID) break;
@@ -48,6 +50,8 @@ typedef enum eTSTokenType {
   TS_CONDITION = 0x22,
   TS_ARGUMENT = 0x23,
   TS_CALLER = 0x24,
+  TS_SWITCH = 0x25,
+  TS_CASE = 0x26,
   TS_UNKNOWN = 0x0,
 } __attribute__ ((__packed__)) TSTokenType;
 
@@ -92,7 +96,7 @@ typedef struct sTSKeyword {
   TS_token_build_fn callback;
 } TSKeyword;
 
-#define KEYWORDS_SIZE 19
+#define KEYWORDS_SIZE 21
 
 typedef struct sTSLocalVariableData {
   const wchar_t *name;
@@ -165,6 +169,15 @@ unsigned char TS_name_is_valid(const wchar_t *name);
 void TS_push_child(TSParserToken *token, TSParserToken *child);
 
 void TS_free_unknown(const TSParserToken *token);
+
+TSParserToken *TS_parse_condition(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_condition(const TSParserToken *token);
+
+TSParserToken *TS_parse_switch(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_switch(const TSParserToken *token);
+
+TSParserToken *TS_parse_case(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_case(const TSParserToken *token);
 
 TSParserToken *TS_parse_argument(TSFile *tsFile, TSParseData *tsParseData);
 void TS_free_argument(const TSParserToken *token);

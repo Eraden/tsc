@@ -11,6 +11,7 @@
 #include "./parser/multiline_comment.h"
 #include "./parser/new_keyword.h"
 #include "./parser/parse_decorator.h"
+#include "./parser/parse_switch.h"
 
 char **only = NULL;
 u_long onlySize = 0;
@@ -37,6 +38,7 @@ Suite *class_suite(void) {
   if (hasOnly("export")) parse_exports_suite(suite);
   if (hasOnly("return")) parse_return_keyword_suite(suite);
   if (hasOnly("decorator")) parse_decorator_suite(suite);
+  if (hasOnly("switch")) parse_switch_suite(suite);
   return suite;
 }
 

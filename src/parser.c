@@ -13,7 +13,6 @@ TS_next_line(
 );
 
 wchar_t *
-__attribute__((__malloc__))
 TS_clone_string(
     const wchar_t *string
 ) {
@@ -63,6 +62,8 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     {TS_NEW,               (wchar_t *) L"new",        TS_parse_new},
     {TS_INLINE_COMMENT,    (wchar_t *) L"//",         TS_parse_inline_comment},
     {TS_MULTILINE_COMMENT, (wchar_t *) L"/*",         TS_parse_multiline_comment},
+    {TS_SWITCH,            (wchar_t *) L"switch",     TS_parse_switch},
+    {TS_CASE,              (wchar_t *) L"case",       TS_parse_case},
 };
 
 unsigned char TS_is_keyword(const wchar_t *str) {
@@ -589,11 +590,19 @@ TS_free_tsToken(
       TS_free_argument(token);
       break;
     case TS_CONDITION:
+      TS_free_condition(token);
+      break;
     case TS_UNKNOWN:
       TS_free_unknown(token);
       break;
     case TS_CALLER:
       TS_free_caller(token);
+      break;
+    case TS_SWITCH:
+      TS_free_switch(token);
+      break;
+    case TS_CASE:
+      TS_free_case(token);
       break;
   }
 }

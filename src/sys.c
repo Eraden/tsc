@@ -8,9 +8,11 @@ FILE *TS_output_stream = NULL;
 
 static TSVerbosity __attribute__((visibility("hidden"))) ts_current_log_level = TS_VERBOSITY_ERROR;
 
+static void __attribute__((visibility("hidden"))) TS_info_msg(void);
+static void __attribute__((visibility("hidden"))) ts_syntax_error(const wchar_t *msg, const wchar_t *file, const u_long line, const u_long character);
+
 static void
-__attribute__((visibility("hidden")))
-TS_info_msg() {
+TS_info_msg(void) {
   printf(
       "Native TypeScript Compiler\n"
           "Version: %i.%i.%i\n"
@@ -26,7 +28,6 @@ TS_info_msg() {
 }
 
 static void
-__attribute__((visibility("hidden")))
 ts_syntax_error(
     const wchar_t *msg,
     const wchar_t *file,

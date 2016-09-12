@@ -6,6 +6,7 @@ PROJECT(tsc)
 SET(
     PARSER_SOURCES
     src/parser/ts_parse_argument.c
+    src/parser/ts_parse_condition.c
     src/parser/ts_parse_arrow.c
     src/parser/ts_parse_class.c
     src/parser/ts_parse_extends.c
@@ -67,6 +68,7 @@ SET(
     tests/parser/multiline_comment.c
     tests/parser/new_keyword.c
     tests/parser/parse_decorator.c
+    tests/parser/parse_switch.c
 )
 
 SET(
