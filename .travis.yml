@@ -12,6 +12,7 @@ addons:
     packages:
     - clang-3.8
     - cmake
+    - texinfo
 branches:
   except:
     - legacy
@@ -22,8 +23,7 @@ before_install:
   - bash ./.travis/install.sh
 script:
   - bash ./.travis/build.sh
-  - ctest
-  - ./tsc_test
+  - bash ./.travis/check.sh
 matrix:
   include:
     - compiler: clang

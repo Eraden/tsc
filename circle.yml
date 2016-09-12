@@ -1,0 +1,10 @@
+dependencies:
+  cache_directories:
+    - tmp/cmake-3.6.1
+  override:
+    - bash ./.travis/install.sh
+test:
+  pre:
+    - bash ./.travis/build.sh
+  override:
+    - bash ./.travis/check.sh

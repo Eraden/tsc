@@ -1,4 +1,4 @@
-# TypeScript Compiler
+# TypeScript Compiler [![CircleCI](https://circleci.com/gh/Eraden/tsc.svg?style=shield&circle-token=14ccc05cdfb02c1568196ff10be25121a8bddaf7)](https://circleci.com/gh/Eraden/tsc)
 
 This is C typescript compiler. It can compile typescript file faster than normal tsc provided by Microsoft.
 
