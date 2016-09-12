@@ -13,10 +13,13 @@ TS_parse_function_arguments(
   volatile unsigned char proceed = 1;
 
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
       ts_token_syntax_error((wchar_t *) L"Unexpected end of function argument", tsFile, token);
+      break;
     }
 
     if (!hadStartBracket) {
@@ -29,6 +32,7 @@ TS_parse_function_arguments(
       } else {
         free((void *) tok);
         ts_token_syntax_error((wchar_t *) L"Function arguments starts before bracket", tsFile, token);
+        break;
       }
     }
 
@@ -54,16 +58,15 @@ TS_parse_function_arguments(
       }
 
       default: {
-        TS_put_back(tsParseData->stream, tok);
-        tsParseData->token = tok;
+        TS_put_back(tsFile->stream, tok);
+        free((void *) tok);
+
         tsParseData->character += movedBy;
         tsParseData->position += movedBy;
         movedBy = 0;
 
         TSParserToken *arg = TS_parse_argument(tsFile, tsParseData);
         TS_push_child(token, arg);
-
-        free((void *) tok);
         break;
       }
     }
@@ -88,15 +91,17 @@ TS_parse_function_lookup_return_type(
 
   proceed = 1;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      free((void *) tok);
       ts_token_syntax_error(
           (wchar_t *) L"Unexpected end of stream while looking for function return type",
           tsFile,
           token
       );
+      break;
     }
 
     switch (tok[0]) {
@@ -134,6 +139,7 @@ TS_parse_function_lookup_return_type(
             tsFile,
             token
         );
+        proceed = 0;
       }
     }
   }
@@ -141,6 +147,8 @@ TS_parse_function_lookup_return_type(
   if (foundColon == 1) {
     proceed = 1;
     while (proceed) {
+      TS_LOOP_SANITY_CHECK(tsFile)
+
       tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
       if (tok == NULL) {
@@ -149,6 +157,7 @@ TS_parse_function_lookup_return_type(
             tsFile,
             token
         );
+        break;
       }
 
       switch (tok[0]) {
@@ -173,10 +182,11 @@ TS_parse_function_lookup_return_type(
                 tsFile,
                 token
             );
+          } else {
+            movedBy += wcslen(tok);
+            free((void *) tok);
           }
           proceed = 0;
-          movedBy += wcslen(tok);
-          free((void *) tok);
           break;
         }
         default: {
@@ -187,20 +197,21 @@ TS_parse_function_lookup_return_type(
                 tsFile,
                 token
             );
+            proceed = 0;
           }
-
-          if (!TS_name_is_valid(tok)) {
+          else if (!TS_name_is_valid(tok)) {
             free((void *) tok);
             ts_token_syntax_error(
                 (wchar_t *) L"Invalid type name for function return type!",
                 tsFile,
                 token
             );
+            proceed = 0;
+          } else {
+            data->returnType = TS_clone_string(tok);
+            movedBy += wcslen(tok);
+            free((void *) tok);
           }
-
-          data->returnType = TS_clone_string(tok);
-          movedBy += wcslen(tok);
-          free((void *) tok);
           break;
         }
       }
@@ -225,6 +236,8 @@ TS_parse_function_body(
   proceed = 1;
 
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
@@ -233,6 +246,7 @@ TS_parse_function_body(
           tsFile,
           token
       );
+      break;
     }
     switch (tok[0]) {
       case L'\n': {
@@ -303,6 +317,8 @@ TS_parse_function(
   volatile unsigned char proceed = 1;
 
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
@@ -311,6 +327,7 @@ TS_parse_function(
           tsFile,
           token
       );
+      break;
     }
 
     switch (tok[0]) {
@@ -357,6 +374,7 @@ TS_parse_function(
                   tsFile,
                   token
               );
+              proceed = 0;
             }
           }
         } else {
@@ -366,6 +384,7 @@ TS_parse_function(
               tsFile,
               token
           );
+          proceed = 0;
         }
         break;
       }
@@ -373,7 +392,6 @@ TS_parse_function(
         if (TS_name_is_valid(tok)) {
           functionData->name = TS_clone_string(tok);
           free((void *) tok);
-          proceed = 0;
         } else {
           free((void *) tok);
           ts_token_syntax_error(
@@ -382,6 +400,7 @@ TS_parse_function(
               token
           );
         }
+        proceed = 0;
         break;
       }
     }

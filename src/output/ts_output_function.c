@@ -6,7 +6,7 @@ static void
 __attribute(( visibility("hidden")))
 __attribute__(( section("output-function")))
 TS_print_for_function_head(
-    const TSFile *__attribute__((__unused__)) tsFile,
+    TSFile *__attribute__((__unused__)) tsFile,
     const TSParserToken *token,
     const u_long indent,
     TSOutputSettings outputSettings
@@ -118,7 +118,7 @@ static void
 __attribute(( visibility("hidden")))
 __attribute__(( section("output-function")))
 TS_print_for_function_body(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     const TSParserToken *token,
     const u_long indent,
     const TSParserToken *tsParserToken,
@@ -131,16 +131,20 @@ TS_print_for_function_body(
     TSParserToken *tsArgumentToken = *children;
     if (tsArgumentToken->tokenType == TS_VAR && tsArgumentToken->data != NULL) {
       arg = tsArgumentToken->data;
-      u_long argSize = sizeof(arg->name);
+      u_long argSize = wcslen(arg->name);
       u_char isSpread = (u_char) (argSize > 3 && arg->name[0] == '.' && arg->name[1] == '.' && arg->name[2] == '.');
+
       if (isSpread && hadSpread) {
         ts_token_syntax_error((wchar_t *) L"Spread argument declared twice!", tsFile, tsParserToken);
-      }
-      if (!hadSpread) hadSpread = isSpread;
-      if (isSpread) {
-        TS_print_for_function_spread_arg(indent, token, arg, outputSettings);
+        break;
+
       } else {
-        TS_print_for_function_arg_default(indent, arg, outputSettings);
+        if (!hadSpread) hadSpread = isSpread;
+        if (isSpread) {
+          TS_print_for_function_spread_arg(indent, token, arg, outputSettings);
+        } else {
+          TS_print_for_function_arg_default(indent, arg, outputSettings);
+        }
       }
     }
     children += 1;
@@ -156,7 +160,7 @@ TS_print_for_function_body(
 void
 __attribute__(( section("output-function")))
 TS_print_from_function(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
@@ -177,7 +181,7 @@ static u_long
 __attribute(( visibility("hidden")))
 __attribute__(( section("output-function")))
 TS_output_measure_function_head(
-    const TSFile *__attribute__((__unused__)) tsFile,
+    TSFile *__attribute__((__unused__)) tsFile,
     const u_long indent,
     const TSParserToken *token
 ) {
@@ -209,7 +213,7 @@ static wchar_t *
 __attribute(( visibility("hidden")))
 __attribute__(( section("output-function")))
 TS_string_for_function_head(
-    const TSFile *__attribute__((__unused__)) tsFile,
+    TSFile *__attribute__((__unused__)) tsFile,
     const TSParserToken *token,
     const u_long indent,
     const u_long size
@@ -338,7 +342,7 @@ static wchar_t *
 __attribute(( visibility("hidden")))
 __attribute__(( section("output-function")))
 TS_string_for_function_body(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     const TSParserToken *token,
     const u_long indent,
     wchar_t *string,
@@ -350,29 +354,33 @@ TS_string_for_function_body(
     TSParserToken *tsArgumentToken = token->children[argumentIndex];
     if (tsArgumentToken->tokenType == TS_ARGUMENT && tsArgumentToken->data != NULL) {
       arg = tsArgumentToken->variableData;
-      u_long argSize = sizeof(arg->name);
+      u_long argSize = wcslen(arg->name);
       u_char isSpread = (u_char) (argSize > 3 && arg->name[0] == '.' && arg->name[1] == '.' && arg->name[2] == '.');
+
       if (isSpread && hadSpread) {
         ts_token_syntax_error((wchar_t *) L"Spread argument declared twice!", tsFile, token);
-      }
-      if (!hadSpread) hadSpread = isSpread;
-      if (isSpread) {
-        wchar_t *spreadArg = TS_string_for_function_spread_arg(indent, token, arg);
-        wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), wcslen(string) + wcslen(spreadArg) + 1);
-        wcscpy(newPointer, string);
-        wcscat(newPointer, spreadArg);
-        free(string);
-        string = newPointer;
+        break;
+
       } else {
-        wchar_t *defaultValue = TS_string_for_function_arg_default(indent, arg);
-        if (defaultValue != NULL) {
-          const u_long defaultValueSize = wcslen(defaultValue);
-          const u_long stringSize = wcslen(string);
-          wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), stringSize + defaultValueSize + 1);
+        if (!hadSpread) hadSpread = isSpread;
+        if (isSpread) {
+          wchar_t *spreadArg = TS_string_for_function_spread_arg(indent, token, arg);
+          wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), wcslen(string) + wcslen(spreadArg) + 1);
           wcscpy(newPointer, string);
-          wcscat(newPointer, defaultValue);
+          wcscat(newPointer, spreadArg);
           free(string);
           string = newPointer;
+        } else {
+          wchar_t *defaultValue = TS_string_for_function_arg_default(indent, arg);
+          if (defaultValue != NULL) {
+            const u_long defaultValueSize = wcslen(defaultValue);
+            const u_long stringSize = wcslen(string);
+            wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), stringSize + defaultValueSize + 1);
+            wcscpy(newPointer, string);
+            wcscat(newPointer, defaultValue);
+            free(string);
+            string = newPointer;
+          }
         }
       }
     }
@@ -399,7 +407,7 @@ TS_string_for_function_body(
 const wchar_t *
 __attribute__(( section("output-function")))
 TS_string_from_function(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {

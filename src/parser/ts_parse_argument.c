@@ -20,10 +20,14 @@ TS_parse_argument(
   TSParseArgumentFlag parseFlag = TS_PARSE_ARG_NAME;
 
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    log_to_file((wchar_t *) L"-- Argument token: '%ls'\n", tok);
 
     if (tok == NULL) {
       ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing argument", tsFile, argument);
+      break;
     }
 
     switch (tok[0]) {
@@ -41,14 +45,20 @@ TS_parse_argument(
         break;
       }
       case L')': {
-        if (parseFlag == TS_PARSE_ARG_VALUE && data->value == NULL)
+        if (parseFlag == TS_PARSE_ARG_VALUE && data->value == NULL) {
+          free((void *) tok);
           ts_token_syntax_error((wchar_t *) L"Value for argument is missing", tsFile, argument);
-
-        if (parseFlag == TS_PARSE_ARG_TYPE && data->type == NULL)
+          break;
+        }
+        else if (parseFlag == TS_PARSE_ARG_TYPE && data->type == NULL) {
+          free((void *) tok);
           ts_token_syntax_error((wchar_t *) L"Type for argument is missing", tsFile, argument);
+          break;
+        } else {
+          TS_put_back(tsParseData->stream, tok);
+          free((void *) tok);
+        }
 
-        TS_put_back(tsParseData->stream, tok);
-        free((void *) tok);
         proceed = 0;
         break;
       }
@@ -58,22 +68,30 @@ TS_parse_argument(
 
         if (data->name == NULL) {
           ts_token_syntax_error((wchar_t *) L"Assigning to argument without name", tsFile, argument);
+          proceed = 0;
+        } else {
+          parseFlag = TS_PARSE_ARG_VALUE;
         }
-        parseFlag = TS_PARSE_ARG_VALUE;
         break;
       }
       case L',': {
         movedBy += wcslen(tok);
         free((void *) tok);
 
-        if (parseFlag == TS_PARSE_ARG_VALUE && data->value == NULL)
+        if (parseFlag == TS_PARSE_ARG_VALUE && data->value == NULL) {
           ts_token_syntax_error((wchar_t *) L"Value for argument is missing", tsFile, argument);
+          break;
+        }
 
-        if (parseFlag == TS_PARSE_ARG_TYPE && data->type == NULL)
+        else if (parseFlag == TS_PARSE_ARG_TYPE && data->type == NULL) {
           ts_token_syntax_error((wchar_t *) L"Value for argument is missing", tsFile, argument);
+          break;
+        }
 
-        if (data->name == NULL)
+        else if (data->name == NULL) {
           ts_token_syntax_error((wchar_t *) L"Declared argument as next but previous has no name", tsFile, argument);
+          break;
+        }
 
         proceed = 0;
 
@@ -83,11 +101,20 @@ TS_parse_argument(
         movedBy += wcslen(tok);
         free((void *) tok);
 
-        if (data->name == NULL)
-          ts_token_syntax_error((wchar_t *) L"Unexpected argument type definition. Argument has no name", tsFile, argument);
+        if (data->name == NULL) {
+          ts_token_syntax_error(
+              (wchar_t *) L"Unexpected argument type definition. Argument has no name",
+              tsFile, argument
+          );
+          proceed = 0;
 
-        if (data->type != NULL)
-          ts_token_syntax_error((wchar_t *) L"Unexpected argument type definition. Type was already declared", tsFile, argument);
+        } else if (data->type != NULL) {
+          ts_token_syntax_error(
+              (wchar_t *) L"Unexpected argument type definition. Type was already declared",
+              tsFile, argument
+          );
+          proceed = 0;
+        }
         parseFlag = TS_PARSE_ARG_TYPE;
 
         break;

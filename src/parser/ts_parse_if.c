@@ -14,9 +14,12 @@ TS_parse_if_body(
   u_long movedBy = 0;
   volatile unsigned char proceed = 1;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
       ts_token_syntax_error((wchar_t *) L"Unexpected end of `if` body while looking for brackets", tsFile, token);
+      break;
     }
 
     switch (tok[0]) {
@@ -64,6 +67,8 @@ TS_parse_if_body(
 
   proceed = 1;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
       ts_token_syntax_error(
@@ -71,6 +76,7 @@ TS_parse_if_body(
           tsFile,
           token
       );
+      break;
     }
     switch (tok[0]) {
       case L' ': {
@@ -94,6 +100,8 @@ TS_parse_if_body(
               tsFile,
               token
           );
+          proceed = 0;
+          break;
         }
         movedBy += wcslen(tok);
         free((void *) tok);
@@ -143,10 +151,13 @@ TS_parse_if_conditions(
   TSIfData *data = token->ifData;
   volatile unsigned char proceed = 1;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
       ts_token_syntax_error((wchar_t *) L"Unexpected end of `if` conditions", tsFile, token);
+      break;
     }
 
     switch (tok[0]) {
@@ -171,6 +182,8 @@ TS_parse_if_conditions(
       }
       default: {
         ts_token_syntax_error((wchar_t *) L"Unexpected token in `if` conditions", tsFile, token);
+        proceed = 0;
+        break;
       }
     }
   }
@@ -178,9 +191,12 @@ TS_parse_if_conditions(
 
   proceed = 1;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
       ts_token_syntax_error((wchar_t *) L"Unexpected end of `if` conditions", tsFile, token);
+      break;
     }
     switch (tok[0]) {
       case L' ': {
@@ -200,7 +216,6 @@ TS_parse_if_conditions(
       }
       case L')': {
         if (data->conditionsSize == 0) {
-          free((void *) tok);
           ts_token_syntax_error(
               (const wchar_t *) L"Unexpected end of `if` conditions. No condition given!",
               tsFile,
@@ -248,6 +263,8 @@ TS_lookup_else(
   const wchar_t *tok;
   volatile unsigned char proceed = 1;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
       return;

@@ -6,7 +6,7 @@ void
 __attribute(( visibility("hidden") ))
 __attribute__(( section("output-return") ))
 ts_print_for_return_body(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     const TSParserToken *tsParserToken,
     const TSOutputSettings outputSettings
 ) {
@@ -25,7 +25,7 @@ ts_print_for_return_body(
 
 void
 ts_print_for_return(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     TSParserToken *tsParserToken,
     TSOutputSettings __attribute__((__weak__)) outputSettings
 ) {
@@ -42,7 +42,7 @@ static const wchar_t *
 __attribute(( visibility("hidden") ))
 __attribute__(( section("output-return") ))
 ts_string_for_return_body(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     const TSParserToken *tsParserToken,
     TSOutputSettings __attribute__((__weak__)) outputSettings
 ) {
@@ -76,7 +76,7 @@ ts_string_for_return_body(
 
 const wchar_t *
 ts_string_for_return(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {

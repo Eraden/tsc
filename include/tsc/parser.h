@@ -7,6 +7,7 @@
 #define TS_TOKEN_END(token) log_to_file(L"-> end %s\n", token);
 #define TS_STRING_END 1
 #define TS_NEW_TOKEN calloc(sizeof(TSParserToken), 1)
+#define TS_LOOP_SANITY_CHECK(file) if (file->sanity != TS_FILE_VALID) break;
 
 typedef struct sTSParseData TSParseData;
 typedef struct sTSFunctionData TSFunctionData;
@@ -242,4 +243,4 @@ TSFile *TS_parse_file(const char *fileName);
 
 TSFile *TS_parse_stream(const char *file, FILE *stream);
 
-void TS_free_tsFile(const TSFile *tsFile);
+void TS_free_tsFile(TSFile *tsFile);

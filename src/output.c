@@ -16,7 +16,7 @@ void TS_push_indent_string(wchar_t *string, const u_long indent) {
 
 void
 TS_print_for_token(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
@@ -101,7 +101,7 @@ TS_print_for_token(
 
 const wchar_t *
 TS_string_for_token(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
@@ -195,7 +195,7 @@ TS_string_for_token(
 
 void
 TS_print_stream(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     FILE *stream
 ) {
 
@@ -226,7 +226,7 @@ TS_print_stream(
 const wchar_t *
 __attribute__((__unused__))
 TS_generate_string_from_file(
-    const TSFile *tsFile
+    TSFile *tsFile
 ) {
   const u_long size = tsFile->tokensSize;
   TSOutputSettings outputSettings;

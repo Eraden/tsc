@@ -13,10 +13,14 @@ TS_parse_extends(
   const wchar_t *tok;
   unsigned char proceed = 1;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Missing parent class name", tsFile, token);
+      ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing class parent name", tsFile, token);
+      break;
     }
+
     switch (tok[0]) {
       case L' ': {
         movedBy += wcslen(tok);
@@ -36,6 +40,8 @@ TS_parse_extends(
         if (!TS_name_is_valid(tok)) {
           free((void *) tok);
           ts_token_syntax_error((wchar_t *) L"Invalid parent class name", tsFile, token);
+          proceed = 0;
+          break;
         }
         token->data = (void *) TS_clone_string(tok);
         proceed = 0;

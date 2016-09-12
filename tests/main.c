@@ -26,17 +26,17 @@ unsigned char hasOnly(char *str) {
 Suite *class_suite(void) {
   Suite *suite = suite_create("Parser");
 
-  if (hasOnly("variable")) parse_variables_suite(suite);
+//  if (hasOnly("variable")) parse_variables_suite(suite);
   if (hasOnly("function")) parse_functions_suite(suite);
-  if (hasOnly("if")) parse_if_conditions_suite(suite);
-  if (hasOnly("else")) parse_else_conditions_suite(suite);
-  if (hasOnly("class")) parse_classes_suite(suite);
-  if (hasOnly("export")) parse_exports_suite(suite);
-  if (hasOnly("comment") || hasOnly("inline_comment")) parse_inline_comment_suite(suite);
-  if (hasOnly("comment") || hasOnly("multiline_comment")) parse_multiline_comment_suite(suite);
-  if (hasOnly("keyword")) parse_return_keyword_suite(suite);
-  if (hasOnly("new")) parse_new_suite(suite);
-  if (hasOnly("decorator")) parse_decorator_suite(suite);
+//  if (hasOnly("if")) parse_if_conditions_suite(suite);
+//  if (hasOnly("else")) parse_else_conditions_suite(suite);
+//  if (hasOnly("class")) parse_classes_suite(suite);
+//  if (hasOnly("export")) parse_exports_suite(suite);
+//  if (hasOnly("comment") || hasOnly("inline_comment")) parse_inline_comment_suite(suite);
+//  if (hasOnly("comment") || hasOnly("multiline_comment")) parse_multiline_comment_suite(suite);
+//  if (hasOnly("keyword")) parse_return_keyword_suite(suite);
+//  if (hasOnly("new")) parse_new_suite(suite);
+//  if (hasOnly("decorator")) parse_decorator_suite(suite);
   return suite;
 }
 

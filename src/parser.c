@@ -148,14 +148,17 @@ TS_parse_ts_token(
     TSFile *tsFile,
     TSParseData *data
 ) {
-  for (u_short i = 0; i < KEYWORDS_SIZE; i++) {
-    TSKeyword k = TS_KEYWORDS[i];
-    if (wcscmp(data->token, k.str) == 0) {
-      log_to_file((wchar_t *) L"  -  data->token = \"%ls\"\n  -  k.str = \"%ls\"\n", data->token, k.str);
-      TSParserToken *token = k.callback(tsFile, data);
-      return token;
+  if (tsFile->sanity == TS_FILE_VALID) {
+    for (u_short i = 0; i < KEYWORDS_SIZE; i++) {
+      TSKeyword k = TS_KEYWORDS[i];
+      if (wcscmp(data->token, k.str) == 0) {
+        log_to_file((wchar_t *) L"  -  data->token = \"%ls\"\n  -  k.str = \"%ls\"\n", data->token, k.str);
+        TSParserToken *token = k.callback(tsFile, data);
+        return token;
+      }
     }
   }
+
   TSParserToken *t = calloc(sizeof(TSParserToken), 1);
   t->data = (void *) TS_clone_string(data->token);
   t->children = NULL;
@@ -603,12 +606,12 @@ TS_free_children(
 
 void
 TS_free_tsFile(
-    const TSFile *tsFile
+    TSFile *tsFile
 ) {
   for (u_long index = 0; index < tsFile->tokensSize; index++) {
     TS_free_tsToken(tsFile->tokens[index]);
   }
-  if (tsFile->file) free(tsFile->file);
   if (tsFile->tokens != NULL) free(tsFile->tokens);
+  if (tsFile->file) free(tsFile->file);
   free((void *) tsFile);
 }

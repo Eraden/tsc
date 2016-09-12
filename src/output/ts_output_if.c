@@ -6,7 +6,7 @@ static void
 __attribute(( visibility("hidden")))
 __attribute__(( section("output-if")))
 ts_print_for_if_body(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     TSParserToken *tsParserToken,
     const TSOutputSettings outputSettings
 ) {
@@ -22,7 +22,7 @@ static void
 __attribute(( visibility("hidden")))
 __attribute__(( section("output-if")))
 ts_print_for_if_condition(
-    const TSFile *__attribute__((__unused__)) tsFile,
+    TSFile *__attribute__((__unused__)) tsFile,
     const TSIfData *data,
     const TSOutputSettings outputSettings
 ) {
@@ -35,7 +35,7 @@ ts_print_for_if_condition(
 
 void
 TS_print_for_if(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
@@ -64,7 +64,7 @@ static const wchar_t *
 __attribute(( visibility("hidden")))
 __attribute__(( section("output-if")))
 ts_string_for_if_body(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     TSParserToken *tsParserToken,
     const TSOutputSettings outputSettings
 ) {
@@ -96,7 +96,7 @@ static const wchar_t *
 __attribute(( visibility("hidden")))
 __attribute__(( section("output-if")))
 ts_string_for_if_condition(
-    const TSFile *__attribute__((__unused__)) tsFile,
+    TSFile *__attribute__((__unused__)) tsFile,
     const TSIfData *data
 ) {
   wchar_t *string = NULL;
@@ -118,7 +118,7 @@ ts_string_for_if_condition(
 
 const wchar_t *
 TS_string_for_if(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {

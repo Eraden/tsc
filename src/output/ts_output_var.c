@@ -5,7 +5,7 @@
 void
 __attribute__(( section("output-var")))
 TS_print_from_var(
-    const TSFile *__attribute__((__unused__)) tsFile,
+    TSFile *__attribute__((__unused__)) tsFile,
     TSParserToken *tsParserToken,
     TSOutputSettings __attribute__((__weak__)) outputSettings
 ) {
@@ -29,7 +29,7 @@ TS_print_from_var(
 const wchar_t *
 __attribute__(( section("output-var")))
 TS_string_from_var(
-    const TSFile *__attribute__((__unused__)) tsFile,
+    TSFile *__attribute__((__unused__)) tsFile,
     TSParserToken *tsParserToken,
     TSOutputSettings __attribute__((__weak__)) outputSettings
 ) {

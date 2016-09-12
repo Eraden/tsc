@@ -255,31 +255,52 @@ START_TEST(parse_valid_functions)
 END_TEST
 
 START_TEST(parse_function_with_missing_return_type)
-  TS_parse_file("./examples/functions/missing_return_type");
+  TSFile *file = TS_parse_file("./examples/functions/missing_return_type");
+  ck_assert_ptr_ne(file, NULL);
+  ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(file);
 END_TEST
 
 START_TEST(parse_function_with_invalid_return_type)
-  TS_parse_file("./examples/functions/invalid_return_type");
+  TSFile *file = TS_parse_file("./examples/functions/invalid_return_type");
+  ck_assert_ptr_ne(file, NULL);
+  ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(file);
 END_TEST
 
 START_TEST(parse_function_with_invalid_return_type_name)
-  TS_parse_file("./examples/functions/invalid_return_type_name");
+  TSFile *file = TS_parse_file("./examples/functions/invalid_return_type_name");
+  ck_assert_ptr_ne(file, NULL);
+  ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(file);
 END_TEST
 
 START_TEST(parse_function_with_invalid_arg_without_name)
-  TS_parse_file("./examples/functions/missing_arg_name");
+  TSFile *file = TS_parse_file("./examples/functions/missing_arg_name");
+  ck_assert_ptr_ne(file, NULL);
+  ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(file);
 END_TEST
 
 START_TEST(parse_function_with_invalid_arg_with_missing_type)
-  TS_parse_file("./examples/functions/missing_arg_type");
+  TSFile *file = TS_parse_file("./examples/functions/missing_arg_type");
+  ck_assert_ptr_ne(file, NULL);
+  ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(file);
 END_TEST
 
 START_TEST(parse_function_with_invalid_arg_with_missing_value)
-  TS_parse_file("./examples/functions/missing_arg_value");
+  TSFile *file = TS_parse_file("./examples/functions/missing_arg_value");
+  ck_assert_ptr_ne(file, NULL);
+  ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(file);
 END_TEST
 
 START_TEST(parse_function_with_invalid_arg_skipping_to_next_before_giving_arg_name)
-  TS_parse_file("./examples/functions/missing_first_arg_name");
+  TSFile *file = TS_parse_file("./examples/functions/missing_first_arg_name");
+  ck_assert_ptr_ne(file, NULL);
+  ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(file);
 END_TEST
 
 void parse_functions_suite(Suite *suite) {
@@ -287,14 +308,14 @@ void parse_functions_suite(Suite *suite) {
 
   tcase_add_test(tc_functions, parse_valid_functions);
 
-  tcase_add_exit_test(tc_functions, parse_function_with_missing_return_type, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_functions, parse_function_with_invalid_return_type, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_functions, parse_function_with_invalid_return_type_name, TS_PARSE_FAILURE_CODE);
+  tcase_add_test(tc_functions, parse_function_with_missing_return_type);
+  tcase_add_test(tc_functions, parse_function_with_invalid_return_type);
+  tcase_add_test(tc_functions, parse_function_with_invalid_return_type_name);
 
-  tcase_add_exit_test(tc_functions, parse_function_with_invalid_arg_without_name, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_functions, parse_function_with_invalid_arg_with_missing_type, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_functions, parse_function_with_invalid_arg_with_missing_value, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_functions, parse_function_with_invalid_arg_skipping_to_next_before_giving_arg_name, TS_PARSE_FAILURE_CODE);
+  tcase_add_test(tc_functions, parse_function_with_invalid_arg_without_name);
+  tcase_add_test(tc_functions, parse_function_with_invalid_arg_with_missing_type);
+  tcase_add_test(tc_functions, parse_function_with_invalid_arg_with_missing_value);
+  tcase_add_test(tc_functions, parse_function_with_invalid_arg_skipping_to_next_before_giving_arg_name);
 
   suite_add_tcase(suite, tc_functions);
 }

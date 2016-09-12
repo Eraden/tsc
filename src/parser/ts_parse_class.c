@@ -9,7 +9,7 @@ TS_class_name_from_parent(
     volatile const wchar_t *tok
 ) {
   TSParserToken *parent = token->parent;
-  if (token->parent == NULL)  {
+  if (token->parent == NULL) {
     return NULL;
   }
   switch (parent->tokenType) {
@@ -39,9 +39,12 @@ TS_parse_class_head(
   unsigned char proceed = 1;
   const wchar_t *tok;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
       ts_token_syntax_error((wchar_t *) L"Unexpected end of class header", tsFile, token);
+      break;
     }
     switch (tok[0]) {
       case L' ': {
@@ -76,10 +79,14 @@ TS_parse_class_head(
         switch (t->tokenType) {
           case TS_EXTENDS: {
             if (data->parentClass != NULL) {
-              ts_token_syntax_error((wchar_t *) L"Unexpected parent name. Class can have only one parent", tsFile,
-                                    token);
+              ts_token_syntax_error(
+                  (wchar_t *) L"Unexpected parent name. Class can have only one parent",
+                  tsFile, token
+              );
+              proceed = 0;
+            } else {
+              data->parentClass = t->data;
             }
-            data->parentClass = t->data;
             break;
           }
           case TS_IMPLEMENTS: {
@@ -117,9 +124,12 @@ TS_parse_class_method(
   TSClassParseFlag parseFlag = TS_PARSE_CLASS_MEMBER_METHOD_ARGUMENTS;
 
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
       ts_token_syntax_error((wchar_t *) L"Unexpected end of class header", tsFile, bodyToken);
+      break;
     }
 
     switch (tok[0]) {
@@ -237,6 +247,8 @@ TS_parse_class_member(
   const wchar_t *value = NULL;
 
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
@@ -245,6 +257,7 @@ TS_parse_class_member(
           tsFile,
           bodyToken
       );
+      break;
     }
 
     switch (tok[0]) {
@@ -269,6 +282,8 @@ TS_parse_class_member(
               tsFile,
               bodyToken
           );
+          proceed = 0;
+          break;
         }
 
         bodyToken->tokenType = TS_CLASS_METHOD;
@@ -343,6 +358,7 @@ TS_parse_class_member(
           if (value == NULL) free((void *) value);
           value = newPointer;
         }
+
         movedBy += wcslen(tok);
         free((void *) tok);
         break;
@@ -369,6 +385,8 @@ TS_parse_class_body(
   const wchar_t *tok;
 
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
       ts_token_syntax_error(
@@ -376,6 +394,7 @@ TS_parse_class_body(
           tsFile,
           token
       );
+      break;
     }
 
     switch (tok[0]) {
@@ -452,6 +471,8 @@ TS_parse_class(
   const wchar_t *tok;
   unsigned char proceed = 1;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile);
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
       ts_token_syntax_error(
@@ -459,6 +480,7 @@ TS_parse_class(
           tsFile,
           token
       );
+      break;
     }
     switch (tok[0]) {
       case L' ': {
@@ -488,6 +510,8 @@ TS_parse_class(
                 tsFile,
                 token
             );
+            proceed = 0;
+            break;
           }
           TS_put_back(tsParseData->stream, tok);
         } else {
@@ -497,6 +521,8 @@ TS_parse_class(
               tsFile,
               token
           );
+          proceed = 0;
+          break;
         }
         free((void *) tok);
 
@@ -512,13 +538,19 @@ TS_parse_class(
                 tsFile,
                 token
             );
+            proceed = 0;
+            break;
           }
         } else if (TS_is_keyword(tok) == 1) {
+          free((void *) tok);
           ts_token_syntax_error(
               (const wchar_t *) L"Unexpected keyword while parsing class name",
               tsFile,
               token
           );
+          proceed = 0;
+          break;
+
         } else {
           if (TS_name_is_valid(tok) == 0) {
             free((void *) tok);
@@ -527,6 +559,8 @@ TS_parse_class(
                 tsFile,
                 token
             );
+            proceed = 0;
+            break;
           }
           token->classData->name = TS_clone_string(tok);
           movedBy += wcslen(tok);

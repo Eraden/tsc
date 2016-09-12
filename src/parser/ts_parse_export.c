@@ -16,6 +16,8 @@ TS_parse_export(
   volatile unsigned char proceed = 1;
   const wchar_t *tok;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {

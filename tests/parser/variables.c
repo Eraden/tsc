@@ -149,27 +149,45 @@ START_TEST(parse_valid_variables)
 END_TEST
 
 START_TEST(parse_var_no_name)
-  TS_parse_file("./examples/variables/no_name");
+  TSFile *file = TS_parse_file("./examples/variables/no_name");
+  ck_assert_ptr_ne(file, NULL);
+  ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(file);
 END_TEST
 
 START_TEST(parse_var_type_without_name)
-  TS_parse_file("./examples/variables/missing_type");
+  TSFile *file = TS_parse_file("./examples/variables/missing_type");
+  ck_assert_ptr_ne(file, NULL);
+  ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(file);
 END_TEST
 
 START_TEST(parse_var_value_without_expression)
-  TS_parse_file("./examples/variables/missing_value");
+  TSFile *file = TS_parse_file("./examples/variables/missing_value");
+  ck_assert_ptr_ne(file, NULL);
+  ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(file);
 END_TEST
 
 START_TEST(parse_var_with_reserved_word_as_name)
-  TS_parse_file("./examples/variables/var_name_reserved_word");
+  TSFile *file = TS_parse_file("./examples/variables/var_name_reserved_word");
+  ck_assert_ptr_ne(file, NULL);
+  ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(file);
 END_TEST
 
 START_TEST(parse_let_with_reserved_word_as_name)
-  TS_parse_file("./examples/variables/let_name_reserved_word");
+  TSFile *file = TS_parse_file("./examples/variables/let_name_reserved_word");
+  ck_assert_ptr_ne(file, NULL);
+  ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(file);
 END_TEST
 
 START_TEST(parse_const_with_reserved_word_as_name)
-  TS_parse_file("./examples/variables/const_name_reserved_word");
+  TSFile *file = TS_parse_file("./examples/variables/const_name_reserved_word");
+  ck_assert_ptr_ne(file, NULL);
+  ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(file);
 END_TEST
 
 void parse_variables_suite(Suite *suite) {
@@ -177,12 +195,12 @@ void parse_variables_suite(Suite *suite) {
 
   tcase_add_test(tc_variables, parse_valid_variables);
 
-  tcase_add_exit_test(tc_variables, parse_var_no_name, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_variables, parse_var_type_without_name, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_variables, parse_var_value_without_expression, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_variables, parse_var_with_reserved_word_as_name, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_variables, parse_let_with_reserved_word_as_name, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_variables, parse_const_with_reserved_word_as_name, TS_PARSE_FAILURE_CODE);
+  tcase_add_test(tc_variables, parse_var_no_name);
+  tcase_add_test(tc_variables, parse_var_type_without_name);
+  tcase_add_test(tc_variables, parse_var_value_without_expression);
+  tcase_add_test(tc_variables, parse_var_with_reserved_word_as_name);
+  tcase_add_test(tc_variables, parse_let_with_reserved_word_as_name);
+  tcase_add_test(tc_variables, parse_const_with_reserved_word_as_name);
 
   suite_add_tcase(suite, tc_variables);
 }

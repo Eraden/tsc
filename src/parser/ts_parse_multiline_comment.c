@@ -15,9 +15,12 @@ TS_parse_multiline_comment(
   volatile unsigned char proceed = 1;
   const wchar_t *tok;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
       ts_token_syntax_error((wchar_t *) L"Unexpected end of multiline comment", tsFile, token);
+      break;
     }
     if (wcslen(tok) == 2 && tok[0] == L'*' && tok[1] == L'/') {
       proceed = 0;

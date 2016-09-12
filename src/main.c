@@ -8,15 +8,17 @@ int main(int argc, const char **argv) {
 
   init_log();
 
-  const TSFile *tsFile = TS_parse_stream(settings.fileName, settings.stream);
+  TSFile *tsFile = TS_parse_stream(settings.fileName, settings.stream);
 
+  TSFileSanity sanity = tsFile->sanity;
+  if (tsFile->stream) fclose(tsFile->stream);
   TS_free_tsFile(tsFile);
 
   TS_destroy_register();
 
-  if (tsFile->sanity == TS_FILE_VALID)
+  if (sanity == TS_FILE_VALID)
     return 0;
-  else if (tsFile->sanity == TS_FILE_SYNTAX_ERROR)
+  else if (sanity == TS_FILE_SYNTAX_ERROR)
     return TS_PARSE_FAILURE_CODE;
   else
     return 1;

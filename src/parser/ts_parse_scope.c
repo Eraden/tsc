@@ -9,9 +9,12 @@ TS_parse_scope_body(
   const wchar_t *tok;
   u_long movedBy = 0;
   while (1) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(data->stream);
     if (tok == NULL) {
       ts_token_syntax_error((const wchar_t *) L"Unexpected end of scope", tsFile, token);
+      break;
     }
     switch (tok[0]) {
       case L'}': {

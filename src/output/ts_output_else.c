@@ -6,7 +6,7 @@ static void
 __attribute(( visibility("hidden")))
 __attribute__(( section("output-else")))
 ts_print_for_else_body(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     TSParserToken *tsParserToken,
     const TSOutputSettings outputSettings
 ) {
@@ -21,7 +21,7 @@ ts_print_for_else_body(
 void
 __attribute__(( section("output-else")))
 TS_print_for_else(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {
@@ -45,7 +45,7 @@ static const wchar_t *
 __attribute(( visibility("hidden")))
 __attribute__(( section("output-else")))
 ts_string_for_else_body(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     TSParserToken *tsParserToken,
     const TSOutputSettings outputSettings
 ) {
@@ -74,7 +74,7 @@ ts_string_for_else_body(
 const wchar_t *
 __attribute__(( section("output-else")))
 TS_string_for_else(
-    const TSFile *tsFile,
+    TSFile *tsFile,
     TSParserToken *tsParserToken,
     TSOutputSettings outputSettings
 ) {

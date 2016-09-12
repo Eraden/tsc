@@ -17,12 +17,18 @@ TS_parse_caller(
   tsParseData->character += len;
 
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      if (token->data == NULL)
+      if (token->data == NULL) {
         ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing caller arguments.", tsFile, token);
-      else break;
+        break;
+
+      } else {
+        break;
+      }
     }
 
     switch (tok[0]) {

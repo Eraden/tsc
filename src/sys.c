@@ -38,18 +38,18 @@ ts_syntax_error(
 }
 
 void
-__attribute__((__noreturn__))
 ts_token_syntax_error(
     const wchar_t *msg,
     TSFile *tsFile,
     const TSParserToken *token
 ) {
   tsFile->sanity = TS_FILE_SYNTAX_ERROR;
-  fclose(tsFile->stream);
-  ts_syntax_error(msg, tsFile->file, token->character, token->line);
-  TS_free_tsToken(token);
-  TS_free_tsFile(tsFile);
-  exit(TS_PARSE_FAILURE_CODE);
+  ts_syntax_error(
+      msg,
+      tsFile->file,
+      token->character,
+      token->line
+  );
 }
 
 

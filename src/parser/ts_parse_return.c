@@ -8,6 +8,9 @@ TS_parse_return(
   TS_TOKEN_BEGIN("return");
   u_long movedBy = wcslen(tsParseData->token);
 
+  const wchar_t *tok;
+  volatile unsigned char proceed = 1;
+
   TSParserToken *token = TS_build_parser_token(TS_RETURN, tsParseData);
   if (token->parent == NULL) {
     ts_token_syntax_error(
@@ -15,11 +18,12 @@ TS_parse_return(
         tsFile,
         token
     );
+    token = NULL;
+    proceed = 0;
   }
-
-  const wchar_t *tok;
-  volatile unsigned char proceed = 1;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {

@@ -14,6 +14,8 @@ TS_parse_decorator_name(
   u_long len;
 
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
     if (tok == NULL) {
       free((void *) tok);
@@ -22,6 +24,8 @@ TS_parse_decorator_name(
           tsFile,
           token
       );
+      break;
+
     } else if (TS_is_keyword(tok)) {
       free((void *) tok);
       ts_token_syntax_error(
@@ -29,6 +33,7 @@ TS_parse_decorator_name(
           tsFile,
           token
       );
+      break;
     }
     len = wcslen(tok);
     switch (tok[0]) {
@@ -40,6 +45,8 @@ TS_parse_decorator_name(
               tsFile,
               token
           );
+          proceed = 0;
+          break;
         }
         proceed = 0;
         tsParseData->character += len;
@@ -58,6 +65,8 @@ TS_parse_decorator_name(
             tsFile,
             token
         );
+        proceed = 0;
+        break;
       }
       default: {
         u_long size = len + TS_STRING_END;
@@ -78,12 +87,13 @@ TS_parse_decorator_name(
     }
   }
 
-  if (TS_name_is_valid(name) != 1)
+  if (TS_name_is_valid(name) != 1) {
     ts_token_syntax_error(
         (const wchar_t *) L"Invalid characters in decorator call",
         tsFile,
         token
     );
+  }
 
   return name;
 }

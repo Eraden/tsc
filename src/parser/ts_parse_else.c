@@ -16,9 +16,12 @@ TS_parse_else_body(
 
   proceed = 1;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
       ts_token_syntax_error((wchar_t *) L"Unexpected end of else body", tsFile, token);
+      break;
     }
 
     switch (tok[0]) {
@@ -60,9 +63,12 @@ TS_parse_else_body(
 
   proceed = 1;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
       ts_token_syntax_error((wchar_t *) L"Unexpected end of else body", tsFile, token);
+      break;
     }
     switch (tok[0]) {
       case L' ': {

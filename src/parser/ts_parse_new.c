@@ -14,12 +14,15 @@ TS_parse_new(
   volatile unsigned char proceed = 1;
   const wchar_t *tok;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      if (token->data == NULL)
+      if (token->data == NULL) {
         ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing `new` keyword.", tsFile, token);
-      else break;
+        break;
+      } else break;
     }
 
     switch (tok[0]) {
@@ -33,6 +36,8 @@ TS_parse_new(
         if (token->childrenSize == 0) {
           free((void *) tok);
           ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found new line.", tsFile, token);
+          proceed = 0;
+          break;
         } else {
           proceed = 0;
           TS_put_back(tsParseData->stream, tok);
@@ -44,6 +49,8 @@ TS_parse_new(
         if (token->childrenSize == 0) {
           free((void *) tok);
           ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found `;`.", tsFile, token);
+          proceed = 0;
+          break;
         } else {
           proceed = 0;
           TS_put_back(tsParseData->stream, tok);
