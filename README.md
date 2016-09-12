@@ -13,16 +13,17 @@ git clone git@github.com:Eraden/tsc.git
 cd tsc
 mkdir build
 cd build
-cmake -DCMAKE_C_COMPILER=$(which clang) -DCMAKE_C_FLAGS="-O0" -DCMAKE_BUILD_TYPE=Debug ..
+cmake -DCMAKE_C_COMPILER=$(which clang) -DCMAKE_BUILD_TYPE=Debug ..
 make -j9
-./tsc examples
+ctest
+./tsc_test
 ```
 
 ## Progress
 
 ### Compiler
 
-- [ ] Read file
+- [X] Read file
 - [X] Log files
 - [ ] `-e environment`
 - [ ] `tsconfig` file
@@ -48,18 +49,18 @@ make -j9
 
 ### Comments
 
-- [ ] Parse single line comments
-- [ ] Parse multi-line comments
+- [X] Parse single line comments
+- [X] Parse multi-line comments
 - [ ] `--preserveComments` flag
 
 ### Variables
 
 - [X] Parse `var` with value
-- [X] Print `var` with value
+- [ ] Print `var` with value
 - [X] Parse `let` with value
-- [X] Print `let` with value
+- [ ] Print `let` with value
 - [X] Parse `const` with value
-- [X] Print `const` with value
+- [ ] Print `const` with value
 
 ### Loops
 
@@ -77,22 +78,22 @@ make -j9
 ### Logical gates
 
 - [X] Parse `if` statement
-- [X] Print `if` statement
+- [ ] Print `if` statement
 - [X] Parse `if` conditions
-- [X] Print `if` conditions
+- [ ] Print `if` conditions
 - [X] Parse `if` body
-- [X] Print `if` body
+- [ ] Print `if` body
 - [X] Parse `else` statement
-- [X] Print `else` statement
+- [ ] Print `else` statement
 - [X] Parse `else` body
-- [X] Print `else` body
-- [ ] Parse `switch` statement
+- [ ] Print `else` body
+- [X] Parse `switch` statement
 - [ ] Print `switch` statement
-- [ ] Parse `case` statement
+- [X] Parse `case` statement
 - [ ] Print `case` statement
-- [ ] Parse `default` statement
+- [X] Parse `default` statement
 - [ ] Print `default` statement
-- [ ] Error on double `default` statement declaration
+- [X] Error on double `default` statement declaration
 
 ### Decorators
 
@@ -116,9 +117,9 @@ make -j9
 ### Class
 
 - [X] Parse empty class
-- [X] Print empty class
+- [ ] Print empty class
 - [ ] Support `extends`
-- [X] Print `extends` as `prototype = Object.create(Parent)`
+- [ ] Print `extends` as `prototype = Object.create(Parent)`
 - [ ] Support `implements`
 - [ ] Support `friend`
 - [ ] Parse class `constructor` without `arguments`
@@ -145,11 +146,11 @@ make -j9
 ### Function
 
 - [X] Parse empty `function`
-- [X] Print empty `function`
+- [ ] Print empty `function`
 - [X] Parse arguments
-- [X] Print arguments
+- [ ] Print arguments
 - [X] Parse `function` body
-- [X] Print `function` body
+- [ ] Print `function` body
 
 ### Validations
 
