@@ -18,7 +18,6 @@ TS_parse_decorator_name(
 
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
     if (tok == NULL) {
-      free((void *) tok);
       ts_token_syntax_error(
           (const wchar_t *) L"Unexpected end of stream while parsing decorator call",
           tsFile,
@@ -113,8 +112,10 @@ TS_parse_decorator(
 
   wchar_t *name = TS_parse_decorator_name(tsFile, tsParseData, token);
 
-  token->name = TS_clone_string(name);
-  free((void *) name);
+  if (name) {
+    token->name = TS_clone_string(name);
+    free((void *) name);
+  }
 
   // parse
   tsParseData->parentTSToken = token->parent;

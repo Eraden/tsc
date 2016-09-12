@@ -20,7 +20,7 @@ TS_output_header_symbol_polyfill() {
 
 const wchar_t *
 __attribute__((__malloc__))
-TS_output_header() {
+TS_output_header(void) {
   wchar_t *string = NULL;
   const wchar_t *symbolPolyfill = TS_output_header_symbol_polyfill();
   u_long size = TS_STRING_END +

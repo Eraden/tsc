@@ -12,11 +12,11 @@ typedef struct sTSOutputSettings {
 
 const wchar_t *
 __attribute__((__malloc__))
-TS_output_header();
+TS_output_header(void);
 
 const wchar_t *
 __attribute__((__malloc__))
-TS_output_footer();
+TS_output_footer(void);
 
 void
 TS_print_from_function(

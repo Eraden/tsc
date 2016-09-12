@@ -87,7 +87,7 @@ typedef enum eTSConditionBodyTermination {
 } __attribute__ ((__packed__)) TSConditionBodyTermination;
 
 typedef struct sTSKeyword {
-  TSTokenType __attribute__((__unused__)) type;
+  TSTokenType type;
   const wchar_t *str;
   TS_token_build_fn callback;
 } TSKeyword;

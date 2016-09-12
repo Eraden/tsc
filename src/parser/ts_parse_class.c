@@ -79,13 +79,15 @@ TS_parse_class_head(
         switch (t->tokenType) {
           case TS_EXTENDS: {
             if (data->parentClass != NULL) {
+              TS_free_tsToken(t);
               ts_token_syntax_error(
                   (wchar_t *) L"Unexpected parent name. Class can have only one parent",
                   tsFile, token
               );
               proceed = 0;
             } else {
-              data->parentClass = t->data;
+              data->parentClass = TS_clone_string(t->name);
+              TS_free_tsToken(t);
             }
             break;
           }
@@ -289,7 +291,7 @@ TS_parse_class_member(
         bodyToken->tokenType = TS_CLASS_METHOD;
 
         TSFunctionData *methodData = (TSFunctionData *) calloc(sizeof(TSFunctionData), 1);
-        methodData->name = name;
+        methodData->name = TS_clone_string(name);
         methodData->returnType = type;
 
         bodyToken->functionData = methodData;
@@ -316,9 +318,9 @@ TS_parse_class_member(
         movedBy += wcslen(tok);
 
         TSLocalVariableData *fieldData = (TSLocalVariableData *) calloc(sizeof(TSLocalVariableData), 1);
-        fieldData->name = name;
-        fieldData->type = type;
-        fieldData->value = value;
+        fieldData->name  = TS_clone_string(name);
+        fieldData->type  = TS_clone_string(type);
+        fieldData->value = TS_clone_string(value);
         bodyToken->variableData = fieldData;
         bodyToken->tokenType = TS_CLASS_FIELD;
 
@@ -365,6 +367,10 @@ TS_parse_class_member(
       }
     }
   }
+
+  if (name) free((void *) name);
+  if (type) free((void *) type);
+  if (value) free((void *) value);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;

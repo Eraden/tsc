@@ -42,7 +42,7 @@ create_log_directory() {
   }
 }
 
-void init_log() {
+void init_log(void) {
   if (TS_check_log_level(TS_VERBOSITY_OFF) == 0) return;
 
   create_log_directory();

@@ -17,13 +17,20 @@ TS_parse_extends(
 
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing class parent name", tsFile, token);
+      ts_token_syntax_error(
+          (wchar_t *) L"Unexpected end of stream while parsing class parent name",
+          tsFile,
+          token
+      );
       break;
     }
 
     switch (tok[0]) {
       case L' ': {
         movedBy += wcslen(tok);
+        tsParseData->character += movedBy;
+        tsParseData->position += movedBy;
+        movedBy = 0;
         free((void *) tok);
         break;
       }
@@ -37,13 +44,20 @@ TS_parse_extends(
         break;
       }
       default: {
+        movedBy += wcslen(tok);
         if (!TS_name_is_valid(tok)) {
           free((void *) tok);
-          ts_token_syntax_error((wchar_t *) L"Invalid parent class name", tsFile, token);
-          proceed = 0;
-          break;
+          ts_token_syntax_error(
+              (wchar_t *) L"Invalid parent class name",
+              tsFile,
+              token
+          );
+        } else {
+          token->name = TS_clone_string(tok);
+          tsParseData->character += movedBy;
+          tsParseData->position += movedBy;
+          movedBy = 0;
         }
-        token->data = (void *) TS_clone_string(tok);
         proceed = 0;
         free((void *) tok);
         break;
@@ -63,5 +77,6 @@ void
 TS_free_extends(
     const TSParserToken *token
 ) {
+  if (token->name) free(token->name);
   free((void *) token);
 }

@@ -12,13 +12,13 @@ TS_parse_return(
   volatile unsigned char proceed = 1;
 
   TSParserToken *token = TS_build_parser_token(TS_RETURN, tsParseData);
+
   if (token->parent == NULL) {
     ts_token_syntax_error(
         (const wchar_t *) L"Return token in global scope",
         tsFile,
         token
     );
-    token = NULL;
     proceed = 0;
   }
   while (proceed) {

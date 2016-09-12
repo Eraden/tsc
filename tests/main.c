@@ -26,17 +26,17 @@ unsigned char hasOnly(char *str) {
 Suite *class_suite(void) {
   Suite *suite = suite_create("Parser");
 
-//  if (hasOnly("variable")) parse_variables_suite(suite);
+  if (hasOnly("variable")) parse_variables_suite(suite);
   if (hasOnly("function")) parse_functions_suite(suite);
-//  if (hasOnly("if")) parse_if_conditions_suite(suite);
-//  if (hasOnly("else")) parse_else_conditions_suite(suite);
-//  if (hasOnly("class")) parse_classes_suite(suite);
-//  if (hasOnly("export")) parse_exports_suite(suite);
-//  if (hasOnly("comment") || hasOnly("inline_comment")) parse_inline_comment_suite(suite);
-//  if (hasOnly("comment") || hasOnly("multiline_comment")) parse_multiline_comment_suite(suite);
-//  if (hasOnly("keyword")) parse_return_keyword_suite(suite);
-//  if (hasOnly("new")) parse_new_suite(suite);
-//  if (hasOnly("decorator")) parse_decorator_suite(suite);
+  if (hasOnly("if")) parse_if_conditions_suite(suite);
+  if (hasOnly("else")) parse_else_conditions_suite(suite);
+  if (hasOnly("class")) parse_classes_suite(suite);
+  if (hasOnly("comment") || hasOnly("inline_comment")) parse_inline_comment_suite(suite);
+  if (hasOnly("comment") || hasOnly("multiline_comment")) parse_multiline_comment_suite(suite);
+  if (hasOnly("new")) parse_new_suite(suite);
+  if (hasOnly("export")) parse_exports_suite(suite);
+  if (hasOnly("return")) parse_return_keyword_suite(suite);
+  if (hasOnly("decorator")) parse_decorator_suite(suite);
   return suite;
 }
 
@@ -44,14 +44,17 @@ int main(int argc, char **argv) {
   setlocale(LC_ALL, "");
 
   enum print_output output_type = CK_NORMAL;
+  enum fork_status should_fork = CK_FORK;
   TSVerbosity tscVerbose = TS_VERBOSITY_OFF;
   for (int i = 0; i < argc; i++) {
     const char *v = argv[i];
-    if (strcmp(v, "--verbose") == 0) {
+    if (strcmp(v, "--no-fork"))
+      should_fork = CK_NOFORK;
+    else if (strcmp(v, "--verbose") == 0) {
       output_type = CK_VERBOSE;
       tscVerbose = TS_VERBOSITY_INFO;
     }
-    if (strcmp(v, "--only") == 0) {
+    else if (strcmp(v, "--only") == 0) {
       while (1) {
         i++;
         if (i == argc) break;
@@ -83,6 +86,7 @@ int main(int argc, char **argv) {
 
   s = class_suite();
   sr = srunner_create(s);
+  srunner_set_fork_status(sr, should_fork);
 
   srunner_run_all(sr, output_type);
   number_failed += srunner_ntests_failed(sr);

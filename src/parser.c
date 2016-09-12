@@ -17,6 +17,7 @@ __attribute__((__malloc__))
 TS_clone_string(
     const wchar_t *string
 ) {
+  if (string == NULL) return NULL;
   wchar_t *clone = calloc(sizeof(wchar_t), wcslen(string) + TS_STRING_END);
   wcscpy(clone, string);
 
@@ -82,6 +83,7 @@ unsigned char
 TS_name_is_valid(
     const wchar_t *name
 ) {
+  if (name == NULL) return 0;
   wchar_t c;
   for (u_long i = 0, l = wcslen(name); i < l; i++) {
     c = name[i];
@@ -478,7 +480,7 @@ TS_parse_stream(
   const wchar_t *tok;
   while (1) {
     if (tsFile->sanity != TS_FILE_VALID)
-      return tsFile;
+      break;
 
     tok = (const wchar_t *) TS_getToken(stream);
     if (tok == NULL) break;
@@ -497,8 +499,10 @@ TS_parse_stream(
 
     free((void *) tok);
   }
-  fclose(tsFile->stream);
-  tsFile->stream = NULL;
+  if (tsFile->stream) {
+    fclose(tsFile->stream);
+    tsFile->stream = NULL;
+  }
 
   return tsFile;
 }

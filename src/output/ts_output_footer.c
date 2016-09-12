@@ -2,7 +2,7 @@
 
 const wchar_t *
 __attribute__((__malloc__))
-TS_output_footer() {
+TS_output_footer(void) {
   wchar_t *string = NULL;
   u_long size = TS_STRING_END +
                 wcslen((wchar_t *) L"\n}(modules, window));\n");

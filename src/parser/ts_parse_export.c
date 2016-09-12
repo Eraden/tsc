@@ -23,8 +23,10 @@ TS_parse_export(
     if (tok == NULL) {
       if (token->childrenSize == 1)
         break;
-      else
+      else {
         ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing `export` keyword.", tsFile, token);
+        break;
+      }
     }
 
     switch (tok[0]) {
@@ -35,7 +37,13 @@ TS_parse_export(
       }
       case L'\n': {
         if (token->childrenSize == 0) {
-          ts_token_syntax_error((wchar_t *) L"Expecting expression after `export` keyword. Found new line.", tsFile, token);
+          free((void *) tok);
+          ts_token_syntax_error(
+              (wchar_t *) L"Expecting expression after `export` keyword. Found new line.",
+              tsFile,
+              token
+          );
+          break;
         } else {
           proceed = 0;
           TS_put_back(tsParseData->stream, tok);
