@@ -28,7 +28,10 @@ echo "$(which cmake)"
 echo "$(cmake --version)"
 echo "$PATH"
 
-if [[ "$(cmake --version | grep -E '[0-9]+.[0-9]+.[0-9]+' | sed 's/[a-z ]//gi')" == "3.6.1" ]]
+version="$(cmake --version | grep -E '[0-9]+.[0-9]+.[0-9]+' | sed 's/[a-z ]//gi')"
+echo "cmake version: '$version'"
+
+if [[ "$version" == "3.6.1" ]]
 then
   echo "Failed to install cmake"
   exit 1
