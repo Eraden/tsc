@@ -13,6 +13,7 @@ io_panic(
     wchar_t *msg
 ) {
   fprintf(stderr, "%ls\n%s\n", msg, strerror(errno));
+  exit(TS_FILE_NOT_FOUND_CODE);
 }
 
 static void

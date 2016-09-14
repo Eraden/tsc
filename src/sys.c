@@ -120,7 +120,7 @@ TS_parse_arguments(
       } else if (strcmp(tmp, "off") == 0) {
         TS_set_log_level(TS_VERBOSITY_OFF);
       } else {
-        log_error(L"Invalid log level argument: %s\n", arg);
+        log_error((wchar_t *) L"Invalid log level argument: %s\n", arg);
         exit(EXIT_FAILURE);
       }
 
@@ -137,7 +137,7 @@ TS_parse_arguments(
       exit(EXIT_SUCCESS);
     } else if (strcmp(arg, "-f") == 0 || strcmp(arg, "--file") == 0) {
       if (i + 1 >= argc) {
-        log_error(L"Expecting file name but no more arguments found");
+        log_error((wchar_t *) L"Expecting file name but no more arguments found");
         exit(EXIT_FAILURE);
       }
 
@@ -147,24 +147,24 @@ TS_parse_arguments(
         io_panic((wchar_t *) L"Couldn't open source code file");
       }
     } else if (strcmp(arg, "-c") == 0 || strcmp(arg, "--code") == 0) {
-      if (i + 1 >= argc) {
-        log_error(L"Expecting code but no more arguments found");
-        exit(EXIT_FAILURE);
-      }
-
-      arg = argv[++i];
-      settings.stream = fmemopen((void *) arg, strlen(arg), "r");
-      settings.fileName = "(code eval)";
+//      if (i + 1 >= argc) {
+//        log_error((wchar_t *) L"Expecting code but no more arguments found");
+//        exit(EXIT_FAILURE);
+//      }
+//
+//      arg = argv[++i];
+//      settings.stream = fmemopen((void *) arg, strlen(arg), "r");
+//      settings.fileName = "(code eval)";
     } else if (strcmp(arg, "-o") == 0 || strcmp(arg, "--out") == 0) {
       if (i + 1 >= argc) {
-        log_error(L"Expecting file name but no more arguments found");
+        log_error((wchar_t *) L"Expecting file name but no more arguments found");
         exit(EXIT_FAILURE);
       }
 
       TS_output_stream = fopen(argv[++i], "w");
 
       if (TS_output_stream == NULL) {
-        log_error(L"Could not open output file: '%s'\nError code: %i\n", argv[i], errno);
+        log_error((wchar_t *) L"Could not open output file: '%s'\nError code: %i\n", argv[i], errno);
         exit(errno);
       }
     }
@@ -172,7 +172,7 @@ TS_parse_arguments(
 
 
   if (settings.stream == NULL) {
-    log_error(L"No code to parse given.\n");
+    log_error((wchar_t *) L"No code to parse given.\n");
     TS_info_msg();
     exit(EXIT_FAILURE);
   }

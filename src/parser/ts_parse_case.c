@@ -13,6 +13,8 @@ TS_parse_case(
   volatile unsigned char proceed = 1;
 
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
 
     if (tok == NULL) {
@@ -48,6 +50,11 @@ TS_parse_case(
         break;
       }
       default: {
+        u_long movedBy = wcslen(tok);
+        tsParseData->position += movedBy;
+        tsParseData->character += movedBy;
+        tsParseData->token = tok;
+
         if (token->childrenSize == 1) {
           ts_token_syntax_error(
               (const wchar_t *) L"Unexpected token while parsing case condition. Only one condition is allowed!",
@@ -56,17 +63,13 @@ TS_parse_case(
           );
           proceed = 0;
           break;
-        }
+        } else {
+          TS_put_back(tsFile->stream, tok);
 
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
-        tsParseData->token = tok;
-        TS_put_back(tsFile->stream, tok);
-
-        TSParserToken *child = TS_parse_condition(tsFile, tsParseData);
-        if (child) {
-          TS_push_child(token, child);
+          TSParserToken *child = TS_parse_condition(tsFile, tsParseData);
+          if (child) {
+            TS_push_child(token, child);
+          }
         }
         free((void *) tok);
         break;
@@ -76,11 +79,13 @@ TS_parse_case(
 
   proceed = 1;
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
 
     if (tok == NULL) {
       ts_token_syntax_error(
-          (const wchar_t *) L"Unexpected end of stream while parsing case",
+          (const wchar_t *) L"Unexpected end of stream while parsing case body",
           tsFile,
           token
       );

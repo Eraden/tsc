@@ -24,6 +24,7 @@
 #endif
 
 #define TS_PARSE_FAILURE_CODE 4
+#define TS_FILE_NOT_FOUND_CODE 5
 
 const unsigned int TS_VERSION_MAJOR;
 const unsigned int TS_VERSION_MINOR;

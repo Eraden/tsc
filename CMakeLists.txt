@@ -195,6 +195,16 @@ ADD_TEST(NAME Class_methods COMMAND ./tsc -f ./examples/class/class_with_multipl
 ADD_TEST(NAME Class_with_invalid_name COMMAND ./tsc -f ./examples/class/invalid_class_name)
 ADD_TEST(NAME Class_with_missing_ending COMMAND ./tsc -f ./examples/class/missing_class_ending)
 
+ADD_TEST(NAME switch_head_unexpected_end_of_stream COMMAND ./tsc -f ./examples/switch/head/unexpected_end_of_stream)
+ADD_TEST(NAME switch_head_unexpected_token COMMAND ./tsc -f ./examples/switch/head/unexpected_token)
+ADD_TEST(NAME switch_body_unexpected_end_of_stream COMMAND ./tsc -f ./examples/switch/body/unexpected_end_of_stream)
+ADD_TEST(NAME switch_body_unexpected_token COMMAND ./tsc -f ./examples/switch/body/unexpected_token)
+ADD_TEST(NAME switch_conditions_unexpected_end_of_stream COMMAND ./tsc -f ./examples/switch/conditions/unexpected_end_of_stream)
+ADD_TEST(NAME switch_conditions_unexpected_token COMMAND ./tsc -f ./examples/switch/conditions/unexpected_token)
+ADD_TEST(NAME case_body_unexpected_end_of_stream COMMAND ./tsc -f ./examples/case/body/unexpected_end_of_stream)
+ADD_TEST(NAME case_conditions_unexpected_end_of_stream COMMAND ./tsc -f ./examples/case/conditions/unexpected_end_of_stream)
+ADD_TEST(NAME case_conditions_unexpected_token COMMAND ./tsc -f ./examples/case/conditions/unexpected_token)
+
 ADD_TEST(NAME CheckTsc COMMAND ./tsc_test)
 
 SET_TESTS_PROPERTIES(
@@ -207,6 +217,15 @@ SET_TESTS_PROPERTIES(
     Decorator_missing_name
     Decorator_unexpected_end_of_stream
     Decorator_unexpected_keyword
+    switch_head_unexpected_end_of_stream
+    switch_head_unexpected_token
+    switch_body_unexpected_end_of_stream
+    switch_body_unexpected_token
+    switch_conditions_unexpected_end_of_stream
+    switch_conditions_unexpected_token
+    case_body_unexpected_end_of_stream
+    case_conditions_unexpected_end_of_stream
+    case_conditions_unexpected_token
     PROPERTIES
     WILL_FAIL TRUE
 )
