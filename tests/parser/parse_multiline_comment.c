@@ -31,7 +31,10 @@ START_TEST(parse_valid_multiline_comment)
 END_TEST
 
 START_TEST(parse_miltiline_comment_with_no_ending)
-  TS_parse_file("./examples/multiline_comment/missing_ending");
+  TSFile *tsFile = TS_parse_file("./examples/multiline_comment/missing_ending");
+  ck_assert_ptr_ne(tsFile, NULL);
+  ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(tsFile);
 END_TEST
 
 void parse_multiline_comment_suite(Suite *suite) {
@@ -40,7 +43,7 @@ void parse_multiline_comment_suite(Suite *suite) {
   tcase_add_test(tc_multiline, parse_valid_multiline_comment);
 
   TCase *tc_multiline_failure = tcase_create("Parse multiline comment failure");
-  tcase_add_exit_test(tc_multiline_failure, parse_miltiline_comment_with_no_ending, TS_PARSE_FAILURE_CODE);
+  tcase_add_test(tc_multiline_failure, parse_miltiline_comment_with_no_ending);
 
   suite_add_tcase(suite, tc_multiline);
   suite_add_tcase(suite, tc_multiline_failure);

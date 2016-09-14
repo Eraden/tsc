@@ -1,5 +1,13 @@
 #include <tsc/log.h>
 
+static FILE *TS_error_file = NULL;
+#define TS_error_stream TS_error_file
+
+void
+TS_set_error_output(FILE *file) {
+  TS_error_file = file;
+}
+
 void
 io_panic(
     wchar_t *msg
@@ -15,7 +23,7 @@ create_log_directory() {
   switch (result) {
     case EACCES:
     {
-      fprintf(stderr, "User can't create log directory, permission denied!");
+      fprintf(TS_error_stream, "User can't create log directory, permission denied!");
       exit(result);
     }
     case EEXIST:
@@ -25,17 +33,17 @@ create_log_directory() {
     }
     case EMLINK:
     {
-      fprintf(stderr, "Directory has too many links!");
+      fprintf(TS_error_stream, "Directory has too many links!");
       exit(result);
     }
     case ENOSPC:
     {
-      fprintf(stderr, "Not enough space!");
+      fprintf(TS_error_stream, "Not enough space!");
       exit(result);
     }
     case EROFS:
     {
-      fprintf(stderr, "Read only!");
+      fprintf(TS_error_stream, "Read only!");
       exit(result);
     }
     default:break;
@@ -43,6 +51,8 @@ create_log_directory() {
 }
 
 void init_log(void) {
+  TS_error_file = stderr;
+
   if (TS_check_log_level(TS_VERBOSITY_OFF) == 0) return;
 
   create_log_directory();
@@ -107,8 +117,9 @@ log_error(
   va_start(ap, msg);
   vfwprintf(file, msg, ap);
   va_end(ap);
+
   va_start(ap, msg);
-  vfwprintf(stderr, msg, ap);
+  vfwprintf(TS_error_stream, msg, ap);
   va_end(ap);
   fclose(file);
 }

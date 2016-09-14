@@ -153,6 +153,7 @@ typedef struct sTSParserToken {
 
 typedef struct sTSFile {
   wchar_t *file;
+  wchar_t  *errorReason;
   FILE *stream;
   TSParserToken **tokens;
   u_long tokensSize;

@@ -59,15 +59,24 @@ START_TEST(parse_valid_new_keyword)
 END_TEST
 
 START_TEST(parse_invalid_new_keyword)
-  TS_parse_file("./examples/new/unexpected_new_line");
+  TSFile *tsFile = TS_parse_file("./examples/new/unexpected_new_line");
+  ck_assert_ptr_ne(tsFile, NULL);
+  ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(tsFile);
 END_TEST
 
 START_TEST(parse_invalid_new_keyword_with_new_line)
-  TS_parse_file("./examples/new/unexpected_end_of_stream");
+  TSFile *tsFile = TS_parse_file("./examples/new/unexpected_end_of_stream");
+  ck_assert_ptr_ne(tsFile, NULL);
+  ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(tsFile);
 END_TEST
 
 START_TEST(parse_invalid_new_keyword_with_end)
-  TS_parse_file("./examples/new/unexpected_colon");
+  TSFile *tsFile = TS_parse_file("./examples/new/unexpected_colon");
+  ck_assert_ptr_ne(tsFile, NULL);
+  ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(tsFile);
 END_TEST
 
 void parse_new_suite(Suite *suite) {
@@ -75,9 +84,9 @@ void parse_new_suite(Suite *suite) {
 
   tcase_add_test(tc_new_keyword, parse_valid_new_keyword);
 
-  tcase_add_exit_test(tc_new_keyword, parse_invalid_new_keyword, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_new_keyword, parse_invalid_new_keyword_with_new_line, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_new_keyword, parse_invalid_new_keyword_with_end, TS_PARSE_FAILURE_CODE);
+  tcase_add_test(tc_new_keyword, parse_invalid_new_keyword);
+  tcase_add_test(tc_new_keyword, parse_invalid_new_keyword_with_new_line);
+  tcase_add_test(tc_new_keyword, parse_invalid_new_keyword_with_end);
 
   suite_add_tcase(suite, tc_new_keyword);
 }

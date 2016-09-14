@@ -51,8 +51,17 @@ ts_token_syntax_error(
       token->character,
       token->line
   );
-}
 
+  u_long len = wcslen(msg) + wcslen(tsFile->file) + 60;
+  wchar_t *buffer = calloc(sizeof(wchar_t), len);
+  swprintf(
+      buffer,
+      len,
+      (const wchar_t *) L"Syntax error: %ls\n      Position: %ls:%lu:%lu [file:line:character]\n",
+      msg, tsFile->file, token->line + 1, token->character
+  );
+  tsFile->errorReason = buffer;
+}
 
 void
 ts_log_position(
@@ -111,7 +120,7 @@ TS_parse_arguments(
       } else if (strcmp(tmp, "off") == 0) {
         TS_set_log_level(TS_VERBOSITY_OFF);
       } else {
-        fprintf(stderr, "Invalid log level argument: %s\n", arg);
+        log_error(L"Invalid log level argument: %s\n", arg);
         exit(EXIT_FAILURE);
       }
 
@@ -128,7 +137,7 @@ TS_parse_arguments(
       exit(EXIT_SUCCESS);
     } else if (strcmp(arg, "-f") == 0 || strcmp(arg, "--file") == 0) {
       if (i + 1 >= argc) {
-        fprintf(stderr, "Expecting file name but no more arguments found");
+        log_error(L"Expecting file name but no more arguments found");
         exit(EXIT_FAILURE);
       }
 
@@ -139,7 +148,7 @@ TS_parse_arguments(
       }
     } else if (strcmp(arg, "-c") == 0 || strcmp(arg, "--code") == 0) {
       if (i + 1 >= argc) {
-        fprintf(stderr, "Expecting code but no more arguments found");
+        log_error(L"Expecting code but no more arguments found");
         exit(EXIT_FAILURE);
       }
 
@@ -148,14 +157,14 @@ TS_parse_arguments(
       settings.fileName = "(code eval)";
     } else if (strcmp(arg, "-o") == 0 || strcmp(arg, "--out") == 0) {
       if (i + 1 >= argc) {
-        fprintf(stderr, "Expecting file name but no more arguments found");
+        log_error(L"Expecting file name but no more arguments found");
         exit(EXIT_FAILURE);
       }
 
       TS_output_stream = fopen(argv[++i], "w");
 
       if (TS_output_stream == NULL) {
-        fprintf(stderr, "Could not open output file: '%s'\nError code: %i\n", argv[i], errno);
+        log_error(L"Could not open output file: '%s'\nError code: %i\n", argv[i], errno);
         exit(errno);
       }
     }
@@ -163,7 +172,7 @@ TS_parse_arguments(
 
 
   if (settings.stream == NULL) {
-    fprintf(stderr, "No code to parse given.\n");
+    log_error(L"No code to parse given.\n");
     TS_info_msg();
     exit(EXIT_FAILURE);
   }

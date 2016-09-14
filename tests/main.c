@@ -12,6 +12,7 @@
 #include "parser/parse_new.h"
 #include "./parser/parse_decorator.h"
 #include "./parser/parse_switch.h"
+#include "./parser/parse_break.h"
 
 char **only = NULL;
 u_long onlySize = 0;
@@ -39,22 +40,28 @@ Suite *class_suite(void) {
   if (hasOnly("return")) parse_return_keyword_suite(suite);
   if (hasOnly("decorator")) parse_decorator_suite(suite);
   if (hasOnly("switch")) parse_switch_suite(suite);
+  if (hasOnly("break")) parse_break_suite(suite);
   return suite;
 }
 
 int main(int argc, char **argv) {
   setlocale(LC_ALL, "");
+  FILE *errorOutput = tmpfile();
+  TS_set_error_output(errorOutput);
 
   enum print_output output_type = CK_NORMAL;
   enum fork_status should_fork = CK_FORK;
   TSVerbosity tscVerbose = TS_VERBOSITY_OFF;
+
+  char **opts = argv;
   for (int i = 0; i < argc; i++) {
-    const char *v = argv[i];
-    if (strcmp(v, "--no-fork"))
+    const char *v = *opts;
+    opts += 1;
+    if (strcmp(v, "--no-fork") == 0)
       should_fork = CK_NOFORK;
     else if (strcmp(v, "--verbose") == 0) {
       output_type = CK_VERBOSE;
-      tscVerbose = TS_VERBOSITY_INFO;
+      tscVerbose = TS_VERBOSITY_DEBUG;
     }
     else if (strcmp(v, "--only") == 0) {
       while (1) {
@@ -98,6 +105,9 @@ int main(int argc, char **argv) {
     for (u_long i = 0; i < onlySize; i++) free(only[i]);
     free(only);
   }
+
+  fflush(errorOutput);
+  fclose(errorOutput);
 
   return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

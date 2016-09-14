@@ -45,8 +45,8 @@ void parse_exports_suite(Suite *suite) {
   TCase *tc_parse_exports = tcase_create("Parse exports");
 
   tcase_add_test(tc_parse_exports, parse_valid_export);
-  tcase_add_exit_test(tc_parse_exports, parse_invalid_export_with_unexpected_end_of_stream, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_parse_exports, parse_invalid_export_with_newline, TS_PARSE_FAILURE_CODE);
+  tcase_add_test(tc_parse_exports, parse_invalid_export_with_unexpected_end_of_stream);
+  tcase_add_test(tc_parse_exports, parse_invalid_export_with_newline);
 
   suite_add_tcase(suite, tc_parse_exports);
 }

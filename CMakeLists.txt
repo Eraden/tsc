@@ -70,6 +70,7 @@ SET(
     tests/parser/parse_new.c
     tests/parser/parse_decorator.c
     tests/parser/parse_switch.c
+    tests/parser/parse_break.c
 )
 
 SET(

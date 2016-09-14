@@ -137,7 +137,7 @@ TS_parse_switch_body(
 
     if (tok == NULL) {
       ts_token_syntax_error(
-          (const wchar_t *) L"Unexpected end of stream while parsing switch",
+          (const wchar_t *) L"Unexpected end of stream while parsing switch body",
           tsFile,
           token
       );

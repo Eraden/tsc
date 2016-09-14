@@ -278,10 +278,10 @@ void parse_classes_suite(Suite *suite) {
   parse_class_with_multiple_instance_fields_suite(tc_class);
   parse_class_with_multiple_instance_methods_suite(tc_class);
 
-  tcase_add_exit_test(tc_class, parse_class_with_invalid_name, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_class, parse_class_without_name, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_class, parse_class_with_multiple_super_class, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_class, parse_class_member_without_ending, TS_PARSE_FAILURE_CODE);
+  tcase_add_test(tc_class, parse_class_with_invalid_name);
+  tcase_add_test(tc_class, parse_class_without_name);
+  tcase_add_test(tc_class, parse_class_with_multiple_super_class);
+  tcase_add_test(tc_class, parse_class_member_without_ending);
 
   suite_add_tcase(suite, tc_class);
 }

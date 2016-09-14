@@ -97,11 +97,17 @@ START_TEST(parse_valid_if_condition)
 END_TEST
 
 START_TEST(parse_if_without_args)
-  TS_parse_file("./examples/if/no_args");
+  TSFile *tsFile = TS_parse_file("./examples/if/no_args");
+  ck_assert_ptr_ne(tsFile, NULL);
+  ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(tsFile);
 END_TEST
 
 START_TEST(parse_if_without_end_bracket)
-  TS_parse_file("./examples/if/no_ending_bracket");
+  TSFile *tsFile = TS_parse_file("./examples/if/no_ending_bracket");
+  ck_assert_ptr_ne(tsFile, NULL);
+  ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(tsFile);
 END_TEST
 
 void parse_if_conditions_suite(Suite *suite) {
@@ -109,8 +115,8 @@ void parse_if_conditions_suite(Suite *suite) {
 
   tcase_add_test(tc_if_conditions, parse_valid_if_condition);
 
-  tcase_add_exit_test(tc_if_conditions, parse_if_without_args, TS_PARSE_FAILURE_CODE);
-  tcase_add_exit_test(tc_if_conditions, parse_if_without_end_bracket, TS_PARSE_FAILURE_CODE);
+  tcase_add_test(tc_if_conditions, parse_if_without_args);
+  tcase_add_test(tc_if_conditions, parse_if_without_end_bracket);
 
   suite_add_tcase(suite, tc_if_conditions);
 }

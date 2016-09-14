@@ -466,7 +466,16 @@ TS_parse_stream(
   wchar_t *filename = calloc(sizeof(wchar_t), size + 1);
   wcscpy(filename, buffer);
   tsFile->file = filename;
-  tsFile->sanity = stream ? TS_FILE_VALID : TS_FILE_NOT_FOUND;
+  if (stream) {
+    tsFile->sanity = TS_FILE_VALID;
+    tsFile->errorReason = NULL;
+  } else {
+    tsFile->sanity = TS_FILE_NOT_FOUND;
+    wchar_t *msg = (wchar_t *) L"File not found!";
+    tsFile->errorReason = calloc(sizeof(wchar_t), wcslen(msg) + 1);
+    wcscpy(tsFile->errorReason, msg);
+  }
+
   TS_register_file(tsFile);
 
   TSParseData data;
@@ -630,5 +639,6 @@ TS_free_tsFile(
   }
   if (tsFile->tokens != NULL) free(tsFile->tokens);
   if (tsFile->file) free(tsFile->file);
+  if (tsFile->errorReason) free(tsFile->errorReason);
   free((void *) tsFile);
 }

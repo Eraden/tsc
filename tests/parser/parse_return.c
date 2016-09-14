@@ -74,14 +74,17 @@ START_TEST(parse_valid_return)
 END_TEST
 
 START_TEST(parse_invalid_export_with_unexpected_end_of_stream)
-  TS_parse_file("./examples/return/without_function");
+  TSFile *tsFile = TS_parse_file("./examples/return/without_function");
+  ck_assert_ptr_ne(tsFile, NULL);
+  ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(tsFile);
 END_TEST
 
 void parse_return_keyword_suite(Suite *suite) {
   TCase *tc_return_keyword = tcase_create("Return keyword");
 
   tcase_add_test(tc_return_keyword, parse_valid_return);
-  tcase_add_exit_test(tc_return_keyword, parse_invalid_export_with_unexpected_end_of_stream, TS_PARSE_FAILURE_CODE);
+  tcase_add_test(tc_return_keyword, parse_invalid_export_with_unexpected_end_of_stream);
 
   suite_add_tcase(suite, tc_return_keyword);
 }

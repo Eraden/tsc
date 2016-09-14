@@ -51,11 +51,66 @@ START_TEST(parse_valid_switch)
   TS_free_tsFile(tsFile);
 END_TEST
 
+// head
+START_TEST(head_unexpected_end_of_stream)
+  TSFile *tsFile = TS_parse_file("./examples/switch/head/unexpected_end_of_stream");
+  ck_assert_ptr_ne(tsFile, NULL);
+  ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(tsFile);
+END_TEST
+
+START_TEST(head_unexpected_token)
+  TSFile *tsFile = TS_parse_file("./examples/switch/head/unexpected_token");
+  ck_assert_ptr_ne(tsFile, NULL);
+  ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(tsFile);
+END_TEST
+
+// body
+START_TEST(body_unexpected_end_of_stream)
+  TSFile *tsFile = TS_parse_file("./examples/switch/body/unexpected_end_of_stream");
+  ck_assert_ptr_ne(tsFile, NULL);
+  ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(tsFile);
+END_TEST
+
+START_TEST(body_unexpected_token)
+  TSFile *tsFile = TS_parse_file("./examples/switch/body/unexpected_token");
+  ck_assert_ptr_ne(tsFile, NULL);
+  ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(tsFile);
+END_TEST
+
+// conditions
+START_TEST(conditions_unexpected_end_of_stream)
+  TSFile *tsFile = TS_parse_file("./examples/switch/conditions/unexpected_end_of_stream");
+  ck_assert_ptr_ne(tsFile, NULL);
+  ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(tsFile);
+END_TEST
+
+START_TEST(conditions_unexpected_token)
+  TSFile *tsFile = TS_parse_file("./examples/switch/conditions/unexpected_token");
+  ck_assert_ptr_ne(tsFile, NULL);
+  ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
+  TS_free_tsFile(tsFile);
+END_TEST
+
 void parse_switch_suite(Suite *suite)
 {
   TCase *tc_parse_switch = tcase_create("Parse switch");
 
   tcase_add_test(tc_parse_switch, parse_valid_switch);
+
+  // head
+  tcase_add_test(tc_parse_switch, head_unexpected_end_of_stream);
+  tcase_add_test(tc_parse_switch, head_unexpected_token);
+  // body
+  tcase_add_test(tc_parse_switch, body_unexpected_end_of_stream);
+  tcase_add_test(tc_parse_switch, body_unexpected_token);
+  // conditions
+  tcase_add_test(tc_parse_switch, conditions_unexpected_end_of_stream);
+  tcase_add_test(tc_parse_switch, conditions_unexpected_token);
 
   suite_add_tcase(suite, tc_parse_switch);
 }

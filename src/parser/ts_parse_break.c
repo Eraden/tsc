@@ -9,6 +9,14 @@ TSParserToken *TS_parse_break(TSFile *tsFile, TSParseData *tsParseData)
 
   TSParserToken *token = TS_build_parser_token(TS_BREAK, tsParseData);
 
+  if (token->parent == NULL) {
+    ts_token_syntax_error(
+        (const wchar_t *) L"Unexpected break in global scope",
+        tsFile,
+        token
+    );
+  }
+
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
   tsParseData->parentTSToken = token->parent;
