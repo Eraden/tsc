@@ -28,6 +28,7 @@ SET(
     src/parser/ts_parse_inline_comment.c
     src/parser/ts_parse_multiline_comment.c
     src/parser/ts_parse_caller.c
+    src/parser/ts_parse_for.c
     src/parser.c
 )
 
@@ -181,6 +182,17 @@ IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
 ENDIF ()
 
 FILE(COPY examples DESTINATION .)
+
+ADD_TEST(NAME cli_invalid_parameters COMMAND ./tsc -)
+ADD_TEST(NAME cli_invalid_file_source_parameters COMMAND ./tsc -f)
+
+ADD_TEST(NAME cli_blank_with_blank_file COMMAND ./tsc -f ./examples/cli/blank.ts)
+ADD_TEST(NAME cli_blank_with_blank_file_and_level_info COMMAND ./tsc -f ./examples/cli/blank.ts -l info)
+ADD_TEST(NAME cli_blank_with_blank_file_and_level_log COMMAND ./tsc -f ./examples/cli/blank.ts -l log)
+ADD_TEST(NAME cli_blank_with_blank_file_and_level_debug COMMAND ./tsc -f ./examples/cli/blank.ts -l debug)
+ADD_TEST(NAME cli_blank_with_blank_file_and_level_off COMMAND ./tsc -f ./examples/cli/blank.ts -l off)
+ADD_TEST(NAME cli_eval_source COMMAND ./tsc -c 'var\ a')
+
 ADD_TEST(NAME Functions COMMAND ./tsc -f ./examples/functions/valid.ts)
 
 ADD_TEST(NAME If_blocks COMMAND ./tsc -f ./examples/if/valid.ts)
@@ -217,6 +229,9 @@ IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
 ENDIF ()
 
 SET_TESTS_PROPERTIES(
+    cli_invalid_parameters
+    cli_invalid_file_source_parameters
+
     Var_name_is_reserved_name
     Let_name_is_reserved_name
     Const_name_is_reserved_name
@@ -226,15 +241,18 @@ SET_TESTS_PROPERTIES(
     Decorator_missing_name
     Decorator_unexpected_end_of_stream
     Decorator_unexpected_keyword
+
     switch_head_unexpected_end_of_stream
     switch_head_unexpected_token
     switch_body_unexpected_end_of_stream
     switch_body_unexpected_token
     switch_conditions_unexpected_end_of_stream
     switch_conditions_unexpected_token
+
     case_body_unexpected_end_of_stream
     case_conditions_unexpected_end_of_stream
     case_conditions_unexpected_token
+
     PROPERTIES
     WILL_FAIL TRUE
 )

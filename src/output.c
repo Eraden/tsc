@@ -97,6 +97,10 @@ TS_print_for_token(
     case TS_SWITCH:break;
     case TS_CASE:break;
     case TS_BREAK:break;
+    case TS_FOR:break;
+    case TS_FOR_LET:break;
+    case TS_FOR_IN:break;
+    case TS_FOR_OF:break;
   }
 }
 
@@ -195,6 +199,10 @@ TS_string_for_token(
     case TS_SWITCH:break;
     case TS_CASE:break;
     case TS_BREAK:break;
+    case TS_FOR:break;
+    case TS_FOR_LET:break;
+    case TS_FOR_IN:break;
+    case TS_FOR_OF:break;
   }
   return NULL;
 }

@@ -7,6 +7,10 @@ int main(int argc, const char **argv) {
   TSParserSettings settings = TS_parse_arguments(argc, argv);
 
   init_log();
+  log_to_file(
+      (wchar_t *) L"Parsing file: %s\n",
+      settings.fileName
+  );
 
   TSFile *tsFile = TS_parse_stream(settings.fileName, settings.stream);
 

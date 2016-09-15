@@ -53,6 +53,10 @@ typedef enum eTSTokenType {
   TS_SWITCH = 25,
   TS_CASE = 26,
   TS_BREAK = 27,
+  TS_FOR = 28,
+  TS_FOR_LET = 29,
+  TS_FOR_IN = 30,
+  TS_FOR_OF = 31,
   TS_UNKNOWN = 0,
 } __attribute__ ((__packed__)) TSTokenType;
 
@@ -97,7 +101,7 @@ typedef struct sTSKeyword {
   TS_token_build_fn callback;
 } TSKeyword;
 
-#define KEYWORDS_SIZE 22
+#define KEYWORDS_SIZE 23
 
 typedef struct sTSLocalVariableData {
   const wchar_t *name;
@@ -248,6 +252,9 @@ void TS_free_multiline_comment(const TSParserToken *token);
 
 TSParserToken *TS_parse_caller(TSFile *tsFile, TSParseData *tsParseData);
 void TS_free_caller(const TSParserToken *token);
+
+TSParserToken *TS_parse_for(TSFile *tsFile, TSParseData *tsParseData);
+void TS_free_for(const TSParserToken *token);
 
 TSParserToken *TS_parse_ts_token(TSFile *tsFile, TSParseData *data);
 void TS_free_tsToken(const TSParserToken *token);
