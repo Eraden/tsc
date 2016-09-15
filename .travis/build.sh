@@ -11,5 +11,5 @@ export CC=$(which clang)
 echo "clang path: $(which clang)"
 
 cd build
-cmake -DCMAKE_C_COMPILER=$(which clang) -DCMAKE_CXX_COMPILER=$(which clang++) -DVALIDATE_MEMORY=FALSE -DVALIDATE_ADDRESS=FALSE -DCMAKE_BUILD_TYPE=Debug ..
+cmake -DCMAKE_C_COMPILER=$(which clang) -DTSC_TEST=1 -DCMAKE_CXX_COMPILER=$(which clang++) -DVALIDATE_MEMORY=FALSE -DVALIDATE_ADDRESS=FALSE -DCMAKE_BUILD_TYPE=Debug ..
 make -j4

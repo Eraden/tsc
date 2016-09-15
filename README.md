@@ -2,9 +2,9 @@
 
 This is C typescript compiler. It can compile typescript file faster than normal tsc provided by Microsoft.
 
-## Pre-requirements
+## Soft requirements
 
-* `libunistring-dev` for unicode support
+* `check` - if build with `-DTSC_TEST=1` requires test framework for c language, this creates tests which check internal pre-compiler functionalities
 
 ## Build
 

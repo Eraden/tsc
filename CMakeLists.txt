@@ -52,26 +52,28 @@ SET(
     src/register.c
 )
 
-SET(
-    TEST_SOURCES
-    ${SOURCE_FILES}
-    tests/test.c
-    tests/parser/parse_variables.c
-    tests/parser/parse_function.c
-    tests/parser/parse_if.c
-    tests/parser/parse_else.c
-    tests/parser/classes.c
-    tests/parser/class/multiple_instance_methods.c
-    tests/parser/class/multiple_instance_fields.c
-    tests/parser/parse_return.c
-    tests/parser/parse_exports.c
-    tests/parser/parse_inline_comment.c
-    tests/parser/parse_multiline_comment.c
-    tests/parser/parse_new.c
-    tests/parser/parse_decorator.c
-    tests/parser/parse_switch.c
-    tests/parser/parse_break.c
-)
+IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
+  SET(
+      TEST_SOURCES
+      ${SOURCE_FILES}
+      tests/test.c
+      tests/parser/parse_variables.c
+      tests/parser/parse_function.c
+      tests/parser/parse_if.c
+      tests/parser/parse_else.c
+      tests/parser/classes.c
+      tests/parser/class/multiple_instance_methods.c
+      tests/parser/class/multiple_instance_fields.c
+      tests/parser/parse_return.c
+      tests/parser/parse_exports.c
+      tests/parser/parse_inline_comment.c
+      tests/parser/parse_multiline_comment.c
+      tests/parser/parse_new.c
+      tests/parser/parse_decorator.c
+      tests/parser/parse_switch.c
+      tests/parser/parse_break.c
+  )
+ENDIF ()
 
 SET(
     HEADER_FILES
@@ -154,7 +156,10 @@ add_library(
 )
 
 ADD_EXECUTABLE(tsc ${SOURCE_FILES} src/main.c)
-ADD_EXECUTABLE(tsc_test ${TEST_SOURCES} tests/main.c)
+
+IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
+  ADD_EXECUTABLE(tsc_test ${TEST_SOURCES} tests/main.c)
+ENDIF ()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build)
 
@@ -165,13 +170,15 @@ target_link_libraries(
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
-target_link_libraries(
-    tsc_test
-    tsparser
-    tsoutput
-    ${CHECK_LIBRARIES}
-    ${CMAKE_THREAD_LIBS_INIT}
-)
+IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
+  target_link_libraries(
+      tsc_test
+      tsparser
+      tsoutput
+      ${CHECK_LIBRARIES}
+      ${CMAKE_THREAD_LIBS_INIT}
+  )
+ENDIF ()
 
 FILE(COPY examples DESTINATION .)
 ADD_TEST(NAME Functions COMMAND ./tsc -f ./examples/functions/valid.ts)
@@ -205,7 +212,9 @@ ADD_TEST(NAME case_body_unexpected_end_of_stream COMMAND ./tsc -f ./examples/cas
 ADD_TEST(NAME case_conditions_unexpected_end_of_stream COMMAND ./tsc -f ./examples/case/conditions/unexpected_end_of_stream)
 ADD_TEST(NAME case_conditions_unexpected_token COMMAND ./tsc -f ./examples/case/conditions/unexpected_token)
 
-ADD_TEST(NAME CheckTsc COMMAND ./tsc_test)
+IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
+  ADD_TEST(NAME CheckTsc COMMAND ./tsc_test)
+ENDIF ()
 
 SET_TESTS_PROPERTIES(
     Var_name_is_reserved_name
