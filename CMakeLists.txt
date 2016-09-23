@@ -1,7 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.4)
-PROJECT(tsc)
-
-#include( CTest )
+PROJECT(cts)
 
 SET(
     PARSER_SOURCES
@@ -78,11 +76,11 @@ ENDIF ()
 
 SET(
     HEADER_FILES
-    include/tsc/log.h
-    include/tsc/sys.h
-    include/tsc/register.h
-    include/tsc/output.h
-    include/tsc/parser.h
+    include/cts/log.h
+    include/cts/sys.h
+    include/cts/register.h
+    include/cts/output.h
+    include/cts/parser.h
     tests/support/ck_wcs_assert.h
 )
 
@@ -156,16 +154,16 @@ add_library(
     ${OUTPUT_SOURCES}
 )
 
-ADD_EXECUTABLE(tsc ${SOURCE_FILES} src/main.c)
+ADD_EXECUTABLE(cts ${SOURCE_FILES} src/main.c)
 
 IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
-  ADD_EXECUTABLE(tsc_test ${TEST_SOURCES} tests/main.c)
+  ADD_EXECUTABLE(cts_test ${TEST_SOURCES} tests/main.c)
 ENDIF ()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build)
 
 target_link_libraries(
-    tsc
+    cts
     tsparser
     tsoutput
     ${CMAKE_THREAD_LIBS_INIT}
@@ -173,7 +171,7 @@ target_link_libraries(
 
 IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
   target_link_libraries(
-      tsc_test
+      cts_test
       tsparser
       tsoutput
       ${CHECK_LIBRARIES}
@@ -183,49 +181,49 @@ ENDIF ()
 
 FILE(COPY examples DESTINATION .)
 
-ADD_TEST(NAME cli_invalid_parameters COMMAND ./tsc -)
-ADD_TEST(NAME cli_invalid_file_source_parameters COMMAND ./tsc -f)
+ADD_TEST(NAME cli_invalid_parameters COMMAND ./cts -)
+ADD_TEST(NAME cli_invalid_file_source_parameters COMMAND ./cts -f)
 
-ADD_TEST(NAME cli_blank_with_blank_file COMMAND ./tsc -f ./examples/cli/blank.ts)
-ADD_TEST(NAME cli_blank_with_blank_file_and_level_info COMMAND ./tsc -f ./examples/cli/blank.ts -l info)
-ADD_TEST(NAME cli_blank_with_blank_file_and_level_log COMMAND ./tsc -f ./examples/cli/blank.ts -l log)
-ADD_TEST(NAME cli_blank_with_blank_file_and_level_debug COMMAND ./tsc -f ./examples/cli/blank.ts -l debug)
-ADD_TEST(NAME cli_blank_with_blank_file_and_level_off COMMAND ./tsc -f ./examples/cli/blank.ts -l off)
-ADD_TEST(NAME cli_eval_source COMMAND ./tsc -c 'var\ a')
+ADD_TEST(NAME cli_blank_with_blank_file COMMAND ./cts -f ./examples/cli/blank.ts)
+ADD_TEST(NAME cli_blank_with_blank_file_and_level_info COMMAND ./cts -f ./examples/cli/blank.ts -l info)
+ADD_TEST(NAME cli_blank_with_blank_file_and_level_log COMMAND ./cts -f ./examples/cli/blank.ts -l log)
+ADD_TEST(NAME cli_blank_with_blank_file_and_level_debug COMMAND ./cts -f ./examples/cli/blank.ts -l debug)
+ADD_TEST(NAME cli_blank_with_blank_file_and_level_off COMMAND ./cts -f ./examples/cli/blank.ts -l off)
+ADD_TEST(NAME cli_eval_source COMMAND ./cts -c 'var\ a')
 
-ADD_TEST(NAME Functions COMMAND ./tsc -f ./examples/functions/valid.ts)
+ADD_TEST(NAME Functions COMMAND ./cts -f ./examples/functions/valid.ts)
 
-ADD_TEST(NAME If_blocks COMMAND ./tsc -f ./examples/if/valid.ts)
-ADD_TEST(NAME If_else_blocks COMMAND ./tsc -f ./examples/else/valid.ts)
+ADD_TEST(NAME If_blocks COMMAND ./cts -f ./examples/if/valid.ts)
+ADD_TEST(NAME If_else_blocks COMMAND ./cts -f ./examples/else/valid.ts)
 
-ADD_TEST(NAME Variables COMMAND ./tsc -f ./examples/variables/valid.ts)
-ADD_TEST(NAME Var_name_is_reserved_name COMMAND ./tsc -f ./examples/variables/var_name_reserved_word)
-ADD_TEST(NAME Let_name_is_reserved_name COMMAND ./tsc -f ./examples/variables/let_name_reserved_word)
-ADD_TEST(NAME Const_name_is_reserved_name COMMAND ./tsc -f ./examples/variables/const_name_reserved_word)
+ADD_TEST(NAME Variables COMMAND ./cts -f ./examples/variables/valid.ts)
+ADD_TEST(NAME Var_name_is_reserved_name COMMAND ./cts -f ./examples/variables/var_name_reserved_word)
+ADD_TEST(NAME Let_name_is_reserved_name COMMAND ./cts -f ./examples/variables/let_name_reserved_word)
+ADD_TEST(NAME Const_name_is_reserved_name COMMAND ./cts -f ./examples/variables/const_name_reserved_word)
 
-ADD_TEST(NAME Decorator_valid COMMAND ./tsc -f ./examples/decorator/valid.ts)
-ADD_TEST(NAME Decorator_invalid_character COMMAND ./tsc -f ./examples/decorator/invalid_character)
-ADD_TEST(NAME Decorator_missing_name COMMAND ./tsc -f ./examples/decorator/missing_name)
-ADD_TEST(NAME Decorator_unexpected_end_of_stream COMMAND ./tsc -f ./examples/decorator/unexpected_end_of_stream)
-ADD_TEST(NAME Decorator_unexpected_keyword COMMAND ./tsc -f ./examples/decorator/unexpected_keyword)
+ADD_TEST(NAME Decorator_valid COMMAND ./cts -f ./examples/decorator/valid.ts)
+ADD_TEST(NAME Decorator_invalid_character COMMAND ./cts -f ./examples/decorator/invalid_character)
+ADD_TEST(NAME Decorator_missing_name COMMAND ./cts -f ./examples/decorator/missing_name)
+ADD_TEST(NAME Decorator_unexpected_end_of_stream COMMAND ./cts -f ./examples/decorator/unexpected_end_of_stream)
+ADD_TEST(NAME Decorator_unexpected_keyword COMMAND ./cts -f ./examples/decorator/unexpected_keyword)
 
-ADD_TEST(NAME Class_fields COMMAND ./tsc -f ./examples/class/class_with_multiple_fields.ts)
-ADD_TEST(NAME Class_methods COMMAND ./tsc -f ./examples/class/class_with_multiple_methods.ts)
-ADD_TEST(NAME Class_with_invalid_name COMMAND ./tsc -f ./examples/class/invalid_class_name)
-ADD_TEST(NAME Class_with_missing_ending COMMAND ./tsc -f ./examples/class/missing_class_ending)
+ADD_TEST(NAME Class_fields COMMAND ./cts -f ./examples/class/class_with_multiple_fields.ts)
+ADD_TEST(NAME Class_methods COMMAND ./cts -f ./examples/class/class_with_multiple_methods.ts)
+ADD_TEST(NAME Class_with_invalid_name COMMAND ./cts -f ./examples/class/invalid_class_name)
+ADD_TEST(NAME Class_with_missing_ending COMMAND ./cts -f ./examples/class/missing_class_ending)
 
-ADD_TEST(NAME switch_head_unexpected_end_of_stream COMMAND ./tsc -f ./examples/switch/head/unexpected_end_of_stream)
-ADD_TEST(NAME switch_head_unexpected_token COMMAND ./tsc -f ./examples/switch/head/unexpected_token)
-ADD_TEST(NAME switch_body_unexpected_end_of_stream COMMAND ./tsc -f ./examples/switch/body/unexpected_end_of_stream)
-ADD_TEST(NAME switch_body_unexpected_token COMMAND ./tsc -f ./examples/switch/body/unexpected_token)
-ADD_TEST(NAME switch_conditions_unexpected_end_of_stream COMMAND ./tsc -f ./examples/switch/conditions/unexpected_end_of_stream)
-ADD_TEST(NAME switch_conditions_unexpected_token COMMAND ./tsc -f ./examples/switch/conditions/unexpected_token)
-ADD_TEST(NAME case_body_unexpected_end_of_stream COMMAND ./tsc -f ./examples/case/body/unexpected_end_of_stream)
-ADD_TEST(NAME case_conditions_unexpected_end_of_stream COMMAND ./tsc -f ./examples/case/conditions/unexpected_end_of_stream)
-ADD_TEST(NAME case_conditions_unexpected_token COMMAND ./tsc -f ./examples/case/conditions/unexpected_token)
+ADD_TEST(NAME switch_head_unexpected_end_of_stream COMMAND ./cts -f ./examples/switch/head/unexpected_end_of_stream)
+ADD_TEST(NAME switch_head_unexpected_token COMMAND ./cts -f ./examples/switch/head/unexpected_token)
+ADD_TEST(NAME switch_body_unexpected_end_of_stream COMMAND ./cts -f ./examples/switch/body/unexpected_end_of_stream)
+ADD_TEST(NAME switch_body_unexpected_token COMMAND ./cts -f ./examples/switch/body/unexpected_token)
+ADD_TEST(NAME switch_conditions_unexpected_end_of_stream COMMAND ./cts -f ./examples/switch/conditions/unexpected_end_of_stream)
+ADD_TEST(NAME switch_conditions_unexpected_token COMMAND ./cts -f ./examples/switch/conditions/unexpected_token)
+ADD_TEST(NAME case_body_unexpected_end_of_stream COMMAND ./cts -f ./examples/case/body/unexpected_end_of_stream)
+ADD_TEST(NAME case_conditions_unexpected_end_of_stream COMMAND ./cts -f ./examples/case/conditions/unexpected_end_of_stream)
+ADD_TEST(NAME case_conditions_unexpected_token COMMAND ./cts -f ./examples/case/conditions/unexpected_token)
 
 IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
-  ADD_TEST(NAME CheckTsc COMMAND ./tsc_test)
+  ADD_TEST(NAME CheckTsc COMMAND ./cts_test)
 ENDIF ()
 
 SET_TESTS_PROPERTIES(
