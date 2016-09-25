@@ -3,45 +3,37 @@
 static void
 TS_parse_scope_body(
     TSFile *tsFile,
-    TSParseData *data,
-    TSParserToken *token
+    TSParseData *tsParseData
 ) {
+  TSParserToken *token = tsParseData->parentTSToken;
   const wchar_t *tok;
   while (1) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_getToken(data->stream);
+    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "scope");
       break;
     }
     switch (tok[0]) {
-      case L'\n': {
-        u_long movedBy = wcslen(tok);
-        data->position += movedBy;
-        data->line += 1;
-        data->character = 0;
+      case L' ': {
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
-      case L' ': {
-        u_long len = wcslen(tok);
-        data->character += len;
-        data->position += len;
+      case L'\n': {
+        TS_NEW_LINE(tsParseData, tok);
         free((void *) tok);
         break;
       }
       case L'}': {
-        u_long movedBy = wcslen(tok);
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
-
-        data->position += movedBy;
-        data->character += movedBy;
         return;
       }
       default: {
-        data->token = tok;
-        TSParserToken *child = TS_parse_ts_token(tsFile, data);
+        tsParseData->token = tok;
+        TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
         if (child->tokenType != TS_UNKNOWN) {
           TS_push_child(token, child);
         } else {
@@ -59,14 +51,11 @@ TS_parse_scope(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("scope");
-  u_long movedBy = wcslen(tsParseData->token);
+  TS_MOVE_BY(tsParseData, tsParseData->token);
 
   TSParserToken *token = TS_build_parser_token(TS_SCOPE, tsParseData);
 
-  TS_parse_scope_body(tsFile, tsParseData, token);
-
-  tsParseData->position += movedBy;
-  tsParseData->character += movedBy;
+  TS_parse_scope_body(tsFile, tsParseData);
 
   tsParseData->parentTSToken = token->parent;
   TS_TOKEN_END("scope");

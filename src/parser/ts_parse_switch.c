@@ -10,7 +10,7 @@ TS_parse_switch_conditions(
   TSParserToken *child = NULL;
 
   const wchar_t *tok;
-  volatile unsigned char proceed = 1;
+  volatile unsigned char proceed = TRUE;
 
   while(proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -18,34 +18,25 @@ TS_parse_switch_conditions(
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
 
     if (tok == NULL) {
-      ts_token_syntax_error(
-          (const wchar_t *) L"Unexpected end of stream while parsing switch conditions section",
-          tsFile,
-          token
-      );
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "switch conditions section");
       break;
     }
     switch (tok[0]) {
       case L' ': {
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        u_long movedBy = wcslen(tok);
+        TS_NEW_LINE(tsParseData, tok);
         free((void *) tok);
-        tsParseData->position += movedBy;
-        tsParseData->character = 0;
-        tsParseData->line += 1;
         break;
       }
       default: {
         TS_put_back(tsFile->stream, tok);
         tsParseData->token = tok;
         child = TS_parse_condition(tsFile, tsParseData);
-        proceed = 0;
+        proceed = FALSE;
         free((void *) tok);
         break;
       }
@@ -64,53 +55,38 @@ TS_parse_switch_skip_to_body(
 {
   TS_TOKEN_SECTION_BEGIN("switch skipping to body");
   TSParserToken *token = tsParseData->parentTSToken;
-  volatile unsigned char proceed = 1;
-  const wchar_t *tok;
+  volatile unsigned char proceed = TRUE;
+  const wchar_t *tok = NULL;
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
     if (tok == NULL) {
-      ts_token_syntax_error(
-          (const wchar_t *) L"Unexpected end of stream while parsing switch",
-          tsFile,
-          token
-      );
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "switch");
       break;
     }
     switch (tok[0]) {
       case L' ': {
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        u_long movedBy = wcslen(tok);
+        TS_NEW_LINE(tsParseData, tok);
         free((void *) tok);
-        tsParseData->position += movedBy;
-        tsParseData->character = 0;
-        tsParseData->line += 1;
         break;
       }
       case L'{': {
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
       default: {
+        TS_UNEXPECTED_TOKEN(tsFile, token, tok, "switch");
         free((void *) tok);
-        ts_token_syntax_error(
-            (const wchar_t *) L"Unexpected token while parsing switch",
-            tsFile,
-            token
-        );
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
     }
@@ -128,7 +104,7 @@ TS_parse_switch_body(
   TSParserToken *child = NULL;
 
   const wchar_t *tok;
-  volatile unsigned char proceed = 1;
+  volatile unsigned char proceed = TRUE;
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -136,44 +112,29 @@ TS_parse_switch_body(
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
 
     if (tok == NULL) {
-      ts_token_syntax_error(
-          (const wchar_t *) L"Unexpected end of stream while parsing switch body",
-          tsFile,
-          token
-      );
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "switch body");
       break;
     }
     switch (tok[0]) {
       case L' ': {
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        u_long movedBy = wcslen(tok);
+        TS_NEW_LINE(tsParseData, tok);
         free((void *) tok);
-        tsParseData->position += movedBy;
-        tsParseData->character = 0;
-        tsParseData->line += 1;
         break;
       }
       case L'}': {
-        proceed = 0;
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
+        proceed = FALSE;
         break;
       }
       default: {
         tsParseData->token = tok;
         child = TS_parse_ts_token(tsFile, tsParseData);
-
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
 
         switch (child->tokenType) {
           case TS_CASE:
@@ -181,11 +142,7 @@ TS_parse_switch_body(
             break;
           }
           default: {
-            ts_token_syntax_error(
-                (const wchar_t *) L"Unexpected token while parsing switch body",
-                tsFile,
-                token
-            );
+            TS_UNEXPECTED_TOKEN(tsFile, token, tok, "switch body");
             TS_free_tsToken(child);
             child = NULL;
             break;
@@ -193,7 +150,7 @@ TS_parse_switch_body(
         }
 
         free((void *) tok);
-        proceed = 0;
+        proceed = FALSE;
         break;
       } // default
     } // switch
@@ -216,7 +173,7 @@ TS_parse_switch(
   TSParserToken *token = TS_build_parser_token(TS_SWITCH, tsParseData);
   TSParserToken *child = NULL;
 
-  volatile long brackets_count = 0;
+  volatile long brackets_count = FALSE;
 
   while (1) {
     TS_LOOP_SANITY_CHECK(tsFile)

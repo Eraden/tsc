@@ -4,55 +4,50 @@ static void
 __attribute__(( visibility("hidden") ))
 TS_parse_else_body(
     TSFile *tsFile,
-    TSParseData *tsParseData,
-    TSParserToken *token,
-    u_long *movedBy
+    TSParseData *tsParseData
 ) {
   log_to_file((wchar_t *) L"->   parsing as %s body\n", "else");
   const wchar_t *tok;
   TSConditionBodyTermination termination = TS_ENDS_WITH_BRACKET;
+  TSParserToken *token = tsParseData->parentTSToken;
 
   unsigned char proceed;
 
-  proceed = 1;
+  proceed = TRUE;
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Unexpected end of else body", tsFile, token);
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "else body");
       break;
     }
 
     switch (tok[0]) {
-      case L'\n': {
-        *movedBy += wcslen(tok);
-        tsParseData->position += *movedBy;
-        tsParseData->line += 1;
-        tsParseData->character = 0;
-        *movedBy = 0;
-        break;
-      }
       case L' ': {
-        *movedBy += wcslen(tok);
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
+      case L'\n': {
+        TS_NEW_LINE(tsParseData, tok);
+        break;
+      }
       case L';': {
-        *movedBy += wcslen(tok);
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
 
         return;
       }
       case L'{': {
-        proceed = 0;
+        TS_MOVE_BY(tsParseData, tok);
+        proceed = FALSE;
         termination = TS_ENDS_WITH_BRACKET;
-        *movedBy += wcslen(tok);
         free((void *) tok);
         break;
       }
       default: {
-        proceed = 0;
+        proceed = FALSE;
         TS_put_back(tsParseData->stream, tok);
         termination = TS_ENDS_WITHOUT_BRACKET;
         free((void *) tok);
@@ -61,56 +56,48 @@ TS_parse_else_body(
     }
   }
 
-  proceed = 1;
+  proceed = TRUE;
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Unexpected end of else body", tsFile, token);
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "else body");
       break;
     }
     switch (tok[0]) {
       case L' ': {
-        *movedBy += wcslen(tok);
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        *movedBy += wcslen(tok);
+        TS_NEW_LINE(tsParseData, tok);
         free((void *) tok);
-
-        tsParseData->position += *movedBy;
-        tsParseData->line += 1;
-        tsParseData->character = 0;
-        *movedBy = 0;
         break;
       }
       case L';': {
-        *movedBy += wcslen(tok);
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
 
         if (termination == TS_ENDS_WITHOUT_BRACKET) {
-          proceed = 0;
+          proceed = FALSE;
         }
         break;
       }
       case L'}': {
         if (termination == TS_ENDS_WITH_BRACKET) {
-          *movedBy += wcslen(tok);
+          TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
         } else {
           free((void *) tok);
           TS_put_back(tsParseData->stream, tok);
         }
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
       default: {
         tsParseData->token = tok;
-        tsParseData->character += *movedBy;
-        tsParseData->position += *movedBy;
-        *movedBy = 0;
         TSParserToken *t = TS_parse_ts_token(tsFile, tsParseData);
         if (token->children == NULL) {
           token->children = (TSParserToken **) calloc(sizeof(TSParserToken *), 1);
@@ -138,13 +125,9 @@ TS_parse_else(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("else");
-  u_long movedBy = wcslen(tsParseData->token);
-
   TSParserToken *token = TS_build_parser_token(TS_ELSE, tsParseData);
-  TS_parse_else_body(tsFile, tsParseData, token, &movedBy);
+  TS_parse_else_body(tsFile, tsParseData);
 
-  tsParseData->position += movedBy;
-  tsParseData->character += movedBy;
   tsParseData->parentTSToken = token->parent;
   TS_TOKEN_END("else");
   return token;

@@ -1,8 +1,5 @@
 #include <cts/parser.h>
 
-/**
- * TODO implement
- */
 TSParserToken *
 TS_parse_default(
     TSFile *tsFile,
@@ -12,7 +9,7 @@ TS_parse_default(
   TSParserToken *token = TS_build_parser_token(TS_DEFAULT, tsParseData);
 
   const wchar_t *tok = NULL;
-  volatile unsigned char proceed = 1;
+  volatile unsigned char proceed = TRUE;
 
   while (proceed) {
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
@@ -27,32 +24,23 @@ TS_parse_default(
     }
     switch (tok[0]) {
       case L' ': {
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        u_long movedBy = wcslen(tok);
+        TS_NEW_LINE(tsParseData, tok);
         free((void *) tok);
-        tsParseData->position += movedBy;
-        tsParseData->character = 0;
-        tsParseData->line += 1;
         break;
       }
       case L':': {
-        u_long movedBy = wcslen(tok);
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
       default: {
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
 
         ts_token_syntax_error(
@@ -60,13 +48,13 @@ TS_parse_default(
             tsFile,
             token
         );
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
     }
   }
 
-  proceed = 1;
+  proceed = TRUE;
   while (proceed) {
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
 
@@ -81,32 +69,23 @@ TS_parse_default(
 
     switch (tok[0]) {
       case L' ': {
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        u_long movedBy = wcslen(tok);
+        TS_NEW_LINE(tsParseData, tok);
         free((void *) tok);
-        tsParseData->position += movedBy;
-        tsParseData->character = 0;
-        tsParseData->line += 1;
         break;
       }
       case L';': {
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
       default: {
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
+        TS_MOVE_BY(tsParseData, tok);
         tsParseData->token = tok;
         TS_put_back(tsFile->stream, tok);
 

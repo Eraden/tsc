@@ -3,7 +3,7 @@
 TSParserToken *TS_parse_break(TSFile *tsFile, TSParseData *tsParseData)
 {
   TS_TOKEN_BEGIN("break");
-  u_long movedBy = wcslen(tsParseData->token);
+  TS_MOVE_BY(tsParseData, tsParseData->token);
   const wchar_t *tok = (const wchar_t *) TS_getToken(tsFile->stream);
   free((void *) tok);
 
@@ -17,8 +17,6 @@ TSParserToken *TS_parse_break(TSFile *tsFile, TSParseData *tsParseData)
     );
   }
 
-  tsParseData->position += movedBy;
-  tsParseData->character += movedBy;
   tsParseData->parentTSToken = token->parent;
   TS_TOKEN_END("break");
   return token;

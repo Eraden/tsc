@@ -10,6 +10,8 @@
 #define TS_STRING_END 1
 #define TS_NEW_TOKEN calloc(sizeof(TSParserToken), 1)
 #define TS_LOOP_SANITY_CHECK(file) if (file->sanity != TS_FILE_VALID) break;
+#define TS_MOVE_BY(data, tok) { u_long m = wcslen(tok); data->position += m; data->position += m; }
+#define TS_NEW_LINE(data, tok) { u_long m = wcslen(tok); data->character = 0; data->position += m; data->line += 1; }
 #define TS_UNEXPECTED_END_OF_STREAM(file, token, type) ts_token_syntax_error( \
   (const wchar_t *) L"Unexpected end of stream while parsing " #type, \
   file, token )

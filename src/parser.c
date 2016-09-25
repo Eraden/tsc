@@ -111,13 +111,13 @@ TS_name_is_valid(
       case L'%':
       case L'\n':
       case L' ': {
-        return 0;
+        return FALSE;
       }
       default:
         break;
     }
   }
-  return 1;
+  return TRUE;
 }
 
 void

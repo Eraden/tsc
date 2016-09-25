@@ -10,7 +10,7 @@ TS_parse_caller(
   token->visibility = TS_VISIBILITY_SCOPE;
   token->name = (void *) TS_clone_string(tsParseData->token);
 
-  volatile unsigned char proceed = 1;
+  volatile unsigned char proceed = TRUE;
   const wchar_t *tok;
   u_long len = wcslen(tsParseData->token);
   tsParseData->position += len;
@@ -23,7 +23,7 @@ TS_parse_caller(
 
     if (tok == NULL) {
       if (token->data == NULL) {
-        ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing caller arguments.", tsFile, token);
+        TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "caller arguments");
         break;
 
       } else {
@@ -43,7 +43,7 @@ TS_parse_caller(
       case L';': {
         TS_put_back(tsParseData->stream, tok);
         free((void *) tok);
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
       case L'\n': {
@@ -68,7 +68,7 @@ TS_parse_caller(
         len = wcslen(tok);
         tsParseData->position += len;
         tsParseData->character += len;
-        proceed = 0;
+        proceed = FALSE;
         free((void *) tok);
         break;
       }

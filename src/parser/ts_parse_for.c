@@ -9,7 +9,7 @@ TS_resolve_for_token_type(
   volatile wchar_t *buffer = NULL;
   u_long size = 0;
   const wchar_t *tok;
-  unsigned char proceed = 1;
+  volatile unsigned char proceed = TRUE;
   TSParserToken *token = tsParseData->parentTSToken;
   TSTokenType type = TS_FOR;
 
@@ -51,7 +51,7 @@ TS_resolve_for_token_type(
         buffer = newPointer;
         free((void *) tok);
         type = TS_FOR_LET;
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
       case L')': {
@@ -67,7 +67,7 @@ TS_resolve_for_token_type(
         if (type == TS_FOR) {
           type = TS_FOR_LET;
         }
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
       default: {
@@ -81,10 +81,10 @@ TS_resolve_for_token_type(
         buffer = newPointer;
         if (wcscmp(tok, (const wchar_t *) L"of") == 0) {
           type = TS_FOR_OF;
-          proceed = 0;
+          proceed = FALSE;
         } else if (wcscmp(tok, (const wchar_t *) L"in") == 0) {
           type = TS_FOR_IN;
-          proceed = 0;
+          proceed = FALSE;
         }
         free((void *) tok);
         break;
@@ -111,7 +111,7 @@ TS_parse_for_head(
   TSParserToken *head = TS_build_parser_token(headType, tsParseData);
   const wchar_t *tok;
 
-  unsigned char proceed = 1;
+  volatile unsigned char proceed = TRUE;
   while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile);
       tok = (const wchar_t *) TS_getToken(tsFile->stream);
@@ -137,7 +137,7 @@ TS_parse_for_head(
         }
         case L')': {
           free((void *) tok);
-          proceed = 0;
+          proceed = FALSE;
           break;
         }
         default: {
@@ -160,8 +160,8 @@ TS_parse_for_body(
     TSParseData *tsParseData
 ) {
   const wchar_t *tok = NULL;
-  unsigned char proceed = 1;
-  unsigned char buildScope = 1;
+  volatile unsigned char proceed = TRUE;
+  unsigned char buildScope = TRUE;
   TSParserToken *body = NULL;
 
   while (proceed) {
@@ -174,45 +174,39 @@ TS_parse_for_body(
       break;
     }
     switch (tok[0]) {
-      case L'\n': {
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->line += 1;
-        tsParseData->character = 0;
+      case L' ': {
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
-      case L' ': {
-        u_long len = wcslen(tok);
-        tsParseData->character += len;
-        tsParseData->position += len;
+      case L'\n': {
+        TS_NEW_LINE(tsParseData, tok);
         free((void *) tok);
         break;
       }
       case L';': {
-        u_long len = wcslen(tok);
-        tsParseData->character += len;
-        tsParseData->position += len;
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
-        proceed = 0;
-        buildScope = 0;
+        proceed = FALSE;
+        buildScope = FALSE;
         break;
       }
       case L'{': {
+        TS_MOVE_BY(tsParseData, tok);
         tsParseData->token = TS_clone_string(tok);
         free((void *) tok);
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
       default: {
         TS_UNEXPECTED_TOKEN(tsFile, tsParseData->parentTSToken, tok, "for");
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
     }
   }
 
-  if (tsFile->sanity != TS_FILE_VALID) buildScope = 0;
+  if (tsFile->sanity != TS_FILE_VALID) buildScope = FALSE;
   if (buildScope) {
     body = TS_parse_scope(tsFile, tsParseData);
   }
@@ -230,7 +224,7 @@ TS_parse_for(
   TSParserToken *token = TS_build_parser_token(TS_FOR, tsParseData);
 
   const wchar_t *tok = NULL;
-  unsigned char proceed = 1;
+  volatile unsigned char proceed = TRUE;
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
@@ -242,32 +236,25 @@ TS_parse_for(
 
     switch (tok[0]) {
       case L' ': {
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        u_long movedBy = wcslen(tok);
+        TS_NEW_LINE(tsParseData, tok);
         free((void *) tok);
-        tsParseData->position += movedBy;
-        tsParseData->line += 1;
-        tsParseData->character = 0;
         break;
       }
       case L'(': {
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
       default: {
         TS_UNEXPECTED_TOKEN(tsFile, token, tok, "for");
         free((void *) tok);
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
     }

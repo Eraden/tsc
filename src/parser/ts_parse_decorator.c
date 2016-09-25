@@ -9,29 +9,21 @@ TS_parse_decorator_name(
     TSParserToken *token
 ) {
   const wchar_t *tok;
-  unsigned char proceed = 1;
+  volatile unsigned char proceed = TRUE;
   wchar_t *name = NULL;
-  u_long len;
+  u_long len = 0;
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
     if (tok == NULL) {
-      ts_token_syntax_error(
-          (const wchar_t *) L"Unexpected end of stream while parsing decorator call",
-          tsFile,
-          token
-      );
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "decorator call");
       break;
 
     } else if (TS_is_keyword(tok)) {
       free((void *) tok);
-      ts_token_syntax_error(
-          (const wchar_t *) L"Unexpected keyword after decorator call symbol",
-          tsFile,
-          token
-      );
+      TS_UNEXPECTED_TOKEN(tsFile, token, tok, "decorator call");
       break;
     }
     len = wcslen(tok);
@@ -44,10 +36,10 @@ TS_parse_decorator_name(
               tsFile,
               token
           );
-          proceed = 0;
+          proceed = FALSE;
           break;
         }
-        proceed = 0;
+        proceed = FALSE;
         tsParseData->character += len;
         tsParseData->position += len;
         free((void *) tok);
@@ -64,7 +56,7 @@ TS_parse_decorator_name(
             tsFile,
             token
         );
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
       default: {
@@ -86,7 +78,7 @@ TS_parse_decorator_name(
     }
   }
 
-  if (TS_name_is_valid(name) != 1) {
+  if (TS_name_is_valid(name) != TRUE) {
     ts_token_syntax_error(
         (const wchar_t *) L"Invalid characters in decorator call",
         tsFile,
@@ -104,12 +96,9 @@ TS_parse_decorator(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("decorator");
-  u_long movedBy = wcslen(tsParseData->token);
+  TS_MOVE_BY(tsParseData, tsParseData->token);
 
   TSParserToken *token = TS_build_parser_token(TS_DECORATOR, tsParseData);
-  tsParseData->position += movedBy;
-  tsParseData->character += movedBy;
-
   wchar_t *name = TS_parse_decorator_name(tsFile, tsParseData, token);
 
   if (name) {

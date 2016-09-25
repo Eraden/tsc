@@ -6,13 +6,10 @@ TS_parse_implements(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("implements");
-  u_long movedBy = wcslen(tsParseData->token);
+  TS_MOVE_BY(tsParseData, tsParseData->token);
 
   TSParserToken *token = TS_build_parser_token(TS_IMPLEMENTS, tsParseData);
-  token->data = NULL;
 
-  tsParseData->position += movedBy;
-  tsParseData->character += movedBy;
   tsParseData->parentTSToken = token->parent;
 
   TS_TOKEN_END("implements");
