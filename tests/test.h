@@ -6,11 +6,10 @@
 #include <sys/types.h>
 #include <check.h>
 
-#include <tsc/sys.h>
-#include <tsc/parser.h>
-#include <tsc/output.h>
+#include <cts/sys.h>
+#include <cts/parser.h>
+#include <cts/output.h>
 
 #include "support/ck_wcs_assert.h"
-
-TSFile *build_ts_file(const char *fileName, const char *content);
-void validate_ts_file(const TSFile *tsFile, const int size, const TSTokenType validType);
+#include "support/ck_tsFile_sanity.h"
+#include "support/ck_token_type.h"

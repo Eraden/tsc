@@ -1,5 +1,5 @@
-#include <tsc/parser.h>
-#include <tsc/register.h>
+#include <cts/parser.h>
+#include <cts/register.h>
 
 static const wchar_t *
 __attribute__((visibility("hidden")))

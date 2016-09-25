@@ -1,5 +1,5 @@
-#include <tsc/parser.h>
-#include <tsc/register.h>
+#include <cts/parser.h>
+#include <cts/register.h>
 
 static void
 TS_append_ts_parser_token(
@@ -172,6 +172,7 @@ TS_parse_ts_token(
   t->character = data->character;
   t->position = data->position;
   t->tokenType = TS_UNKNOWN;
+  t->parent = data->parentTSToken;
   return t;
 }
 

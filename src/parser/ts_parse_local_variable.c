@@ -1,4 +1,4 @@
-#include <tsc/parser.h>
+#include <cts/parser.h>
 
 static void
 __attribute__((visibility("hidden")))
@@ -63,25 +63,34 @@ TS_parse_local_variable_body(
         break;
       }
       case L' ': {
-        *movedBy += wcslen(tok);
+        u_long len = wcslen(tok);
+        tsParseData->character += len;
+        tsParseData->position += len;
         free((void *) tok);
         break;
       }
       case L':': {
         parseFlag = TS_PARSE_VARIABLE_TYPE;
-        *movedBy += wcslen(tok);
+        u_long len = wcslen(tok);
+        tsParseData->character += len;
+        tsParseData->position += len;
         free((void *) tok);
         break;
       }
       case L'=': {
         parseFlag = TS_PARSE_VARIABLE_VALUE;
-        *movedBy += wcslen(tok);
+        u_long len = wcslen(tok);
+        tsParseData->character += len;
+        tsParseData->position += len;
         free((void *) tok);
         break;
       }
       case L';': {
         proceed = 0;
-        *movedBy += wcslen(tok);
+        u_long len = wcslen(tok);
+        tsParseData->character += len;
+        tsParseData->position += len;
+        TS_put_back(tsFile->stream, tok);
         free((void *) tok);
         break;
       }

@@ -1,21 +1,22 @@
 #include "./test.h"
 
 #include "parser/parse_variables.h"
-#include "./parser/classes.h"
+#include "parser/classes.h"
 #include "parser/parse_function.h"
 #include "parser/parse_if.h"
 #include "parser/parse_else.h"
 #include "parser/parse_return.h"
-#include "./parser/parse_exports.h"
+#include "parser/parse_exports.h"
 #include "parser/parse_inline_comment.h"
 #include "parser/parse_multiline_comment.h"
 #include "parser/parse_new.h"
-#include "./parser/parse_decorator.h"
-#include "./parser/parse_switch.h"
-#include "./parser/parse_break.h"
+#include "parser/parse_decorator.h"
+#include "parser/parse_switch.h"
+#include "parser/parse_break.h"
+#include "parser/for/parse_for_let.h"
 
-char **only = NULL;
-u_long onlySize = 0;
+static char **only = NULL;
+static u_long onlySize = 0;
 
 unsigned char hasOnly(char *str) {
   if (!only) return 1;
@@ -41,6 +42,7 @@ Suite *class_suite(void) {
   if (hasOnly("decorator")) parse_decorator_suite(suite);
   if (hasOnly("switch")) parse_switch_suite(suite);
   if (hasOnly("break")) parse_break_suite(suite);
+  if (hasOnly("for") || hasOnly("for-let")) parse_for_let_suite(suite);
   return suite;
 }
 
@@ -51,7 +53,7 @@ int main(int argc, char **argv) {
 
   enum print_output output_type = CK_NORMAL;
   enum fork_status should_fork = CK_FORK;
-  TSVerbosity tscVerbose = TS_VERBOSITY_OFF;
+  TSVerbosity ctsVerbose = TS_VERBOSITY_OFF;
 
   char **opts = argv;
   for (int i = 0; i < argc; i++) {
@@ -61,7 +63,7 @@ int main(int argc, char **argv) {
       should_fork = CK_NOFORK;
     else if (strcmp(v, "--verbose") == 0) {
       output_type = CK_VERBOSE;
-      tscVerbose = TS_VERBOSITY_DEBUG;
+      ctsVerbose = TS_VERBOSITY_DEBUG;
     }
     else if (strcmp(v, "--only") == 0) {
       while (1) {
@@ -86,7 +88,7 @@ int main(int argc, char **argv) {
     }
   }
 
-  TS_set_log_level(tscVerbose);
+  TS_set_log_level(ctsVerbose);
   init_log();
 
   Suite *s;

@@ -71,6 +71,7 @@ IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
       tests/parser/parse_decorator.c
       tests/parser/parse_switch.c
       tests/parser/parse_break.c
+      tests/parser/for/parse_for_let.c
   )
 ENDIF ()
 
@@ -81,7 +82,6 @@ SET(
     include/cts/register.h
     include/cts/output.h
     include/cts/parser.h
-    tests/support/ck_wcs_assert.h
 )
 
 include_directories(include)
@@ -211,6 +211,8 @@ ADD_TEST(NAME Class_fields COMMAND ./cts -f ./examples/class/class_with_multiple
 ADD_TEST(NAME Class_methods COMMAND ./cts -f ./examples/class/class_with_multiple_methods.ts)
 ADD_TEST(NAME Class_with_invalid_name COMMAND ./cts -f ./examples/class/invalid_class_name)
 ADD_TEST(NAME Class_with_missing_ending COMMAND ./cts -f ./examples/class/missing_class_ending)
+
+ADD_TEST(NAME for_with_iteration COMMAND ./cts -f ./examples/for/let/valid.ts)
 
 ADD_TEST(NAME switch_head_unexpected_end_of_stream COMMAND ./cts -f ./examples/switch/head/unexpected_end_of_stream)
 ADD_TEST(NAME switch_head_unexpected_token COMMAND ./cts -f ./examples/switch/head/unexpected_token)

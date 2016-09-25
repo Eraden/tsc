@@ -1,4 +1,4 @@
-#include <tsc/parser.h>
+#include <cts/parser.h>
 
 static TSParserToken *
 TS_parse_switch_conditions(

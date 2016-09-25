@@ -1,5 +1,5 @@
-#include <tsc/sys.h>
-#include <tsc/parser.h>
+#include <cts/sys.h>
+#include <cts/parser.h>
 
 const unsigned int TS_VERSION_MAJOR = 0;
 const unsigned int TS_VERSION_MINOR = 0;
@@ -44,7 +44,8 @@ void
 ts_token_syntax_error(
     const wchar_t *msg,
     TSFile *tsFile,
-    const TSParserToken *token
+    const TSParserToken *token,
+    ...
 ) {
   tsFile->sanity = TS_FILE_SYNTAX_ERROR;
   ts_syntax_error(
@@ -62,6 +63,10 @@ ts_token_syntax_error(
       (const wchar_t *) L"Syntax error: %ls\n      Position: %ls:%lu:%lu [file:line:character]\n",
       msg, tsFile->file, token->line + 1, token->character
   );
+//  va_list ap;
+//  va_start(ap, L"      additional data: '%ls'\n");
+//  vfwprintf(stderr, (const wchar_t *) L"      additional data: '%ls'\n", ap);
+//  va_end(ap);
   tsFile->errorReason = buffer;
 }
 

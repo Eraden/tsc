@@ -4,7 +4,7 @@
 #define TS_DEBUG 1
 #endif
 
-#include <tsc/sys.h>
+#include <cts/sys.h>
 
 void io_panic(wchar_t *msg);
 void init_log(void);

@@ -1,15 +1,15 @@
 #pragma once
 
-#include <tsc/sys.h>
+#include <cts/sys.h>
 
 #define _ck_assert_wstr(X, OP, Y) do { \
-  const wchar_t* _ck_x = (X); \
-  const wchar_t* _ck_y = (Y); \
-  ck_assert_msg( 0 OP wcscmp(_ck_y, _ck_x), \
+  const wchar_t* _wck_x = (X); \
+  const wchar_t* _wck_y = (Y); \
+  ck_assert_msg( 0 OP wcscmp(_wck_y, _wck_x), \
     "Assertion '%s' failed: %s == \"%ls\", %s == \"%ls\"", \
     #X" "#OP" "#Y, \
-    #X, _ck_x, \
-    #Y, _ck_y\
+    #X, _wck_x, \
+    #Y, _wck_y \
   ); \
 } while (0)
 

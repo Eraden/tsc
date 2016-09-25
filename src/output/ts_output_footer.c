@@ -1,4 +1,4 @@
-#include <tsc/output.h>
+#include <cts/output.h>
 
 const wchar_t *
 __attribute__((__malloc__))

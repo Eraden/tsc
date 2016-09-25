@@ -1,4 +1,4 @@
-#include <tsc/parser.h>
+#include <cts/parser.h>
 
 static void
 __attribute__(( visibility("hidden")))

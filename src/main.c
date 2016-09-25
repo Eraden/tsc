@@ -1,5 +1,5 @@
-#include <tsc/parser.h>
-#include <tsc/register.h>
+#include <cts/parser.h>
+#include <cts/register.h>
 
 int main(int argc, const char **argv) {
   setlocale(LC_ALL, "");

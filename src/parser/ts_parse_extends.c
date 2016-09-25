@@ -1,4 +1,4 @@
-#include <tsc/parser.h>
+#include <cts/parser.h>
 
 TSParserToken *
 TS_parse_extends(

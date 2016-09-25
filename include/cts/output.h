@@ -1,7 +1,7 @@
 #pragma once
 
-#include <tsc/parser.h>
-#include <tsc/sys.h>
+#include <cts/parser.h>
+#include <cts/sys.h>
 
 #define TS_SPREAD_PREFIX_SIZE 3
 

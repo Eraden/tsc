@@ -4,6 +4,7 @@ START_TEST(parse_valid_else_condition)
   TSFile *tsFile = TS_parse_file("./examples/else/valid.ts");
 
   ck_assert_int_eq(tsFile->tokensSize, 4);
+  ck_assert_tsFile_valid(tsFile);
 
   TSParserToken *token, *child, *retValue;
 
@@ -72,8 +73,8 @@ START_TEST(parse_valid_else_condition)
   ck_assert_ptr_ne(child->children, NULL);
   retValue = child->children[0];
   ck_assert(retValue->tokenType == TS_UNKNOWN);
-  ck_assert_ptr_ne(retValue->data, NULL);
-  ck_assert_wstr_eq(retValue->data, L"20");
+  ck_assert_ptr_ne(retValue->name, NULL);
+  ck_assert_wstr_eq(retValue->name, L"20");
 
   TS_free_tsFile(tsFile);
 END_TEST

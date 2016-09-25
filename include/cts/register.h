@@ -1,7 +1,7 @@
 #pragma once
 
-#include <tsc/sys.h>
-#include <tsc/parser.h>
+#include <cts/sys.h>
+#include <cts/parser.h>
 
 typedef struct sTSRegisterEntry TSRegisterEntry;
 

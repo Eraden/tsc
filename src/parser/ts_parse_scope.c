@@ -1,4 +1,4 @@
-#include <tsc/parser.h>
+#include <cts/parser.h>
 
 static void
 TS_parse_scope_body(
@@ -7,18 +7,32 @@ TS_parse_scope_body(
     TSParserToken *token
 ) {
   const wchar_t *tok;
-  u_long movedBy = 0;
   while (1) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
     tok = (const wchar_t *) TS_getToken(data->stream);
     if (tok == NULL) {
-      ts_token_syntax_error((const wchar_t *) L"Unexpected end of scope", tsFile, token);
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "scope");
       break;
     }
     switch (tok[0]) {
+      case L'\n': {
+        u_long movedBy = wcslen(tok);
+        data->position += movedBy;
+        data->line += 1;
+        data->character = 0;
+        free((void *) tok);
+        break;
+      }
+      case L' ': {
+        u_long len = wcslen(tok);
+        data->character += len;
+        data->position += len;
+        free((void *) tok);
+        break;
+      }
       case L'}': {
-        movedBy += wcslen(tok);
+        u_long movedBy = wcslen(tok);
         free((void *) tok);
 
         data->position += movedBy;
@@ -27,16 +41,11 @@ TS_parse_scope_body(
       }
       default: {
         data->token = tok;
-        TSParserToken *t = TS_parse_ts_token(tsFile, data);
-        if (t->tokenType != TS_UNKNOWN) {
-          TSParserToken **newPointer = (TSParserToken **) calloc(sizeof(TSParserToken *), token->childrenSize + 1);
-          if (token->children != NULL) memcpy(newPointer, token->children, sizeof(TSParserToken *) * token->childrenSize);
-          if (token->children != NULL) free(token->children);
-          token->children = newPointer;
-          token->children[token->childrenSize] = t;
-          token->childrenSize += 1;
+        TSParserToken *child = TS_parse_ts_token(tsFile, data);
+        if (child->tokenType != TS_UNKNOWN) {
+          TS_push_child(token, child);
         } else {
-          TS_free_tsToken(token);
+          TS_free_tsToken(child);
         }
         free((void *) tok);
       }
@@ -52,21 +61,14 @@ TS_parse_scope(
   TS_TOKEN_BEGIN("scope");
   u_long movedBy = wcslen(tsParseData->token);
 
-  TSParserToken *token = TS_NEW_TOKEN;
-  token->tokenType = TS_SCOPE;
-  token->character = tsParseData->character;
-  token->line = tsParseData->line;
-  token->position = tsParseData->position;
-  token->visibility = TS_VISIBILITY_SCOPE;
-  token->children = NULL;
-  token->childrenSize = 0;
-  token->data = NULL;
+  TSParserToken *token = TS_build_parser_token(TS_SCOPE, tsParseData);
 
   TS_parse_scope_body(tsFile, tsParseData, token);
 
   tsParseData->position += movedBy;
   tsParseData->character += movedBy;
 
+  tsParseData->parentTSToken = token->parent;
   TS_TOKEN_END("scope");
   return token;
 }
