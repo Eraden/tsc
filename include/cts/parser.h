@@ -3,6 +3,7 @@
 #include <cts/sys.h>
 #include <cts/log.h>
 
+#define TS_CODE_EVAL "(code eval)"
 #define TS_TOKEN_BEGIN(token) log_to_file(L"-> parsing as %s\n", token);
 #define TS_TOKEN_SECTION_BEGIN(token) log_to_file(L"    -> parsing as %s\n", token);
 #define TS_TOKEN_END(token) log_to_file(L"-> end %s\n", token);

@@ -105,50 +105,49 @@ __attribute__((__visibility__("hidden")))
 TS_parse_for_head(
     TSFile *tsFile,
     TSParseData *tsParseData
-)
-{
+) {
   TSTokenType headType = TS_resolve_for_token_type(tsFile, tsParseData);
   TSParserToken *head = TS_build_parser_token(headType, tsParseData);
   const wchar_t *tok;
 
   volatile unsigned char proceed = TRUE;
   while (proceed) {
-      TS_LOOP_SANITY_CHECK(tsFile);
-      tok = (const wchar_t *) TS_getToken(tsFile->stream);
-      if (tok == NULL) {
-        TS_UNEXPECTED_END_OF_STREAM(tsFile, head, "for head");
+    TS_LOOP_SANITY_CHECK(tsFile);
+    tok = (const wchar_t *) TS_getToken(tsFile->stream);
+    if (tok == NULL) {
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, head, "for head");
+      break;
+    }
+    switch (tok[0]) {
+      case L'\n': {
+        u_long movedBy = wcslen(tok);
+        tsParseData->position += movedBy;
+        tsParseData->line += 1;
+        tsParseData->character = 0;
+        free((void *) tok);
         break;
       }
-      switch (tok[0]) {
-        case L'\n': {
-          u_long movedBy = wcslen(tok);
-          tsParseData->position += movedBy;
-          tsParseData->line += 1;
-          tsParseData->character = 0;
-          free((void *) tok);
-          break;
-        }
-        case L' ': {
-          u_long len = wcslen(tok);
-          tsParseData->character += len;
-          tsParseData->position += len;
-          free((void *) tok);
-          break;
-        }
-        case L')': {
-          free((void *) tok);
-          proceed = FALSE;
-          break;
-        }
-        default: {
-          tsParseData->token = tok;
-          TSParserToken *current = TS_parse_ts_token(tsFile, tsParseData);
-          free((void *) tok);
-          TS_push_child(head, current);
-          break;
-        }
+      case L' ': {
+        u_long len = wcslen(tok);
+        tsParseData->character += len;
+        tsParseData->position += len;
+        free((void *) tok);
+        break;
+      }
+      case L')': {
+        free((void *) tok);
+        proceed = FALSE;
+        break;
+      }
+      default: {
+        tsParseData->token = tok;
+        TSParserToken *current = TS_parse_ts_token(tsFile, tsParseData);
+        free((void *) tok);
+        TS_push_child(head, current);
+        break;
       }
     }
+  }
   tsParseData->parentTSToken = head->parent;
   return head;
 }

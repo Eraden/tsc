@@ -71,7 +71,7 @@ _TS_type_to_string(const TSTokenType type) {
     case TS_UNKNOWN:
       return "TS_UNKNOWN";
     default:
-      NULL;
+      return NULL;
   }
 }
 
@@ -81,10 +81,8 @@ _TS_type_to_string(const TSTokenType type) {
   ck_assert_msg( \
     a == b, "Assertion '%s' failed: %s == %i, %s == %i", \
     #X" "#OP" "#Y, \
-    _TS_type_to_string(a),\
-    a,\
-    _TS_type_to_string(b),\
-    b\
+    _TS_type_to_string(a), a,\
+    _TS_type_to_string(b), b\
   ); \
 }
 

@@ -4,8 +4,9 @@
 
 START_TEST(parse_valid_variables)
   TSFile *tsFile = TS_parse_file("./examples/variables/valid.ts");
-
+  ck_assert_tsFile_valid(tsFile);
   ck_assert_int_eq(tsFile->tokensSize, 12);
+  ck_assert_ptr_ne(tsFile->tokens, NULL);
 
   TSParserToken *token;
   TSLocalVariableData *data;

@@ -1,5 +1,6 @@
 #include <cts/parser.h>
 #include <cts/register.h>
+#include <cts/sys.h>
 
 static void
 TS_append_ts_parser_token(
@@ -173,6 +174,15 @@ TS_parse_ts_token(
   t->position = data->position;
   t->tokenType = TS_UNKNOWN;
   t->parent = data->parentTSToken;
+
+  if (data->parentTSToken == NULL && wcscmp(data->token, (const wchar_t *) L";") != 0) {
+    ts_token_syntax_error(
+        (const wchar_t *) L"Unknown token in global scope!",
+        tsFile,
+        t
+    );
+  }
+
   return t;
 }
 
@@ -458,9 +468,16 @@ TS_parse_stream(
     FILE *stream
 ) {
   char full_path[4096];
-  realpath(file, full_path);
+  memset(full_path, 0, sizeof(char) * 4096);
+  if (strcmp(file, TS_CODE_EVAL) != 0) {
+    realpath(file, full_path);
+  } else {
+    strcpy(full_path, file);
+  }
   wchar_t buffer[4096];
+  memset(buffer, 0, sizeof(wchar_t) * 4096);
   size_t size = mbstowcs(buffer, full_path, 4096);
+
   TSFile *tsFile = calloc(sizeof(TSFile), 1);
   tsFile->tokens = NULL;
   tsFile->tokensSize = 0;

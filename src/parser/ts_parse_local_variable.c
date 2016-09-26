@@ -24,30 +24,34 @@ TS_parse_local_variable_body(
 
     if (tok == NULL) {
       switch (parseFlag) {
-        case TS_PARSE_VARIABLE_NAME:
+        case TS_PARSE_VARIABLE_NAME: {
           ts_token_syntax_error(
               (wchar_t *) L"Missing variable name",
               tsFile,
               token
           );
           return;
-        case TS_PARSE_VARIABLE_TYPE:
+        }
+        case TS_PARSE_VARIABLE_TYPE: {
           ts_token_syntax_error(
               (wchar_t *) L"Expect variable type but none provided",
               tsFile,
               token
           );
           return;
-        case TS_PARSE_VARIABLE_VALUE:
+        }
+        case TS_PARSE_VARIABLE_VALUE: {
           ts_token_syntax_error(
               (wchar_t *) L"Expect variable default value but none provided",
               tsFile,
               token
           );
           return;
-        case TS_PARSE_VARIABLE_NONE:
-        default:
+        }
+        case TS_PARSE_VARIABLE_NONE: {}
+        default: {
           return;
+        }
       }
     }
     switch (tok[0]) {
