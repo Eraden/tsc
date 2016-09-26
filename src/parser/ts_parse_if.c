@@ -17,7 +17,7 @@ TS_parse_if_body(
 
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Unexpected end of `if` body while looking for brackets", tsFile, token);
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "`if` body (looking for brackets)");
       break;
     }
 
@@ -129,7 +129,6 @@ TS_parse_if_conditions(
 ) {
   TSParserToken *token = tsParseData->parentTSToken;
   const wchar_t *tok;
-  TSIfData *data = token->ifData;
   volatile unsigned char proceed = TRUE;
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -168,6 +167,7 @@ TS_parse_if_conditions(
   // after (
 
   proceed = TRUE;
+  volatile unsigned long conditionsCount = 0;
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
@@ -188,7 +188,7 @@ TS_parse_if_conditions(
         break;
       }
       case L')': {
-        if (data->conditionsSize == 0) {
+        if (conditionsCount == 0) {
           ts_token_syntax_error(
               (const wchar_t *) L"Unexpected end of `if` conditions. No condition given!",
               tsFile,
@@ -202,22 +202,25 @@ TS_parse_if_conditions(
         break;
       }
       default: {
-        TSParserToken *t = TS_build_parser_token(TS_CONDITION, tsParseData);
-        t->name = (void *) TS_clone_string(tok);
+        TS_MOVE_BY(tsParseData, tok);
+        TSParserToken *child = TS_build_parser_token(TS_CONDITION, tsParseData);
+        child->name = (void *) TS_clone_string(tok);
 
         // FIXME replace with push child!
-        TSParserToken **newPointer = (TSParserToken **) calloc(sizeof(TSParserToken *), data->conditionsSize + 1);
-        if (data->conditions != NULL)
-          memcpy(newPointer, data->conditions, sizeof(TSParserToken *) * data->conditionsSize);
-        free(data->conditions);
-        data->conditions = newPointer;
-        data->conditions[data->conditionsSize] = t;
-        data->conditionsSize += 1;
+//        TSParserToken **newPointer = (TSParserToken **) calloc(sizeof(TSParserToken *), data->conditionsSize + 1);
+//        if (data->conditions != NULL)
+//          memcpy(newPointer, data->conditions, sizeof(TSParserToken *) * data->conditionsSize);
+//        free(data->conditions);
+//        data->conditions = newPointer;
+//        data->conditions[data->conditionsSize] = child;
+//        data->conditionsSize += 1;
+        TS_push_child(token, child);
+        conditionsCount += 1;
 
         TS_MOVE_BY(tsParseData, tok);
 
         free((void *) tok);
-        tsParseData->parentTSToken = t->parent;
+        tsParseData->parentTSToken = child->parent;
         break;
       }
     }
@@ -278,13 +281,8 @@ TS_parse_if(
   TS_TOKEN_BEGIN("if")
   TS_MOVE_BY(tsParseData, tsParseData->token);
 
-  // Remove custom data with children structure
-  TSIfData *data = (TSIfData *) calloc(sizeof(TSIfData), 1);
-  data->conditions = NULL;
-  data->conditionsSize = 0;
-
   TSParserToken *token = TS_build_parser_token(TS_IF, tsParseData);
-  token->ifData = data;
+  token->data = NULL;
 
   TS_parse_if_conditions(tsFile, tsParseData);
   TS_parse_if_body(tsFile, tsParseData);
@@ -301,15 +299,5 @@ TS_free_if(
 ) {
   TS_free_children(token);
 
-  TSIfData *data = token->ifData;
   free((void *) token);
-  if (data == NULL) return;
-
-  if (data->conditions) {
-    for (u_long conditionIndex = 0; conditionIndex < data->conditionsSize; conditionIndex++) {
-      TS_free_tsToken(data->conditions[conditionIndex]);
-    }
-    free(data->conditions);
-  }
-  free(data);
 }

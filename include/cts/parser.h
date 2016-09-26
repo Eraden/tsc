@@ -122,11 +122,6 @@ typedef struct sTSFunctionData {
   const wchar_t *returnType;
 } TSFunctionData;
 
-typedef struct sTSIfData {
-  TSParserToken **conditions;
-  u_long conditionsSize;
-} TSIfData;
-
 typedef struct sTSClassData {
   const wchar_t *name;
   const wchar_t *parentClass;
@@ -157,7 +152,6 @@ typedef struct sTSParserToken {
     wchar_t *name;
     wchar_t *content;
     TSClassData *classData;
-    TSIfData *ifData;
     TSFunctionData *functionData;
     TSLocalVariableData *variableData;
   };

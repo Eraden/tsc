@@ -178,6 +178,9 @@ TS_parse_arguments(
         log_error((wchar_t *) L"Could not open output file: '%s'\nError code: %i\n", argv[i], errno);
         exit(errno);
       }
+    } else if (strcmp(arg, "-i") == 0) {
+      settings.stream = stdin;
+      settings.fileName = "(code eval)";
     } else {
       fprintf(stderr, "Unknown parameter: '%s'\n\n", arg);
       TS_info_msg();
