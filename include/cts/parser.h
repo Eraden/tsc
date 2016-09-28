@@ -66,6 +66,8 @@ typedef enum eTSTokenType {
   TS_FOR_LET = 29,
   TS_FOR_IN = 30,
   TS_FOR_OF = 31,
+  TS_OF = 32,
+  TS_IN = 33,
   TS_UNKNOWN = 0,
 } __attribute__ ((__packed__)) TSTokenType;
 
@@ -91,6 +93,15 @@ typedef enum sTSVariableParseFlag {
   TS_PARSE_VARIABLE_VALUE = 0x3,
 } __attribute__((__packed__)) TSVariableParseFlag;
 
+typedef enum eTSForParseFlag {
+  TS_PARSE_FOR_IN_KEYWORD_LET = 1 << 0,
+  TS_PARSE_FOR_IN_KEYWORD_IN = 1 << 1,
+  TS_PARSE_FOR_IN_COLLECTION = 1 << 2,
+  TS_PARSE_FOR_OF_KEYWORD_LET = 1 << 3,
+  TS_PARSE_FOR_OF_KEYWORD_OF = 1 << 4,
+  TS_PARSE_FOR_OF_COLLECTION = 1 << 5
+} TSForParseFlag;
+
 typedef enum eTSVisibility {
   TS_VISIBILITY_NONE = 0x0,
   TS_VISIBILITY_SCOPE = 0x1,
@@ -110,7 +121,7 @@ typedef struct sTSKeyword {
   TS_token_build_fn callback;
 } TSKeyword;
 
-#define KEYWORDS_SIZE 23
+#define KEYWORDS_SIZE 25
 
 typedef struct sTSLocalVariableData {
   const wchar_t *name;
@@ -178,6 +189,14 @@ unsigned char TS_name_is_valid(const wchar_t *name);
 void TS_push_child(TSParserToken *token, TSParserToken *child);
 
 void TS_free_unknown(const TSParserToken *token);
+
+TSParserToken *TS_parse_in(TSFile *tsFile, TSParseData *tsParseData);
+
+void TS_free_in(const TSParserToken *token);
+
+TSParserToken *TS_parse_of(TSFile *tsFile, TSParseData *tsParseData);
+
+void TS_free_of(const TSParserToken *token);
 
 TSParserToken *TS_parse_condition(TSFile *tsFile, TSParseData *tsParseData);
 

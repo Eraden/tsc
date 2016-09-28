@@ -2,12 +2,52 @@
 
 static void
 __attribute__((visibility("hidden")))
+TS_parse_local_variable_done(
+    TSFile *tsFile,
+    TSParseData *tsParseData,
+    TSVariableParseFlag parseFlag
+) {
+  TSParserToken *token = tsParseData->parentTSToken;
+  switch (parseFlag) {
+    case TS_PARSE_VARIABLE_NAME: {
+      ts_token_syntax_error(
+          (wchar_t *) L"Missing variable name",
+          tsFile,
+          token
+      );
+      break;
+    }
+    case TS_PARSE_VARIABLE_TYPE: {
+      ts_token_syntax_error(
+          (wchar_t *) L"Expect variable type but none provided",
+          tsFile,
+          token
+      );
+      break;
+    }
+    case TS_PARSE_VARIABLE_VALUE: {
+      ts_token_syntax_error(
+          (wchar_t *) L"Expect variable default value but none provided",
+          tsFile,
+          token
+      );
+      break;
+    }
+    case TS_PARSE_VARIABLE_NONE: {}
+    default: {
+      break;
+    }
+  }
+}
+
+static void
+__attribute__((visibility("hidden")))
 TS_parse_local_variable_body(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
   TSParserToken *token = tsParseData->parentTSToken;
-  const wchar_t *tok;
+  const wchar_t *tok = NULL;
   volatile unsigned char proceed = TRUE;
   TSVariableParseFlag parseFlag = TS_PARSE_VARIABLE_NAME;
   TSLocalVariableData *data = (TSLocalVariableData *) calloc(sizeof(TSLocalVariableData), 1);
@@ -23,36 +63,8 @@ TS_parse_local_variable_body(
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      switch (parseFlag) {
-        case TS_PARSE_VARIABLE_NAME: {
-          ts_token_syntax_error(
-              (wchar_t *) L"Missing variable name",
-              tsFile,
-              token
-          );
-          return;
-        }
-        case TS_PARSE_VARIABLE_TYPE: {
-          ts_token_syntax_error(
-              (wchar_t *) L"Expect variable type but none provided",
-              tsFile,
-              token
-          );
-          return;
-        }
-        case TS_PARSE_VARIABLE_VALUE: {
-          ts_token_syntax_error(
-              (wchar_t *) L"Expect variable default value but none provided",
-              tsFile,
-              token
-          );
-          return;
-        }
-        case TS_PARSE_VARIABLE_NONE: {}
-        default: {
-          return;
-        }
-      }
+      TS_parse_local_variable_done(tsFile, tsParseData, parseFlag);
+      break;
     }
     switch (tok[0]) {
       case L' ': {
@@ -89,6 +101,12 @@ TS_parse_local_variable_body(
         break;
       }
       default: {
+        if (wcscmp(tok, (const wchar_t *) L"in") == 0 || wcscmp(tok, (const wchar_t *) L"of") == 0) {
+          TS_put_back(tsFile->stream, tok);
+          TS_parse_local_variable_done(tsFile, tsParseData, parseFlag);
+          proceed = FALSE;
+          break;
+        }
         if (parseFlag == TS_PARSE_VARIABLE_NAME) {
           log_to_file((wchar_t *) L"Setting name of local variable\n");
           if (TS_is_keyword(tok)) {

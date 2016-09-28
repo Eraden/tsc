@@ -27,6 +27,8 @@ SET(
     src/parser/ts_parse_multiline_comment.c
     src/parser/ts_parse_caller.c
     src/parser/ts_parse_for.c
+    src/parser/ts_parse_of.c
+    src/parser/ts_parse_in.c
     src/parser.c
 )
 

@@ -100,14 +100,185 @@ TS_resolve_for_token_type(
   return type;
 }
 
-static TSParserToken *
+static void
 __attribute__((__visibility__("hidden")))
-TS_parse_for_head(
+TS_parse_for_head_for_of(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TSTokenType headType = TS_resolve_for_token_type(tsFile, tsParseData);
-  TSParserToken *head = TS_build_parser_token(headType, tsParseData);
+  TSParserToken *head = tsParseData->parentTSToken;
+  const wchar_t *tok;
+  TSForParseFlag flag = TS_PARSE_FOR_OF_KEYWORD_LET;
+
+  volatile unsigned char proceed = TRUE;
+  while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile);
+    tok = (const wchar_t *) TS_getToken(tsFile->stream);
+
+    if (tok == NULL) {
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, head, "for of head");
+      break;
+    }
+
+    switch (tok[0]) {
+      case L' ': {
+        TS_MOVE_BY(tsParseData, tok);
+        free((void *) tok);
+        break;
+      }
+      case L'\n': {
+        TS_NEW_LINE(tsParseData, tok);
+        free((void *) tok);
+        break;
+      }
+      case L')': {
+        TS_MOVE_BY(tsParseData, tok);
+        free((void *) tok);
+        proceed = FALSE;
+        break;
+      }
+      default: {
+        tsParseData->token = tok;
+        TSParserToken *current = TS_parse_ts_token(tsFile, tsParseData);
+        free((void *) tok);
+        switch (flag) {
+          case TS_PARSE_FOR_OF_KEYWORD_LET: {
+            if (current->tokenType == TS_LET) {
+              TS_push_child(head, current);
+              flag = TS_PARSE_FOR_OF_KEYWORD_OF;
+            } else {
+              TS_free_tsToken(current);
+              TS_UNEXPECTED_TOKEN(tsFile, current, tok, "for of variable name");
+            }
+            break;
+          }
+          case TS_PARSE_FOR_OF_KEYWORD_OF: {
+            if (current->tokenType == TS_OF) {
+              TS_push_child(head, current);
+              flag = TS_PARSE_FOR_OF_COLLECTION;
+            } else {
+              TS_free_tsToken(current);
+              TS_UNEXPECTED_TOKEN(tsFile, current, tok, "for of, expecting to get `of`");
+            }
+            break;
+          }
+          case TS_PARSE_FOR_OF_COLLECTION: {
+            if (TS_is_keyword(tok)) {
+              TS_free_tsToken(current);
+              ts_token_syntax_error(
+                  (const wchar_t *) L"Unexpected keyword while parsing `for of` collection",
+                  tsFile, current
+              );
+            }
+            else if (current->tokenType == TS_UNKNOWN) {
+              TS_push_child(head, current);
+            } else {
+              TS_free_tsToken(current);
+              TS_UNEXPECTED_TOKEN(tsFile, current, tok, "for of, expecting to collection`");
+            }
+            break;
+          }
+        }
+        break;
+      }
+    }
+  }
+  tsParseData->parentTSToken = head->parent;
+}
+
+static void
+__attribute__((__visibility__("hidden")))
+TS_parse_for_head_for_in(
+    TSFile *tsFile,
+    TSParseData *tsParseData
+) {
+  TSParserToken *head = tsParseData->parentTSToken;
+  const wchar_t *tok;
+  TSForParseFlag flag = TS_PARSE_FOR_IN_KEYWORD_LET;
+
+  volatile unsigned char proceed = TRUE;
+  while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile);
+    tok = (const wchar_t *) TS_getToken(tsFile->stream);
+
+    if (tok == NULL) {
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, head, "for in head");
+      break;
+    }
+
+    switch (tok[0]) {
+      case L' ': {
+        TS_MOVE_BY(tsParseData, tok);
+        free((void *) tok);
+        break;
+      }
+      case L'\n': {
+        TS_NEW_LINE(tsParseData, tok);
+        free((void *) tok);
+        break;
+      }
+      case L')': {
+        TS_MOVE_BY(tsParseData, tok);
+        free((void *) tok);
+        proceed = FALSE;
+        break;
+      }
+      default: {
+        tsParseData->token = tok;
+        TSParserToken *current = TS_parse_ts_token(tsFile, tsParseData);
+        free((void *) tok);
+        switch (flag) {
+          case TS_PARSE_FOR_IN_KEYWORD_LET: {
+            if (current->tokenType == TS_LET) {
+              TS_push_child(head, current);
+              flag = TS_PARSE_FOR_IN_KEYWORD_IN;
+            } else {
+              TS_free_tsToken(current);
+              TS_UNEXPECTED_TOKEN(tsFile, current, tok, "for in variable name");
+            }
+            break;
+          }
+          case TS_PARSE_FOR_IN_KEYWORD_IN: {
+            if (current->tokenType == TS_IN) {
+              TS_push_child(head, current);
+              flag = TS_PARSE_FOR_IN_COLLECTION;
+            } else {
+              TS_free_tsToken(current);
+              TS_UNEXPECTED_TOKEN(tsFile, current, tok, "for in, expecting to get `in`");
+            }
+            break;
+          }
+          case TS_PARSE_FOR_IN_COLLECTION: {
+            if (TS_is_keyword(tok)) {
+              TS_free_tsToken(current);
+              ts_token_syntax_error(
+                  (const wchar_t *) L"Unexpected keyword while parsing `for in` collection",
+                  tsFile, current
+              );
+            }
+            else if (current->tokenType == TS_UNKNOWN) {
+              TS_push_child(head, current);
+            } else {
+              TS_free_tsToken(current);
+              TS_UNEXPECTED_TOKEN(tsFile, current, tok, "for in, expecting to get collection");
+            }
+            break;
+          }
+        }
+        break;
+      }
+    }
+  }
+  tsParseData->parentTSToken = head->parent;
+}
+
+static void
+__attribute__((__visibility__("hidden")))
+TS_parse_for_head_for_let(
+    TSFile *tsFile,
+    TSParseData *tsParseData
+) {
+  TSParserToken *head = tsParseData->parentTSToken;
   const wchar_t *tok;
 
   volatile unsigned char proceed = TRUE;
@@ -149,6 +320,34 @@ TS_parse_for_head(
     }
   }
   tsParseData->parentTSToken = head->parent;
+}
+
+static TSParserToken *
+__attribute__((__visibility__("hidden")))
+TS_parse_for_head(
+    TSFile *tsFile,
+    TSParseData *tsParseData
+) {
+  TSTokenType headType = TS_resolve_for_token_type(tsFile, tsParseData);
+  TSParserToken *head = TS_build_parser_token(headType, tsParseData);
+
+  switch (head->tokenType) {
+    case TS_FOR_LET: {
+      TS_parse_for_head_for_let(tsFile, tsParseData);
+      break;
+    }
+    case TS_FOR_IN: {
+      TS_parse_for_head_for_in(tsFile, tsParseData);
+      break;
+    }
+    case TS_FOR_OF: {
+      TS_parse_for_head_for_of(tsFile, tsParseData);
+      break;
+    }
+    default: {
+      ts_token_syntax_error((const wchar_t *) L"Invalid for head", tsFile, head);
+    }
+  }
   return head;
 }
 

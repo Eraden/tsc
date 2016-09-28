@@ -116,6 +116,12 @@ TS_print_for_token(
     case TS_FOR_OF: {
       break;
     }
+    case TS_OF: {
+      break;
+    }
+    case TS_IN: {
+      break;
+    }
   }
 }
 
@@ -222,6 +228,12 @@ TS_string_for_token(
       break;
     }
     case TS_FOR_OF: {
+      break;
+    }
+    case TS_OF: {
+      break;
+    }
+    case TS_IN: {
       break;
     }
   }
