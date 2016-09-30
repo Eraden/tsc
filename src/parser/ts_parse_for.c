@@ -163,14 +163,14 @@ TS_parse_for_head_for_of(
             break;
           }
           case TS_PARSE_FOR_OF_COLLECTION: {
-            if (TS_is_keyword(tok)) {
+            if (TS_is_keyword(tok) && current->tokenType != TS_ARRAY) {
               TS_free_tsToken(current);
               ts_token_syntax_error(
                   (const wchar_t *) L"Unexpected keyword while parsing `for of` collection",
                   tsFile, current
               );
             }
-            else if (current->tokenType == TS_UNKNOWN) {
+            else if (current->tokenType == TS_UNKNOWN || current->tokenType == TS_ARRAY) {
               TS_push_child(head, current);
             } else {
               TS_free_tsToken(current);

@@ -31,6 +31,7 @@ SET(
     src/parser/ts_parse_json.c
     src/parser/ts_parse_scope.c
     src/parser/ts_parse_scope_or_json.c
+    src/parser/ts_parse_array.c
     src/parser.c
 )
 

@@ -7,6 +7,8 @@ TS_parse_json(
 ) {
   TS_TOKEN_BEGIN("json");
   TSParserToken *token = TS_build_parser_token(TS_JSON, tsParseData);
+
+  tsParseData->parentTSToken = token->parent;
   TS_TOKEN_END("json");
   return token;
 }

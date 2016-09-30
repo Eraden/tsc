@@ -16,7 +16,7 @@ START_TEST(parse_valid_for_of)
   ck_assert_ptr_ne(token->children, NULL);
   head = token->children[0];
   ck_assert_eq_ts_for_of(head->tokenType);
-  ck_assert_ulong_eq(head->childrenSize, 9);
+  ck_assert_ulong_eq(head->childrenSize, 3);
   ck_assert_ptr_ne(head->children, NULL);
 
   token = tsFile->tokens[1];
@@ -26,7 +26,7 @@ START_TEST(parse_valid_for_of)
   ck_assert_ptr_ne(token->children, NULL);
   head = token->children[0];
   ck_assert_eq_ts_for_of(head->tokenType);
-  ck_assert_ulong_eq(head->childrenSize, 9);
+  ck_assert_ulong_eq(head->childrenSize, 3);
   ck_assert_ptr_ne(head->children, NULL);
   body = token->children[1];
   ck_assert_eq_ts_scope(body->tokenType);
@@ -40,7 +40,7 @@ START_TEST(parse_valid_for_of)
   ck_assert_ptr_ne(token->children, NULL);
   head = token->children[0];
   ck_assert_eq_ts_for_of(head->tokenType);
-  ck_assert_ulong_eq(head->childrenSize, 9);
+  ck_assert_ulong_eq(head->childrenSize, 3);
   ck_assert_ptr_ne(head->children, NULL);
   body = token->children[1];
   ck_assert_eq_ts_scope(body->tokenType);

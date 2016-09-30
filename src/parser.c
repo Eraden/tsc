@@ -1,6 +1,4 @@
-#include <cts/parser.h>
 #include <cts/register.h>
-#include <cts/sys.h>
 
 static void
 TS_append_ts_parser_token(
@@ -69,6 +67,7 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     {TS_FOR,               (wchar_t *) L"for",        TS_parse_for},
     {TS_OF,                (wchar_t *) L"of",         TS_parse_of},
     {TS_IN,                (wchar_t *) L"in",         TS_parse_in},
+    {TS_ARRAY,             (wchar_t *) L"[",          TS_parse_array},
 };
 
 unsigned char TS_is_keyword(const wchar_t *str) {
@@ -661,6 +660,9 @@ TS_free_tsToken(
       TS_free_json(token);
       break;
     }
+    case TS_ARRAY:
+      TS_free_array(token);
+      break;
   }
 }
 
