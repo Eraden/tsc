@@ -2,7 +2,9 @@
 
 START_TEST(parse_valid_export)
   TSFile *tsFile = TS_parse_file("./examples/export/valid.ts");
+  ck_assert_tsFile_valid(tsFile);
   ck_assert_uint_eq(tsFile->tokensSize, 4);
+  ck_assert_ptr_ne(tsFile->tokens, NULL);
 
   TSParserToken *token, *exported;
 

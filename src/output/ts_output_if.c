@@ -1,4 +1,4 @@
-#include <tsc/output.h>
+#include <cts/output.h>
 
 // PRINT
 
@@ -18,20 +18,20 @@ ts_print_for_if_body(
   }
 }
 
-static void
-__attribute(( visibility("hidden")))
-__attribute__(( section("output-if")))
-ts_print_for_if_condition(
-    TSFile *__attribute__((__unused__)) tsFile,
-    const TSIfData *data,
-    const TSOutputSettings outputSettings
-) {
-  for (u_long conditionIndex = 0; conditionIndex < data->conditionsSize; conditionIndex++) {
-    TSParserToken *conditionToken = data->conditions[conditionIndex];
-    const wchar_t *value = (wchar_t *) conditionToken->data;
-    fprintf(outputSettings.stream, "%ls", value);
-  }
-}
+//static void
+//__attribute(( visibility("hidden")))
+//__attribute__(( section("output-if")))
+//ts_print_for_if_condition(
+//    TSFile *__attribute__((__unused__)) tsFile,
+//    const TSIfData *data,
+//    const TSOutputSettings outputSettings
+//) {
+//  for (u_long conditionIndex = 0; conditionIndex < data->conditionsSize; conditionIndex++) {
+//    TSParserToken *conditionToken = data->conditions[conditionIndex];
+//    const wchar_t *value = (wchar_t *) conditionToken->data;
+//    fprintf(outputSettings.stream, "%ls", value);
+//  }
+//}
 
 void
 TS_print_for_if(
@@ -40,14 +40,12 @@ TS_print_for_if(
     TSOutputSettings outputSettings
 ) {
   const u_long indent = outputSettings.indent;
-  const TSIfData *data = tsParserToken->data;
-  if (!data) return;
-
   for (u_long indentIndex = 0; indentIndex < indent; indentIndex++)
     fprintf(outputSettings.stream, "%s", "  ");
   fprintf(outputSettings.stream, "%s", "if (");
 
-  ts_print_for_if_condition(tsFile, data, outputSettings);
+  // @deprecated
+  // ts_print_for_if_condition(tsFile, data, outputSettings);
 
   fprintf(outputSettings.stream, "%s", ") {\n");
 
@@ -92,29 +90,29 @@ ts_string_for_if_body(
   return ifBody;
 }
 
-static const wchar_t *
-__attribute(( visibility("hidden")))
-__attribute__(( section("output-if")))
-ts_string_for_if_condition(
-    TSFile *__attribute__((__unused__)) tsFile,
-    const TSIfData *data
-) {
-  wchar_t *string = NULL;
-  for (u_long conditionIndex = 0; conditionIndex < data->conditionsSize; conditionIndex++) {
-    TSParserToken *conditionToken = data->conditions[conditionIndex];
-    const wchar_t *value = (wchar_t *) conditionToken->data;
-
-    u_long size = wcslen(value) + TS_STRING_END;
-    if (string != NULL) size += wcslen(string);
-
-    wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
-    if (string) wcscpy(newPointer, string);
-    wcscat(newPointer, value);
-    free(string);
-    string = newPointer;
-  }
-  return string;
-}
+//static const wchar_t *
+//__attribute(( visibility("hidden")))
+//__attribute__(( section("output-if")))
+//ts_string_for_if_condition(
+//    TSFile *__attribute__((__unused__)) tsFile,
+//    const TSIfData *data
+//) {
+//  wchar_t *string = NULL;
+//  for (u_long conditionIndex = 0; conditionIndex < data->conditionsSize; conditionIndex++) {
+//    TSParserToken *conditionToken = data->conditions[conditionIndex];
+//    const wchar_t *value = (wchar_t *) conditionToken->data;
+//
+//    u_long size = wcslen(value) + TS_STRING_END;
+//    if (string != NULL) size += wcslen(string);
+//
+//    wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
+//    if (string) wcscpy(newPointer, string);
+//    wcscat(newPointer, value);
+//    free(string);
+//    string = newPointer;
+//  }
+//  return string;
+//}
 
 const wchar_t *
 TS_string_for_if(
@@ -123,8 +121,8 @@ TS_string_for_if(
     TSOutputSettings outputSettings
 ) {
   const u_long indent = outputSettings.indent;
-  const TSIfData *data = tsParserToken->data;
-  if (!data) return NULL;
+//  const TSIfData *data = tsParserToken->data;
+//  if (!data) return NULL;
 
   wchar_t *string = (wchar_t *) calloc(sizeof(wchar_t), wcslen((const wchar_t *) L"if (") + (indent * 2) + 1);
 
@@ -132,15 +130,16 @@ TS_string_for_if(
 
   wcscat(string, (const wchar_t *) L"if (");
 
-  {
-    const wchar_t *conditionsBody = ts_string_for_if_condition(tsFile, data);
-    wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), wcslen(string) + wcslen(conditionsBody) + 1);
-    wcscpy(newPointer, string);
-    wcscat(newPointer, conditionsBody);
-    free((void *) string);
-    free((void *) conditionsBody);
-    string = newPointer;
-  }
+  // @deprecated
+//  {
+//    const wchar_t *conditionsBody = ts_string_for_if_condition(tsFile, data);
+//    wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), wcslen(string) + wcslen(conditionsBody) + 1);
+//    wcscpy(newPointer, string);
+//    wcscat(newPointer, conditionsBody);
+//    free((void *) string);
+//    free((void *) conditionsBody);
+//    string = newPointer;
+//  }
 
   {
     wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), wcslen(string) + wcslen((const wchar_t *) L") {\n") + 1);

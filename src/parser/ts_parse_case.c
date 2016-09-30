@@ -1,4 +1,4 @@
-#include <tsc/parser.h>
+#include <cts/parser.h>
 
 TSParserToken *
 TS_parse_case(
@@ -10,7 +10,7 @@ TS_parse_case(
   TSParserToken *token = TS_build_parser_token(TS_CASE, tsParseData);
 
   const wchar_t *tok = NULL;
-  volatile unsigned char proceed = 1;
+  volatile unsigned char proceed = TRUE;
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -46,7 +46,7 @@ TS_parse_case(
         free((void *) tok);
         tsParseData->position += movedBy;
         tsParseData->character += movedBy;
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
       default: {
@@ -61,7 +61,7 @@ TS_parse_case(
               tsFile,
               token
           );
-          proceed = 0;
+          proceed = FALSE;
           break;
         } else {
           TS_put_back(tsFile->stream, tok);
@@ -77,18 +77,14 @@ TS_parse_case(
     }
   }
 
-  proceed = 1;
+  proceed = TRUE;
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
 
     if (tok == NULL) {
-      ts_token_syntax_error(
-          (const wchar_t *) L"Unexpected end of stream while parsing case body",
-          tsFile,
-          token
-      );
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "case body");
       break;
     }
 
@@ -113,7 +109,7 @@ TS_parse_case(
         tsParseData->position += movedBy;
         tsParseData->character += movedBy;
         free((void *) tok);
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
       default: {

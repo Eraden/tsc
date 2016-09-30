@@ -1,15 +1,54 @@
-#include <tsc/parser.h>
+#include <cts/parser.h>
+
+static void
+__attribute__((visibility("hidden")))
+TS_parse_local_variable_done(
+    TSFile *tsFile,
+    TSParseData *tsParseData,
+    TSVariableParseFlag parseFlag
+) {
+  TSParserToken *token = tsParseData->parentTSToken;
+  switch (parseFlag) {
+    case TS_PARSE_VARIABLE_NAME: {
+      ts_token_syntax_error(
+          (wchar_t *) L"Missing variable name",
+          tsFile,
+          token
+      );
+      break;
+    }
+    case TS_PARSE_VARIABLE_TYPE: {
+      ts_token_syntax_error(
+          (wchar_t *) L"Expect variable type but none provided",
+          tsFile,
+          token
+      );
+      break;
+    }
+    case TS_PARSE_VARIABLE_VALUE: {
+      ts_token_syntax_error(
+          (wchar_t *) L"Expect variable default value but none provided",
+          tsFile,
+          token
+      );
+      break;
+    }
+    case TS_PARSE_VARIABLE_NONE: {}
+    default: {
+      break;
+    }
+  }
+}
 
 static void
 __attribute__((visibility("hidden")))
 TS_parse_local_variable_body(
     TSFile *tsFile,
-    TSParseData *tsParseData,
-    TSParserToken *token,
-    u_long *movedBy
+    TSParseData *tsParseData
 ) {
-  const wchar_t *tok;
-  volatile unsigned char proceed = 1;
+  TSParserToken *token = tsParseData->parentTSToken;
+  const wchar_t *tok = NULL;
+  volatile unsigned char proceed = TRUE;
   TSVariableParseFlag parseFlag = TS_PARSE_VARIABLE_NAME;
   TSLocalVariableData *data = (TSLocalVariableData *) calloc(sizeof(TSLocalVariableData), 1);
 
@@ -24,34 +63,15 @@ TS_parse_local_variable_body(
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      switch (parseFlag) {
-        case TS_PARSE_VARIABLE_NAME:
-          ts_token_syntax_error(
-              (wchar_t *) L"Missing variable name",
-              tsFile,
-              token
-          );
-          return;
-        case TS_PARSE_VARIABLE_TYPE:
-          ts_token_syntax_error(
-              (wchar_t *) L"Expect variable type but none provided",
-              tsFile,
-              token
-          );
-          return;
-        case TS_PARSE_VARIABLE_VALUE:
-          ts_token_syntax_error(
-              (wchar_t *) L"Expect variable default value but none provided",
-              tsFile,
-              token
-          );
-          return;
-        case TS_PARSE_VARIABLE_NONE:
-        default:
-          return;
-      }
+      TS_parse_local_variable_done(tsFile, tsParseData, parseFlag);
+      break;
     }
     switch (tok[0]) {
+      case L' ': {
+        TS_MOVE_BY(tsParseData, tok);
+        free((void *) tok);
+        break;
+      }
       case L'\n': {
         free((void *) tok);
         ts_token_syntax_error(
@@ -59,33 +79,34 @@ TS_parse_local_variable_body(
             tsFile,
             token
         );
-        proceed = 0;
-        break;
-      }
-      case L' ': {
-        *movedBy += wcslen(tok);
-        free((void *) tok);
+        proceed = FALSE;
         break;
       }
       case L':': {
         parseFlag = TS_PARSE_VARIABLE_TYPE;
-        *movedBy += wcslen(tok);
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
       case L'=': {
         parseFlag = TS_PARSE_VARIABLE_VALUE;
-        *movedBy += wcslen(tok);
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
       case L';': {
-        proceed = 0;
-        *movedBy += wcslen(tok);
+        proceed = FALSE;
+        TS_put_back(tsFile->stream, tok);
         free((void *) tok);
         break;
       }
       default: {
+        if (wcscmp(tok, (const wchar_t *) L"in") == 0 || wcscmp(tok, (const wchar_t *) L"of") == 0) {
+          TS_put_back(tsFile->stream, tok);
+          TS_parse_local_variable_done(tsFile, tsParseData, parseFlag);
+          proceed = FALSE;
+          break;
+        }
         if (parseFlag == TS_PARSE_VARIABLE_NAME) {
           log_to_file((wchar_t *) L"Setting name of local variable\n");
           if (TS_is_keyword(tok)) {
@@ -93,11 +114,11 @@ TS_parse_local_variable_body(
             ts_token_syntax_error(
                 (const wchar_t *) L"Local variable name cannot use reserved word", tsFile, token
             );
-            proceed = 0;
+            proceed = FALSE;
             break;
           }
           data->name = TS_clone_string(tok);
-          *movedBy += wcslen(tok);
+          TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
           parseFlag = TS_PARSE_VARIABLE_NONE;
           log_to_file((wchar_t *) L"    Local variable current name: '%s'\n", data->name);
@@ -114,7 +135,7 @@ TS_parse_local_variable_body(
           data->value = newPointer;
           log_to_file((wchar_t *) L"    Local variable current value: '%s'\n", data->value);
 
-          *movedBy += wcslen(tok);
+          TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
 
         } else if (parseFlag == TS_PARSE_VARIABLE_TYPE) {
@@ -133,7 +154,7 @@ TS_parse_local_variable_body(
               data->type
           );
 
-          *movedBy += wcslen(tok);
+          TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
 
         } else {
@@ -143,8 +164,7 @@ TS_parse_local_variable_body(
               tsFile,
               token
           );
-          proceed = 0;
-          break;
+          proceed = FALSE;
         }
         break;
       }
@@ -158,15 +178,12 @@ TS_parse_var(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("var");
-  u_long movedBy = wcslen(tsParseData->token);
+  TS_MOVE_BY(tsParseData, tsParseData->token);
 
   TSParserToken *token = TS_build_parser_token(TS_VAR, tsParseData);
-  TS_parse_local_variable_body(tsFile, tsParseData, token, &movedBy);
+  TS_parse_local_variable_body(tsFile, tsParseData);
 
-  tsParseData->position += movedBy;
-  tsParseData->character += movedBy;
   tsParseData->parentTSToken = token->parent;
-
   TS_TOKEN_END("var");
   return token;
 }
@@ -178,15 +195,12 @@ TS_parse_let(
 ) {
   TS_TOKEN_BEGIN("let");
 
-  u_long movedBy = wcslen(tsParseData->token);
+  TS_MOVE_BY(tsParseData, tsParseData->token);
 
   TSParserToken *token = TS_build_parser_token(TS_LET, tsParseData);
-  TS_parse_local_variable_body(tsFile, tsParseData, token, &movedBy);
+  TS_parse_local_variable_body(tsFile, tsParseData);
 
-  tsParseData->position += movedBy;
-  tsParseData->character += movedBy;
   tsParseData->parentTSToken = token->parent;
-
   TS_TOKEN_END("let");
   return token;
 }
@@ -197,15 +211,12 @@ TS_parse_const(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("const");
-  u_long movedBy = wcslen(tsParseData->token);
+  TS_MOVE_BY(tsParseData, tsParseData->token);
 
   TSParserToken *token = TS_build_parser_token(TS_CONST, tsParseData);
-  TS_parse_local_variable_body(tsFile, tsParseData, token, &movedBy);
+  TS_parse_local_variable_body(tsFile, tsParseData);
 
-  tsParseData->position += movedBy;
-  tsParseData->character += movedBy;
   tsParseData->parentTSToken = token->parent;
-
   TS_TOKEN_END("const");
   return token;
 }

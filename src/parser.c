@@ -1,5 +1,4 @@
-#include <tsc/parser.h>
-#include <tsc/register.h>
+#include <cts/register.h>
 
 static void
 TS_append_ts_parser_token(
@@ -56,7 +55,7 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     {TS_IMPORT,            (wchar_t *) L"import",     TS_parse_import},
     {TS_EXPORT,            (wchar_t *) L"export",     TS_parse_export},
     {TS_DEFAULT,           (wchar_t *) L"default",    TS_parse_default},
-    {TS_SCOPE,             (wchar_t *) L"{",          TS_parse_scope},
+    {TS_SCOPE,             (wchar_t *) L"{",          TS_parse_scope_or_json},
     {TS_EXTENDS,           (wchar_t *) L"extends",    TS_parse_extends},
     {TS_IMPLEMENTS,        (wchar_t *) L"implements", TS_parse_implements},
     {TS_NEW,               (wchar_t *) L"new",        TS_parse_new},
@@ -65,6 +64,10 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     {TS_SWITCH,            (wchar_t *) L"switch",     TS_parse_switch},
     {TS_CASE,              (wchar_t *) L"case",       TS_parse_case},
     {TS_BREAK,             (wchar_t *) L"break",      TS_parse_break},
+    {TS_FOR,               (wchar_t *) L"for",        TS_parse_for},
+    {TS_OF,                (wchar_t *) L"of",         TS_parse_of},
+    {TS_IN,                (wchar_t *) L"in",         TS_parse_in},
+    {TS_ARRAY,             (wchar_t *) L"[",          TS_parse_array},
 };
 
 unsigned char TS_is_keyword(const wchar_t *str) {
@@ -86,8 +89,9 @@ TS_name_is_valid(
     const wchar_t *name
 ) {
   if (name == NULL) return 0;
-  wchar_t c;
-  for (u_long i = 0, l = wcslen(name); i < l; i++) {
+  wchar_t c = 0;
+  const u_long len = wcslen(name);
+  for (u_long i = 0; i < len; i++) {
     c = name[i];
     switch (c) {
       case L'@':
@@ -97,6 +101,8 @@ TS_name_is_valid(
       case L'}':
       case L'(':
       case L')':
+      case L'[':
+      case L']':
       case L',':
       case L'.':
       case L'=':
@@ -110,13 +116,13 @@ TS_name_is_valid(
       case L'%':
       case L'\n':
       case L' ': {
-        return 0;
+        return FALSE;
       }
       default:
         break;
     }
   }
-  return 1;
+  return TRUE;
 }
 
 void
@@ -171,6 +177,16 @@ TS_parse_ts_token(
   t->character = data->character;
   t->position = data->position;
   t->tokenType = TS_UNKNOWN;
+  t->parent = data->parentTSToken;
+
+  if (data->parentTSToken == NULL && wcscmp(data->token, (const wchar_t *) L";") != 0) {
+    ts_token_syntax_error(
+        (const wchar_t *) L"Unknown token in global scope!",
+        tsFile,
+        t
+    );
+  }
+
   return t;
 }
 
@@ -178,7 +194,8 @@ static void
 TS_next_line(
     TSParseData *data
 ) {
-  data->position += 1;
+  u_long len = wcslen(data->token);
+  data->position += len;
   data->line += 1;
   data->character = 0;
 }
@@ -196,6 +213,8 @@ TS_valid_char_for_token(
     case L'}':
     case L'(':
     case L')':
+    case L'[':
+    case L']':
     case L',':
     case L'.':
     case L'=':
@@ -359,6 +378,8 @@ TS_getToken(
       case L'}':
       case L'(':
       case L')':
+      case L'[':
+      case L']':
       case L',':
       case L'.':
       case L':':
@@ -456,9 +477,16 @@ TS_parse_stream(
     FILE *stream
 ) {
   char full_path[4096];
-  realpath(file, full_path);
+  memset(full_path, 0, sizeof(char) * 4096);
+  if (strcmp(file, TS_CODE_EVAL) != 0) {
+    realpath(file, full_path);
+  } else {
+    strcpy(full_path, file);
+  }
   wchar_t buffer[4096];
+  memset(buffer, 0, sizeof(wchar_t) * 4096);
   size_t size = mbstowcs(buffer, full_path, 4096);
+
   TSFile *tsFile = calloc(sizeof(TSFile), 1);
   tsFile->tokens = NULL;
   tsFile->tokensSize = 0;
@@ -490,8 +518,7 @@ TS_parse_stream(
 
   const wchar_t *tok;
   while (1) {
-    if (tsFile->sanity != TS_FILE_VALID)
-      break;
+    TS_LOOP_SANITY_CHECK(tsFile);
 
     tok = (const wchar_t *) TS_getToken(stream);
     if (tok == NULL) break;
@@ -616,6 +643,25 @@ TS_free_tsToken(
       break;
     case TS_BREAK:
       TS_free_break(token);
+      break;
+    case TS_FOR:
+    case TS_FOR_LET:
+    case TS_FOR_IN:
+    case TS_FOR_OF:
+      TS_free_for(token);
+      break;
+    case TS_OF:
+      TS_free_of(token);
+      break;
+    case TS_IN:
+      TS_free_in(token);
+      break;
+    case TS_JSON: {
+      TS_free_json(token);
+      break;
+    }
+    case TS_ARRAY:
+      TS_free_array(token);
       break;
   }
 }

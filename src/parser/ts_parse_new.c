@@ -1,4 +1,4 @@
-#include <tsc/parser.h>
+#include <cts/parser.h>
 
 TSParserToken *
 TS_parse_new(
@@ -6,13 +6,12 @@ TS_parse_new(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("new");
-
-  u_long movedBy = wcslen(tsParseData->token);
+  TS_MOVE_BY(tsParseData, tsParseData->token);
 
   TSParserToken *token = TS_build_parser_token(TS_NEW, tsParseData);
 
-  volatile unsigned char proceed = 1;
-  const wchar_t *tok;
+  volatile unsigned char proceed = TRUE;
+  const wchar_t *tok = NULL;
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
@@ -27,19 +26,18 @@ TS_parse_new(
 
     switch (tok[0]) {
       case L' ': {
-        movedBy += wcslen(tok);
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
-
         break;
       }
       case L'\n': {
         if (token->childrenSize == 0) {
           free((void *) tok);
           ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found new line.", tsFile, token);
-          proceed = 0;
+          proceed = FALSE;
           break;
         } else {
-          proceed = 0;
+          proceed = FALSE;
           TS_put_back(tsParseData->stream, tok);
           free((void *) tok);
         }
@@ -49,10 +47,10 @@ TS_parse_new(
         if (token->childrenSize == 0) {
           free((void *) tok);
           ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found `;`.", tsFile, token);
-          proceed = 0;
+          proceed = FALSE;
           break;
         } else {
-          proceed = 0;
+          proceed = FALSE;
           TS_put_back(tsParseData->stream, tok);
 
           free((void *) tok);
@@ -70,8 +68,6 @@ TS_parse_new(
     }
   }
 
-  tsParseData->position += movedBy;
-  tsParseData->character += movedBy;
   tsParseData->parentTSToken = token->parent;
 
   TS_TOKEN_END("new");

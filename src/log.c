@@ -1,4 +1,4 @@
-#include <tsc/log.h>
+#include <cts/log.h>
 
 static FILE *TS_error_file = NULL;
 #define TS_error_stream TS_error_file
@@ -65,7 +65,7 @@ void init_log(void) {
   } else {
     file = fopen("./log/info.log", "w");
     if (file == NULL) {
-      io_panic((wchar_t *) L"Failed to open tsc.log for writing!\n");
+      io_panic((wchar_t *) L"Failed to open cts.log for writing!\n");
     }
     time_t t = time(NULL);
     char *str = ctime(&t);

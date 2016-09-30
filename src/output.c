@@ -1,4 +1,4 @@
-#include <tsc/output.h>
+#include <cts/output.h>
 
 // PRINT
 
@@ -21,35 +21,30 @@ TS_print_for_token(
     TSOutputSettings outputSettings
 ) {
   switch (tsParserToken->tokenType) {
-    case TS_VAR:
-      TS_print_from_var(tsFile, tsParserToken, outputSettings);
+    case TS_VAR: {
       break;
-    case TS_LET:
-      TS_print_from_var(tsFile, tsParserToken, outputSettings);
+    }
+    case TS_LET: {
       break;
-    case TS_CONST:
-      TS_print_from_var(tsFile, tsParserToken, outputSettings);
+    }
+    case TS_CONST: {
       break;
+    }
     case TS_CLASS: {
-      TS_print_for_class(tsFile, tsParserToken, outputSettings);
       break;
     }
     case TS_FUNCTION:
-      TS_print_from_function(tsFile, tsParserToken, outputSettings);
       break;
     case TS_ARROW: {
       break;
     }
     case TS_IF: {
-      TS_print_for_if(tsFile, tsParserToken, outputSettings);
       break;
     }
     case TS_ELSE: {
-      TS_print_for_else(tsFile, tsParserToken, outputSettings);
       break;
     }
     case TS_RETURN: {
-      ts_print_for_return(tsFile, tsParserToken, outputSettings);
       break;
     }
     case TS_DECORATOR: {
@@ -91,12 +86,45 @@ TS_print_for_token(
     case TS_MULTILINE_COMMENT: {
       break;
     }
-    case TS_CONDITION:break;
-    case TS_ARGUMENT:break;
-    case TS_CALLER:break;
-    case TS_SWITCH:break;
-    case TS_CASE:break;
-    case TS_BREAK:break;
+    case TS_CONDITION: {
+      break;
+    }
+    case TS_ARGUMENT: {
+      break;
+    }
+    case TS_CALLER: {
+      break;
+    }
+    case TS_SWITCH: {
+      break;
+    }
+    case TS_CASE: {
+      break;
+    }
+    case TS_BREAK: {
+      break;
+    }
+    case TS_FOR: {
+      break;
+    }
+    case TS_FOR_LET: {
+      break;
+    }
+    case TS_FOR_IN: {
+      break;
+    }
+    case TS_FOR_OF: {
+      break;
+    }
+    case TS_OF: {
+      break;
+    }
+    case TS_IN: {
+      break;
+    }
+    case TS_JSON: {
+      break;
+    }
   }
 }
 
@@ -109,92 +137,111 @@ TS_string_for_token(
     TSOutputSettings outputSettings
 ) {
   switch (tsParserToken->tokenType) {
-    case TS_VAR:
-      return TS_string_from_var(tsFile, tsParserToken, outputSettings);
-    case TS_LET:
-      return TS_string_from_var(tsFile, tsParserToken, outputSettings);
-    case TS_CONST:
-      return TS_string_from_var(tsFile, tsParserToken, outputSettings);
+    case TS_VAR: {
+      break;
+    }
+    case TS_LET: {
+      break;
+    }
+    case TS_CONST: {
+      break;
+    }
     case TS_CLASS: {
-      return TS_string_for_class(tsFile, tsParserToken, outputSettings);
+      break;
     }
-    case TS_FUNCTION:
-      return TS_string_from_function(tsFile, tsParserToken, outputSettings);
+    case TS_FUNCTION: {
+      break;
+    }
     case TS_ARROW: {
-      wchar_t *tag = (wchar_t *) L"=>";
-      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
-      wcscat(s, tag);
-      return s;
+      break;
     }
-    case TS_IF: {
-      return TS_string_for_if(tsFile, tsParserToken, outputSettings);
+    case TS_IF:  {
+      break;
     }
     case TS_ELSE: {
-      return TS_string_for_else(tsFile, tsParserToken, outputSettings);
+      break;
     }
     case TS_RETURN: {
-      return ts_string_for_return(tsFile, tsParserToken, outputSettings);
+      break;
     }
     case TS_DECORATOR: {
-      wchar_t *tag = (wchar_t *) L"component";
-      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
-      wcscat(s, tag);
-      return s;
+      break;
     }
     case TS_IMPORT: {
-      wchar_t *tag = (wchar_t *) L"import";
-      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
-      wcscat(s, tag);
-      return s;
+      break;
     }
     case TS_EXPORT: {
-      wchar_t *tag = (wchar_t *) L"export";
-      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
-      wcscat(s, tag);
-      return s;
+      break;
     }
     case TS_DEFAULT: {
-      wchar_t *tag = (wchar_t *) L"default";
-      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
-      wcscat(s, tag);
-      return s;
+      break;
     }
     case TS_SCOPE: {
-      wchar_t *tag = (wchar_t *) L"unnamed scope";
-      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
-      wcscat(s, tag);
-      return s;
+      break;
     }
     case TS_EXTENDS: {
-      wchar_t *tag = (wchar_t *) L"extends";
-      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
-      wcscat(s, tag);
-      return s;
+      break;
     }
     case TS_IMPLEMENTS: {
-      wchar_t *tag = (wchar_t *) L"implements";
-      wchar_t *s = (wchar_t *) calloc(sizeof(wchar_t), sizeof(tag) + 1);
-      wcscat(s, tag);
-      return s;
+      break;
     }
-    case TS_CLASS_FIELD:
+    case TS_CLASS_FIELD: {
       break;
-    case TS_CLASS_METHOD:
+    }
+    case TS_CLASS_METHOD: {
       break;
-    case TS_NEW:
+    }
+    case TS_NEW: {
       break;
-    case TS_UNKNOWN:
+    }
+    case TS_UNKNOWN: {
       break;
-    case TS_INLINE_COMMENT:
+    }
+    case TS_INLINE_COMMENT: {
       break;
-    case TS_MULTILINE_COMMENT:
+    }
+    case TS_MULTILINE_COMMENT: {
       break;
-    case TS_CONDITION:break;
-    case TS_ARGUMENT:break;
-    case TS_CALLER:break;
-    case TS_SWITCH:break;
-    case TS_CASE:break;
-    case TS_BREAK:break;
+    }
+    case TS_CONDITION: {
+      break;
+    }
+    case TS_ARGUMENT: {
+      break;
+    }
+    case TS_CALLER: {
+      break;
+    }
+    case TS_SWITCH: {
+      break;
+    }
+    case TS_CASE: {
+      break;
+    }
+    case TS_BREAK: {
+      break;
+    }
+    case TS_FOR: {
+      break;
+    }
+    case TS_FOR_LET: {
+      break;
+    }
+    case TS_FOR_IN: {
+      break;
+    }
+    case TS_FOR_OF: {
+      break;
+    }
+    case TS_OF: {
+      break;
+    }
+    case TS_IN: {
+      break;
+    }
+    case TS_JSON: {
+      break;
+    }
   }
   return NULL;
 }

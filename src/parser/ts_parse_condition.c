@@ -1,4 +1,4 @@
-#include <tsc/parser.h>
+#include <cts/parser.h>
 
 TSParserToken *
 TS_parse_condition(
@@ -11,42 +11,33 @@ TS_parse_condition(
   TSParserToken *token = TS_build_parser_token(TS_CONDITION, tsParseData);
 
   const wchar_t *tok;
-  unsigned char proceed = 1;
+  volatile unsigned char proceed = TRUE;
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Unexpected end of conditions", tsFile, token);
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "conditions");
       break;
     }
     switch (tok[0]) {
       case L' ': {
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
-
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        u_long movedBy = wcslen(tok);
+        TS_NEW_LINE(tsParseData, tok);
         free((void *) tok);
-
-        tsParseData->position += movedBy;
-        tsParseData->line += 1;
-        tsParseData->character = 0;
         break;
       }
       default: {
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->character += movedBy;
+        TS_MOVE_BY(tsParseData, tok);
 
         token->name = (void *) TS_clone_string(tok);
 
-        proceed = 0;
+        proceed = FALSE;
 
         free((void *) tok);
         break;

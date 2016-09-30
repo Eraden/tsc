@@ -1,4 +1,4 @@
-#import <tsc/parser.h>
+#import <cts/parser.h>
 
 /**
  * TODO implement
@@ -9,11 +9,9 @@ TS_parse_export(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("export");
-  u_long movedBy = wcslen(tsParseData->token);
-
   TSParserToken *token = TS_build_parser_token(TS_EXPORT, tsParseData);
 
-  volatile unsigned char proceed = 1;
+  volatile unsigned char proceed = TRUE;
   const wchar_t *tok;
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -24,14 +22,14 @@ TS_parse_export(
       if (token->childrenSize == 1)
         break;
       else {
-        ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing `export` keyword.", tsFile, token);
+        TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "`export` keyword");
         break;
       }
     }
 
     switch (tok[0]) {
       case L' ': {
-        movedBy += wcslen(tok);
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
@@ -45,14 +43,14 @@ TS_parse_export(
           );
           break;
         } else {
-          proceed = 0;
+          proceed = FALSE;
           TS_put_back(tsParseData->stream, tok);
           free((void *) tok);
           break;
         }
       }
       case L';': {
-        proceed = 0;
+        proceed = FALSE;
         TS_put_back(tsParseData->stream, tok);
         free((void *) tok);
         break;
@@ -60,14 +58,11 @@ TS_parse_export(
       default: {
         if (token->childrenSize == 1) {
           TS_put_back(tsParseData->stream, tok);
-          proceed = 0;
+          proceed = FALSE;
         } else {
-          movedBy += wcslen(tok);
+          TS_MOVE_BY(tsParseData, tok);
 
           tsParseData->token = tok;
-          tsParseData->character += movedBy;
-          tsParseData->position += movedBy;
-          movedBy = 0;
           TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
 
           TS_push_child(token, child);
@@ -78,8 +73,6 @@ TS_parse_export(
     }
   }
 
-  tsParseData->position += movedBy;
-  tsParseData->character += movedBy;
   tsParseData->parentTSToken = token->parent;
   TS_TOKEN_END("export");
   return token;

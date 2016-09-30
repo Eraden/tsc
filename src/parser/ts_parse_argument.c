@@ -1,4 +1,4 @@
-#include <tsc/parser.h>
+#include <cts/parser.h>
 
 TSParserToken *
 TS_parse_argument(
@@ -16,7 +16,7 @@ TS_parse_argument(
   TSParserToken *argument = TS_build_parser_token(TS_ARGUMENT, tsParseData);
   argument->data = data;
 
-  volatile unsigned char proceed = 1;
+  volatile unsigned char proceed = TRUE;
   TSParseArgumentFlag parseFlag = TS_PARSE_ARG_NAME;
 
   while (proceed) {
@@ -26,21 +26,18 @@ TS_parse_argument(
     log_to_file((wchar_t *) L"-- Argument token: '%ls'\n", tok);
 
     if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing argument", tsFile, argument);
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, argument, "argument");
       break;
     }
 
     switch (tok[0]) {
       case L' ': {
-        movedBy += wcslen(tok);
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        tsParseData->line += 1;
-        tsParseData->character = 0;
-        tsParseData->position += movedBy;
-        movedBy = 0;
+        TS_NEW_LINE(tsParseData, tok);
         free((void *) tok);
         break;
       }
@@ -59,7 +56,7 @@ TS_parse_argument(
           free((void *) tok);
         }
 
-        proceed = 0;
+        proceed = FALSE;
         break;
       }
       case L'=': {
@@ -68,7 +65,7 @@ TS_parse_argument(
 
         if (data->name == NULL) {
           ts_token_syntax_error((wchar_t *) L"Assigning to argument without name", tsFile, argument);
-          proceed = 0;
+          proceed = FALSE;
         } else {
           parseFlag = TS_PARSE_ARG_VALUE;
         }
@@ -93,7 +90,7 @@ TS_parse_argument(
           break;
         }
 
-        proceed = 0;
+        proceed = FALSE;
 
         break;
       }
@@ -106,14 +103,14 @@ TS_parse_argument(
               (wchar_t *) L"Unexpected argument type definition. Argument has no name",
               tsFile, argument
           );
-          proceed = 0;
+          proceed = FALSE;
 
         } else if (data->type != NULL) {
           ts_token_syntax_error(
               (wchar_t *) L"Unexpected argument type definition. Type was already declared",
               tsFile, argument
           );
-          proceed = 0;
+          proceed = FALSE;
         }
         parseFlag = TS_PARSE_ARG_TYPE;
 

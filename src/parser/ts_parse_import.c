@@ -1,4 +1,4 @@
-#include <tsc/parser.h>
+#include <cts/parser.h>
 
 /**
  * TODO implement
@@ -9,12 +9,10 @@ TS_parse_import(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("import");
-  u_long movedBy = wcslen(tsParseData->token);
+  TS_MOVE_BY(tsParseData, tsParseData->token);
 
   TSParserToken *token = TS_build_parser_token(TS_IMPORT, tsParseData);
 
-  tsParseData->position += movedBy;
-  tsParseData->character += movedBy;
   tsParseData->parentTSToken= token->parent;
   TS_TOKEN_END("import");
   return token;

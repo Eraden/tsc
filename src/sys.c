@@ -1,5 +1,5 @@
-#include <tsc/sys.h>
-#include <tsc/parser.h>
+#include <cts/sys.h>
+#include <cts/parser.h>
 
 const unsigned int TS_VERSION_MAJOR = 0;
 const unsigned int TS_VERSION_MINOR = 0;
@@ -9,7 +9,9 @@ FILE *TS_output_stream = NULL;
 static TSVerbosity __attribute__((visibility("hidden"))) ts_current_log_level = TS_VERBOSITY_ERROR;
 
 static void __attribute__((visibility("hidden"))) TS_info_msg(void);
-static void __attribute__((visibility("hidden"))) ts_syntax_error(const wchar_t *msg, const wchar_t *file, const u_long line, const u_long character);
+
+static void __attribute__((visibility("hidden")))
+ts_syntax_error(const wchar_t *msg, const wchar_t *file, const u_long line, const u_long character);
 
 static void
 TS_info_msg(void) {
@@ -42,7 +44,8 @@ void
 ts_token_syntax_error(
     const wchar_t *msg,
     TSFile *tsFile,
-    const TSParserToken *token
+    const TSParserToken *token,
+    ...
 ) {
   tsFile->sanity = TS_FILE_SYNTAX_ERROR;
   ts_syntax_error(
@@ -60,6 +63,10 @@ ts_token_syntax_error(
       (const wchar_t *) L"Syntax error: %ls\n      Position: %ls:%lu:%lu [file:line:character]\n",
       msg, tsFile->file, token->line + 1, token->character
   );
+//  va_list ap;
+//  va_start(ap, L"      additional data: '%ls'\n");
+//  vfwprintf(stderr, (const wchar_t *) L"      additional data: '%ls'\n", ap);
+//  va_end(ap);
   tsFile->errorReason = buffer;
 }
 
@@ -97,9 +104,10 @@ TS_parse_arguments(
   settings.stream = NULL;
   settings.fileName = NULL;
 
-  for (int i = 0; i < argc; i++) {
+  init_log();
+
+  for (int i = 1; i < argc; i++) {
     arg = argv[i];
-//    printf("program argument: '%s'\n", arg);
 
     if (strcmp(arg, "-l") == 0 || strcmp(arg, "--level") == 0) {
       arg = argv[++i];
@@ -137,27 +145,30 @@ TS_parse_arguments(
       exit(EXIT_SUCCESS);
     } else if (strcmp(arg, "-f") == 0 || strcmp(arg, "--file") == 0) {
       if (i + 1 >= argc) {
-        log_error((wchar_t *) L"Expecting file name but no more arguments found");
+        log_error((wchar_t *) L"Expecting file name but no more arguments found\n");
         exit(EXIT_FAILURE);
       }
 
       settings.fileName = argv[++i];
       settings.stream = fopen(settings.fileName, "r");
       if (settings.stream == NULL) {
-        io_panic((wchar_t *) L"Couldn't open source code file");
+        io_panic((wchar_t *) L"Couldn't open source code file\n");
       }
     } else if (strcmp(arg, "-c") == 0 || strcmp(arg, "--code") == 0) {
-//      if (i + 1 >= argc) {
-//        log_error((wchar_t *) L"Expecting code but no more arguments found");
-//        exit(EXIT_FAILURE);
-//      }
-//
-//      arg = argv[++i];
-//      settings.stream = fmemopen((void *) arg, strlen(arg), "r");
-//      settings.fileName = "(code eval)";
+      if (i + 1 >= argc) {
+        log_error((wchar_t *) L"Expecting code but no more arguments found\n");
+        exit(EXIT_FAILURE);
+      }
+      arg = argv[++i];
+      FILE *file = tmpfile();
+      fprintf(file, "%s", arg);
+      fflush(file);
+      rewind(file);
+      settings.stream = file;
+      settings.fileName = "(code eval)";
     } else if (strcmp(arg, "-o") == 0 || strcmp(arg, "--out") == 0) {
       if (i + 1 >= argc) {
-        log_error((wchar_t *) L"Expecting file name but no more arguments found");
+        log_error((wchar_t *) L"Expecting output file name but no more arguments found\n");
         exit(EXIT_FAILURE);
       }
 
@@ -167,6 +178,13 @@ TS_parse_arguments(
         log_error((wchar_t *) L"Could not open output file: '%s'\nError code: %i\n", argv[i], errno);
         exit(errno);
       }
+    } else if (strcmp(arg, "-i") == 0) {
+      settings.stream = stdin;
+      settings.fileName = "(code eval)";
+    } else {
+      fprintf(stderr, "Unknown parameter: '%s'\n\n", arg);
+      TS_info_msg();
+      exit(EXIT_FAILURE);
     }
   }
 
@@ -177,4 +195,14 @@ TS_parse_arguments(
     exit(EXIT_FAILURE);
   }
   return settings;
+}
+
+wchar_t *TS_join_strings(const wchar_t *a, const wchar_t *b) {
+  u_long len = TS_STRING_END;
+  if (a) len += wcslen(a);
+  if (b) len += wcslen(b);
+  wchar_t *buffer = calloc(sizeof(wchar_t), len);
+  if (a) wcscat(buffer, a);
+  if (b) wcscat(buffer, b);
+  return buffer;
 }

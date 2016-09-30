@@ -1,18 +1,17 @@
-#include <tsc/parser.h>
+#include <cts/parser.h>
 
 TSParserToken *
 TS_parse_inline_comment(
-    TSFile __attribute__((__unused__)) *tsFile,
+    TSFile *tsFile,
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN("Inline token");
-
-  u_long movedBy = wcslen(tsParseData->token);
+  TS_MOVE_BY(tsParseData, tsParseData->token);
 
   TSParserToken *token = TS_build_parser_token(TS_INLINE_COMMENT, tsParseData);
   token->visibility = TS_VISIBILITY_NONE;
 
-  volatile unsigned char proceed = 1;
+  volatile unsigned char proceed = TRUE;
   const wchar_t *tok;
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -25,12 +24,13 @@ TS_parse_inline_comment(
     switch (tok[0]) {
       case L'\n': {
         TS_put_back(tsParseData->stream, tok);
-        proceed = 0;
+        proceed = FALSE;
         free((void *) tok);
 
         break;
       }
       default: {
+        TS_MOVE_BY(tsParseData, tok);
         u_long size = TS_STRING_END + wcslen(tok);
         if (token->content != NULL) size += wcslen(token->content);
         wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
@@ -38,14 +38,11 @@ TS_parse_inline_comment(
         if (token->content != NULL) free(token->content);
         wcscat(newPointer, tok);
         token->content = newPointer;
-        movedBy += wcslen(tok);
         free((void *) tok);
       }
     }
   }
 
-  tsParseData->position += movedBy;
-  tsParseData->character += movedBy;
   tsParseData->parentTSToken= token->parent;
   TS_TOKEN_END("Inline token")
 
