@@ -2,5 +2,5 @@
 
 cd build
 
-ctest
+ctest -j 20
 [[ -f ./cts_test ]] && ./cts_test

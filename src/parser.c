@@ -102,6 +102,8 @@ TS_name_is_valid(
       case L'}':
       case L'(':
       case L')':
+      case L'[':
+      case L']':
       case L',':
       case L'.':
       case L'=':
@@ -212,6 +214,8 @@ TS_valid_char_for_token(
     case L'}':
     case L'(':
     case L')':
+    case L'[':
+    case L']':
     case L',':
     case L'.':
     case L'=':
@@ -375,6 +379,8 @@ TS_getToken(
       case L'}':
       case L'(':
       case L')':
+      case L'[':
+      case L']':
       case L',':
       case L'.':
       case L':':

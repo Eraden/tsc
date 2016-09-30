@@ -76,6 +76,8 @@ IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
       tests/parser/parse_switch.c
       tests/parser/parse_break.c
       tests/parser/for/parse_for_let.c
+      tests/parser/for/parse_for_of.c
+      tests/parser/for/parse_for_in.c
   )
 ENDIF ()
 
@@ -217,6 +219,8 @@ ADD_TEST(NAME Class_with_invalid_name COMMAND ./cts -f ./examples/class/invalid_
 ADD_TEST(NAME Class_with_missing_ending COMMAND ./cts -f ./examples/class/missing_class_ending)
 
 ADD_TEST(NAME for_with_iteration COMMAND ./cts -f ./examples/for/let/valid.ts)
+ADD_TEST(NAME for_with_in COMMAND ./cts -f ./examples/for/in/valid.ts)
+ADD_TEST(NAME for_with_of COMMAND ./cts -f ./examples/for/of/valid.ts)
 
 ADD_TEST(NAME switch_head_unexpected_end_of_stream COMMAND ./cts -f ./examples/switch/head/unexpected_end_of_stream)
 ADD_TEST(NAME switch_head_unexpected_token COMMAND ./cts -f ./examples/switch/head/unexpected_token)
