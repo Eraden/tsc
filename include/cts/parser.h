@@ -68,6 +68,7 @@ typedef enum eTSTokenType {
   TS_FOR_OF = 31,
   TS_OF = 32,
   TS_IN = 33,
+  TS_JSON = 34,
   TS_UNKNOWN = 0,
 } __attribute__ ((__packed__)) TSTokenType;
 
@@ -114,6 +115,11 @@ typedef enum eTSConditionBodyTermination {
   TS_ENDS_WITH_BRACKET = 0x1,
   TS_ENDS_WITHOUT_BRACKET = 0x0,
 } __attribute__ ((__packed__)) TSConditionBodyTermination;
+
+typedef enum eTSParseBracketType {
+  TS_PARSE_BRACKET_AS_SCOPE = 1,
+  TS_PARSE_BRACKET_AS_JSON = 2,
+} TSParseBracketType;
 
 typedef struct sTSKeyword {
   TSTokenType type;
@@ -273,6 +279,12 @@ void TS_free_export(const TSParserToken *token);
 TSParserToken *TS_parse_default(TSFile *tsFile, TSParseData *tsParseData);
 
 void TS_free_default(const TSParserToken *token);
+
+TSParserToken *TS_parse_scope_or_json(TSFile *tsFile, TSParseData *tsParseData);
+
+TSParserToken *TS_parse_json(TSFile *tsFile, TSParseData *tsParseData);
+
+void TS_free_json(const TSParserToken *token);
 
 TSParserToken *TS_parse_scope(TSFile *tsFile, TSParseData *tsParseData);
 

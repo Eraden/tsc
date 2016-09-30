@@ -57,7 +57,7 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     {TS_IMPORT,            (wchar_t *) L"import",     TS_parse_import},
     {TS_EXPORT,            (wchar_t *) L"export",     TS_parse_export},
     {TS_DEFAULT,           (wchar_t *) L"default",    TS_parse_default},
-    {TS_SCOPE,             (wchar_t *) L"{",          TS_parse_scope},
+    {TS_SCOPE,             (wchar_t *) L"{",          TS_parse_scope_or_json},
     {TS_EXTENDS,           (wchar_t *) L"extends",    TS_parse_extends},
     {TS_IMPLEMENTS,        (wchar_t *) L"implements", TS_parse_implements},
     {TS_NEW,               (wchar_t *) L"new",        TS_parse_new},
@@ -90,8 +90,9 @@ TS_name_is_valid(
     const wchar_t *name
 ) {
   if (name == NULL) return 0;
-  wchar_t c;
-  for (u_long i = 0, l = wcslen(name); i < l; i++) {
+  wchar_t c = 0;
+  const u_long len = wcslen(name);
+  for (u_long i = 0; i < len; i++) {
     c = name[i];
     switch (c) {
       case L'@':
@@ -192,7 +193,8 @@ static void
 TS_next_line(
     TSParseData *data
 ) {
-  data->position += 1;
+  u_long len = wcslen(data->token);
+  data->position += len;
   data->line += 1;
   data->character = 0;
 }
@@ -511,8 +513,7 @@ TS_parse_stream(
 
   const wchar_t *tok;
   while (1) {
-    if (tsFile->sanity != TS_FILE_VALID)
-      break;
+    TS_LOOP_SANITY_CHECK(tsFile);
 
     tok = (const wchar_t *) TS_getToken(stream);
     if (tok == NULL) break;
@@ -650,6 +651,10 @@ TS_free_tsToken(
     case TS_IN:
       TS_free_in(token);
       break;
+    case TS_JSON: {
+      TS_free_json(token);
+      break;
+    }
   }
 }
 

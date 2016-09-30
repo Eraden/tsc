@@ -122,6 +122,9 @@ TS_print_for_token(
     case TS_IN: {
       break;
     }
+    case TS_JSON: {
+      break;
+    }
   }
 }
 
@@ -234,6 +237,9 @@ TS_string_for_token(
       break;
     }
     case TS_IN: {
+      break;
+    }
+    case TS_JSON: {
       break;
     }
   }

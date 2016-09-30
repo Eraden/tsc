@@ -33,27 +33,20 @@ TS_parse_caller(
 
     switch (tok[0]) {
       case L' ': {
-        len = wcslen(tok);
-        tsParseData->position += len;
-        tsParseData->character += len;
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
 
+        break;
+      }
+      case L'\n': {
+        TS_put_back(tsParseData->stream, tok);
+        free((void *) tok);
         break;
       }
       case L';': {
         TS_put_back(tsParseData->stream, tok);
         free((void *) tok);
         proceed = FALSE;
-        break;
-      }
-      case L'\n': {
-        len = wcslen(tok);
-        TS_put_back(tsParseData->stream, tok);
-        free((void *) tok);
-
-        tsParseData->line += 1;
-        tsParseData->character = 0;
-        tsParseData->position += len;
         break;
       }
       case L',':

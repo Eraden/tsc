@@ -21,7 +21,6 @@ SET(
     src/parser/ts_parse_decorator.c
     src/parser/ts_parse_import.c
     src/parser/ts_parse_export.c
-    src/parser/ts_parse_scope.c
     src/parser/ts_parse_new.c
     src/parser/ts_parse_inline_comment.c
     src/parser/ts_parse_multiline_comment.c
@@ -29,6 +28,9 @@ SET(
     src/parser/ts_parse_for.c
     src/parser/ts_parse_of.c
     src/parser/ts_parse_in.c
+    src/parser/ts_parse_json.c
+    src/parser/ts_parse_scope.c
+    src/parser/ts_parse_scope_or_json.c
     src/parser.c
 )
 

@@ -32,15 +32,12 @@ TS_parse_argument(
 
     switch (tok[0]) {
       case L' ': {
-        movedBy += wcslen(tok);
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        tsParseData->line += 1;
-        tsParseData->character = 0;
-        tsParseData->position += movedBy;
-        movedBy = 0;
+        TS_NEW_LINE(tsParseData, tok);
         free((void *) tok);
         break;
       }

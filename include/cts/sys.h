@@ -63,4 +63,4 @@ void ts_log_position(const wchar_t *file, const u_long character, const u_long l
 
 const TSParserSettings TS_parse_arguments(int argc, const char **argv);
 
-wchar_t *TS_join_strings(wchar_t *, wchar_t *);
+wchar_t *TS_join_strings(const wchar_t *, const wchar_t *);

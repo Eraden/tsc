@@ -63,10 +63,10 @@ ts_token_syntax_error(
       (const wchar_t *) L"Syntax error: %ls\n      Position: %ls:%lu:%lu [file:line:character]\n",
       msg, tsFile->file, token->line + 1, token->character
   );
-  va_list ap;
-  va_start(ap, L"      additional data: '%ls'\n");
-  vfwprintf(stderr, (const wchar_t *) L"      additional data: '%ls'\n", ap);
-  va_end(ap);
+//  va_list ap;
+//  va_start(ap, L"      additional data: '%ls'\n");
+//  vfwprintf(stderr, (const wchar_t *) L"      additional data: '%ls'\n", ap);
+//  va_end(ap);
   tsFile->errorReason = buffer;
 }
 
@@ -197,7 +197,7 @@ TS_parse_arguments(
   return settings;
 }
 
-wchar_t *TS_join_strings(wchar_t *a, wchar_t *b) {
+wchar_t *TS_join_strings(const wchar_t *a, const wchar_t *b) {
   u_long len = TS_STRING_END;
   if (a) len += wcslen(a);
   if (b) len += wcslen(b);

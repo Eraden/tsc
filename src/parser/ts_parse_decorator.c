@@ -11,74 +11,72 @@ TS_parse_decorator_name(
   const wchar_t *tok;
   volatile unsigned char proceed = TRUE;
   wchar_t *name = NULL;
-  u_long len = 0;
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
+
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "decorator call");
       break;
 
     } else if (TS_is_keyword(tok)) {
+      TS_MOVE_BY(tsParseData, tok);
       free((void *) tok);
       TS_UNEXPECTED_TOKEN(tsFile, token, tok, "decorator call");
       break;
     }
-    len = wcslen(tok);
+
     switch (tok[0]) {
       case L'(': {
+        TS_MOVE_BY(tsParseData, tok);
         if (name == NULL) {
-          free((void *) tok);
           ts_token_syntax_error(
               (const wchar_t *) L"Missing decorator name",
               tsFile,
               token
           );
-          proceed = FALSE;
-          break;
         }
-        proceed = FALSE;
-        tsParseData->character += len;
-        tsParseData->position += len;
         free((void *) tok);
+        proceed = FALSE;
         break;
       }
       case '\n':
       case '\t':
       case '\r':
       case L' ': {
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
-        if (name) free(name);
-        ts_token_syntax_error(
-            (const wchar_t *) L"Unexpected white character in decorator call name",
-            tsFile,
-            token
-        );
+        if (!name) {
+          ts_token_syntax_error(
+              (const wchar_t *) L"Unexpected white character in decorator call function name",
+              tsFile,
+              token
+          );
+        }
         proceed = FALSE;
         break;
       }
       default: {
-        u_long size = len + TS_STRING_END;
-        if (name != NULL) size += wcslen(name);
-
-        wchar_t *newPointer = calloc(sizeof(wchar_t), size);
-        if (name) {
-          wcscpy(newPointer, name);
-          free(name);
-        }
-        wcscat(newPointer, tok);
+        wchar_t *newPointer = TS_join_strings(name, tok);
+        if (name) free(name);
         name = newPointer;
-        tsParseData->character += len;
-        tsParseData->position += len;
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
     }
   }
 
-  if (TS_name_is_valid(name) != TRUE) {
+  if (name == NULL) {
+    ts_token_syntax_error(
+        (const wchar_t *) L"Missing decorator call function name",
+        tsFile,
+        token
+    );
+  }
+  else if (TS_name_is_valid(name) != TRUE) {
     ts_token_syntax_error(
         (const wchar_t *) L"Invalid characters in decorator call",
         tsFile,
@@ -87,6 +85,53 @@ TS_parse_decorator_name(
   }
 
   return name;
+}
+
+static void
+__attribute__((visibility("hidden")))
+__attribute__((section("parse-decorator")))
+TS_parse_decorator_arguments(
+    TSFile *tsFile,
+    TSParseData *tsParseData
+)
+{
+  TSParserToken *token = tsParseData->parentTSToken;
+  const wchar_t *tok;
+  volatile unsigned char proceed = TRUE;
+
+  while (proceed) {
+    tok = (const wchar_t *) TS_getToken(tsFile->stream);
+
+    if (tok == NULL) {
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "decorator call arguments");
+      break;
+    }
+
+    switch (tok[0]) {
+      case L' ': {
+        TS_MOVE_BY(tsParseData, tok);
+        free((void *) tok);
+        break;
+      }
+      case L'\n': {
+        TS_NEW_LINE(tsParseData, tok);
+        free((void *) tok);
+        break;
+      }
+      case L')': {
+        TS_MOVE_BY(tsParseData, tok);
+        free((void *) tok);
+        proceed = FALSE;
+        break;
+      }
+      default: {
+        tsParseData->token = tok;
+        TSParserToken *argument = TS_parse_argument(tsFile, tsParseData);
+        free((void *) tok);
+        TS_push_child(token, argument);
+      }
+    }
+  }
 }
 
 TSParserToken *
@@ -105,6 +150,8 @@ TS_parse_decorator(
     token->name = TS_clone_string(name);
     free((void *) name);
   }
+
+  TS_parse_decorator_arguments(tsFile, tsParseData);
 
   // parse
   tsParseData->parentTSToken = token->parent;
