@@ -137,7 +137,12 @@ TS_build_predefined_class(
 ) {
   TSParseData data;
   TSParserToken *token;
-  data = {0, 0, 0, NULL, NULL, NULL};
+  data.stream = NULL;
+  data.parentTSToken = NULL;
+  data.token = NULL;
+  data.character = 0;
+  data.line = 0;
+  data.line = 0;
   token = TS_build_parser_token(TS_CLASS, &data);
   token->name = calloc(sizeof(wchar_t), wcslen(name) + TS_STRING_END);
   wcscpy(token->name, name);
