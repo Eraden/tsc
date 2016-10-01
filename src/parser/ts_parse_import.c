@@ -8,14 +8,8 @@ TS_parse_import(
     TSFile *__attribute__((__unused__)) tsFile,
     TSParseData *tsParseData
 ) {
-  TS_TOKEN_BEGIN("import");
-  TS_MOVE_BY(tsParseData, tsParseData->token);
-
-  TSParserToken *token = TS_build_parser_token(TS_IMPORT, tsParseData);
-
-  tsParseData->parentTSToken= token->parent;
-  TS_TOKEN_END("import");
-  return token;
+  TS_TOKEN_BEGIN(TS_IMPORT, tsParseData)
+  TS_TOKEN_END(TS_IMPORT)
 }
 
 void

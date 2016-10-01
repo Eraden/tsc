@@ -5,17 +5,9 @@ TS_parse_arrow(
     TSFile *__attribute__((__unused__)) tsFile,
     TSParseData *tsParseData
 ) {
-  TS_TOKEN_BEGIN("arrow");
-  u_long movedBy = wcslen(tsParseData->token);
+  TS_TOKEN_BEGIN(TS_ARROW, tsParseData)
 
-  TSParserToken *token = TS_build_parser_token(TS_ARROW, tsParseData);
-  token->visibility = TS_VISIBILITY_SCOPE;
-
-  tsParseData->position += movedBy;
-  tsParseData->character += movedBy;
-  tsParseData->parentTSToken = token->parent;
-  TS_TOKEN_END("arrow");
-  return token;
+  TS_TOKEN_END(TS_ARROW)
 }
 
 void

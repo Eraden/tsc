@@ -13,7 +13,7 @@ TS_parse_scope_or_json(
 
     tok = (wchar_t *) TS_getToken(tsFile->stream);
     if (!tok) {
-      TS_UNEXPECTED_END_OF_STREAM(tsFile, tsParseData->parentTSToken, "scope of json");
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, tsParseData->parentTSToken, "scope or json");
       break;
     }
     switch (tok[0]) {

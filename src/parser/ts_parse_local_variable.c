@@ -33,7 +33,8 @@ TS_parse_local_variable_done(
       );
       break;
     }
-    case TS_PARSE_VARIABLE_NONE: {}
+    case TS_PARSE_VARIABLE_NONE: {
+    }
     default: {
       break;
     }
@@ -177,15 +178,9 @@ TS_parse_var(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TS_TOKEN_BEGIN("var");
-  TS_MOVE_BY(tsParseData, tsParseData->token);
-
-  TSParserToken *token = TS_build_parser_token(TS_VAR, tsParseData);
-  TS_parse_local_variable_body(tsFile, tsParseData);
-
-  tsParseData->parentTSToken = token->parent;
-  TS_TOKEN_END("var");
-  return token;
+  TS_TOKEN_BEGIN(TS_VAR, tsParseData)
+    TS_parse_local_variable_body(tsFile, tsParseData);
+  TS_TOKEN_END(TS_VAR)
 }
 
 TSParserToken *
@@ -193,16 +188,9 @@ TS_parse_let(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TS_TOKEN_BEGIN("let");
-
-  TS_MOVE_BY(tsParseData, tsParseData->token);
-
-  TSParserToken *token = TS_build_parser_token(TS_LET, tsParseData);
-  TS_parse_local_variable_body(tsFile, tsParseData);
-
-  tsParseData->parentTSToken = token->parent;
-  TS_TOKEN_END("let");
-  return token;
+  TS_TOKEN_BEGIN(TS_LET, tsParseData)
+    TS_parse_local_variable_body(tsFile, tsParseData);
+  TS_TOKEN_END(TS_LET)
 }
 
 TSParserToken *
@@ -210,15 +198,9 @@ TS_parse_const(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TS_TOKEN_BEGIN("const");
-  TS_MOVE_BY(tsParseData, tsParseData->token);
-
-  TSParserToken *token = TS_build_parser_token(TS_CONST, tsParseData);
-  TS_parse_local_variable_body(tsFile, tsParseData);
-
-  tsParseData->parentTSToken = token->parent;
-  TS_TOKEN_END("const");
-  return token;
+  TS_TOKEN_BEGIN(TS_CONST, tsParseData)
+    TS_parse_local_variable_body(tsFile, tsParseData);
+  TS_TOKEN_END(TS_CONST)
 }
 
 void

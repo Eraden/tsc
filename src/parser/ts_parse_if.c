@@ -278,19 +278,18 @@ TS_parse_if(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TS_TOKEN_BEGIN("if")
-  TS_MOVE_BY(tsParseData, tsParseData->token);
+  TS_TOKEN_BEGIN(TS_IF, tsParseData)
 
-  TSParserToken *token = TS_build_parser_token(TS_IF, tsParseData);
-  token->data = NULL;
+    TS_MOVE_BY(tsParseData, tsParseData->token);
+    token->data = NULL;
 
-  TS_parse_if_conditions(tsFile, tsParseData);
-  TS_parse_if_body(tsFile, tsParseData);
-  TS_lookup_else(tsFile, tsParseData);
+    TS_parse_if_conditions(tsFile, tsParseData);
+    TS_parse_if_body(tsFile, tsParseData);
+    TS_lookup_else(tsFile, tsParseData);
 
-  tsParseData->parentTSToken = token->parent;
-  TS_TOKEN_END("if")
-  return token;
+    tsParseData->parentTSToken = token->parent;
+
+  TS_TOKEN_END(TS_IF)
 }
 
 void

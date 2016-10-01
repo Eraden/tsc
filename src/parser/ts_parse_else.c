@@ -1,7 +1,7 @@
 #include <cts/parser.h>
 
 static void
-__attribute__(( visibility("hidden") ))
+__attribute__(( visibility("hidden")))
 TS_parse_else_body(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -124,13 +124,9 @@ TS_parse_else(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TS_TOKEN_BEGIN("else");
-  TSParserToken *token = TS_build_parser_token(TS_ELSE, tsParseData);
-  TS_parse_else_body(tsFile, tsParseData);
-
-  tsParseData->parentTSToken = token->parent;
-  TS_TOKEN_END("else");
-  return token;
+  TS_TOKEN_BEGIN(TS_ELSE, tsParseData)
+    TS_parse_else_body(tsFile, tsParseData);
+  TS_TOKEN_END(TS_ELSE);
 }
 
 void

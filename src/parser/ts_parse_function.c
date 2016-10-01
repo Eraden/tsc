@@ -248,107 +248,101 @@ TS_parse_function(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TS_TOKEN_BEGIN("function");
-  TS_MOVE_BY(tsParseData, tsParseData->token);
+  TS_TOKEN_BEGIN(TS_FUNCTION, tsParseData)
 
-  TSFunctionData *functionData = calloc(sizeof(TSFunctionData), 1);
-  functionData->name = NULL;
-  functionData->returnType = NULL;
+    TSFunctionData *functionData = calloc(sizeof(TSFunctionData), 1);
+    functionData->name = NULL;
+    functionData->returnType = NULL;
+    token->data = functionData;
 
-  TSParserToken *token = TS_build_parser_token(TS_FUNCTION, tsParseData);
-  token->data = functionData;
+    const wchar_t *tok;
+    volatile unsigned char proceed = TRUE;
 
-  const wchar_t *tok;
-  volatile unsigned char proceed = TRUE;
+    while (proceed) {
+      TS_LOOP_SANITY_CHECK(tsFile)
 
-  while (proceed) {
-    TS_LOOP_SANITY_CHECK(tsFile)
+      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
-
-    if (tok == NULL) {
-      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "function");
-      break;
-    }
-
-    switch (tok[0]) {
-      case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
+      if (tok == NULL) {
+        TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "function");
         break;
       }
-      case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
-      case L'(': {
-        if (token->name) {
-          proceed = FALSE;
-          TS_put_back(tsFile->stream, tok);
+
+      switch (tok[0]) {
+        case L' ': {
+          TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
           break;
-        } else if (token->parent) {
-          proceed = FALSE;
-          TS_put_back(tsFile->stream, tok);
+        }
+        case L'\n': {
+          TS_NEW_LINE(tsParseData, tok);
           free((void *) tok);
+          break;
+        }
+        case L'(': {
+          if (token->name) {
+            proceed = FALSE;
+            TS_put_back(tsFile->stream, tok);
+            free((void *) tok);
+            break;
+          } else if (token->parent) {
+            proceed = FALSE;
+            TS_put_back(tsFile->stream, tok);
+            free((void *) tok);
 
-          switch (token->parent->tokenType) {
-            case TS_RETURN: {
-              break;
+            switch (token->parent->tokenType) {
+              case TS_RETURN: {
+                break;
+              }
+              case TS_CONST:
+              case TS_LET:
+              case TS_VAR: {
+                token->name = TS_clone_string(token->parent->name);
+                break;
+              }
+              default: {
+                ts_token_syntax_error(
+                    (const wchar_t *) L"Missing function name",
+                    tsFile,
+                    token
+                );
+                proceed = FALSE;
+              }
             }
-            case TS_CONST:
-            case TS_LET:
-            case TS_VAR: {
-              token->name = TS_clone_string(token->parent->name);
-              break;
-            }
-            default: {
-              ts_token_syntax_error(
-                  (const wchar_t *) L"Missing function name",
-                  tsFile,
-                  token
-              );
-              proceed = FALSE;
-            }
+          } else {
+            free((void *) tok);
+            ts_token_syntax_error(
+                (const wchar_t *) L"Missing function name",
+                tsFile,
+                token
+            );
+            proceed = FALSE;
           }
-        } else {
-          free((void *) tok);
-          ts_token_syntax_error(
-              (const wchar_t *) L"Missing function name",
-              tsFile,
-              token
-          );
+          break;
+        }
+        default: {
+          if (TS_name_is_valid(tok)) {
+            functionData->name = TS_clone_string(tok);
+            free((void *) tok);
+          } else {
+            free((void *) tok);
+            ts_token_syntax_error(
+                (wchar_t *) L"Invalid function name",
+                tsFile,
+                token
+            );
+          }
           proceed = FALSE;
+          break;
         }
-        break;
-      }
-      default: {
-        if (TS_name_is_valid(tok)) {
-          functionData->name = TS_clone_string(tok);
-          free((void *) tok);
-        } else {
-          free((void *) tok);
-          ts_token_syntax_error(
-              (wchar_t *) L"Invalid function name",
-              tsFile,
-              token
-          );
-        }
-        proceed = FALSE;
-        break;
       }
     }
-  }
 
-  TS_parse_function_arguments(tsFile, tsParseData);
-  TS_parse_function_lookup_return_type(tsFile, tsParseData);
-  TS_parse_function_body(tsFile, tsParseData, token);
+    TS_parse_function_arguments(tsFile, tsParseData);
+    TS_parse_function_lookup_return_type(tsFile, tsParseData);
+    TS_parse_function_body(tsFile, tsParseData, token);
 
-  tsParseData->parentTSToken = token->parent;
-
-  TS_TOKEN_END("function");
-  return token;
+  TS_TOKEN_END(TS_FUNCTION);
 }
 
 void

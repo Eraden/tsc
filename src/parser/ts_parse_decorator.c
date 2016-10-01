@@ -75,8 +75,7 @@ TS_parse_decorator_name(
         tsFile,
         token
     );
-  }
-  else if (TS_name_is_valid(name) != TRUE) {
+  } else if (TS_name_is_valid(name) != TRUE) {
     ts_token_syntax_error(
         (const wchar_t *) L"Invalid characters in decorator call",
         tsFile,
@@ -93,8 +92,7 @@ __attribute__((section("parse-decorator")))
 TS_parse_decorator_arguments(
     TSFile *tsFile,
     TSParseData *tsParseData
-)
-{
+) {
   TSParserToken *token = tsParseData->parentTSToken;
   const wchar_t *tok;
   volatile unsigned char proceed = TRUE;
@@ -140,23 +138,18 @@ TS_parse_decorator(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TS_TOKEN_BEGIN("decorator");
-  TS_MOVE_BY(tsParseData, tsParseData->token);
+  TS_TOKEN_BEGIN(TS_DECORATOR, tsParseData)
 
-  TSParserToken *token = TS_build_parser_token(TS_DECORATOR, tsParseData);
-  wchar_t *name = TS_parse_decorator_name(tsFile, tsParseData, token);
+    wchar_t *name = TS_parse_decorator_name(tsFile, tsParseData, token);
 
-  if (name) {
-    token->name = TS_clone_string(name);
-    free((void *) name);
-  }
+    if (name) {
+      token->name = TS_clone_string(name);
+      free((void *) name);
+    }
 
-  TS_parse_decorator_arguments(tsFile, tsParseData);
+    TS_parse_decorator_arguments(tsFile, tsParseData);
 
-  // parse
-  tsParseData->parentTSToken = token->parent;
-  TS_TOKEN_END("decorator");
-  return token;
+  TS_TOKEN_END(TS_DECORATOR)
 }
 
 void

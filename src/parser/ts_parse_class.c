@@ -405,116 +405,111 @@ TS_parse_class(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TS_TOKEN_BEGIN("class");
-  TS_MOVE_BY(tsParseData, tsParseData->token);
+  TS_TOKEN_BEGIN(TS_CLASS, tsParseData)
 
-  TSClassData *data = (TSClassData *) calloc(sizeof(TSClassData), 1);
-  data->name = NULL;
-  data->parentClass = NULL;
-  data->implementsInterfaces = NULL;
-  data->implementsInterfacesSize = 0;
+    TSClassData *data = (TSClassData *) calloc(sizeof(TSClassData), 1);
+    data->name = NULL;
+    data->parentClass = NULL;
+    data->implementsInterfaces = NULL;
+    data->implementsInterfacesSize = 0;
 
-  TSParserToken *token = TS_build_parser_token(TS_CLASS, tsParseData);
-  token->classData = data;
+    token->classData = data;
 
-  const wchar_t *tok;
-  volatile unsigned char proceed = TRUE;
-  while (proceed) {
-    TS_LOOP_SANITY_CHECK(tsFile);
+    const wchar_t *tok;
+    volatile unsigned char proceed = TRUE;
+    while (proceed) {
+      TS_LOOP_SANITY_CHECK(tsFile);
 
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
-    if (tok == NULL) {
-      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "class name");
-      break;
-    }
-    switch (tok[0]) {
-      case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
+      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      if (tok == NULL) {
+        TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "class name");
         break;
       }
-      case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
-      case L'{': {
-        if (token->parent) {
-          token->classData->name = TS_class_name_from_parent(tsParseData, token, tok);
-          if (token->classData->name == NULL) {
-            free((void *) tok);
-            ts_token_syntax_error(
-                (wchar_t *) L"Missing class name",
-                tsFile,
-                token
-            );
-            proceed = FALSE;
-            break;
-          }
-          TS_put_back(tsParseData->stream, tok);
-        } else {
+      switch (tok[0]) {
+        case L' ': {
+          TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
-          ts_token_syntax_error(
-              (wchar_t *) L"Missing class name",
-              tsFile,
-              token
-          );
-          proceed = FALSE;
           break;
         }
-        proceed = FALSE;
-        free((void *) tok);
-
-        break;
-      }
-      default: {
-        if (wcscmp((const wchar_t *) L"extends", tok) == 0 || wcscmp((const wchar_t *) L"implements", tok) == 0) {
-          token->classData->name = TS_class_name_from_parent(tsParseData, token, tok);
-          if (token->classData->name == NULL) {
-            free((void *) tok);
-            ts_token_syntax_error(
-                (wchar_t *) L"Missing class name",
-                tsFile,
-                token
-            );
-            proceed = FALSE;
-            break;
-          }
-        } else if (TS_is_keyword(tok) == 1) {
-          TS_UNEXPECTED_TOKEN(tsFile, token, tok, "class name");
+        case L'\n': {
+          TS_NEW_LINE(tsParseData, tok);
           free((void *) tok);
-          proceed = FALSE;
           break;
-
-        } else {
-          if (TS_name_is_valid(tok) == 0) {
-            free((void *) tok);
-            ts_token_syntax_error(
-                (wchar_t *) L"Invalid class name",
-                tsFile,
-                token
-            );
+        }
+        case L'{': {
+          if (token->parent) {
+            token->classData->name = TS_class_name_from_parent(tsParseData, token, tok);
+            if (token->classData->name == NULL) {
+              free((void *) tok);
+              ts_token_syntax_error(
+                  (wchar_t *) L"Missing class name",
+                  tsFile,
+                  token
+              );
+              proceed = FALSE;
+              break;
+            }
+            TS_put_back(tsParseData->stream, tok);
           } else {
-            token->classData->name = TS_clone_string(tok);
-            TS_MOVE_BY(tsParseData, tok);
             free((void *) tok);
+            ts_token_syntax_error(
+                (wchar_t *) L"Missing class name",
+                tsFile,
+                token
+            );
+            proceed = FALSE;
+            break;
           }
+          proceed = FALSE;
+          free((void *) tok);
+
+          break;
         }
-        proceed = FALSE;
-        break;
+        default: {
+          if (wcscmp((const wchar_t *) L"extends", tok) == 0 || wcscmp((const wchar_t *) L"implements", tok) == 0) {
+            token->classData->name = TS_class_name_from_parent(tsParseData, token, tok);
+            if (token->classData->name == NULL) {
+              free((void *) tok);
+              ts_token_syntax_error(
+                  (wchar_t *) L"Missing class name",
+                  tsFile,
+                  token
+              );
+              proceed = FALSE;
+              break;
+            }
+          } else if (TS_is_keyword(tok) == 1) {
+            TS_UNEXPECTED_TOKEN(tsFile, token, tok, "class name");
+            free((void *) tok);
+            proceed = FALSE;
+            break;
+
+          } else {
+            if (TS_name_is_valid(tok) == 0) {
+              free((void *) tok);
+              ts_token_syntax_error(
+                  (wchar_t *) L"Invalid class name",
+                  tsFile,
+                  token
+              );
+            } else {
+              token->classData->name = TS_clone_string(tok);
+              TS_MOVE_BY(tsParseData, tok);
+              free((void *) tok);
+            }
+          }
+          proceed = FALSE;
+          break;
+        }
       }
     }
-  }
 
-  TS_register_class(tsFile, token);
+    TS_register_class(tsFile, token);
 
-  TS_parse_class_head(tsFile, tsParseData, token);
-  TS_parse_class_body(tsFile, tsParseData, token);
+    TS_parse_class_head(tsFile, tsParseData, token);
+    TS_parse_class_body(tsFile, tsParseData, token);
 
-  tsParseData->parentTSToken = token->parent;
-
-  TS_TOKEN_END("class");
-  return token;
+  TS_TOKEN_END(TS_CLASS);
 }
 
 void

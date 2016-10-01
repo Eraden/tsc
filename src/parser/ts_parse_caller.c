@@ -5,82 +5,70 @@ TS_parse_caller(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TS_TOKEN_BEGIN("caller")
-  TSParserToken *token = TS_build_parser_token(TS_CALLER, tsParseData);
-  token->visibility = TS_VISIBILITY_SCOPE;
-  token->name = (void *) TS_clone_string(tsParseData->token);
+  TS_TOKEN_BEGIN(TS_CALLER, tsParseData)
 
-  volatile unsigned char proceed = TRUE;
-  const wchar_t *tok;
-  u_long len = wcslen(tsParseData->token);
-  tsParseData->position += len;
-  tsParseData->character += len;
+    token->visibility = TS_VISIBILITY_SCOPE;
+    token->name = (void *) TS_clone_string(tsParseData->token);
 
-  while (proceed) {
-    TS_LOOP_SANITY_CHECK(tsFile)
+    volatile unsigned char proceed = TRUE;
+    const wchar_t *tok;
 
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    while (proceed) {
+      TS_LOOP_SANITY_CHECK(tsFile)
 
-    if (tok == NULL) {
-      if (token->data == NULL) {
-        TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "caller arguments");
-        break;
+      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
-      } else {
-        break;
+      if (tok == NULL) {
+        if (token->data == NULL) {
+          TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "caller arguments");
+          break;
+
+        } else {
+          break;
+        }
+      }
+
+      switch (tok[0]) {
+        case L' ': {
+          TS_MOVE_BY(tsParseData, tok);
+          free((void *) tok);
+
+          break;
+        }
+        case L'\n': {
+          TS_put_back(tsParseData->stream, tok);
+          free((void *) tok);
+          break;
+        }
+        case L';': {
+          TS_put_back(tsParseData->stream, tok);
+          free((void *) tok);
+          proceed = FALSE;
+          break;
+        }
+        case L',':
+        case L'(': {
+          TS_MOVE_BY(tsParseData, tok);
+          free((void *) tok);
+          break;
+        }
+        case L')': {
+          TS_MOVE_BY(tsParseData, tok);
+          proceed = FALSE;
+          free((void *) tok);
+          break;
+        }
+        default: {
+          TS_put_back(tsFile->stream, tok);
+          free((void *) tok);
+          TSParserToken *argument = TS_parse_argument(tsFile, tsParseData);
+          TS_push_child(token, argument);
+          break;
+        }
       }
     }
 
-    switch (tok[0]) {
-      case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-
-        break;
-      }
-      case L'\n': {
-        TS_put_back(tsParseData->stream, tok);
-        free((void *) tok);
-        break;
-      }
-      case L';': {
-        TS_put_back(tsParseData->stream, tok);
-        free((void *) tok);
-        proceed = FALSE;
-        break;
-      }
-      case L',':
-      case L'(': {
-        len = wcslen(tok);
-        tsParseData->position += len;
-        tsParseData->character += len;
-        free((void *) tok);
-        break;
-      }
-      case L')': {
-        len = wcslen(tok);
-        tsParseData->position += len;
-        tsParseData->character += len;
-        proceed = FALSE;
-        free((void *) tok);
-        break;
-      }
-      default: {
-        len = wcslen(tok);
-        TS_put_back(tsFile->stream, tok);
-        free((void *) tok);
-        tsParseData->position += len;
-        tsParseData->character += len;
-        TSParserToken *argument = TS_parse_argument(tsFile, tsParseData);
-        TS_push_child(token, argument);
-        break;
-      }
-    }
-  }
-
-  tsParseData->parentTSToken = token->parent;
-  TS_TOKEN_END("caller")
-  return token;
+  TS_TOKEN_END(TS_CALLER)
 }
 
 void

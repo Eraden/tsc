@@ -50,16 +50,11 @@ TS_parse_scope(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TS_TOKEN_BEGIN("scope");
-  TS_MOVE_BY(tsParseData, tsParseData->token);
+  TS_TOKEN_BEGIN(TS_SCOPE, tsParseData)
 
-  TSParserToken *token = TS_build_parser_token(TS_SCOPE, tsParseData);
+    TS_parse_scope_body(tsFile, tsParseData);
 
-  TS_parse_scope_body(tsFile, tsParseData);
-
-  tsParseData->parentTSToken = token->parent;
-  TS_TOKEN_END("scope");
-  return token;
+  TS_TOKEN_END(TS_SCOPE)
 }
 
 void

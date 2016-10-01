@@ -258,9 +258,9 @@ TS_getToken(
         return tok;
       }
       case L'*': {
-        log_to_file((wchar_t *) L"# '*' character, checking if it's end of multiline token...\n");
+        TS_GET_TOKEN_MSG((wchar_t *) L"# '*' character, checking if it's end of multiline token...\n", tok);
         if (tok == NULL) {
-          log_to_file((wchar_t *) L"# tok is NULL\n");
+          TS_GET_TOKEN_MSG((wchar_t *) L"# tok is %ls\n", tok);
           wchar_t next = (wchar_t) fgetwc(stream);
           switch (next) {
             case L'/':
@@ -277,12 +277,12 @@ TS_getToken(
           return tok;
         } else {
           ungetwc((wint_t) c, stream);
-          log_to_file((wchar_t *) L"# tok isn't null, putting back and returning token\n", tok);
+          TS_GET_TOKEN_MSG((wchar_t *) L"# tok isn't null, putting back and returning token\n", tok);
           return tok;
         }
       }
       case L'/': {
-        log_to_file((wchar_t *) L"# Comment character...\n");
+        TS_GET_TOKEN_MSG((wchar_t *) L"# Comment character...\n", tok);
         if (tok == NULL) {
           wchar_t next = (wchar_t) fgetwc(stream);
           switch (next) {
@@ -298,11 +298,11 @@ TS_getToken(
           tok = (wchar_t *) calloc(sizeof(wchar_t), (next != 0 ? 2 : 1) + TS_STRING_END);
           tok[0] = c;
           if (next != 0) tok[1] = next;
-          log_to_file((wchar_t *) L"# Returning comment token...\n");
+          TS_GET_TOKEN_MSG((wchar_t *) L"# Returning comment token...\n", tok);
           return tok;
         } else {
           ungetwc((wint_t) c, stream);
-          log_to_file((wchar_t *) L"# Putting back and returning token since token is '%ls'...\n", tok);
+          TS_GET_TOKEN_MSG((wchar_t *) L"# Putting back and returning token since token is '%ls'...\n", tok);
           return tok;
         }
       }
@@ -310,7 +310,7 @@ TS_getToken(
       case L'+':
       case L'|':
       case L'&': {
-        log_to_file((wchar_t *) L"# Arithmetic character...\n");
+        TS_GET_TOKEN_MSG((wchar_t *) L"# Arithmetic character...\n", tok);
         if (tok == NULL || (tok[0] == c && prev == c && wcslen((const wchar_t *) tok) == 1)) {
           const size_t size = tok == NULL ? 1 : wcslen((const wchar_t *) tok) + 1;
 
@@ -330,13 +330,13 @@ TS_getToken(
           if (next != c) return tok;
         } else {
           ungetwc((wint_t) c, stream);
-          log_to_file((wchar_t *) L"# token: '%ls' [single token + else]\n", tok);
+          TS_GET_TOKEN_MSG((wchar_t *) L"# token: '%ls' [single token + else]\n", tok);
           return tok;
         }
         break;
       }
       case L'=': {
-        log_to_file((wchar_t *) L"# '=' character building token...\n");
+        TS_GET_TOKEN_MSG((wchar_t *) L"# '=' character building token...\n", tok)
         if (tok == NULL || (tok[0] == c && prev == c)) {
           const size_t size = tok == NULL ? 1 : wcslen((const wchar_t *) tok) + 1;
 
@@ -358,8 +358,10 @@ TS_getToken(
           if (size == 3) return tok;
         } else {
           ungetwc((wint_t) c, stream);
-          log_to_file((wchar_t *) L"# Putting back since token ('%ls') exists and contains invalid characters...\n",
-                      tok);
+          TS_GET_TOKEN_MSG(
+              (wchar_t *) L"# Putting back since token ('%ls') exists and contains invalid characters...\n",
+              tok
+          )
           return tok;
         }
         break;
@@ -382,20 +384,20 @@ TS_getToken(
       case L'\\':
       case L'%':
       case L'\n': {
-        log_to_file((wchar_t *) L"# Special character '%lc', tok is '%ls'\n", c, tok);
+        TS_GET_TOKEN_MSG((wchar_t *) L"# Special character '%lc', tok is '%ls'\n", c, tok);
         if (tok == NULL) {
           tok = (wchar_t *) calloc(sizeof(wchar_t), 1 + TS_STRING_END);
           tok[0] = c;
           return tok;
         } else {
           ungetwc((wint_t) c, stream);
-          log_to_file((wchar_t *) L"# Putting back since token already exists!\n", tok);
+          TS_GET_TOKEN_MSG((wchar_t *) L"# Putting back since token already exists!\n", tok);
           return tok;
         }
       }
       case L' ': {
         if (tok == NULL) {
-          log_to_file((wchar_t *) L"# parse space, tok is NULL\n");
+          TS_GET_TOKEN_MSG((wchar_t *) L"# parse space, tok is NULL\n", tok);
           tok = (wchar_t *) calloc(sizeof(wchar_t), 1 + TS_STRING_END);
           tok[0] = c;
           prev = c;
@@ -412,19 +414,19 @@ TS_getToken(
           break;
 
         } else if (wcslen((const wchar_t *) tok) == 0) {
-          log_to_file((wchar_t *) L"# parse space, tok is empty\n");
+          TS_GET_TOKEN_MSG((wchar_t *) L"# parse space, tok is empty\n", tok);
           free((void *) tok);
           return NULL;
 
         } else {
           ungetwc((wint_t) c, stream);
-          log_to_file((wchar_t *) L"# parse space, tok exists and isn't empty, token: '%ls'\n", tok);
+          TS_GET_TOKEN_MSG((wchar_t *) L"# parse space, tok exists and isn't empty, token: '%ls'\n", tok);
           return tok;
         }
       }
       default: {
         if (TS_valid_char_for_token(prev)) {
-          log_to_file(
+          TS_GET_TOKEN_MSG(
               (wchar_t *) L"-- parse default, prev was '%lc' and is valid for token, token is: '%ls'\n", prev, tok
           );
           const u_long size = tok ? wcslen((const wchar_t *) tok) : 0;
@@ -436,7 +438,7 @@ TS_getToken(
 
         } else {
           ungetwc((wint_t) c, stream);
-          log_to_file(
+          TS_GET_TOKEN_MSG(
               (wchar_t *) L"# previous character isn't valid for token, putting current char back and returning token '%ls'\n",
               tok);
           return tok;
@@ -448,7 +450,7 @@ TS_getToken(
     free((void *) tok);
     return NULL;
   }
-  log_to_file((wchar_t *) L"# token: '%ls' [done return]\n", tok);
+  TS_GET_TOKEN_MSG((wchar_t *) L"# token: '%ls' [done return]\n", tok);
   return tok;
 }
 

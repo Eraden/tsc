@@ -4,9 +4,7 @@
 #include <cts/log.h>
 
 #define TS_CODE_EVAL "(code eval)"
-#define TS_TOKEN_BEGIN(token) log_to_file(L"-> parsing as %s\n", token);
 #define TS_TOKEN_SECTION_BEGIN(token) log_to_file(L"    -> parsing as %s\n", token);
-#define TS_TOKEN_END(token) log_to_file(L"-> end %s\n", token);
 #define TS_TOKEN_SECTION_END(token) log_to_file(L"    -> end %s\n", token);
 #define TS_STRING_END 1
 #define TS_NEW_TOKEN calloc(sizeof(TSParserToken), 1)
@@ -19,6 +17,12 @@
 #define TS_UNEXPECTED_TOKEN(tsFile, token, tok, type) ts_token_syntax_error( \
   (const wchar_t *) L"Unexpected token while parsing " #type, \
   tsFile, token, tok );
+#define TS_UNEXPECTED_GLOBAL_TOKEN(tsFile, token, type) \
+  ts_token_syntax_error( \
+    (const wchar_t *) L"Unexpected `" #type "` in global scope", \
+    tsFile, token );
+#define TS_GET_TOKEN_MSG(msg, ...) if (TS_check_log_level(TS_VERBOSITY_INFO) == TRUE) \
+  log_to_file(msg, __VA_ARGS__);
 
 typedef struct sTSParseData TSParseData;
 typedef struct sTSFunctionData TSFunctionData;
@@ -338,3 +342,14 @@ TSFile *TS_parse_file(const char *fileName);
 TSFile *TS_parse_stream(const char *file, FILE *stream);
 
 void TS_free_tsFile(TSFile *tsFile);
+
+#define TS_TOKEN_BEGIN(type, tsParseData) \
+  { \
+    TS_MOVE_BY(tsParseData, tsParseData->token); \
+    TSParserToken *token = TS_build_parser_token(type, tsParseData); \
+    log_to_file(L"-> parsing as %s\n", #type);
+#define TS_TOKEN_END(type) \
+    tsParseData->parentTSToken = token->parent; \
+    log_to_file(L"-> end %s\n", #type); \
+    return token; \
+  }

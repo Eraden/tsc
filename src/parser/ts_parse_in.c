@@ -2,16 +2,11 @@
 
 TSParserToken *
 TS_parse_in(
-    TSFile *_,
+    TSFile __attribute__((__unused__))*tsFile,
     TSParseData *tsParseData
 ) {
-  TS_MOVE_BY(tsParseData, tsParseData->token);
-  TS_TOKEN_BEGIN("in");
-  TSParserToken *token = TS_build_parser_token(TS_IN, tsParseData);
-
-  tsParseData->parentTSToken = token->parent;
-  TS_TOKEN_END("in");
-  return token;
+  TS_TOKEN_BEGIN(TS_IN, tsParseData)
+  TS_TOKEN_END(TS_IN)
 }
 
 void TS_free_in(
