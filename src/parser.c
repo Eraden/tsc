@@ -170,7 +170,7 @@ TS_parse_ts_token(
   }
 
   TSParserToken *t = calloc(sizeof(TSParserToken), 1);
-  t->data = (void *) TS_clone_string(data->token);
+  t->content = (void *) TS_clone_string(data->token);
   t->children = NULL;
   t->childrenSize = 0;
   t->line = data->line;
@@ -185,6 +185,7 @@ TS_parse_ts_token(
         tsFile,
         t
     );
+    fwprintf(stderr, (const wchar_t *) L"      invalid token: '%ls'\n", t->content);
   }
 
   return t;
@@ -257,13 +258,9 @@ TS_getToken(
         return tok;
       }
       case L'*': {
-        log_to_file(
-            (wchar_t *) L"# '*' character, checking it is end of multiline token...\n"
-        );
+        log_to_file((wchar_t *) L"# '*' character, checking if it's end of multiline token...\n");
         if (tok == NULL) {
-          log_to_file(
-              (wchar_t *) L"# tok is NULL\n"
-          );
+          log_to_file((wchar_t *) L"# tok is NULL\n");
           wchar_t next = (wchar_t) fgetwc(stream);
           switch (next) {
             case L'/':
@@ -285,9 +282,7 @@ TS_getToken(
         }
       }
       case L'/': {
-        log_to_file(
-            (wchar_t *) L"# Comment character...\n"
-        );
+        log_to_file((wchar_t *) L"# Comment character...\n");
         if (tok == NULL) {
           wchar_t next = (wchar_t) fgetwc(stream);
           switch (next) {
@@ -315,9 +310,7 @@ TS_getToken(
       case L'+':
       case L'|':
       case L'&': {
-        log_to_file(
-            (wchar_t *) L"# Arithmetic character...\n"
-        );
+        log_to_file((wchar_t *) L"# Arithmetic character...\n");
         if (tok == NULL || (tok[0] == c && prev == c && wcslen((const wchar_t *) tok) == 1)) {
           const size_t size = tok == NULL ? 1 : wcslen((const wchar_t *) tok) + 1;
 

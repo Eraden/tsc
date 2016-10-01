@@ -11,8 +11,15 @@ TS_parse_export(
   TS_TOKEN_BEGIN("export");
   TSParserToken *token = TS_build_parser_token(TS_EXPORT, tsParseData);
 
+  if (token->parent != NULL) {
+    ts_token_syntax_error(
+        (const wchar_t *) L"Unexpected parent for export. Export can be declared only in global scope.",
+        tsFile, token
+    );
+  }
+
   volatile unsigned char proceed = TRUE;
-  const wchar_t *tok;
+  const wchar_t *tok = NULL;
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 

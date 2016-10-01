@@ -20,4 +20,6 @@ TSParserToken *TS_find_class(const wchar_t *file, const wchar_t *name);
 
 void TS_register_remove_class(TSFile *tsFile, TSParserToken *token);
 
-void TS_destroy_register();
+void TS_destroy_register(void);
+
+void TS_initialize_register(void);

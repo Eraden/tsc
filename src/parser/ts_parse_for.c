@@ -18,11 +18,7 @@ TS_resolve_for_token_type(
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
 
     if (tok == NULL) {
-      ts_token_syntax_error(
-          (const wchar_t *) L"Unexpected end of stream while parsing for",
-          tsFile,
-          token
-      );
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "for");
       break;
     }
 

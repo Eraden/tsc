@@ -220,8 +220,13 @@ ADD_TEST(NAME Class_with_invalid_name COMMAND ./cts -f ./examples/class/invalid_
 ADD_TEST(NAME Class_with_missing_ending COMMAND ./cts -f ./examples/class/missing_class_ending)
 
 ADD_TEST(NAME for_with_iteration COMMAND ./cts -f ./examples/for/let/valid.ts)
+ADD_TEST(NAME for_iteration_with_unexpected_end_of_stream COMMAND ./cts -f ./examples/for/let/unexpected_end_of_stream)
+
 ADD_TEST(NAME for_with_in COMMAND ./cts -f ./examples/for/in/valid.ts)
+ADD_TEST(NAME for_of_with_unexpected_end_of_stream COMMAND ./cts -f ./examples/for/in/unexpected_end_of_stream)
+
 ADD_TEST(NAME for_with_of COMMAND ./cts -f ./examples/for/of/valid.ts)
+ADD_TEST(NAME for_in_with_unexpected_end_of_stream COMMAND ./cts -f ./examples/for/of/unexpected_end_of_stream)
 
 ADD_TEST(NAME switch_head_unexpected_end_of_stream COMMAND ./cts -f ./examples/switch/head/unexpected_end_of_stream)
 ADD_TEST(NAME switch_head_unexpected_token COMMAND ./cts -f ./examples/switch/head/unexpected_token)
@@ -261,6 +266,10 @@ SET_TESTS_PROPERTIES(
     case_body_unexpected_end_of_stream
     case_conditions_unexpected_end_of_stream
     case_conditions_unexpected_token
+
+    for_iteration_with_unexpected_end_of_stream
+    for_of_with_unexpected_end_of_stream
+    for_in_with_unexpected_end_of_stream
 
     PROPERTIES
     WILL_FAIL TRUE

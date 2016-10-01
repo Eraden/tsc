@@ -8,18 +8,24 @@ TS_parse_default(
   TS_TOKEN_BEGIN("default");
   TSParserToken *token = TS_build_parser_token(TS_DEFAULT, tsParseData);
 
+  if (token->parent == NULL) {
+    ts_token_syntax_error(
+        (const wchar_t *) L"Unexpected `default` without `switch` or `export`",
+        tsFile,
+        token
+    );
+  }
+
   const wchar_t *tok = NULL;
   volatile unsigned char proceed = TRUE;
 
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile);
+
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
 
     if (tok == NULL) {
-      ts_token_syntax_error(
-          (const wchar_t *) L"Unexpected end of stream while parsing case condition",
-          tsFile,
-          token
-      );
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "default");
       break;
     }
     switch (tok[0]) {
@@ -41,29 +47,28 @@ TS_parse_default(
       }
       default: {
         TS_MOVE_BY(tsParseData, tok);
+        if (token->parent->tokenType == TS_SWITCH) {
+          TS_UNEXPECTED_TOKEN(tsFile, token, tok, "switch default. Default cannot have any condition!");
+        } else if (token->parent->tokenType == TS_EXPORT) {
+          tsParseData->token = tok;
+          TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
+          TS_push_child(token, child);
+        }
         free((void *) tok);
-
-        ts_token_syntax_error(
-            (const wchar_t *) L"Unexpected token while parsing default. Default cannot ave any condition!",
-            tsFile,
-            token
-        );
         proceed = FALSE;
         break;
       }
     }
   }
 
-  proceed = TRUE;
+  proceed = (volatile unsigned char) (token->parent->tokenType == TS_SWITCH);
   while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile);
+
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
 
     if (tok == NULL) {
-      ts_token_syntax_error(
-          (const wchar_t *) L"Unexpected end of stream while parsing default",
-          tsFile,
-          token
-      );
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "default");
       break;
     }
 
