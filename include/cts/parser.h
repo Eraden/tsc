@@ -12,14 +12,14 @@
 #define TS_MOVE_BY(data, tok) { u_long m = wcslen(tok); data->position += m; data->position += m; }
 #define TS_NEW_LINE(data, tok) { u_long m = wcslen(tok); data->character = 0; data->position += m; data->line += 1; }
 #define TS_UNEXPECTED_END_OF_STREAM(file, token, type) ts_token_syntax_error( \
-  (const wchar_t *) L"Unexpected end of stream while parsing " #type, \
+  (const wchar_t *) L"Unexpected end of stream while parsing `" type "`", \
   file, token )
 #define TS_UNEXPECTED_TOKEN(tsFile, token, tok, type) ts_token_syntax_error( \
-  (const wchar_t *) L"Unexpected token while parsing " #type, \
+  (const wchar_t *) L"Unexpected token while parsing `" type "`", \
   tsFile, token, tok );
 #define TS_UNEXPECTED_GLOBAL_TOKEN(tsFile, token, type) \
   ts_token_syntax_error( \
-    (const wchar_t *) L"Unexpected `" #type "` in global scope", \
+    (const wchar_t *) L"Unexpected `" type "` in global scope", \
     tsFile, token );
 #define TS_GET_TOKEN_MSG(msg, ...) if (TS_check_log_level(TS_VERBOSITY_INFO) == TRUE) \
   log_to_file(msg, __VA_ARGS__);
