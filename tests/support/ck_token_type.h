@@ -70,6 +70,8 @@ _TS_type_to_string(const TSTokenType type) {
       return "TS_FOR_OF";
     case TS_UNKNOWN:
       return "TS_UNKNOWN";
+    case TS_JSON:
+      return "TS_JSON";
     default:
       return NULL;
   }
@@ -102,6 +104,7 @@ _TS_type_to_string(const TSTokenType type) {
 #define ck_assert_eq_ts_export(type) ck_assert_tsType_eq(type, TS_EXPORT)
 #define ck_assert_eq_ts_default(type) ck_assert_tsType_eq(type, TS_DEFAULT)
 #define ck_assert_eq_ts_scope(type) ck_assert_tsType_eq(type, TS_SCOPE)
+#define ck_assert_eq_ts_json(type) ck_assert_tsType_eq(type, TS_JSON)
 #define ck_assert_eq_ts_extends(type) ck_assert_tsType_eq(type, TS_EXTENDS)
 #define ck_assert_eq_ts_implements(type) ck_assert_tsType_eq(type, TS_IMPLEMENTS)
 #define ck_assert_eq_ts_new(type) ck_assert_tsType_eq(type, TS_NEW)

@@ -8,7 +8,6 @@ TS_parse_else_body(
 ) {
   log_to_file((wchar_t *) L"->   parsing as %s body\n", "else");
   const wchar_t *tok;
-  TSConditionBodyTermination termination = TS_ENDS_WITH_BRACKET;
   TSParserToken *token = tsParseData->parentTSToken;
 
   unsigned char proceed;
@@ -39,79 +38,12 @@ TS_parse_else_body(
 
         return;
       }
-      case L'{': {
-        TS_MOVE_BY(tsParseData, tok);
-        proceed = FALSE;
-        termination = TS_ENDS_WITH_BRACKET;
-        free((void *) tok);
-        break;
-      }
-      default: {
-        proceed = FALSE;
-        TS_put_back(tsParseData->stream, tok);
-        termination = TS_ENDS_WITHOUT_BRACKET;
-        free((void *) tok);
-        break;
-      }
-    }
-  }
-
-  proceed = TRUE;
-  while (proceed) {
-    TS_LOOP_SANITY_CHECK(tsFile)
-
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
-    if (tok == NULL) {
-      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "else body");
-      break;
-    }
-    switch (tok[0]) {
-      case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
-      case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
-      case L';': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-
-        if (termination == TS_ENDS_WITHOUT_BRACKET) {
-          proceed = FALSE;
-        }
-        break;
-      }
-      case L'}': {
-        if (termination == TS_ENDS_WITH_BRACKET) {
-          TS_MOVE_BY(tsParseData, tok);
-          free((void *) tok);
-        } else {
-          free((void *) tok);
-          TS_put_back(tsParseData->stream, tok);
-        }
-        proceed = FALSE;
-        break;
-      }
       default: {
         tsParseData->token = tok;
-        TSParserToken *t = TS_parse_ts_token(tsFile, tsParseData);
-        if (token->children == NULL) {
-          token->children = (TSParserToken **) calloc(sizeof(TSParserToken *), 1);
-          token->children[0] = t;
-          token->childrenSize = 1;
-        } else {
-          TSParserToken **newPointer = (TSParserToken **) calloc(sizeof(TSParserToken *), token->childrenSize + 1);
-          memcpy(newPointer, token->children, token->childrenSize * sizeof(TSParserToken *));
-          free(token->children);
-          token->children = newPointer;
-          token->children[token->childrenSize] = t;
-          token->childrenSize += 1;
-        }
+        TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
+        TS_push_child(token, child);
         free((void *) tok);
+        proceed = FALSE;
         break;
       }
     }

@@ -116,11 +116,6 @@ typedef enum eTSVisibility {
   TS_VISIBILITY_PUBLIC = 0x4
 } __attribute__ ((__packed__)) TSVisibility;
 
-typedef enum eTSConditionBodyTermination {
-  TS_ENDS_WITH_BRACKET = 0x1,
-  TS_ENDS_WITHOUT_BRACKET = 0x0,
-} __attribute__ ((__packed__)) TSConditionBodyTermination;
-
 typedef enum eTSParseBracketType {
   TS_PARSE_BRACKET_AS_SCOPE = 1,
   TS_PARSE_BRACKET_AS_JSON = 2,

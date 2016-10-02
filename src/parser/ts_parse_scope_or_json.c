@@ -7,7 +7,7 @@ TS_parse_scope_or_json(
 ) {
   wchar_t *buffer = NULL, *tok;
   volatile unsigned char proceed = TRUE;
-  TSParseBracketType type = TS_PARSE_BRACKET_AS_JSON;
+  TSParseBracketType type = TS_PARSE_BRACKET_AS_SCOPE;
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
@@ -17,6 +17,17 @@ TS_parse_scope_or_json(
       break;
     }
     switch (tok[0]) {
+
+      case L' ': {
+        TS_MOVE_BY(tsParseData, tok);
+        free((void *) tok);
+        break;
+      }
+      case L'\n': {
+        TS_NEW_LINE(tsParseData, tok);
+        free((void *) tok);
+        break;
+      }
       case L'}': {
         wchar_t *extended = TS_join_strings(buffer, tok);
         if (buffer) free(buffer);
@@ -26,11 +37,12 @@ TS_parse_scope_or_json(
         break;
       }
       default: {
-        if (TS_is_keyword(tok)) {
+        if (!TS_is_keyword(tok)) {
+          type = TS_PARSE_BRACKET_AS_JSON;
+        } else {
           type = TS_PARSE_BRACKET_AS_SCOPE;
-          proceed = FALSE;
-          break;
         }
+        proceed = FALSE;
         wchar_t *extended = TS_join_strings(buffer, tok);
         if (buffer) free(buffer);
         free(tok);
@@ -39,7 +51,9 @@ TS_parse_scope_or_json(
       }
     }
   }
-  TS_put_back(tsFile->stream, buffer);
+  if (buffer) {
+    TS_put_back(tsFile->stream, buffer);
+  }
   TSParserToken *token = NULL;
   switch (type) {
     case TS_PARSE_BRACKET_AS_SCOPE:

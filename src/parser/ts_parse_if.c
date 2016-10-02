@@ -9,7 +9,6 @@ TS_parse_if_body(
   log_to_file((wchar_t *) L"->   parsing as %s body\n", "if");
   TSParserToken *token = tsParseData->parentTSToken;
   const wchar_t *tok = NULL;
-  TSConditionBodyTermination termination = TS_ENDS_WITHOUT_BRACKET;
 
   volatile unsigned char proceed = TRUE;
   while (proceed) {
@@ -30,94 +29,21 @@ TS_parse_if_body(
       case L'\n': {
         TS_NEW_LINE(tsParseData, tok);
         free((void *) tok);
-        termination = TS_ENDS_WITHOUT_BRACKET;
-        break;
-      }
-      case L';': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-        if (termination == TS_ENDS_WITHOUT_BRACKET) {
-          return;
-        }
-      }
-      case L'{': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-
-        termination = TS_ENDS_WITH_BRACKET;
-        proceed = FALSE;
         break;
       }
       default: {
-        termination = TS_ENDS_WITHOUT_BRACKET;
-        TS_put_back(tsParseData->stream, tok);
-        proceed = FALSE;
-
-        free((void *) tok);
-        break;
-      }
-    }
-  }
-
-  proceed = TRUE;
-  while (proceed) {
-    TS_LOOP_SANITY_CHECK(tsFile)
-
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
-    if (tok == NULL) {
-      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "`if` body child nodes");
-      break;
-    }
-    switch (tok[0]) {
-      case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
-      case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
-      case L'}': {
-        if (termination != TS_ENDS_WITH_BRACKET) {
-          ts_token_syntax_error(
-              (wchar_t *) L"Unexpected end bracket for `if` during collecting child nodes. Starting one was not declared",
-              tsFile,
-              token
-          );
-          proceed = FALSE;
-          break;
-        } else {
-          TS_MOVE_BY(tsParseData, tok);
-        }
-        free((void *) tok);
-
-        proceed = FALSE;
-        break;
-      }
-      case L';': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-
-        if (termination == TS_ENDS_WITHOUT_BRACKET) {
-          proceed = FALSE;
-        }
-        break;
-      }
-      default: {
-        TS_MOVE_BY(tsParseData, tok);
         tsParseData->token = tok;
-
         TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
-        TS_push_child(token, child);
+        if (child) {
+          TS_push_child(token, child);
+        }
+        proceed = FALSE;
 
         free((void *) tok);
         break;
       }
     }
   }
-
   log_to_file((wchar_t *) L"->   done %s body\n", "if");
 }
 

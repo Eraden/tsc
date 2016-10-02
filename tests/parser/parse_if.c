@@ -3,29 +3,35 @@
 START_TEST(parse_valid_if_condition)
   TSFile *tsFile = TS_parse_file("./examples/if/valid.ts");
 
+  ck_assert_tsFile_valid(tsFile);
   ck_assert_int_eq(tsFile->tokensSize, 5);
 
-  TSParserToken *token, *cond, *child;
+  TSParserToken *token, *cond, *child, *scope;
 
   token = tsFile->tokens[0];
   ck_assert(token->tokenType == TS_IF);
-  ck_assert_int_eq(token->childrenSize, 1);
+  ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   cond = token->children[0];
-  ck_assert(cond->tokenType == TS_CONDITION);
+  ck_assert_eq_ts_condition(cond->tokenType);
   ck_assert_wstr_eq(cond->data, L"1");
+  cond = token->children[1];
+  ck_assert_eq_ts_unknown(cond->tokenType);
+  ck_assert_wstr_eq(cond->data, L";");
 
   token = tsFile->tokens[1];
   ck_assert(token->tokenType == TS_IF);
-  ck_assert_int_eq(token->childrenSize, 1);
+  ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   cond = token->children[0];
-  ck_assert(cond->tokenType == TS_CONDITION);
+  ck_assert_eq_ts_condition(cond->tokenType);
   ck_assert_wstr_eq(cond->data, L"2");
+  scope = token->children[1];
+  ck_assert_eq_ts_scope(scope->tokenType);
 
   token = tsFile->tokens[2];
   ck_assert(token->tokenType == TS_IF);
-  ck_assert_int_eq(token->childrenSize, 5);
+  ck_assert_int_eq(token->childrenSize, 6);
   ck_assert_ptr_ne(token->children, NULL);
   cond = token->children[0];
   ck_assert(cond->tokenType == TS_CONDITION);
@@ -42,6 +48,8 @@ START_TEST(parse_valid_if_condition)
   cond = token->children[4];
   ck_assert(cond->tokenType == TS_CONDITION);
   ck_assert_wstr_eq(cond->data, L"true");
+  scope = token->children[5];
+  ck_assert_eq_ts_scope(scope->tokenType);
 
   token = tsFile->tokens[3];
   ck_assert(token->tokenType == TS_IF);
@@ -57,12 +65,14 @@ START_TEST(parse_valid_if_condition)
 
   token = tsFile->tokens[4];
   ck_assert(token->tokenType == TS_IF);
-  ck_assert_int_eq(token->childrenSize, 3);
+  ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   cond = token->children[0];
   ck_assert(cond->tokenType == TS_CONDITION);
   ck_assert_wstr_eq(cond->data, L"5");
-  child = token->children[1];
+  scope = token->children[1];
+  ck_assert_eq_ts_scope(scope->tokenType);
+  child = scope->children[0];
   TSLocalVariableData *varData = child->data;
   ck_assert(child->tokenType == TS_VAR);
   ck_assert_ptr_ne(varData, NULL);
@@ -72,8 +82,8 @@ START_TEST(parse_valid_if_condition)
   ck_assert_ptr_ne(varData->value, NULL);
   ck_assert_wstr_eq(varData->value, L"10");
   ck_assert_int_eq(child->childrenSize, 0);
-  child = token->children[2];
-  ck_assert(child->tokenType == TS_RETURN);
+  child = scope->children[1];
+  ck_assert_eq_ts_return(child->tokenType);
   ck_assert_ptr_eq(child->data, NULL);
   ck_assert_int_eq(child->childrenSize, 1);
 
