@@ -12,3 +12,5 @@ const i;
 const j: number;
 const k = 5;
 const l: number = 6;
+
+var m, n: number, o = 30, p: string = "hello";

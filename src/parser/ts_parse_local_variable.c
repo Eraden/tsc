@@ -83,6 +83,30 @@ TS_parse_local_variable_body(
         proceed = FALSE;
         break;
       }
+      case L',': {
+        TS_parse_local_variable_done(tsFile, tsParseData, parseFlag);
+        TS_MOVE_BY(tsParseData, tok);
+        free((void *) tok);
+        switch (token->tokenType) {
+          case TS_VAR: {
+            TS_put_back(tsFile->stream, (volatile const int *) (const wchar_t *) L"var ");
+            break;
+          }
+          case TS_LET: {
+            TS_put_back(tsFile->stream, (volatile const int *) (const wchar_t *) L"let ");
+            break;
+          }
+          case TS_CONST: {
+            TS_put_back(tsFile->stream, (const wchar_t *) L"const ");
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+        proceed = FALSE;
+        break;
+      }
       case L':': {
         parseFlag = TS_PARSE_VARIABLE_TYPE;
         TS_MOVE_BY(tsParseData, tok);
@@ -122,7 +146,7 @@ TS_parse_local_variable_body(
           TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
           parseFlag = TS_PARSE_VARIABLE_NONE;
-          log_to_file((wchar_t *) L"    Local variable current name: '%s'\n", data->name);
+          log_to_file((wchar_t *) L"    Local variable current name: '%ls'\n", data->name);
 
         } else if (parseFlag == TS_PARSE_VARIABLE_VALUE) {
           log_to_file((wchar_t *) L"%s", "Setting value for local variable\n");
@@ -134,15 +158,14 @@ TS_parse_local_variable_body(
           if (data->value != NULL) free((void *) data->value);
           wcscat(newPointer, tok);
           data->value = newPointer;
-          log_to_file((wchar_t *) L"    Local variable current value: '%s'\n", data->value);
+          log_to_file((wchar_t *) L"    Local variable current value: '%ls'\n", data->value);
 
+          parseFlag = TS_PARSE_VARIABLE_NONE;
           TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
 
         } else if (parseFlag == TS_PARSE_VARIABLE_TYPE) {
-          log_to_file(
-              (wchar_t *) L"%s", "Setting type of local variable\n"
-          );
+          log_to_file((wchar_t *) L"%s", "Setting type of local variable\n");
           u_long size = TS_STRING_END + wcslen(tok);
           if (data->type) size += wcslen(data->type);
           wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
@@ -150,21 +173,15 @@ TS_parse_local_variable_body(
           if (data->type != NULL) free((void *) data->type);
           wcscat(newPointer, tok);
           data->type = newPointer;
-          log_to_file(
-              (wchar_t *) L"    Local variable current type: '%s'\n",
-              data->type
-          );
+          log_to_file((wchar_t *) L"    Local variable current type: '%ls'\n", data->type);
 
+          parseFlag = TS_PARSE_VARIABLE_NONE;
           TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
 
         } else {
           free((void *) tok);
-          ts_token_syntax_error(
-              (wchar_t *) L"Unexpected token while parsing local variable\n",
-              tsFile,
-              token
-          );
+          TS_UNEXPECTED_TOKEN(tsFile, token, tok, "local variable");
           proceed = FALSE;
         }
         break;

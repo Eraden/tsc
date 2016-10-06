@@ -74,6 +74,9 @@ typedef enum eTSTokenType {
   TS_IN = 33,
   TS_JSON = 34,
   TS_ARRAY = 35,
+  TS_FOR_VARIABLES_SECTION = 36,
+  TS_FOR_CONDITION_SECTION = 37,
+  TS_FOR_CHANGE_SECTION = 38,
   TS_UNKNOWN = 0,
 } __attribute__ ((__packed__)) TSTokenType;
 

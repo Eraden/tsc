@@ -268,7 +268,7 @@ TS_parse_for_head_for_in(
 
 static void
 __attribute__((__visibility__("hidden")))
-TS_parse_for_head_for_let(
+TS_parse_for_head_for_with_condition(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
@@ -285,17 +285,12 @@ TS_parse_for_head_for_let(
     }
     switch (tok[0]) {
       case L'\n': {
-        u_long movedBy = wcslen(tok);
-        tsParseData->position += movedBy;
-        tsParseData->line += 1;
-        tsParseData->character = 0;
+        TS_NEW_LINE(tsParseData, tok);
         free((void *) tok);
         break;
       }
       case L' ': {
-        u_long len = wcslen(tok);
-        tsParseData->character += len;
-        tsParseData->position += len;
+        TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         break;
       }
@@ -327,7 +322,7 @@ TS_parse_for_head(
 
   switch (head->tokenType) {
     case TS_FOR_LET: {
-      TS_parse_for_head_for_let(tsFile, tsParseData);
+      TS_parse_for_head_for_with_condition(tsFile, tsParseData);
       break;
     }
     case TS_FOR_IN: {

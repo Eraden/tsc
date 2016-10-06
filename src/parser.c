@@ -179,13 +179,29 @@ TS_parse_ts_token(
   t->tokenType = TS_UNKNOWN;
   t->parent = data->parentTSToken;
 
-  if (data->parentTSToken == NULL && wcscmp(data->token, (const wchar_t *) L";") != 0) {
-    ts_token_syntax_error(
-        (const wchar_t *) L"Unknown token in global scope!",
-        tsFile,
-        t
-    );
-    fwprintf(stderr, (const wchar_t *) L"      invalid token: '%ls'\n", t->content);
+  if (data->parentTSToken == NULL && data->token != NULL) {
+    switch (data->token[0]) {
+      case L' ':
+      case L'\n':
+      case L';': {
+        break;
+      }
+      default: {
+        ts_token_syntax_error(
+            (const wchar_t *) L"Unknown token in global scope!",
+            tsFile,
+            t
+        );
+        fwprintf(stderr, (const wchar_t *) L"      invalid token: '%ls'\n", t->content);
+        fprintf(stderr, "Dumping stream:\n\n");
+        while (1) {
+          wchar_t c = (wchar_t) fgetwc(tsFile->stream);
+          if (c == 0 || c == -1) break;
+          fwprintf(stderr, (const wchar_t *) L"%lc", c);
+        }
+        break;
+      }
+    }
   }
 
   return t;
@@ -658,6 +674,18 @@ TS_free_tsToken(
     case TS_ARRAY:
       TS_free_array(token);
       break;
+    case TS_FOR_VARIABLES_SECTION: {
+      TS_free_unknown(token);
+      break;
+    }
+    case TS_FOR_CONDITION_SECTION: {
+      TS_free_unknown(token);
+      break;
+    }
+    case TS_FOR_CHANGE_SECTION: {
+      TS_free_unknown(token);
+      break;
+    }
   }
 }
 

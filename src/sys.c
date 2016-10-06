@@ -68,6 +68,15 @@ ts_token_syntax_error(
 //  vfwprintf(stderr, (const wchar_t *) L"      additional data: '%ls'\n", ap);
 //  va_end(ap);
   tsFile->errorReason = buffer;
+
+
+  fprintf(stderr, "Dumping stream:\n\n\"");
+  while (1) {
+    wchar_t c = (wchar_t) fgetwc(tsFile->stream);
+    if (c == 0 || c == -1) break;
+    fwprintf(stderr, (const wchar_t *) L"%lc", c);
+  }
+  fprintf(stderr, "\"");
 }
 
 void
