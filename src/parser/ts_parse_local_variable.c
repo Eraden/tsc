@@ -149,17 +149,20 @@ TS_parse_local_variable_body(
           log_to_file((wchar_t *) L"    Local variable current name: '%ls'\n", data->name);
 
         } else if (parseFlag == TS_PARSE_VARIABLE_VALUE) {
-          log_to_file((wchar_t *) L"%s", "Setting value for local variable\n");
+//          log_to_file((wchar_t *) L"%s", "Setting value for local variable\n");
+//
+//          u_long size = TS_STRING_END + wcslen(tok);
+//          if (data->value) size += wcslen(data->value);
+//          wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
+//          if (data->value != NULL) wcscpy(newPointer, data->value);
+//          if (data->value != NULL) free((void *) data->value);
+//          wcscat(newPointer, tok);
+//          data->value = newPointer;
+//          log_to_file((wchar_t *) L"    Local variable current value: '%ls'\n", data->value);
 
-          u_long size = TS_STRING_END + wcslen(tok);
-          if (data->value) size += wcslen(data->value);
-          wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
-          if (data->value != NULL) wcscpy(newPointer, data->value);
-          if (data->value != NULL) free((void *) data->value);
-          wcscat(newPointer, tok);
-          data->value = newPointer;
-          log_to_file((wchar_t *) L"    Local variable current value: '%ls'\n", data->value);
-
+          tsParseData->token = tok;
+          TSParserToken *value = TS_parse_ts_token(tsFile, tsParseData);
+          if (value) TS_push_child(token, value);
           parseFlag = TS_PARSE_VARIABLE_NONE;
           TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
@@ -239,6 +242,8 @@ void
 TS_free_let(
     const TSParserToken *token
 ) {
+  TS_free_children(token);
+
   TSLocalVariableData *data = token->variableData;
   free((void *) token);
   if (data == NULL) return;
@@ -252,6 +257,8 @@ void
 TS_free_const(
     const TSParserToken *token
 ) {
+  TS_free_children(token);
+
   TSLocalVariableData *data = token->variableData;
   free((void *) token);
   if (data == NULL) return;

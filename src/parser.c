@@ -68,6 +68,8 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     {TS_OF,                (wchar_t *) L"of",         TS_parse_of},
     {TS_IN,                (wchar_t *) L"in",         TS_parse_in},
     {TS_ARRAY,             (wchar_t *) L"[",          TS_parse_array},
+    {TS_STRING,            (wchar_t *) L"\"",         TS_parse_string},
+    {TS_STRING,            (wchar_t *) L"\'",         TS_parse_string},
 };
 
 unsigned char TS_is_keyword(const wchar_t *str) {
@@ -684,6 +686,11 @@ TS_free_tsToken(
     }
     case TS_FOR_CHANGE_SECTION: {
       TS_free_unknown(token);
+      break;
+    }
+    case TS_STRING_TEMPLATE:
+    case TS_STRING: {
+      TS_free_string(token);
       break;
     }
   }

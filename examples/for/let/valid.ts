@@ -4,5 +4,5 @@ for (let b = 0; b < 20; b++) {
 }
 
 for (let c = 0; c < 30; c++) {
-  var d = c * c;
+  var d = c;
 }

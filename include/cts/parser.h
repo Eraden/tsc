@@ -77,6 +77,8 @@ typedef enum eTSTokenType {
   TS_FOR_VARIABLES_SECTION = 36,
   TS_FOR_CONDITION_SECTION = 37,
   TS_FOR_CHANGE_SECTION = 38,
+  TS_STRING = 39,
+  TS_STRING_TEMPLATE = 40,
   TS_UNKNOWN = 0,
 } __attribute__ ((__packed__)) TSTokenType;
 
@@ -130,7 +132,7 @@ typedef struct sTSKeyword {
   TS_token_build_fn callback;
 } TSKeyword;
 
-#define KEYWORDS_SIZE 26
+#define KEYWORDS_SIZE 28
 
 typedef struct sTSLocalVariableData {
   const wchar_t *name;
@@ -198,6 +200,10 @@ unsigned char TS_name_is_valid(const wchar_t *name);
 void TS_push_child(TSParserToken *token, TSParserToken *child);
 
 void TS_free_unknown(const TSParserToken *token);
+
+TSParserToken *TS_parse_string(TSFile *tsFile, TSParseData *tsParseData);
+
+void TS_free_string(const TSParserToken *token);
 
 TSParserToken *TS_parse_array(TSFile *tsFile, TSParseData *tsParseData);
 

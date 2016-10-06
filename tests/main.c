@@ -54,6 +54,7 @@ int main(int argc, char **argv) {
   setlocale(LC_ALL, "");
   FILE *errorOutput = tmpfile();
   TS_set_error_output(errorOutput);
+//  TS_set_error_output(stderr);
 
   enum print_output output_type = CK_NORMAL;
   enum fork_status should_fork = CK_FORK;

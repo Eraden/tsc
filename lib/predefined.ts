@@ -15,7 +15,7 @@ class Array {
   public every(callback: (element, index, array) => {}, thisArg: any = undefined) { callback.call(thisArg || this); }
   public fill(value, start: number = 0, end: number = -1) {}
   public filter(callback: (element, index, array) => {}, thisArg = undefined) { callback.call(thisArg || this); }
-  public find(callback: (element, index, array) => {}, thisArg = undefined): Array<any> { callback.call(thisArg || this); }
+  public find(callback: (element, index, array) => {}, thisArg = undefined): any[] { return callback.call(thisArg || this); }
   public findIndex(callback: (element, index, array) => {}, thisArg = undefined) { callback.call(thisArg || this); }
   public forEach(callback: (element, index, array) => {}, thisArg = undefined) { callback.call(thisArg || this); }
   public includes() {}

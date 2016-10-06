@@ -22,8 +22,9 @@ TS_class_name_from_parent(
       return NULL;
     }
   }
-  TS_put_back(tsParseData->stream, (const wchar_t *) tok);
-  free((void *) tok);
+  if (tok) {
+    TS_put_back(tsParseData->stream, (const wchar_t *) tok);
+  }
   return TS_clone_string(parent->variableData->name);
 }
 

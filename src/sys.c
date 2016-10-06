@@ -63,20 +63,20 @@ ts_token_syntax_error(
       (const wchar_t *) L"Syntax error: %ls\n      Position: %ls:%lu:%lu [file:line:character]\n",
       msg, tsFile->file, token->line + 1, token->character
   );
+  tsFile->errorReason = buffer;
+  
 //  va_list ap;
 //  va_start(ap, L"      additional data: '%ls'\n");
 //  vfwprintf(stderr, (const wchar_t *) L"      additional data: '%ls'\n", ap);
 //  va_end(ap);
-  tsFile->errorReason = buffer;
-
-
-  fprintf(stderr, "Dumping stream:\n\n\"");
-  while (1) {
-    wchar_t c = (wchar_t) fgetwc(tsFile->stream);
-    if (c == 0 || c == -1) break;
-    fwprintf(stderr, (const wchar_t *) L"%lc", c);
-  }
-  fprintf(stderr, "\"");
+//
+//  fprintf(stderr, "Dumping stream:\n\n\"");
+//  while (1) {
+//    wchar_t c = (wchar_t) fgetwc(tsFile->stream);
+//    if (c == 0 || c == -1) break;
+//    fwprintf(stderr, (const wchar_t *) L"%lc", c);
+//  }
+//  fprintf(stderr, "\"");
 }
 
 void
