@@ -173,6 +173,9 @@ TS_parse_for_head_for_of(
             }
             break;
           }
+          case TS_PARSE_FOR_IN_KEYWORD_LET:break;
+          case TS_PARSE_FOR_IN_KEYWORD_IN:break;
+          case TS_PARSE_FOR_IN_COLLECTION:break;
         }
         break;
       }
@@ -379,8 +382,6 @@ TS_parse_for_body(
         break;
       }
       case L'{': {
-        TS_MOVE_BY(tsParseData, tok);
-        tsParseData->token = TS_clone_string(tok);
         free((void *) tok);
         proceed = FALSE;
         break;
@@ -395,6 +396,7 @@ TS_parse_for_body(
 
   if (tsFile->sanity != TS_FILE_VALID) buildScope = FALSE;
   if (buildScope) {
+    tsParseData->token = (const wchar_t *) L"{";
     body = TS_parse_scope(tsFile, tsParseData);
   }
 

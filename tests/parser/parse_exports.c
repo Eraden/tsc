@@ -36,11 +36,15 @@ START_TEST(parse_valid_export)
 END_TEST
 
 START_TEST(parse_invalid_export_with_newline)
-  TS_parse_file("./examples/export/unexpected_new_line");
+  TSFile *tsFile = TS_parse_file("./examples/export/unexpected_new_line");
+  ck_assert_tsFile_syntax_error(tsFile);
+  TS_free_tsFile(tsFile);
 END_TEST
 
 START_TEST(parse_invalid_export_with_unexpected_end_of_stream)
-  TS_parse_file("./examples/export/unexpected_end_of_stream");
+  TSFile *tsFile = TS_parse_file("./examples/export/unexpected_end_of_stream");
+  ck_assert_tsFile_syntax_error(tsFile);
+  TS_free_tsFile(tsFile);
 END_TEST
 
 void parse_exports_suite(Suite *suite) {

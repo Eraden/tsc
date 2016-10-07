@@ -25,7 +25,7 @@ TS_class_name_from_parent(
   if (tok) {
     TS_put_back(tsParseData->stream, (const wchar_t *) tok);
   }
-  return TS_clone_string(parent->variableData->name);
+  return TS_clone_string(parent->name);
 }
 
 static void
@@ -142,6 +142,7 @@ TS_parse_class_method(
       }
       case L'\n': {
         TS_NEW_LINE(tsParseData, tok);
+        free((void *) tok);
         break;
       }
       case L'{':
@@ -170,9 +171,10 @@ TS_parse_class_method(
       }
       default: {
         if (parseFlag == TS_PARSE_CLASS_MEMBER_METHOD_ARGUMENTS) {
+          TS_put_back(tsFile->stream, tok);
           tsParseData->token = tok;
-          TSParserToken *arg = TS_parse_argument(tsFile, tsParseData);
-          TS_push_child(bodyToken, arg);
+          TSParserToken *argument = TS_parse_argument(tsFile, tsParseData);
+          TS_push_child(bodyToken, argument);
 
           free((void *) tok);
         } else if (parseFlag == TS_PARSE_CLASS_MEMBER_METHOD_BODY) {
@@ -182,12 +184,8 @@ TS_parse_class_method(
           TS_push_child(bodyToken, child);
           free((void *) tok);
         } else /*if (parseFlag == TS_PARSE_CLASS_MEMBER_METHOD_RETURN_TYPE)*/ {
-          u_long size = wcslen(tok) + TS_STRING_END;
-          if (methodData->returnType != NULL) size += wcslen(methodData->returnType);
-          wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
-          if (methodData->returnType != NULL) wcscpy(newPointer, methodData->returnType);
-          if (methodData->returnType != NULL) free((void *) methodData->returnType);
-          wcscat(newPointer, tok);
+          wchar_t *newPointer = TS_join_strings(methodData->returnType, tok);
+          if (methodData->returnType) free((void *) methodData->returnType);
           methodData->returnType = newPointer;
 
           TS_MOVE_BY(tsParseData, tok);
@@ -210,11 +208,11 @@ TS_parse_class_member(
   TSClassParseFlag parseFlag = TS_PARSE_CLASS_MEMBER_NAME;
 
   TSParserToken *bodyToken = TS_build_parser_token(TS_UNKNOWN, tsParseData);
-  bodyToken->visibility = TS_VISIBILITY_PRIVATE;
+  bodyToken->visibility = TS_MODIFIER_PRIVATE;
 
-  const wchar_t *name = NULL;
-  const wchar_t *type = NULL;
-  const wchar_t *value = NULL;
+  wchar_t *name = NULL;
+  wchar_t *type = NULL;
+  wchar_t *value = NULL;
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -254,7 +252,7 @@ TS_parse_class_member(
 
           TSFunctionData *methodData = (TSFunctionData *) calloc(sizeof(TSFunctionData), 1);
           methodData->name = TS_clone_string(name);
-          methodData->returnType = type;
+          methodData->returnType = TS_clone_string(type);
 
           bodyToken->functionData = methodData;
 
@@ -280,12 +278,15 @@ TS_parse_class_member(
       case L';': {
         TS_MOVE_BY(tsParseData, tok);
 
-        TSLocalVariableData *fieldData = (TSLocalVariableData *) calloc(sizeof(TSLocalVariableData), 1);
-        fieldData->name = TS_clone_string(name);
-        fieldData->type = TS_clone_string(type);
-        fieldData->value = TS_clone_string(value);
-        bodyToken->variableData = fieldData;
+        bodyToken->name = TS_clone_string(name);
+        TSParserToken *t = TS_find_class(tsFile->file, type);
+        if (t == NULL) t = TS_find_class(tsFile->file, (const wchar_t *) L"Object");
+        TS_push_child(bodyToken, t);
+        TSParserToken *v = TS_build_parser_token(TS_VAR, tsParseData);
+        v->content = value;
+        TS_push_child(bodyToken, v);
         bodyToken->tokenType = TS_CLASS_FIELD;
+        tsParseData->parentTSToken = v->parent;
 
         proceed = FALSE;
         free((void *) tok);
@@ -293,34 +294,29 @@ TS_parse_class_member(
       }
       default: {
         if (wcscmp(tok, (const wchar_t *) L"public") == 0) {
-          bodyToken->visibility = TS_VISIBILITY_PUBLIC;
+          bodyToken->visibility = TS_MODIFIER_PUBLIC;
 
         } else if (wcscmp(tok, (const wchar_t *) L"protected") == 0) {
-          bodyToken->visibility = TS_VISIBILITY_PROTECTED;
+          bodyToken->visibility = TS_MODIFIER_PROTECTED;
 
         } else if (wcscmp(tok, (const wchar_t *) L"private") == 0) {
-          bodyToken->visibility = TS_VISIBILITY_PRIVATE;
+          bodyToken->visibility = TS_MODIFIER_PRIVATE;
+
+        } else if (wcscmp(tok, (const wchar_t *) L"static") == 0) {
+          bodyToken->visibility = bodyToken->visibility | TS_MODIFIER_STATIC;
 
         } else if (parseFlag == TS_PARSE_CLASS_MEMBER_NAME) {
           name = TS_clone_string(tok);
           parseFlag = TS_PARSE_CLASS_MEMBER_TYPE;
 
         } else if (parseFlag == TS_PARSE_CLASS_MEMBER_TYPE) {
-          u_long size = wcslen(tok);
-          if (type != NULL) size += wcslen(type);
-          wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size + TS_STRING_END);
-          if (type != NULL) wcscpy(newPointer, type);
-          wcscat(newPointer, tok);
-          if (type == NULL) free((void *) type);
+          wchar_t *newPointer = TS_join_strings(type, tok);
+          if (type) free((void *) type);
           type = newPointer;
 
         } else /*if (parseFlag == TS_PARSE_CLASS_MEMBER_VALUE)*/ {
-          u_long size = wcslen(tok);
-          if (value != NULL) size += wcslen(value);
-          wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size + TS_STRING_END);
-          if (value != NULL) wcscpy(newPointer, value);
-          wcscat(newPointer, tok);
-          if (value == NULL) free((void *) value);
+          wchar_t *newPointer = TS_join_strings(value, tok);
+          if (value != NULL) free((void *) value);
           value = newPointer;
         }
 

@@ -69,18 +69,20 @@ TS_parse_decorator_name(
     }
   }
 
-  if (name == NULL) {
-    ts_token_syntax_error(
-        (const wchar_t *) L"Missing decorator call function name",
-        tsFile,
-        token
-    );
-  } else if (TS_name_is_valid(name) != TRUE) {
-    ts_token_syntax_error(
-        (const wchar_t *) L"Invalid characters in decorator call",
-        tsFile,
-        token
-    );
+  if (tsFile->sanity == TS_FILE_VALID) {
+    if (name == NULL) {
+      ts_token_syntax_error(
+          (const wchar_t *) L"Missing decorator call function name",
+          tsFile,
+          token
+      );
+    } else if (TS_name_is_valid(name) != TRUE) {
+      ts_token_syntax_error(
+          (const wchar_t *) L"Invalid characters in decorator call",
+          tsFile,
+          token
+      );
+    }
   }
 
   return name;
@@ -147,7 +149,7 @@ TS_parse_decorator(
       free((void *) name);
     }
 
-    TS_parse_decorator_arguments(tsFile, tsParseData);
+    if (tsFile->sanity == TS_FILE_VALID) TS_parse_decorator_arguments(tsFile, tsParseData);
 
   TS_TOKEN_END(TS_DECORATOR)
 }

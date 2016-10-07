@@ -11,6 +11,8 @@ TS_parse_array(
     volatile unsigned char proceed = TRUE;
 
     while (proceed) {
+      TS_LOOP_SANITY_CHECK(tsFile);
+
       tok = (wchar_t *) TS_getToken(tsFile->stream);
 
       if (tok == NULL) {

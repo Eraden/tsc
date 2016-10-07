@@ -1,3 +1,4 @@
+#include <cts/register.h>
 #include "./test.h"
 
 #include "parser/parse_variables.h"
@@ -53,8 +54,8 @@ Suite *class_suite(void) {
 int main(int argc, char **argv) {
   setlocale(LC_ALL, "");
   FILE *errorOutput = tmpfile();
-  TS_set_error_output(errorOutput);
-//  TS_set_error_output(stderr);
+//  TS_set_error_output(errorOutput);
+  TS_set_error_output(stderr);
 
   enum print_output output_type = CK_NORMAL;
   enum fork_status should_fork = CK_FORK;
@@ -95,6 +96,7 @@ int main(int argc, char **argv) {
 
   TS_set_log_level(ctsVerbose);
   init_log();
+  TS_setup_predefined();
 
   Suite *s;
   SRunner *sr;
@@ -115,6 +117,9 @@ int main(int argc, char **argv) {
 
   fflush(errorOutput);
   fclose(errorOutput);
+
+  TS_destroy_register();
+  TS_remove_predefined();
 
   return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

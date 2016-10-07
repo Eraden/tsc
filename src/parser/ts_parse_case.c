@@ -24,32 +24,24 @@ TS_parse_case(
       }
       switch (tok[0]) {
         case L' ': {
-          u_long movedBy = wcslen(tok);
-          tsParseData->position += movedBy;
-          tsParseData->character += movedBy;
+          TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
           break;
         }
         case L'\n': {
-          u_long movedBy = wcslen(tok);
+          TS_NEW_LINE(tsParseData, tok);
           free((void *) tok);
-          tsParseData->position += movedBy;
-          tsParseData->character = 0;
-          tsParseData->line += 1;
           break;
         }
         case L':': {
-          u_long movedBy = wcslen(tok);
+          TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
-          tsParseData->position += movedBy;
-          tsParseData->character += movedBy;
+
           proceed = FALSE;
           break;
         }
         default: {
-          u_long movedBy = wcslen(tok);
-          tsParseData->position += movedBy;
-          tsParseData->character += movedBy;
+          TS_MOVE_BY(tsParseData, tok);
           tsParseData->token = tok;
 
           if (token->childrenSize == 1) {
@@ -58,8 +50,8 @@ TS_parse_case(
                 tsFile,
                 token
             );
+            free((void *) tok);
             proceed = FALSE;
-            break;
           } else {
             TS_put_back(tsFile->stream, tok);
 
@@ -67,8 +59,8 @@ TS_parse_case(
             if (child) {
               TS_push_child(token, child);
             }
+            free((void *) tok);
           }
-          free((void *) tok);
           break;
         }
       }
@@ -87,32 +79,22 @@ TS_parse_case(
 
       switch (tok[0]) {
         case L' ': {
-          u_long movedBy = wcslen(tok);
-          tsParseData->position += movedBy;
-          tsParseData->character += movedBy;
+          TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
           break;
         }
         case L'\n': {
-          u_long movedBy = wcslen(tok);
+          TS_NEW_LINE(tsParseData, tok);
           free((void *) tok);
-          tsParseData->position += movedBy;
-          tsParseData->character = 0;
-          tsParseData->line += 1;
           break;
         }
         case L';': {
-          u_long movedBy = wcslen(tok);
-          tsParseData->position += movedBy;
-          tsParseData->character += movedBy;
+          TS_NEW_LINE(tsParseData, tok);
           free((void *) tok);
           proceed = FALSE;
           break;
         }
         default: {
-          u_long movedBy = wcslen(tok);
-          tsParseData->position += movedBy;
-          tsParseData->character += movedBy;
           tsParseData->token = tok;
           TS_put_back(tsFile->stream, tok);
 

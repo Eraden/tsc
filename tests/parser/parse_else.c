@@ -77,12 +77,10 @@ START_TEST(parse_valid_else_condition)
   ck_assert_ptr_ne(scope->children, NULL);
 
   TSParserToken *val = scope->children[0];
-  TSLocalVariableData *data = val->variableData;
   ck_assert_eq_ts_var(val->tokenType);
   ck_assert_ptr_ne(val->data, NULL);
-  ck_assert_ptr_ne(data->name, NULL);
-  ck_assert_wstr_eq(data->name, L"variable");
-  ck_assert_ptr_eq(data->type, NULL);
+  ck_assert_ptr_ne(val->name, NULL);
+  ck_assert_wstr_eq(val->name, L"variable");
 //  ck_assert_ptr_ne(data->value, NULL);
 //  ck_assert_wstr_eq(data->value, L"30");
 

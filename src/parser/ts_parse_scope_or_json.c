@@ -53,6 +53,7 @@ TS_parse_scope_or_json(
   }
   if (buffer) {
     TS_put_back(tsFile->stream, buffer);
+    free(buffer);
   }
   TSParserToken *token = NULL;
   switch (type) {

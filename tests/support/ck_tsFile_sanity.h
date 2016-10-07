@@ -28,3 +28,4 @@ _TS_sanity_to_string(const TSFileSanity sanity) {
 
 #define ck_assert_sanity_eq(X, Y) _ck_assert_sanity(X, =, Y)
 #define ck_assert_tsFile_valid(file) ck_assert_sanity_eq(file->sanity, TS_FILE_VALID)
+#define ck_assert_tsFile_syntax_error(file) ck_assert_sanity_eq(file->sanity, TS_FILE_SYNTAX_ERROR)

@@ -1,4 +1,5 @@
 #include <cts/parser.h>
+#include <cts/register.h>
 
 TSParserToken *
 TS_parse_argument(
@@ -9,11 +10,11 @@ TS_parse_argument(
 
     const wchar_t *tok;
 
-    TSLocalVariableData *data = (TSLocalVariableData *) calloc(sizeof(TSLocalVariableData), 1);
-    data->name = NULL;
-    data->value = NULL;
-    data->type = NULL;
-    token->data = data;
+    unsigned char foundColon = FALSE;
+    token->name = NULL;
+    TSParserToken *value = NULL;
+    TSParserToken *type = TS_find_class(tsFile->file, (const wchar_t *) L"Object");
+    TS_push_child(token, type);
 
     volatile unsigned char proceed = TRUE;
     TSParseArgumentFlag parseFlag = TS_PARSE_ARG_NAME;
@@ -40,11 +41,11 @@ TS_parse_argument(
           break;
         }
         case L')': {
-          if (parseFlag == TS_PARSE_ARG_VALUE && data->value == NULL) {
+          if (parseFlag == TS_PARSE_ARG_VALUE && value == NULL) {
             free((void *) tok);
             ts_token_syntax_error((wchar_t *) L"Value for argument is missing", tsFile, token);
             break;
-          } else if (parseFlag == TS_PARSE_ARG_TYPE && data->type == NULL) {
+          } else if (parseFlag == TS_PARSE_ARG_TYPE && type == NULL) {
             free((void *) tok);
             ts_token_syntax_error((wchar_t *) L"Type for argument is missing", tsFile, token);
             break;
@@ -60,7 +61,7 @@ TS_parse_argument(
           TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
 
-          if (data->name == NULL) {
+          if (token->name == NULL) {
             ts_token_syntax_error((wchar_t *) L"Assigning to argument without name", tsFile, token);
             proceed = FALSE;
           } else {
@@ -72,13 +73,13 @@ TS_parse_argument(
           TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
 
-          if (parseFlag == TS_PARSE_ARG_VALUE && data->value == NULL) {
+          if (parseFlag == TS_PARSE_ARG_VALUE && value == NULL) {
             ts_token_syntax_error((wchar_t *) L"Value for argument is missing", tsFile, token);
             break;
-          } else if (parseFlag == TS_PARSE_ARG_TYPE && data->type == NULL) {
+          } else if (parseFlag == TS_PARSE_ARG_TYPE && type == NULL) {
             ts_token_syntax_error((wchar_t *) L"Value for argument is missing", tsFile, token);
             break;
-          } else if (data->name == NULL) {
+          } else if (token->name == NULL) {
             ts_token_syntax_error((wchar_t *) L"Declared argument as next but previous has no name", tsFile, token);
             break;
           }
@@ -88,62 +89,56 @@ TS_parse_argument(
           break;
         }
         case L':': {
-          TS_MOVE_BY(tsParseData, tok);
-          free((void *) tok);
-
-          if (data->name == NULL) {
+          if (token->name == NULL) {
             ts_token_syntax_error(
                 (wchar_t *) L"Unexpected argument type definition. Argument has no name",
                 tsFile, token
             );
             proceed = FALSE;
 
-          } else if (data->type != NULL) {
+          } else if (foundColon == TRUE) {
             ts_token_syntax_error(
                 (wchar_t *) L"Unexpected argument type definition. Type was already declared",
                 tsFile, token
             );
             proceed = FALSE;
           }
+          foundColon = TRUE;
+          TS_MOVE_BY(tsParseData, tok);
           parseFlag = TS_PARSE_ARG_TYPE;
+          free((void *) tok);
 
           break;
         }
         default: {
           if (wcscmp(tok, (wchar_t *) L"private") == 0) {
-            token->visibility = TS_VISIBILITY_PRIVATE;
+            token->visibility = TS_MODIFIER_PRIVATE;
 
           } else if (wcscmp(tok, (wchar_t *) L"protected") == 0) {
-            token->visibility = TS_VISIBILITY_PROTECTED;
+            token->visibility = TS_MODIFIER_PROTECTED;
 
           } else if (wcscmp(tok, (wchar_t *) L"public") == 0) {
-            token->visibility = TS_VISIBILITY_PUBLIC;
+            token->visibility = TS_MODIFIER_PUBLIC;
 
           } else if (parseFlag == TS_PARSE_ARG_NAME) {
-            u_long size = wcslen(tok) + 1;
-            if (data->name != NULL) size += wcslen(data->name);
-            wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
-            if (data->name != NULL) wcscpy(newPointer, data->name);
-            if (data->name != NULL) free((void *) data->name);
-            wcscat(newPointer, tok);
-            data->name = newPointer;
+            wchar_t *newPointer = TS_join_strings(token->name, tok);
+            if (token->name) free((void *) token->name);
+            token->name = newPointer;
+            TS_MOVE_BY(tsParseData, tok);
 
           } else if (parseFlag == TS_PARSE_ARG_VALUE) {
-            u_long size = wcslen(tok) + TS_STRING_END;
-            if (data->value != NULL)
-              size = size + wcslen(data->value) + wcslen((const wchar_t *) L" ");
-            wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
-            if (data->value != NULL) wcscpy(newPointer, data->value);
-            if (data->value != NULL) wcscat(newPointer, (const wchar_t *) L" ");
-            if (data->value) free((void *) data->value);
-            wcscat(newPointer, tok);
-            data->value = newPointer;
+            tsParseData->token = tok;
+            value = TS_parse_ts_token(tsFile, tsParseData);
+            if (value) {
+              TS_push_child(token, value);
+            }
 
           } else /*if (parseFlag == TS_PARSE_ARG_TYPE)*/ {
-            data->type = TS_clone_string(tok);
+            TS_MOVE_BY(tsParseData, tok);
+            // Find class if possible
+            // TODO () => {}
           }
 
-          TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
           break;
         }
@@ -154,11 +149,10 @@ TS_parse_argument(
 }
 
 void TS_free_argument(const TSParserToken *token) {
-  if (token->variableData) {
-    if (token->variableData->name) free((void *) token->variableData->name);
-    if (token->variableData->type) free((void *) token->variableData->type);
-    if (token->variableData->value) free((void *) token->variableData->value);
-    free(token->variableData);
+  if (token->childrenSize == 2) {
+    TS_free_tsToken(token->children[1]);
   }
+
+  if (token->name) free((void *) token->name);
   free((void *) token);
 }

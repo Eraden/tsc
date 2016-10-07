@@ -55,10 +55,11 @@ TS_parse_function_arguments(
 
       default: {
         TS_put_back(tsFile->stream, tok);
-        free((void *) tok);
 
-        TSParserToken *arg = TS_parse_argument(tsFile, tsParseData);
-        TS_push_child(token, arg);
+        tsParseData->token = tok;
+        TSParserToken *argument = TS_parse_argument(tsFile, tsParseData);
+        TS_push_child(token, argument);
+        free((void *) tok);
         break;
       }
     }

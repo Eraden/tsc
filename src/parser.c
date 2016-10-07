@@ -32,7 +32,7 @@ TS_build_parser_token(
   token->position = tsParseData->position;
   token->character = tsParseData->character;
   token->line = tsParseData->line;
-  token->visibility = TS_VISIBILITY_SCOPE;
+  token->visibility = TS_MODIFIER_SCOPE;
   token->children = NULL;
   token->childrenSize = 0;
   token->parent = tsParseData->parentTSToken;
@@ -195,12 +195,6 @@ TS_parse_ts_token(
             t
         );
         fwprintf(stderr, (const wchar_t *) L"      invalid token: '%ls'\n", t->content);
-        fprintf(stderr, "Dumping stream:\n\n");
-        while (1) {
-          wchar_t c = (wchar_t) fgetwc(tsFile->stream);
-          if (c == 0 || c == -1) break;
-          fwprintf(stderr, (const wchar_t *) L"%lc", c);
-        }
         break;
       }
     }
@@ -449,8 +443,12 @@ TS_getToken(
           );
           const u_long size = tok ? wcslen((const wchar_t *) tok) : 0;
           volatile wchar_t *newPointerForDefault = (wchar_t *) calloc(sizeof(wchar_t), size + 1 + TS_STRING_END);
-          if (tok != NULL) wcscat((wchar_t *) newPointerForDefault, (const wchar_t *) tok);
-          if (tok != NULL) free((void *) tok);
+          if (tok != NULL) {
+            wcscat((wchar_t *) newPointerForDefault, (const wchar_t *) tok);
+          }
+          if (tok != NULL) {
+            free((void *) tok);
+          }
           tok = newPointerForDefault;
           tok[size] = c;
 
@@ -710,11 +708,14 @@ void
 TS_free_tsFile(
     TSFile *tsFile
 ) {
+  TS_register_remove_file(tsFile);
+
   for (u_long index = 0; index < tsFile->tokensSize; index++) {
     TS_free_tsToken(tsFile->tokens[index]);
   }
   if (tsFile->tokens != NULL) free(tsFile->tokens);
   if (tsFile->file) free(tsFile->file);
   if (tsFile->errorReason) free(tsFile->errorReason);
+
   free((void *) tsFile);
 }

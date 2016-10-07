@@ -9,7 +9,7 @@
 #define TS_STRING_END 1
 #define TS_NEW_TOKEN calloc(sizeof(TSParserToken), 1)
 #define TS_LOOP_SANITY_CHECK(file) if (file->sanity != TS_FILE_VALID) break;
-#define TS_MOVE_BY(data, tok) { u_long m = wcslen(tok); data->position += m; data->position += m; }
+#define TS_MOVE_BY(data, tok) { u_long m = wcslen(tok); data->position += m; data->character += m; }
 #define TS_NEW_LINE(data, tok) { u_long m = wcslen(tok); data->character = 0; data->position += m; data->line += 1; }
 #define TS_UNEXPECTED_END_OF_STREAM(file, token, type) ts_token_syntax_error( \
   (const wchar_t *) L"Unexpected end of stream while parsing `" type "`", \
@@ -113,13 +113,14 @@ typedef enum eTSForParseFlag {
   TS_PARSE_FOR_OF_COLLECTION = 1 << 5
 } TSForParseFlag;
 
-typedef enum eTSVisibility {
-  TS_VISIBILITY_NONE = 0x0,
-  TS_VISIBILITY_SCOPE = 0x1,
-  TS_VISIBILITY_PRIVATE = 0x2,
-  TS_VISIBILITY_PROTECTED = 0x3,
-  TS_VISIBILITY_PUBLIC = 0x4
-} __attribute__ ((__packed__)) TSVisibility;
+typedef enum eTSModifier {
+  TS_MODIFIER_NONE = 0,
+  TS_MODIFIER_SCOPE = 1 << 0,
+  TS_MODIFIER_PRIVATE = 1 << 1,
+  TS_MODIFIER_PROTECTED = 1 << 2,
+  TS_MODIFIER_PUBLIC = 1 << 3,
+  TS_MODIFIER_STATIC = 1 << 4
+} __attribute__ ((__packed__)) TSModifier;
 
 typedef enum eTSParseBracketType {
   TS_PARSE_BRACKET_AS_SCOPE = 1,
@@ -133,12 +134,6 @@ typedef struct sTSKeyword {
 } TSKeyword;
 
 #define KEYWORDS_SIZE 28
-
-typedef struct sTSLocalVariableData {
-  const wchar_t *name;
-  const wchar_t *value;
-  const wchar_t *type;
-} TSLocalVariableData;
 
 typedef struct sTSFunctionData {
   const wchar_t *name;
@@ -168,7 +163,7 @@ typedef struct sTSParserToken {
   u_long position;
   u_long childrenSize;
   TSParserToken **children;
-  TSVisibility visibility;
+  TSModifier visibility;
   TSParserToken *parent;
   union {
     void *data;
@@ -176,7 +171,6 @@ typedef struct sTSParserToken {
     wchar_t *content;
     TSClassData *classData;
     TSFunctionData *functionData;
-    TSLocalVariableData *variableData;
   };
 } TSParserToken;
 

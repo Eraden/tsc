@@ -15,13 +15,13 @@ START_TEST(parse_class_with_complex_methods)
   TSFunctionData *methodData;
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_NONE);
+  ck_assert(child->visibility == TS_MODIFIER_NONE);
   ck_assert(child->tokenType == TS_INLINE_COMMENT);
   ck_assert_wstr_eq(child->name, L" undefined first");
 
   // 1
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -30,7 +30,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -39,7 +39,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -48,7 +48,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -58,7 +58,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 2
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -67,7 +67,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -76,7 +76,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -85,7 +85,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -95,7 +95,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 3
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -104,7 +104,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -113,7 +113,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -122,7 +122,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -132,7 +132,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 4
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -141,7 +141,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -150,7 +150,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -159,7 +159,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -169,7 +169,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 5
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -178,7 +178,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -187,7 +187,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -196,7 +196,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -206,7 +206,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 6
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -215,7 +215,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -224,7 +224,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -233,7 +233,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -243,12 +243,12 @@ START_TEST(parse_class_with_complex_methods)
 
   // comment
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_NONE);
+  ck_assert(child->visibility == TS_MODIFIER_NONE);
   ck_assert(child->tokenType == TS_INLINE_COMMENT);
 
   // 7
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -257,7 +257,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -266,7 +266,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -275,7 +275,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -285,7 +285,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 8
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -294,7 +294,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -303,7 +303,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -312,7 +312,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -322,7 +322,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 9
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -331,7 +331,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -340,7 +340,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -349,7 +349,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -359,7 +359,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 10
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -368,7 +368,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -377,7 +377,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -386,7 +386,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -396,7 +396,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 11
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -405,7 +405,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -414,7 +414,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -423,7 +423,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -433,7 +433,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 12
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -442,7 +442,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -451,7 +451,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -460,7 +460,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -470,14 +470,14 @@ START_TEST(parse_class_with_complex_methods)
 
   // comment
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_NONE);
+  ck_assert(child->visibility == TS_MODIFIER_NONE);
   ck_assert(child->tokenType == TS_INLINE_COMMENT);
   ck_assert_ptr_ne(child->data, NULL);
   ck_assert_wstr_eq(child->data, L" protected first");
 
   // 13
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -486,7 +486,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -495,7 +495,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -504,7 +504,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -514,7 +514,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 14
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -523,7 +523,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -532,7 +532,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -541,7 +541,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -551,7 +551,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 15
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -560,7 +560,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -569,7 +569,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -578,7 +578,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -588,7 +588,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 16
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -597,7 +597,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -606,7 +606,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -615,7 +615,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -625,7 +625,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 17
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -634,7 +634,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -643,7 +643,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -652,7 +652,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -662,7 +662,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 18
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -671,7 +671,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -680,7 +680,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -689,7 +689,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -699,14 +699,14 @@ START_TEST(parse_class_with_complex_methods)
 
   // comment
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_NONE);
+  ck_assert(child->visibility == TS_MODIFIER_NONE);
   ck_assert(child->tokenType == TS_INLINE_COMMENT);
   ck_assert_ptr_ne(child->data, NULL);
   ck_assert_wstr_eq(child->data, L" public first");
 
   // 19
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -715,7 +715,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -724,7 +724,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -733,7 +733,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -743,7 +743,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 20
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -752,7 +752,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -761,7 +761,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -770,7 +770,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -780,7 +780,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 21
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -789,7 +789,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -798,7 +798,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -807,7 +807,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -817,7 +817,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 22
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -826,7 +826,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -835,7 +835,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -844,7 +844,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -854,7 +854,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 23
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -863,7 +863,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -872,7 +872,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -881,7 +881,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -891,7 +891,7 @@ START_TEST(parse_class_with_complex_methods)
 
   // 24
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PUBLIC);
+  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -900,7 +900,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PROTECTED);
+  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -909,7 +909,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);
@@ -918,7 +918,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_ptr_ne(child->children, NULL);
 
   child = token->children[childIndex];
-  ck_assert(child->visibility == TS_VISIBILITY_PRIVATE);
+  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
   ck_assert(child->tokenType == TS_CLASS_METHOD);
   methodData = child->data;
   ck_assert_ptr_ne(methodData, NULL);

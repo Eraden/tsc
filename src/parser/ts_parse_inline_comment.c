@@ -7,7 +7,7 @@ TS_parse_inline_comment(
 ) {
   TS_TOKEN_BEGIN(TS_INLINE_COMMENT, tsParseData)
 
-    token->visibility = TS_VISIBILITY_NONE;
+    token->visibility = TS_MODIFIER_NONE;
 
     volatile unsigned char proceed = TRUE;
     const wchar_t *tok;

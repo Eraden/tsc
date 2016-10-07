@@ -14,12 +14,13 @@ typedef struct sTSRegisterEntry {
 #define RegisterCollection TSRegisterEntry **
 
 TSRegisterEntry *TS_register_file(TSFile *tsFile);
+void TS_register_remove_file(TSFile *file);
 
 void TS_register_class(TSFile *tsFile, TSParserToken *token);
 TSParserToken *TS_find_class(const wchar_t *file, const wchar_t *name);
 
-void TS_register_remove_class(TSFile *tsFile, TSParserToken *token);
-
 void TS_destroy_register(void);
 
-void TS_initialize_register(void);
+void TS_setup_predefined(void);
+void TS_remove_predefined(void);
+

@@ -7,6 +7,7 @@ int main(int argc, const char **argv) {
   TSParserSettings settings = TS_parse_arguments(argc, argv);
 
   init_log();
+  TS_setup_predefined();
   log_to_file(
       (wchar_t *) L"Parsing file: %s\n",
       settings.fileName
@@ -22,6 +23,7 @@ int main(int argc, const char **argv) {
   TS_free_tsFile(tsFile);
 
   TS_destroy_register();
+  TS_remove_predefined();
 
   if (sanity == TS_FILE_VALID)
     return 0;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cts/os.h>
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,6 +35,8 @@
 #ifndef FALSE
 #define FALSE 0
 #endif
+
+#define swap(type, i, j) {type t = i; i = j; j = t;}
 
 const unsigned int TS_VERSION_MAJOR;
 const unsigned int TS_VERSION_MINOR;

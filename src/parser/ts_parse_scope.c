@@ -61,5 +61,6 @@ void
 TS_free_scope(
     const TSParserToken *token
 ) {
+  TS_free_children(token);
   free((void *) token);
 }

@@ -52,6 +52,7 @@ SET(
 
 SET(
     SOURCE_FILES
+    src/os.c
     src/sys.c
     src/log.c
     src/register.c
@@ -92,14 +93,16 @@ SET(
     include/cts/parser.h
 )
 
-include_directories(include)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build)
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+INCLUDE_DIRECTORIES(include)
 
-enable_testing()
-find_package(Check REQUIRED)
-find_package(Threads)
-include_directories(${CHECK_INCLUDE_DIRS})
+SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+ENABLE_TESTING()
+FIND_PACKAGE(Check REQUIRED)
+FIND_PACKAGE(Threads)
+INCLUDE_DIRECTORIES(${CHECK_INCLUDE_DIRS})
 
 MESSAGE(INFO " Compiler: ${CMAKE_C_COMPILER}")
 
@@ -151,7 +154,7 @@ IF (Debug)
   ADD_DEFINITIONS(-DDebug=1)
 ENDIF ()
 
-ADD_DEFINITIONS(-Wstrict-prototypes -Wall -DUNICODE -D_UNICODE -D_MBCS)
+ADD_DEFINITIONS(-Wstrict-prototypes -DUNICODE -D_UNICODE -D_MBCS)
 
 add_library(
     tsparser
@@ -167,8 +170,6 @@ ADD_EXECUTABLE(cts ${SOURCE_FILES} src/main.c)
 IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
   ADD_EXECUTABLE(cts_test ${TEST_SOURCES} tests/main.c)
 ENDIF ()
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build)
 
 target_link_libraries(
     cts
@@ -199,7 +200,9 @@ ADD_TEST(NAME cli_blank_with_blank_file_and_level_debug COMMAND ./cts -f ./examp
 ADD_TEST(NAME cli_blank_with_blank_file_and_level_off COMMAND ./cts -f ./examples/cli/blank.ts -l off)
 ADD_TEST(NAME cli_eval_source COMMAND ./cts -c 'var\ a')
 
-ADD_TEST(NAME Functions COMMAND ./cts -f ./examples/functions/valid.ts)
+ADD_TEST(NAME test_file COMMAND ./cts -f ./examples/test.ts)
+
+ADD_TEST(NAME functions COMMAND ./cts -f ./examples/functions/valid.ts)
 
 ADD_TEST(NAME If_blocks COMMAND ./cts -f ./examples/if/valid.ts)
 ADD_TEST(NAME If_else_blocks COMMAND ./cts -f ./examples/else/valid.ts)
@@ -275,3 +278,21 @@ SET_TESTS_PROPERTIES(
     PROPERTIES
     WILL_FAIL TRUE
 )
+
+INSTALL(
+    TARGETS cts tsparser tsoutput
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib/static
+    PUBLIC_HEADER DESTINATION include
+)
+
+INSTALL(DIRECTORY lib DESTINATION lib)
+
+
+IF (CMAKE_BUILD_TYPE MATCHES "Debug")
+  SET(LIBRARY_OUTPUT_PATH ${cts_SOURCE_DIR}/lib)
+ELSE()
+  SET(LIBRARY_OUTPUT_PATH ${CMAKE_INSTALL_PREFIX}/lib)
+ENDIF()
+ADD_DEFINITIONS(-DLIBRARY_OUTPUT_PATH="${LIBRARY_OUTPUT_PATH}")
