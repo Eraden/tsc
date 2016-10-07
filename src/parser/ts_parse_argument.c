@@ -1,5 +1,34 @@
-#include <cts/parser.h>
 #include <cts/register.h>
+
+static unsigned char
+__attribute__((visibility("hidden")))
+TS_parse_argument_done(
+    TSFile *tsFile,
+    TSParseData *tsParseData,
+    TSVariableParseFlag parseFlag
+) {
+  TSParserToken *token = tsParseData->parentTSToken;
+  switch (parseFlag) {
+    case TS_PARSE_VARIABLE_NAME: {
+      ts_token_syntax_error((wchar_t *) L"Missing argument name", tsFile, token);
+      break;
+    }
+    case TS_PARSE_VARIABLE_TYPE: {
+      ts_token_syntax_error((wchar_t *) L"Expect argument type but none provided", tsFile, token);
+      break;
+    }
+    case TS_PARSE_VARIABLE_VALUE: {
+      ts_token_syntax_error((wchar_t *) L"Expect argument default value but none provided", tsFile, token);
+      break;
+    }
+    case TS_PARSE_VARIABLE_NONE: {
+    }
+    default: {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
 
 TSParserToken *
 TS_parse_argument(
@@ -10,14 +39,13 @@ TS_parse_argument(
 
     const wchar_t *tok;
 
-    unsigned char foundColon = FALSE;
     token->name = NULL;
     TSParserToken *value = NULL;
-    TSParserToken *type = TS_find_class(tsFile->file, (const wchar_t *) L"Object");
+    TSParserToken *type = TS_find_class(tsFile->file, (const wchar_t *) L"any");
     TS_push_child(token, type);
 
     volatile unsigned char proceed = TRUE;
-    TSParseArgumentFlag parseFlag = TS_PARSE_ARG_NAME;
+    TSVariableParseFlag parseFlag = TS_PARSE_VARIABLE_NAME;
 
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
@@ -41,18 +69,10 @@ TS_parse_argument(
           break;
         }
         case L')': {
-          if (parseFlag == TS_PARSE_ARG_VALUE && value == NULL) {
-            free((void *) tok);
-            ts_token_syntax_error((wchar_t *) L"Value for argument is missing", tsFile, token);
-            break;
-          } else if (parseFlag == TS_PARSE_ARG_TYPE && type == NULL) {
-            free((void *) tok);
-            ts_token_syntax_error((wchar_t *) L"Type for argument is missing", tsFile, token);
-            break;
-          } else {
+          if (TS_parse_argument_done(tsFile, tsParseData, parseFlag)) {
             TS_put_back(tsParseData->stream, tok);
-            free((void *) tok);
           }
+          free((void *) tok);
 
           proceed = FALSE;
           break;
@@ -64,25 +84,18 @@ TS_parse_argument(
           if (token->name == NULL) {
             ts_token_syntax_error((wchar_t *) L"Assigning to argument without name", tsFile, token);
             proceed = FALSE;
+          } else if (parseFlag == TS_PARSE_VARIABLE_TYPE) {
+            ts_token_syntax_error((const wchar_t *) L"Assigning to argument when expect type", tsFile, token);
+            proceed = FALSE;
           } else {
-            parseFlag = TS_PARSE_ARG_VALUE;
+            parseFlag = TS_PARSE_VARIABLE_VALUE;
           }
           break;
         }
         case L',': {
           TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
-
-          if (parseFlag == TS_PARSE_ARG_VALUE && value == NULL) {
-            ts_token_syntax_error((wchar_t *) L"Value for argument is missing", tsFile, token);
-            break;
-          } else if (parseFlag == TS_PARSE_ARG_TYPE && type == NULL) {
-            ts_token_syntax_error((wchar_t *) L"Value for argument is missing", tsFile, token);
-            break;
-          } else if (token->name == NULL) {
-            ts_token_syntax_error((wchar_t *) L"Declared argument as next but previous has no name", tsFile, token);
-            break;
-          }
+          TS_parse_argument_done(tsFile, tsParseData, parseFlag);
 
           proceed = FALSE;
 
@@ -96,16 +109,15 @@ TS_parse_argument(
             );
             proceed = FALSE;
 
-          } else if (foundColon == TRUE) {
+          } else if (parseFlag >= TS_PARSE_VARIABLE_TYPE) {
             ts_token_syntax_error(
                 (wchar_t *) L"Unexpected argument type definition. Type was already declared",
                 tsFile, token
             );
             proceed = FALSE;
           }
-          foundColon = TRUE;
           TS_MOVE_BY(tsParseData, tok);
-          parseFlag = TS_PARSE_ARG_TYPE;
+          parseFlag = TS_PARSE_VARIABLE_TYPE;
           free((void *) tok);
 
           break;
@@ -120,23 +132,36 @@ TS_parse_argument(
           } else if (wcscmp(tok, (wchar_t *) L"public") == 0) {
             token->visibility = TS_MODIFIER_PUBLIC;
 
-          } else if (parseFlag == TS_PARSE_ARG_NAME) {
+          } else if (parseFlag == TS_PARSE_VARIABLE_NAME) {
             wchar_t *newPointer = TS_join_strings(token->name, tok);
             if (token->name) free((void *) token->name);
             token->name = newPointer;
             TS_MOVE_BY(tsParseData, tok);
 
-          } else if (parseFlag == TS_PARSE_ARG_VALUE) {
+            parseFlag = TS_PARSE_VARIABLE_NONE;
+
+          } else if (parseFlag == TS_PARSE_VARIABLE_VALUE) {
             tsParseData->token = tok;
             value = TS_parse_ts_token(tsFile, tsParseData);
             if (value) {
               TS_push_child(token, value);
             }
+            parseFlag = TS_PARSE_VARIABLE_NONE;
 
-          } else /*if (parseFlag == TS_PARSE_ARG_TYPE)*/ {
+          } else if (parseFlag == TS_PARSE_VARIABLE_TYPE) {
             TS_MOVE_BY(tsParseData, tok);
             // Find class if possible
-            // TODO () => {}
+            if (tok[0] != L'(') {
+              type = TS_find_class(tsFile->file, tok);
+              if (type) {
+                token->children[TS_VARIABLE_TYPE] = type;
+              }
+            } else {
+              // TODO fat arrow
+            }
+            parseFlag = TS_PARSE_VARIABLE_NONE;
+          } else {
+            TS_MOVE_BY(tsParseData, tok);
           }
 
           free((void *) tok);
@@ -149,9 +174,7 @@ TS_parse_argument(
 }
 
 void TS_free_argument(const TSParserToken *token) {
-  if (token->childrenSize == 2) {
-    TS_free_tsToken(token->children[1]);
-  }
+  TS_free_children_from(token, 1);
 
   if (token->name) free((void *) token->name);
   free((void *) token);

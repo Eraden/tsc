@@ -17,6 +17,7 @@ TS_parse_else_body(
     TS_LOOP_SANITY_CHECK(tsFile)
 
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "else body");
       break;
@@ -30,6 +31,7 @@ TS_parse_else_body(
       }
       case L'\n': {
         TS_NEW_LINE(tsParseData, tok);
+        free((void *) tok);
         break;
       }
       case L';': {

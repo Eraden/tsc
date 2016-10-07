@@ -14,8 +14,7 @@ __attribute__(( visibility("hidden")))
 
 TSFile *TS_PREDEFINED_FILE = NULL;
 
-static RegisterCollection
-__attribute__(( visibility("hidden")))
+RegisterCollection
 TS_PREDEFINED_REGISTER = NULL;
 
 static u_long
@@ -64,8 +63,12 @@ TS_register_remove_file(
     if (entry->tsFile != file) {
       newPointer[index] = entry;
       index += 1;
+    } else {
+      free(entry->classList);
+      free(entry);
     }
   }
+  free(TS_REGISTER);
   TS_REGISTER = newPointer;
   TS_REGISTER_SIZE -= 1;
   pthread_mutex_unlock(&REGISTER_FILE_MUTEX_LOCK);

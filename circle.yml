@@ -1,3 +1,7 @@
+general:
+  branches:
+    ignore:
+      - /experimental\/.*/
 dependencies:
   cache_directories:
     - tmp/cmake-3.6.1

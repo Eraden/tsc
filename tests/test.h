@@ -13,3 +13,4 @@
 #include "support/ck_wcs_assert.h"
 #include "support/ck_tsFile_sanity.h"
 #include "support/ck_token_type.h"
+#include "support/ck_token_eq.h"

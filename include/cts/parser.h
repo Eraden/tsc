@@ -82,12 +82,6 @@ typedef enum eTSTokenType {
   TS_UNKNOWN = 0,
 } __attribute__ ((__packed__)) TSTokenType;
 
-typedef enum sTSParseArgumentFlag {
-  TS_PARSE_ARG_NAME = 0x0,
-  TS_PARSE_ARG_TYPE = 0x1,
-  TS_PARSE_ARG_VALUE = 0x2,
-} __attribute__ ((__packed__)) TSParseArgumentFlag;
-
 typedef enum sTSClassParseFlag {
   TS_PARSE_CLASS_MEMBER_NAME = 0x0,
   TS_PARSE_CLASS_MEMBER_TYPE = 0x1,
@@ -98,10 +92,10 @@ typedef enum sTSClassParseFlag {
 } __attribute__((__packed__)) TSClassParseFlag;
 
 typedef enum sTSVariableParseFlag {
-  TS_PARSE_VARIABLE_NONE = 0x0,
-  TS_PARSE_VARIABLE_NAME = 0x1,
-  TS_PARSE_VARIABLE_TYPE = 0x2,
-  TS_PARSE_VARIABLE_VALUE = 0x3,
+  TS_PARSE_VARIABLE_NONE = 0,
+  TS_PARSE_VARIABLE_NAME = 1,
+  TS_PARSE_VARIABLE_TYPE = 1 << 1,
+  TS_PARSE_VARIABLE_VALUE = 1 << 2,
 } __attribute__((__packed__)) TSVariableParseFlag;
 
 typedef enum eTSForParseFlag {
@@ -125,7 +119,12 @@ typedef enum eTSModifier {
 typedef enum eTSParseBracketType {
   TS_PARSE_BRACKET_AS_SCOPE = 1,
   TS_PARSE_BRACKET_AS_JSON = 2,
-} TSParseBracketType;
+} __attribute__ ((__packed__)) TSParseBracketType;
+
+typedef enum eTSVariableChild {
+  TS_VARIABLE_TYPE = 0,
+  TS_VARIABLE_VALUE = 1
+} TSVariableChild;
 
 typedef struct sTSKeyword {
   TSTokenType type;
@@ -330,6 +329,8 @@ TSParserToken *TS_parse_ts_token(TSFile *tsFile, TSParseData *data);
 void TS_free_tsToken(const TSParserToken *token);
 
 void TS_free_children(const TSParserToken *token);
+
+void TS_free_children_from(const TSParserToken *token, u_long childIndex);
 
 volatile const wchar_t *TS_getToken(FILE *stream) __attribute__((__malloc__));
 

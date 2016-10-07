@@ -705,6 +705,17 @@ TS_free_children(
 }
 
 void
+TS_free_children_from(
+    const TSParserToken *token,
+    u_long childIndex
+) {
+  for (; childIndex < token->childrenSize; childIndex++) {
+    TS_free_tsToken(token->children[childIndex]);
+  }
+  if (token->children != NULL) free(token->children);
+}
+
+void
 TS_free_tsFile(
     TSFile *tsFile
 ) {

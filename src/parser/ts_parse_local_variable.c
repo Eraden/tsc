@@ -54,7 +54,7 @@ TS_parse_local_variable_body(
   TSVariableParseFlag parseFlag = TS_PARSE_VARIABLE_NAME;
   token->name = NULL;
   TSParserToken *value = NULL;
-  TSParserToken *type = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"Object");
+  TSParserToken *type = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"any");
   TS_push_child(token, type);
 
   while (proceed) {
@@ -211,8 +211,7 @@ void
 TS_free_var(
     const TSParserToken *token
 ) {
-  if (token->childrenSize == 2)
-    TS_free_tsToken(token->children[1]);
+  TS_free_children_from(token, 1);
 
   if (token->name)
     free(token->name);
@@ -223,8 +222,7 @@ void
 TS_free_let(
     const TSParserToken *token
 ) {
-  if (token->childrenSize == 2)
-    TS_free_tsToken(token->children[1]);
+  TS_free_children_from(token, 1);
 
   if (token->name)
     free(token->name);
@@ -235,8 +233,7 @@ void
 TS_free_const(
     const TSParserToken *token
 ) {
-  if (token->childrenSize == 2)
-    TS_free_tsToken(token->children[1]);
+  TS_free_children_from(token, 1);
 
   if (token->name)
     free(token->name);

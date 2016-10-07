@@ -10,6 +10,7 @@ START_TEST(parse_valid_classes_file)
   TSClassData *classData;
   TSFunctionData *methodData;
 
+  ck_assert_tsFile_valid(tsFile);
   ck_assert_int_eq(tsFile->tokensSize, 11);
 
   // 1
@@ -38,10 +39,9 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->tokenType == TS_CLASS_FIELD);
   ck_assert(childToken->visibility == TS_MODIFIER_PRIVATE);
 
-  TSLocalVariableData *childData = childToken->data;
-  ck_assert_ptr_ne(childData, NULL);
-  ck_assert_wstr_eq(childData->name, L"field_1");
-  ck_assert_ptr_eq(childData->type, NULL);
+//  TSLocalVariableData *childData = childToken->data;
+  ck_assert_wstr_eq(childToken->name, L"field_1");
+//  ck_assert_ptr_eq(childData->type, NULL);
 //  ck_assert_ptr_eq(childData->value, NULL);
 
   // 3
@@ -59,10 +59,8 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->tokenType == TS_CLASS_FIELD);
   ck_assert(childToken->visibility == TS_MODIFIER_PRIVATE);
 
-  childData = childToken->data;
-  ck_assert_ptr_ne(childData, NULL);
-  ck_assert_wstr_eq(childData->name, L"field_2");
-  ck_assert_ptr_eq(childData->type, NULL);
+  ck_assert_wstr_eq(childToken->name, L"field_2");
+//  ck_assert_ptr_eq(childData->type, NULL);
 //  ck_assert_ptr_eq(childData->value, NULL);
 
   // 4
@@ -80,10 +78,8 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->tokenType == TS_CLASS_FIELD);
   ck_assert(childToken->visibility == TS_MODIFIER_PROTECTED);
 
-  childData = childToken->data;
-  ck_assert_ptr_ne(childData, NULL);
-  ck_assert_wstr_eq(childData->name, L"field_3");;
-  ck_assert_ptr_eq(childData->type, NULL);
+  ck_assert_wstr_eq(childToken->name, L"field_3");;
+//  ck_assert_ptr_eq(childData->type, NULL);
 //  ck_assert_ptr_eq(childData->value, NULL);
 
   // 5
@@ -101,10 +97,8 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->tokenType == TS_CLASS_FIELD);
   ck_assert(childToken->visibility == TS_MODIFIER_PUBLIC);
 
-  childData = childToken->data;
-  ck_assert_ptr_ne(childData, NULL);
-  ck_assert_wstr_eq(childData->name, L"field_4");;
-  ck_assert_ptr_eq(childData->type, NULL);
+  ck_assert_wstr_eq(childToken->name, L"field_4");;
+//  ck_assert_ptr_eq(childData->type, NULL);
 //  ck_assert_ptr_eq(childData->value, NULL);
 
   // 6
@@ -210,10 +204,8 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->tokenType == TS_CLASS_FIELD);
   ck_assert(childToken->visibility == TS_MODIFIER_PRIVATE);
 
-  childData = childToken->data;
-  ck_assert_ptr_ne(childData, NULL);
-  ck_assert_wstr_eq(childData->name, L"foo");
-  ck_assert_ptr_eq(childData->type, NULL);
+  ck_assert_wstr_eq(childToken->name, L"foo");
+//  ck_assert_ptr_eq(childData->type, NULL);
 //  ck_assert_ptr_eq(childData->value, NULL);
 
   childToken = classToken->children[1];
@@ -230,10 +222,9 @@ START_TEST(parse_valid_classes_file)
   // 11
   TSParserToken *token = tsFile->tokens[10];
   ck_assert(token->tokenType == TS_CONST);
-  ck_assert_ptr_ne(token->variableData, NULL);
-  ck_assert_ptr_ne(token->variableData->name, NULL);
-  ck_assert_wstr_eq(token->variableData->name, L"TEST");
-  ck_assert_ptr_eq(token->variableData->type, NULL);
+  ck_assert_ptr_ne(token->name, NULL);
+  ck_assert_wstr_eq(token->name, L"TEST");
+//  ck_assert_ptr_eq(token->variableData->type, NULL);
 //  ck_assert_ptr_ne(token->variableData->value, NULL);
 //  ck_assert_wstr_eq(token->variableData->value, L"class{}");
 

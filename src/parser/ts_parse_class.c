@@ -220,11 +220,7 @@ TS_parse_class_member(
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      ts_token_syntax_error(
-          (wchar_t *) L"Unexpected end of class member",
-          tsFile,
-          bodyToken
-      );
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, bodyToken, "class member");
       break;
     }
 
@@ -241,11 +237,7 @@ TS_parse_class_member(
       }
       case L'(': {
         if (name == NULL) {
-          ts_token_syntax_error(
-              (wchar_t *) L"Missing class method name",
-              tsFile,
-              bodyToken
-          );
+          ts_token_syntax_error((wchar_t *) L"Missing class method name", tsFile, bodyToken);
           proceed = FALSE;
         } else {
           bodyToken->tokenType = TS_CLASS_METHOD;
@@ -276,17 +268,21 @@ TS_parse_class_member(
         break;
       }
       case L';': {
-        TS_MOVE_BY(tsParseData, tok);
-
-        bodyToken->name = TS_clone_string(name);
-        TSParserToken *t = TS_find_class(tsFile->file, type);
-        if (t == NULL) t = TS_find_class(tsFile->file, (const wchar_t *) L"Object");
-        TS_push_child(bodyToken, t);
-        TSParserToken *v = TS_build_parser_token(TS_VAR, tsParseData);
-        v->content = value;
-        TS_push_child(bodyToken, v);
         bodyToken->tokenType = TS_CLASS_FIELD;
-        tsParseData->parentTSToken = v->parent;
+        bodyToken->name = TS_clone_string(name);
+        TSParserToken *tokenType = NULL;
+        if (type) {
+          tokenType = TS_find_class(tsFile->file, type);
+        }
+        if (tokenType == NULL) {
+          tokenType = TS_find_class(tsFile->file, (const wchar_t *) L"Object");
+        }
+        TS_push_child(bodyToken, tokenType);
+
+        TSParserToken *tokenValue = TS_build_parser_token(TS_UNKNOWN, tsParseData);
+        tokenValue->content = TS_clone_string(value);
+        TS_push_child(bodyToken, tokenValue);
+        tsParseData->parentTSToken = tokenValue->parent;
 
         proceed = FALSE;
         free((void *) tok);
@@ -351,11 +347,7 @@ TS_parse_class_body(
 
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
     if (tok == NULL) {
-      ts_token_syntax_error(
-          (wchar_t *) L"Unexpected end of class member",
-          tsFile,
-          token
-      );
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "class body member");
       break;
     }
 
@@ -374,6 +366,11 @@ TS_parse_class_body(
         TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         proceed = FALSE;
+        break;
+      }
+      case L'{': {
+        TS_MOVE_BY(tsParseData, tok);
+        free((void *) tok);
         break;
       }
       default: {
