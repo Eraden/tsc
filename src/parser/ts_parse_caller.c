@@ -11,7 +11,7 @@ TS_parse_caller(
     token->name = (void *) TS_clone_string(tsParseData->token);
 
     volatile unsigned char proceed = TRUE;
-    const wchar_t *tok;
+    const wchar_t *tok = NULL;
 
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
@@ -60,9 +60,9 @@ TS_parse_caller(
         }
         default: {
           TS_put_back(tsFile->stream, tok);
-          free((void *) tok);
           TSParserToken *argument = TS_parse_argument(tsFile, tsParseData);
           TS_push_child(token, argument);
+          free((void *) tok);
           break;
         }
       }

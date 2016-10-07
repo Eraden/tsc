@@ -99,12 +99,9 @@ typedef enum sTSVariableParseFlag {
 } __attribute__((__packed__)) TSVariableParseFlag;
 
 typedef enum eTSForParseFlag {
-  TS_PARSE_FOR_IN_KEYWORD_LET = 1 << 0,
-  TS_PARSE_FOR_IN_KEYWORD_IN = 1 << 1,
-  TS_PARSE_FOR_IN_COLLECTION = 1 << 2,
-  TS_PARSE_FOR_OF_KEYWORD_LET = 1 << 3,
-  TS_PARSE_FOR_OF_KEYWORD_OF = 1 << 4,
-  TS_PARSE_FOR_OF_COLLECTION = 1 << 5
+  TS_PARSE_FOR_KEYWORD_LET = 1 << 0,
+  TS_PARSE_FOR_ITERATION_KEYWORD = 1 << 1,
+  TS_PARSE_FOR_COLLECTION = 1 << 2,
 } TSForParseFlag;
 
 typedef enum eTSModifier {

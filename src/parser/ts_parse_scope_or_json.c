@@ -7,27 +7,37 @@ TS_parse_scope_or_json(
 ) {
   wchar_t *buffer = NULL, *tok;
   volatile unsigned char proceed = TRUE;
-  TSParseBracketType type = TS_PARSE_BRACKET_AS_SCOPE;
+  TSParseBracketType type;
+
+  if (tsParseData->parentTSToken == NULL) {
+    type = TS_PARSE_BRACKET_AS_SCOPE;
+  } else {
+    switch (tsParseData->parentTSToken->tokenType) {
+      case TS_VAR:
+      case TS_LET:
+      case TS_CONST:
+      case TS_ARGUMENT: {
+        type = TS_PARSE_BRACKET_AS_JSON;
+        break;
+      }
+      default: {
+        type = TS_PARSE_BRACKET_AS_SCOPE;
+      }
+    }
+  }
+
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
     tok = (wchar_t *) TS_getToken(tsFile->stream);
+
     if (!tok) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, tsParseData->parentTSToken, "scope or json");
       break;
     }
     switch (tok[0]) {
-
-      case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
-      case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
+      case L' ':
+      case L'\n':
       case L'}': {
         wchar_t *extended = TS_join_strings(buffer, tok);
         if (buffer) free(buffer);

@@ -39,10 +39,8 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->tokenType == TS_CLASS_FIELD);
   ck_assert(childToken->visibility == TS_MODIFIER_PRIVATE);
 
-//  TSLocalVariableData *childData = childToken->data;
   ck_assert_wstr_eq(childToken->name, L"field_1");
-//  ck_assert_ptr_eq(childData->type, NULL);
-//  ck_assert_ptr_eq(childData->value, NULL);
+  ck_assert_ts_token_eq(childToken->children[TS_VARIABLE_TYPE], ANY);
 
   // 3
   classToken = tsFile->tokens[2];
@@ -60,8 +58,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->visibility == TS_MODIFIER_PRIVATE);
 
   ck_assert_wstr_eq(childToken->name, L"field_2");
-//  ck_assert_ptr_eq(childData->type, NULL);
-//  ck_assert_ptr_eq(childData->value, NULL);
+  ck_assert_ts_token_eq(childToken->children[TS_VARIABLE_TYPE], ANY);
 
   // 4
   classToken = tsFile->tokens[3];
@@ -78,9 +75,8 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->tokenType == TS_CLASS_FIELD);
   ck_assert(childToken->visibility == TS_MODIFIER_PROTECTED);
 
-  ck_assert_wstr_eq(childToken->name, L"field_3");;
-//  ck_assert_ptr_eq(childData->type, NULL);
-//  ck_assert_ptr_eq(childData->value, NULL);
+  ck_assert_wstr_eq(childToken->name, L"field_3");
+  ck_assert_ts_token_eq(childToken->children[TS_VARIABLE_TYPE], ANY);
 
   // 5
   classToken = tsFile->tokens[4];
@@ -97,9 +93,8 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->tokenType == TS_CLASS_FIELD);
   ck_assert(childToken->visibility == TS_MODIFIER_PUBLIC);
 
-  ck_assert_wstr_eq(childToken->name, L"field_4");;
-//  ck_assert_ptr_eq(childData->type, NULL);
-//  ck_assert_ptr_eq(childData->value, NULL);
+  ck_assert_wstr_eq(childToken->name, L"field_4");
+  ck_assert_ts_token_eq(childToken->children[TS_VARIABLE_TYPE], ANY);
 
   // 6
   classToken = tsFile->tokens[5];
@@ -205,8 +200,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->visibility == TS_MODIFIER_PRIVATE);
 
   ck_assert_wstr_eq(childToken->name, L"foo");
-//  ck_assert_ptr_eq(childData->type, NULL);
-//  ck_assert_ptr_eq(childData->value, NULL);
+  ck_assert_ts_token_eq(childToken->children[TS_VARIABLE_TYPE], ANY);
 
   childToken = classToken->children[1];
   ck_assert(childToken->tokenType == TS_CLASS_METHOD);
@@ -224,9 +218,10 @@ START_TEST(parse_valid_classes_file)
   ck_assert(token->tokenType == TS_CONST);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"TEST");
-//  ck_assert_ptr_eq(token->variableData->type, NULL);
-//  ck_assert_ptr_ne(token->variableData->value, NULL);
-//  ck_assert_wstr_eq(token->variableData->value, L"class{}");
+  ck_assert_uint_eq(token->childrenSize, 2);
+  ck_assert_ts_token_eq(token->children[TS_VARIABLE_TYPE], ANY);
+  TSParserToken *variableValue = token->children[TS_VARIABLE_VALUE];
+  ck_assert_eq_ts_class(variableValue->tokenType);
 
   TS_free_tsFile(tsFile);
 END_TEST

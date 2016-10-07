@@ -104,7 +104,7 @@ TS_parse_for_head_for_of(
 ) {
   TSParserToken *head = tsParseData->parentTSToken;
   const wchar_t *tok;
-  TSForParseFlag flag = TS_PARSE_FOR_OF_KEYWORD_LET;
+  TSForParseFlag flag = TS_PARSE_FOR_KEYWORD_LET;
 
   volatile unsigned char proceed = TRUE;
   while (proceed) {
@@ -138,27 +138,27 @@ TS_parse_for_head_for_of(
         TSParserToken *current = TS_parse_ts_token(tsFile, tsParseData);
         free((void *) tok);
         switch (flag) {
-          case TS_PARSE_FOR_OF_KEYWORD_LET: {
+          case TS_PARSE_FOR_KEYWORD_LET: {
             if (current->tokenType == TS_LET) {
               TS_push_child(head, current);
-              flag = TS_PARSE_FOR_OF_KEYWORD_OF;
+              flag = TS_PARSE_FOR_ITERATION_KEYWORD;
             } else {
               TS_free_tsToken(current);
               TS_UNEXPECTED_TOKEN(tsFile, current, tok, "for of variable name");
             }
             break;
           }
-          case TS_PARSE_FOR_OF_KEYWORD_OF: {
+          case TS_PARSE_FOR_ITERATION_KEYWORD: {
             if (current->tokenType == TS_OF) {
               TS_push_child(head, current);
-              flag = TS_PARSE_FOR_OF_COLLECTION;
+              flag = TS_PARSE_FOR_COLLECTION;
             } else {
               TS_free_tsToken(current);
               TS_UNEXPECTED_TOKEN(tsFile, current, tok, "for of, expecting to get `of`");
             }
             break;
           }
-          case TS_PARSE_FOR_OF_COLLECTION: {
+          case TS_PARSE_FOR_COLLECTION: {
             if (TS_is_keyword(tok) && current->tokenType != TS_ARRAY) {
               TS_free_tsToken(current);
               ts_token_syntax_error(
@@ -173,9 +173,6 @@ TS_parse_for_head_for_of(
             }
             break;
           }
-          case TS_PARSE_FOR_IN_KEYWORD_LET:break;
-          case TS_PARSE_FOR_IN_KEYWORD_IN:break;
-          case TS_PARSE_FOR_IN_COLLECTION:break;
         }
         break;
       }
@@ -192,7 +189,7 @@ TS_parse_for_head_for_in(
 ) {
   TSParserToken *head = tsParseData->parentTSToken;
   const wchar_t *tok;
-  TSForParseFlag flag = TS_PARSE_FOR_IN_KEYWORD_LET;
+  TSForParseFlag flag = TS_PARSE_FOR_KEYWORD_LET;
 
   volatile unsigned char proceed = TRUE;
   while (proceed) {
@@ -226,27 +223,27 @@ TS_parse_for_head_for_in(
         TSParserToken *current = TS_parse_ts_token(tsFile, tsParseData);
         free((void *) tok);
         switch (flag) {
-          case TS_PARSE_FOR_IN_KEYWORD_LET: {
+          case TS_PARSE_FOR_KEYWORD_LET: {
             if (current->tokenType == TS_LET) {
               TS_push_child(head, current);
-              flag = TS_PARSE_FOR_IN_KEYWORD_IN;
+              flag = TS_PARSE_FOR_ITERATION_KEYWORD;
             } else {
               TS_free_tsToken(current);
               TS_UNEXPECTED_TOKEN(tsFile, current, tok, "for in variable name");
             }
             break;
           }
-          case TS_PARSE_FOR_IN_KEYWORD_IN: {
+          case TS_PARSE_FOR_ITERATION_KEYWORD: {
             if (current->tokenType == TS_IN) {
               TS_push_child(head, current);
-              flag = TS_PARSE_FOR_IN_COLLECTION;
+              flag = TS_PARSE_FOR_COLLECTION;
             } else {
               TS_free_tsToken(current);
               TS_UNEXPECTED_TOKEN(tsFile, current, tok, "for in, expecting to get `in`");
             }
             break;
           }
-          case TS_PARSE_FOR_IN_COLLECTION: {
+          case TS_PARSE_FOR_COLLECTION: {
             if (TS_is_keyword(tok)) {
               TS_free_tsToken(current);
               ts_token_syntax_error(

@@ -2,7 +2,7 @@
 
 START_TEST(parse_valid_new_keyword)
   TSFile *tsFile = TS_parse_file("./examples/new/valid.ts");
-  /*ck_assert_tsFile_valid(tsFile);
+  ck_assert_tsFile_valid(tsFile);
   ck_assert_uint_eq(tsFile->tokensSize, 3);
   ck_assert_ptr_ne(tsFile->tokens, NULL);
 
@@ -41,20 +41,17 @@ START_TEST(parse_valid_new_keyword)
   ck_assert_uint_eq(caller->childrenSize, 3);
   ck_assert_ptr_ne(caller->children, NULL);
   arg = caller->children[0];
-  ck_assert(arg->tokenType == TS_ARGUMENT);
-  ck_assert_ptr_ne(arg->variableData, NULL);
-  ck_assert_ptr_ne(arg->variableData->name, NULL);
-  ck_assert_wstr_eq(arg->variableData->name, L"1");
+  ck_assert_eq_ts_argument(arg->tokenType);
+  ck_assert_ptr_ne(arg->name, NULL);
+  ck_assert_wstr_eq(arg->name, L"1");
   arg = caller->children[1];
-  ck_assert(arg->tokenType == TS_ARGUMENT);
-  ck_assert_ptr_ne(arg->variableData, NULL);
-  ck_assert_ptr_ne(arg->variableData->name, NULL);
-  ck_assert_wstr_eq(arg->variableData->name, L"2");
+  ck_assert_eq_ts_argument(arg->tokenType);
+  ck_assert_ptr_ne(arg->name, NULL);
+  ck_assert_wstr_eq(arg->name, L"2");
   arg = caller->children[2];
-  ck_assert(arg->tokenType == TS_ARGUMENT);
-  ck_assert_ptr_ne(arg->variableData, NULL);
-  ck_assert_ptr_ne(arg->variableData->name, NULL);
-  ck_assert_wstr_eq(arg->variableData->name, L"3");*/
+  ck_assert_eq_ts_argument(arg->tokenType);
+  ck_assert_ptr_ne(arg->name, NULL);
+  ck_assert_wstr_eq(arg->name, L"3");
 
   TS_free_tsFile(tsFile);
 END_TEST

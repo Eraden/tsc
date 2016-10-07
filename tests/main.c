@@ -98,6 +98,11 @@ int main(int argc, char **argv) {
   init_log();
   TS_setup_predefined();
 
+  ANY = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"any");
+  NUMBER = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"number");
+  OBJECT = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"Object");
+  STRING = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"string");
+
   Suite *s;
   SRunner *sr;
   int number_failed = 0;

@@ -10,11 +10,6 @@ START_TEST(parse_valid_functions)
   TSParserToken *token, *arg;
   TSFunctionData *data;
 
-  TSParserToken *ANY = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"any");
-  TSParserToken *NUMBER = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"number");
-  TSParserToken *OBJECT = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"Object");
-  TSParserToken *STRING = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"string");
-
   // example1
   token = tsFile->tokens[0];
   data = token->functionData;
@@ -116,16 +111,14 @@ START_TEST(parse_valid_functions)
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first5");
-  // ck_assert_ptr_eq(argData->type, NULL);
-//  ck_assert_ptr_eq(argData->value, NULL);
+  ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], ANY);
   arg = token->children[1];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 1);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"second5");
-  // ck_assert_ptr_eq(argData->type, NULL);
-//  ck_assert_ptr_eq(argData->value, NULL);
+  ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], ANY);
 
   token = tsFile->tokens[6];
   data = token->functionData;
@@ -142,18 +135,16 @@ START_TEST(parse_valid_functions)
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first6");
-  // ck_assert_ptr_eq(argData->type, NULL);
-//  ck_assert_ptr_ne(argData->value, NULL);
-//  ck_assert_wstr_eq(argData->value, L"1");
+  ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], ANY);
+  ck_assert_wstr_eq(arg->children[TS_VARIABLE_VALUE]->content, L"1");
   arg = token->children[1];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"second6");
-  // ck_assert_ptr_eq(argData->type, NULL);
-//  ck_assert_ptr_ne(argData->value, NULL);
-//  ck_assert_wstr_eq(argData->value, L"2");
+  ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], ANY);
+  ck_assert_wstr_eq(arg->children[TS_VARIABLE_VALUE]->content, L"2");
 
   // example8
   token = tsFile->tokens[7];
@@ -171,18 +162,14 @@ START_TEST(parse_valid_functions)
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first7");
-//  ck_assert_ptr_ne(argData->type, NULL);
-//  ck_assert_wstr_eq(argData->type, L"number");
-//  ck_assert_ptr_eq(argData->value, NULL);
+  ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], NUMBER);
   arg = token->children[1];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 1);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"second7");
-//  ck_assert_ptr_ne(argData->type, NULL);
-//  ck_assert_wstr_eq(argData->type, L"Object");
-//  ck_assert_ptr_eq(argData->value, NULL);
+  ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], OBJECT);
 
   // example9
   token = tsFile->tokens[8];
@@ -200,19 +187,16 @@ START_TEST(parse_valid_functions)
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first8");
-  ck_assert(arg->children[TS_VARIABLE_TYPE] == NUMBER);
-//  ck_assert_ptr_ne(argData->value, NULL);
-//  ck_assert_wstr_eq(argData->value, L"234");
+  ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], NUMBER);
+  ck_assert_wstr_eq(arg->children[TS_VARIABLE_VALUE]->content, L"234");
   arg = token->children[1];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"second8");
-//  ck_assert_ptr_ne(argData->type, NULL);
-//  ck_assert_wstr_eq(argData->type, L"Object");
-//  ck_assert_ptr_ne(argData->value, NULL);
-//  ck_assert_wstr_eq(argData->value, L"new Object");
+  ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], OBJECT);
+  ck_assert_eq_ts_json(arg->children[TS_VARIABLE_VALUE]->tokenType);
 
   // example10
   token = tsFile->tokens[9];

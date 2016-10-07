@@ -275,7 +275,7 @@ TS_parse_class_member(
           tokenType = TS_find_class(tsFile->file, type);
         }
         if (tokenType == NULL) {
-          tokenType = TS_find_class(tsFile->file, (const wchar_t *) L"Object");
+          tokenType = TS_find_class(tsFile->file, (const wchar_t *) L"any");
         }
         TS_push_child(bodyToken, tokenType);
 

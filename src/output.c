@@ -125,6 +125,24 @@ TS_print_for_token(
     case TS_JSON: {
       break;
     }
+    case TS_ARRAY: {
+      break;
+    }
+    case TS_FOR_VARIABLES_SECTION: {
+      break;
+    }
+    case TS_FOR_CONDITION_SECTION: {
+      break;
+    }
+    case TS_FOR_CHANGE_SECTION: {
+      break;
+    }
+    case TS_STRING: {
+      break;
+    }
+    case TS_STRING_TEMPLATE: {
+      break;
+    }
   }
 }
 
@@ -240,6 +258,24 @@ TS_string_for_token(
       break;
     }
     case TS_JSON: {
+      break;
+    }
+    case TS_ARRAY: {
+      break;
+    }
+    case TS_FOR_VARIABLES_SECTION: {
+      break;
+    }
+    case TS_FOR_CONDITION_SECTION: {
+      break;
+    }
+    case TS_FOR_CHANGE_SECTION: {
+      break;
+    }
+    case TS_STRING: {
+      break;
+    }
+    case TS_STRING_TEMPLATE: {
       break;
     }
   }
