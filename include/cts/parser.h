@@ -21,8 +21,7 @@
   ts_token_syntax_error( \
     (const wchar_t *) L"Unexpected `" type "` in global scope", \
     tsFile, token );
-#define TS_GET_TOKEN_MSG(msg, ...) if (TS_check_log_level(TS_VERBOSITY_INFO) == TRUE) \
-  log_to_file(msg, __VA_ARGS__);
+#define TS_GET_TOKEN_MSG(msg, ...) if (TS_check_log_level(TS_VERBOSITY_INFO) == TRUE) log_to_file(msg, __VA_ARGS__);
 
 typedef struct sTSParseData TSParseData;
 typedef struct sTSFunctionData TSFunctionData;
@@ -67,18 +66,19 @@ typedef enum eTSTokenType {
   TS_CASE = 26,
   TS_BREAK = 27,
   TS_FOR = 28,
-  TS_FOR_LET = 29,
+  TS_FOR_WITH_CONDITION = 29,
   TS_FOR_IN = 30,
   TS_FOR_OF = 31,
-  TS_OF = 32,
-  TS_IN = 33,
-  TS_JSON = 34,
-  TS_ARRAY = 35,
-  TS_FOR_VARIABLES_SECTION = 36,
-  TS_FOR_CONDITION_SECTION = 37,
-  TS_FOR_CHANGE_SECTION = 38,
+  TS_LOOP_VARIABLES_SECTION = 32,
+  TS_LOOP_CONDITION_SECTION = 33,
+  TS_LOOP_CHANGE_SECTION = 34,
+  TS_OF = 35,
+  TS_IN = 36,
+  TS_JSON = 37,
+  TS_ARRAY = 38,
   TS_STRING = 39,
   TS_STRING_TEMPLATE = 40,
+  TS_CALL_ARGUMENTS = 41,
   TS_UNKNOWN = 0,
 } __attribute__ ((__packed__)) TSTokenType;
 
@@ -98,11 +98,17 @@ typedef enum sTSVariableParseFlag {
   TS_PARSE_VARIABLE_VALUE = 1 << 2,
 } __attribute__((__packed__)) TSVariableParseFlag;
 
-typedef enum eTSForParseFlag {
-  TS_PARSE_FOR_KEYWORD_LET = 1 << 0,
-  TS_PARSE_FOR_ITERATION_KEYWORD = 1 << 1,
-  TS_PARSE_FOR_COLLECTION = 1 << 2,
-} TSForParseFlag;
+typedef enum eTSForIterationParseFlag {
+  TS_PARSE_FOR_VARIABLE = 0,
+  TS_PARSE_FOR_ITERATION_KEYWORD = 1 << 0,
+  TS_PARSE_FOR_COLLECTION = 1 << 1
+} TSForIterationParseFlag;
+
+typedef enum eTSForWithConditionParseFlag {
+  TS_PARSE_FOR_VARIABLES = 0,
+  TS_PARSE_FOR_CONDITION = 1 << 0,
+  TS_PARSE_FOR_CHANGE = 1 << 1,
+} TSForWithConditionParseFlag;
 
 typedef enum eTSModifier {
   TS_MODIFIER_NONE = 0,
@@ -124,7 +130,6 @@ typedef enum eTSVariableChild {
 } TSVariableChild;
 
 typedef struct sTSKeyword {
-  TSTokenType type;
   const wchar_t *str;
   TS_token_build_fn callback;
 } TSKeyword;
@@ -190,6 +195,10 @@ unsigned char TS_name_is_valid(const wchar_t *name);
 void TS_push_child(TSParserToken *token, TSParserToken *child);
 
 void TS_free_unknown(const TSParserToken *token);
+
+TSParserToken *TS_parse_call_arguments(TSFile *tsFile, TSParseData *tsParseData);
+
+void TS_free_call_arguments(const TSParserToken *token);
 
 TSParserToken *TS_parse_string(TSFile *tsFile, TSParseData *tsParseData);
 

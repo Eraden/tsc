@@ -4,8 +4,7 @@ static pthread_mutex_t
 __attribute__(( visibility("hidden")))
     REGISTER_CLASS_MUTEX_LOCK, REGISTER_FILE_MUTEX_LOCK, TS_PREDEFINED_MUTEX_LOCK;
 
-static RegisterCollection
-__attribute__(( visibility("hidden")))
+RegisterCollection
 TS_REGISTER = NULL;
 
 static u_long
@@ -106,7 +105,6 @@ TS_register_class(
 }
 
 TSParserToken *
-__attribute__(( __unused__ ))
 TS_find_class(
     const wchar_t *file,
     const wchar_t *name

@@ -107,7 +107,7 @@ TS_print_for_token(
     case TS_FOR: {
       break;
     }
-    case TS_FOR_LET: {
+    case TS_FOR_WITH_CONDITION: {
       break;
     }
     case TS_FOR_IN: {
@@ -128,13 +128,13 @@ TS_print_for_token(
     case TS_ARRAY: {
       break;
     }
-    case TS_FOR_VARIABLES_SECTION: {
+    case TS_LOOP_VARIABLES_SECTION: {
       break;
     }
-    case TS_FOR_CONDITION_SECTION: {
+    case TS_LOOP_CONDITION_SECTION: {
       break;
     }
-    case TS_FOR_CHANGE_SECTION: {
+    case TS_LOOP_CHANGE_SECTION: {
       break;
     }
     case TS_STRING: {
@@ -242,7 +242,7 @@ TS_string_for_token(
     case TS_FOR: {
       break;
     }
-    case TS_FOR_LET: {
+    case TS_FOR_WITH_CONDITION: {
       break;
     }
     case TS_FOR_IN: {
@@ -263,13 +263,13 @@ TS_string_for_token(
     case TS_ARRAY: {
       break;
     }
-    case TS_FOR_VARIABLES_SECTION: {
+    case TS_LOOP_VARIABLES_SECTION: {
       break;
     }
-    case TS_FOR_CONDITION_SECTION: {
+    case TS_LOOP_CONDITION_SECTION: {
       break;
     }
-    case TS_FOR_CHANGE_SECTION: {
+    case TS_LOOP_CHANGE_SECTION: {
       break;
     }
     case TS_STRING: {

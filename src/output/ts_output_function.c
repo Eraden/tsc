@@ -14,8 +14,6 @@ TS_print_for_function_head(
 
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat"
 static void
 __attribute(( visibility("hidden")))
 __attribute__(( section("output-function")))
@@ -34,7 +32,6 @@ TS_print_for_function_arg_default(
     TSOutputSettings outputSettings
 ) {
 }
-#pragma clang diagnostic pop
 
 static void
 __attribute(( visibility("hidden")))

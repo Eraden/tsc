@@ -7,7 +7,7 @@ function b() {
 }
 
 function c() {
-  return new Object();
+  return {};
 }
 
 function d() {

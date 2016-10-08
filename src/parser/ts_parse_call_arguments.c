@@ -1,15 +1,14 @@
-#include <cts/parser.h>
 #include <cts/register.h>
 
 TSParserToken *
-TS_parse_new(
+TS_parse_call_arguments(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TS_TOKEN_BEGIN(TS_NEW, tsParseData)
-
+  TS_TOKEN_BEGIN(TS_CALL_ARGUMENTS, tsParseData)
     volatile unsigned char proceed = TRUE;
     const wchar_t *tok = NULL;
+
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
@@ -41,54 +40,35 @@ TS_parse_new(
           }
           break;
         }
-        case L';': {
-          if (token->childrenSize == 0) {
-            free((void *) tok);
-            ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found `;`.", tsFile, token);
-            proceed = FALSE;
-            break;
-          } else {
-            proceed = FALSE;
-            TS_put_back(tsParseData->stream, tok);
-
-            free((void *) tok);
-          }
-          break;
-        }
-        case L'(': {
-          tsParseData->token = tok;
-          TSParserToken *arguments = TS_parse_call_arguments(tsFile, tsParseData);
-          if (arguments) {
-            TS_push_child(token, arguments);
-          } else {
-            ts_token_syntax_error((const wchar_t *) L"Expecting call arguments but nothing was found", tsFile, token);
-          }
+        case L')': {
+          TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
+          proceed = FALSE;
           break;
         }
         default: {
-          TSParserToken *classToken = TS_find_class(tsFile->file, tok);
-          if (classToken) {
-            TS_push_child(token, classToken);
+          TS_put_back(tsFile->stream, tok);
+          tsParseData->token = tok;
+          TSParserToken *child = TS_parse_argument(tsFile, tsParseData);
+          if (child == NULL) {
+            ts_token_syntax_error((const wchar_t *) L"Expecting call argument but nothing was found", tsFile, token);
+          } else if (child->tokenType != TS_ARGUMENT) {
+            ts_token_syntax_error((const wchar_t *) L"Unexpected token while parsing call arguments", tsFile, child);
           } else {
-            ts_token_syntax_error((const wchar_t *) L"Instantialization of unknown class", tsFile, token);
+            TS_push_child(token, child);
           }
-
           free((void *) tok);
           break;
         }
       }
     }
-
-  TS_TOKEN_END(TS_NEW)
+  TS_TOKEN_END(TS_CALL_ARGUMENTS)
 }
 
 void
-TS_free_new(
+TS_free_call_arguments(
     const TSParserToken *token
 ) {
-  TS_free_children_from(token, 1);
-
-  if (token->data) free(token->data);
+  TS_free_children(token);
   free((void *) token);
 }

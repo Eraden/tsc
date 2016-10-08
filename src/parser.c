@@ -15,10 +15,11 @@ wchar_t *
 TS_clone_string(
     const wchar_t *string
 ) {
-  if (string == NULL) return NULL;
-  wchar_t *clone = calloc(sizeof(wchar_t), wcslen(string) + TS_STRING_END);
-  wcscpy(clone, string);
-
+  wchar_t *clone = NULL;
+  if (string) {
+    clone = calloc(sizeof(wchar_t), wcslen(string) + TS_STRING_END);
+    wcscpy(clone, string);
+  }
   return clone;
 }
 
@@ -42,34 +43,34 @@ TS_build_parser_token(
 }
 
 static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
-    {TS_VAR,               (wchar_t *) L"var",        TS_parse_var},
-    {TS_LET,               (wchar_t *) L"let",        TS_parse_let},
-    {TS_CONST,             (wchar_t *) L"const",      TS_parse_const},
-    {TS_CLASS,             (wchar_t *) L"class",      TS_parse_class},
-    {TS_FUNCTION,          (wchar_t *) L"function",   TS_parse_function},
-    {TS_ARROW,             (wchar_t *) L"=>",         TS_parse_arrow},
-    {TS_IF,                (wchar_t *) L"if",         TS_parse_if},
-    {TS_ELSE,              (wchar_t *) L"else",       TS_parse_else},
-    {TS_RETURN,            (wchar_t *) L"return",     TS_parse_return},
-    {TS_DECORATOR,         (wchar_t *) L"@",          TS_parse_decorator},
-    {TS_IMPORT,            (wchar_t *) L"import",     TS_parse_import},
-    {TS_EXPORT,            (wchar_t *) L"export",     TS_parse_export},
-    {TS_DEFAULT,           (wchar_t *) L"default",    TS_parse_default},
-    {TS_SCOPE,             (wchar_t *) L"{",          TS_parse_scope_or_json},
-    {TS_EXTENDS,           (wchar_t *) L"extends",    TS_parse_extends},
-    {TS_IMPLEMENTS,        (wchar_t *) L"implements", TS_parse_implements},
-    {TS_NEW,               (wchar_t *) L"new",        TS_parse_new},
-    {TS_INLINE_COMMENT,    (wchar_t *) L"//",         TS_parse_inline_comment},
-    {TS_MULTILINE_COMMENT, (wchar_t *) L"/*",         TS_parse_multiline_comment},
-    {TS_SWITCH,            (wchar_t *) L"switch",     TS_parse_switch},
-    {TS_CASE,              (wchar_t *) L"case",       TS_parse_case},
-    {TS_BREAK,             (wchar_t *) L"break",      TS_parse_break},
-    {TS_FOR,               (wchar_t *) L"for",        TS_parse_for},
-    {TS_OF,                (wchar_t *) L"of",         TS_parse_of},
-    {TS_IN,                (wchar_t *) L"in",         TS_parse_in},
-    {TS_ARRAY,             (wchar_t *) L"[",          TS_parse_array},
-    {TS_STRING,            (wchar_t *) L"\"",         TS_parse_string},
-    {TS_STRING,            (wchar_t *) L"\'",         TS_parse_string},
+    {(wchar_t *) L"var",        TS_parse_var},
+    {(wchar_t *) L"let",        TS_parse_let},
+    {(wchar_t *) L"const",      TS_parse_const},
+    {(wchar_t *) L"class",      TS_parse_class},
+    {(wchar_t *) L"function",   TS_parse_function},
+    {(wchar_t *) L"=>",         TS_parse_arrow},
+    {(wchar_t *) L"if",         TS_parse_if},
+    {(wchar_t *) L"else",       TS_parse_else},
+    {(wchar_t *) L"return",     TS_parse_return},
+    {(wchar_t *) L"@",          TS_parse_decorator},
+    {(wchar_t *) L"import",     TS_parse_import},
+    {(wchar_t *) L"export",     TS_parse_export},
+    {(wchar_t *) L"default",    TS_parse_default},
+    {(wchar_t *) L"{",          TS_parse_scope_or_json},
+    {(wchar_t *) L"extends",    TS_parse_extends},
+    {(wchar_t *) L"implements", TS_parse_implements},
+    {(wchar_t *) L"new",        TS_parse_new},
+    {(wchar_t *) L"//",         TS_parse_inline_comment},
+    {(wchar_t *) L"/*",         TS_parse_multiline_comment},
+    {(wchar_t *) L"switch",     TS_parse_switch},
+    {(wchar_t *) L"case",       TS_parse_case},
+    {(wchar_t *) L"break",      TS_parse_break},
+    {(wchar_t *) L"for",        TS_parse_for},
+    {(wchar_t *) L"of",         TS_parse_of},
+    {(wchar_t *) L"in",         TS_parse_in},
+    {(wchar_t *) L"[",          TS_parse_array},
+    {(wchar_t *) L"\"",         TS_parse_string},
+    {(wchar_t *) L"\'",         TS_parse_string},
 };
 
 unsigned char TS_is_keyword(const wchar_t *str) {
@@ -656,7 +657,7 @@ TS_free_tsToken(
       TS_free_break(token);
       break;
     case TS_FOR:
-    case TS_FOR_LET:
+    case TS_FOR_WITH_CONDITION:
     case TS_FOR_IN:
     case TS_FOR_OF:
       TS_free_for(token);
@@ -674,21 +675,25 @@ TS_free_tsToken(
     case TS_ARRAY:
       TS_free_array(token);
       break;
-    case TS_FOR_VARIABLES_SECTION: {
+    case TS_LOOP_VARIABLES_SECTION: {
       TS_free_unknown(token);
       break;
     }
-    case TS_FOR_CONDITION_SECTION: {
+    case TS_LOOP_CONDITION_SECTION: {
       TS_free_unknown(token);
       break;
     }
-    case TS_FOR_CHANGE_SECTION: {
+    case TS_LOOP_CHANGE_SECTION: {
       TS_free_unknown(token);
       break;
     }
     case TS_STRING_TEMPLATE:
     case TS_STRING: {
       TS_free_string(token);
+      break;
+    }
+    case TS_CALL_ARGUMENTS: {
+      TS_free_call_arguments(token);
       break;
     }
   }

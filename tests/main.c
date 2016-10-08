@@ -101,7 +101,10 @@ int main(int argc, char **argv) {
   ANY = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"any");
   NUMBER = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"number");
   OBJECT = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"Object");
-  STRING = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"string");
+  STRING_RETURN_TYPE = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"string");
+  STRING = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"String");
+  FUNCTION = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"Function");
+  ARRAY = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"Array");
 
   Suite *s;
   SRunner *sr;

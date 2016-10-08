@@ -18,4 +18,7 @@
 TSParserToken *ANY;
 TSParserToken *NUMBER;
 TSParserToken *OBJECT;
+TSParserToken *STRING_RETURN_TYPE;
 TSParserToken *STRING;
+TSParserToken *FUNCTION;
+TSParserToken *ARRAY;
