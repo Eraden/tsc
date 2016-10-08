@@ -163,11 +163,9 @@ TS_destroy_register(
   pthread_mutex_unlock(&REGISTER_FILE_MUTEX_LOCK);
 }
 
-void
-TS_setup_predefined(
-    void
-) {
-  pthread_mutex_lock(&TS_PREDEFINED_MUTEX_LOCK);
+static void
+__attribute__((visibility("hidden")))
+__TS_setup_predefined(void) {
   if (TS_PREDEFINED_REGISTER == NULL) {
     TS_PREDEFINED_REGISTER = calloc(sizeof(TSRegisterEntry *), 1);
 
@@ -184,6 +182,14 @@ TS_setup_predefined(
     swap(u_long, TS_PREDEFINED_REGISTER_SIZE, TS_REGISTER_SIZE);
     swap(RegisterCollection, TS_PREDEFINED_REGISTER, TS_REGISTER);
   }
+}
+
+void
+TS_setup_predefined(
+    void
+) {
+  pthread_mutex_lock(&TS_PREDEFINED_MUTEX_LOCK);
+  TS_suppress_logging(__TS_setup_predefined);
   pthread_mutex_unlock(&TS_PREDEFINED_MUTEX_LOCK);
 }
 

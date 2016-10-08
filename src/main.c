@@ -16,6 +16,7 @@ int main(int argc, const char **argv) {
   TSFile *tsFile = TS_parse_stream(settings.fileName, settings.stream);
 
   TSFileSanity sanity = tsFile->sanity;
+
   if (tsFile->stream) {
     fclose(tsFile->stream);
     tsFile->stream = NULL;

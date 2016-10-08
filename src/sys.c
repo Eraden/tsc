@@ -170,13 +170,19 @@ TS_parse_arguments(
         log_error((wchar_t *) L"Expecting code but no more arguments found\n");
         exit(EXIT_FAILURE);
       }
+
       arg = argv[++i];
       FILE *file = tmpfile();
-      fprintf(file, "%s", arg);
-      fflush(file);
-      rewind(file);
-      settings.stream = file;
-      settings.fileName = "(code eval)";
+      if (file) {
+        fwprintf(file, (const wchar_t *) L"%s\n\0", arg);
+        fflush(file);
+        rewind(file);
+        settings.stream = file;
+        settings.fileName = "(code eval)";
+      } else {
+        fprintf(stderr, "Evaluation failed due failure of creating temp file.\nOS error: %s\n", strerror(errno));
+        exit(6);
+      }
     } else if (strcmp(arg, "-o") == 0 || strcmp(arg, "--out") == 0) {
       if (i + 1 >= argc) {
         log_error((wchar_t *) L"Expecting output file name but no more arguments found\n");
@@ -216,4 +222,11 @@ wchar_t *TS_join_strings(const wchar_t *a, const wchar_t *b) {
   if (a) wcscat(buffer, a);
   if (b) wcscat(buffer, b);
   return buffer;
+}
+
+void TS_suppress_logging(void (*fn)(void)) {
+  TSVerbosity memo = TS_VERBOSITY_OFF;
+  swap(TSVerbosity, ts_current_log_level, memo);
+  fn();
+  swap(TSVerbosity, ts_current_log_level, memo);
 }

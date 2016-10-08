@@ -143,6 +143,9 @@ TS_print_for_token(
     case TS_STRING_TEMPLATE: {
       break;
     }
+    case TS_CALL_ARGUMENTS: {
+      break;
+    }
   }
 }
 
@@ -276,6 +279,9 @@ TS_string_for_token(
       break;
     }
     case TS_STRING_TEMPLATE: {
+      break;
+    }
+    case TS_CALL_ARGUMENTS: {
       break;
     }
   }

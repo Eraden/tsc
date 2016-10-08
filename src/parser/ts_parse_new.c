@@ -66,6 +66,12 @@ TS_parse_new(
           free((void *) tok);
           break;
         }
+        case L')': {
+          TS_put_back(tsFile->stream, tok);
+          proceed = FALSE;
+          free((void *) tok);
+          break;
+        }
         default: {
           TSParserToken *classToken = TS_find_class(tsFile->file, tok);
           if (classToken) {

@@ -514,6 +514,7 @@ TS_parse_stream(
     wchar_t *msg = (wchar_t *) L"File not found!";
     tsFile->errorReason = calloc(sizeof(wchar_t), wcslen(msg) + 1);
     wcscpy(tsFile->errorReason, msg);
+    fprintf(stderr, "OS error: %s\n", strerror(errno));
   }
 
   TS_register_file(tsFile);
@@ -528,7 +529,7 @@ TS_parse_stream(
   if (tsFile->sanity != TS_FILE_VALID)
     return tsFile;
 
-  const wchar_t *tok;
+  const wchar_t *tok = NULL;
   while (1) {
     TS_LOOP_SANITY_CHECK(tsFile);
 

@@ -37,12 +37,7 @@ START_TEST(parse_valid_return)
   ck_assert_uint_eq(ret->childrenSize, 1);
   ck_assert_ptr_ne(ret->children, NULL);
   returned = ret->children[0];
-  ck_assert(returned->tokenType == TS_NEW);
-  ck_assert_ptr_eq(returned->data, NULL);
-  ck_assert_uint_eq(returned->childrenSize, 2);
-  ck_assert_ptr_ne(returned->children, NULL);
-  TSParserToken *classToken = returned->children[0];
-  ck_assert_eq_ts_class(classToken->tokenType);
+  ck_assert_eq_ts_json(returned->tokenType);
 
   token = tsFile->tokens[3];
   ck_assert(token->tokenType == TS_FUNCTION);
