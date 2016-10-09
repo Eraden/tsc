@@ -18,34 +18,34 @@ START_TEST(parse_class_with_complex_fields)
   ck_assert_ulong_eq(size, validChildrenSize);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_NONE);
+  ck_assert(child->modifiers == TS_MODIFIER_NONE);
   ck_assert(child->tokenType == TS_INLINE_COMMENT);
   ck_assert_wstr_eq(child->name, L" undefined first");
 
   // 1
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_1");
 //  ck_assert_ptr_eq(fieldData->type, NULL);
 //  ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_1");
 //  ck_assert_ptr_eq(fieldData->type, NULL);
 //  ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_1");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
 //  ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_1");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -53,28 +53,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 2
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_2");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
 //  ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_2");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
 //  ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_2");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
 //  ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_2");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -82,28 +82,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 3
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_3");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
 //  ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_3");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
 //  ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_3");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
 //  ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_3");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -111,28 +111,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 4
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_4");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
 //  ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_4");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
 //  ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_4");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
 //  ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_4");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -140,28 +140,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 5
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_5");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_5");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_5");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_5");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -169,28 +169,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 6
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_6");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_6");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_6");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_6");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -198,33 +198,33 @@ START_TEST(parse_class_with_complex_fields)
 
   // comment
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_NONE);
+  ck_assert(child->modifiers == TS_MODIFIER_NONE);
   ck_assert(child->tokenType == TS_INLINE_COMMENT);
 
   // 7
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_7");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_7");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_7");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_7");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -232,28 +232,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 8
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_8");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_8");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_8");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_8");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -261,28 +261,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 9
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_9");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_9");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_9");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_9");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -290,28 +290,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 10
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_10");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_10");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_10");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_10");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -319,28 +319,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 11
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_11");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_11");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_11");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_11");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -348,28 +348,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 12
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_12");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_12");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_12");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_12");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -377,35 +377,35 @@ START_TEST(parse_class_with_complex_fields)
 
   // comment
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_NONE);
+  ck_assert(child->modifiers == TS_MODIFIER_NONE);
   ck_assert(child->tokenType == TS_INLINE_COMMENT);
   ck_assert_ptr_ne(child->data, NULL);
   ck_assert_wstr_eq(child->data, L" protected first");
 
   // 13
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_13");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_13");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_13");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_13");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -413,28 +413,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 14
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_14");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_14");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_14");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_14");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -442,28 +442,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 15
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_15");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_15");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_15");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_15");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -471,28 +471,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 16
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_16");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_16");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_16");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_16");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -500,28 +500,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 17
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_17");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_17");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_17");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_17");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -529,28 +529,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 18
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_18");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_18");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_18");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_18");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -558,35 +558,35 @@ START_TEST(parse_class_with_complex_fields)
 
   // comment
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_NONE);
+  ck_assert(child->modifiers == TS_MODIFIER_NONE);
   ck_assert(child->tokenType == TS_INLINE_COMMENT);
   ck_assert_ptr_ne(child->data, NULL);
   ck_assert_wstr_eq(child->data, L" public first");
 
   // 19
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_19");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_19");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_19");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_19");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -594,28 +594,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 20
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_20");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_20");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_20");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_20");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -623,28 +623,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 21
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_21");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_21");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_21");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_21");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -652,28 +652,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 22
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_22");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_22");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_22");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_22");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -681,28 +681,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 23
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_23");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_23");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_23");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_23");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
@@ -710,28 +710,28 @@ START_TEST(parse_class_with_complex_fields)
 
   // 24
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PUBLIC);
+  ck_assert(child->modifiers == TS_MODIFIER_PUBLIC);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"public_field_24");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PROTECTED);
+  ck_assert(child->modifiers == TS_MODIFIER_PROTECTED);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"protected_field_24");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex++];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"undefined_field_24");
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
   child = token->children[childIndex];
-  ck_assert(child->visibility == TS_MODIFIER_PRIVATE);
+  ck_assert(child->modifiers == TS_MODIFIER_PRIVATE);
   ck_assert_eq_ts_class_field(child->tokenType);
   ck_assert_wstr_eq(child->name, L"private_field_24");
   //  ck_assert_ptr_eq(fieldData->type, NULL);

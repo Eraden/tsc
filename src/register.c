@@ -74,7 +74,7 @@ TS_register_remove_file(
 }
 
 void
-TS_register_class(
+TS_register_type(
     TSFile *file,
     TSParserToken *token
 ) {
@@ -105,10 +105,13 @@ TS_register_class(
 }
 
 TSParserToken *
-TS_find_class(
+TS_find_type(
     const wchar_t *file,
     const wchar_t *name
 ) {
+  if (name == NULL) {
+    return NULL;
+  }
   TSParserToken *result = NULL;
 
   pthread_mutex_lock(&REGISTER_CLASS_MUTEX_LOCK);
@@ -119,7 +122,7 @@ TS_find_class(
     if (file == NULL || wcscmp(entry->tsFile->file, file) == 0) {
       for (u_long clsIndex = 0; clsIndex < entry->listSize; clsIndex++) {
         TSParserToken *cls = entry->classList[clsIndex];
-        if (wcscmp(cls->classData->name, name) == 0) {
+        if (wcscmp(cls->name, name) == 0) {
           result = cls;
           goto exit_find_class;
         }
@@ -131,7 +134,7 @@ TS_find_class(
     TSRegisterEntry *entry = TS_PREDEFINED_REGISTER[entryIndex];
     for (u_long clsIndex = 0; clsIndex < entry->listSize; clsIndex++) {
       TSParserToken *cls = entry->classList[clsIndex];
-      if (wcscmp(cls->classData->name, name) == 0) {
+      if (wcscmp(cls->name, name) == 0) {
         result = cls;
         goto exit_find_class;
       }

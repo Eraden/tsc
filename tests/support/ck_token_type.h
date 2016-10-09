@@ -70,6 +70,7 @@ _TS_type_to_string(const TSTokenType type) {
 #define ck_assert_eq_ts_const(type) ck_assert_tsType_eq(type, TS_CONST)
 #define ck_assert_eq_ts_class(type) ck_assert_tsType_eq(type, TS_CLASS)
 #define ck_assert_eq_ts_function(type) ck_assert_tsType_eq(type, TS_FUNCTION)
+#define ck_assert_eq_ts_function_return_type(type) ck_assert_tsType_eq(type, TS_FUNCTION_RETURN_TYPE)
 #define ck_assert_eq_ts_arrow(type) ck_assert_tsType_eq(type, TS_ARROW)
 #define ck_assert_eq_ts_if(type) ck_assert_tsType_eq(type, TS_IF)
 #define ck_assert_eq_ts_else(type) ck_assert_tsType_eq(type, TS_ELSE)

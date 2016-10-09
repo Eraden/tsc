@@ -41,7 +41,7 @@ TS_parse_argument(
 
     token->name = NULL;
     TSParserToken *value = NULL;
-    TSParserToken *type = TS_find_class(tsFile->file, (const wchar_t *) L"any");
+    TSParserToken *type = TS_find_type(tsFile->file, (const wchar_t *) L"any");
     TS_push_child(token, type);
 
     volatile unsigned char proceed = TRUE;
@@ -124,13 +124,13 @@ TS_parse_argument(
         }
         default: {
           if (wcscmp(tok, (wchar_t *) L"private") == 0) {
-            token->visibility = TS_MODIFIER_PRIVATE;
+            token->modifiers = TS_MODIFIER_PRIVATE;
 
           } else if (wcscmp(tok, (wchar_t *) L"protected") == 0) {
-            token->visibility = TS_MODIFIER_PROTECTED;
+            token->modifiers = TS_MODIFIER_PROTECTED;
 
           } else if (wcscmp(tok, (wchar_t *) L"public") == 0) {
-            token->visibility = TS_MODIFIER_PUBLIC;
+            token->modifiers = TS_MODIFIER_PUBLIC;
 
           } else if (parseFlag == TS_PARSE_VARIABLE_NAME) {
             wchar_t *newPointer = TS_join_strings(token->name, tok);
@@ -152,7 +152,7 @@ TS_parse_argument(
             TS_MOVE_BY(tsParseData, tok);
             // Find class if possible
             if (tok[0] != L'(') {
-              type = TS_find_class(tsFile->file, tok);
+              type = TS_find_type(tsFile->file, tok);
               if (type) {
                 token->children[TS_VARIABLE_TYPE] = type;
               }

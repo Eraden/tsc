@@ -82,6 +82,30 @@ ts_token_syntax_error(
 }
 
 void
+ts_token_syntax_error_info(
+    struct sTSFile *tsFile,
+    const wchar_t *format,
+    const wchar_t *msg
+) {
+  u_long len = wcslen(msg) + wcslen(format) + 2;
+  wchar_t *formatted = calloc(sizeof(wchar_t), len);
+  swprintf(formatted, len, format, msg);
+  if (tsFile->errorReason) {
+    wchar_t *newPointer = NULL;
+    newPointer = TS_join_strings(tsFile->errorReason, (const wchar_t *) L"\n");
+    free(tsFile->errorReason);
+    tsFile->errorReason = newPointer;
+    newPointer = TS_join_strings(tsFile->errorReason, formatted);
+    free(tsFile->errorReason);
+    tsFile->errorReason = newPointer;
+  }
+
+  log_error((wchar_t *) L"    %ls\n", formatted);
+
+  free(formatted);
+}
+
+void
 ts_log_position(
     const wchar_t *file,
     const u_long character,
@@ -225,8 +249,110 @@ wchar_t *TS_join_strings(const wchar_t *a, const wchar_t *b) {
 }
 
 void TS_suppress_logging(void (*fn)(void)) {
-  TSVerbosity memo = TS_VERBOSITY_OFF;
+//  TSVerbosity memo = TS_VERBOSITY_OFF;
+  TSVerbosity memo = TS_VERBOSITY_DEBUG;
   swap(TSVerbosity, ts_current_log_level, memo);
   fn();
   swap(TSVerbosity, ts_current_log_level, memo);
+}
+
+wchar_t *
+TS_resolve_directory(
+    const wchar_t *absolute_path
+) {
+  if (absolute_path == NULL) return NULL;
+  long len = wcslen(absolute_path);
+  wchar_t *res = NULL;
+  const wchar_t *pointer = absolute_path + len;
+  wchar_t c;
+  while (len - 1 >= 0) {
+    pointer -= 1;
+    c = pointer[0];
+    if (c == L'/') break;
+    len -= 1;
+  }
+  res = calloc(sizeof(wchar_t), (u_long) (len + TS_STRING_END));
+  memcpy(res, absolute_path, sizeof(wchar_t) * len);
+  return res;
+}
+
+wchar_t *
+TS_resolve_file(
+    const wchar_t *absolute_path
+) {
+  if (absolute_path == NULL) return NULL;
+  long index = wcslen(absolute_path);
+  u_long len = 0;
+  wchar_t *res = NULL;
+  const wchar_t *pointer = absolute_path + wcslen(absolute_path);
+  wchar_t c;
+  while (index - 1 >= 0) {
+    pointer -= 1;
+    c = pointer[0];
+    if (c == L'/') break;
+    index -= 1;
+    len += 1;
+  }
+  res = calloc(sizeof(wchar_t), (u_long) (len + TS_STRING_END));
+  memcpy(res, absolute_path + index, sizeof(wchar_t) * len);
+  return res;
+}
+
+wchar_t *
+TS_resolve_path(
+    const wchar_t *absolute_path,
+    const wchar_t *unresolved_path
+) {
+  wchar_t *resolved_path = NULL;
+  if (absolute_path != NULL && unresolved_path != NULL) {
+    const wchar_t *pointer_for_absolute = absolute_path;
+    const wchar_t *pointer_for_unresolved = unresolved_path;
+    long absolute_len = wcslen(pointer_for_absolute);
+    long unresolved_start_point = 0;
+    long unresolved_len = wcslen(unresolved_path);
+
+    wchar_t c = 0;
+    while (1) {
+      c = pointer_for_unresolved[0];
+
+      if (c == L'.' && unresolved_start_point + 1 <= unresolved_len && pointer_for_unresolved[1] == L'.') {
+        pointer_for_unresolved += 1;
+        unresolved_start_point += 1;
+        unresolved_len -= 3;
+        const wchar_t *path = pointer_for_absolute + absolute_len - 1;
+        wchar_t cutC = 0;
+        while (1) {
+          if (absolute_len - 1 <= 0) {
+            absolute_len = -1;
+            break;
+          }
+          path -= 1;
+          cutC = path[0];
+          if (cutC == L'/') {
+            absolute_len -= 1;
+            break;
+          }
+          absolute_len -= 1;
+        }
+        if (absolute_len == -1) {
+          break;
+        }
+      }
+      if (c != L'.' && c != L'/') {
+        unresolved_start_point -= 1;
+        break;
+      }
+      unresolved_start_point += 1;
+      pointer_for_unresolved += 1;
+    }
+    u_long size = absolute_len + wcslen(unresolved_path) - unresolved_start_point + 1;
+    if (absolute_len != -1)
+      resolved_path = calloc(sizeof(wchar_t), size);
+    if (absolute_len > 1)
+      memcpy(resolved_path, absolute_path, sizeof(wchar_t) * absolute_len);
+    if (absolute_len != -1 && wcslen(unresolved_path) - 1 > unresolved_start_point)
+      wcscat(resolved_path, unresolved_path + unresolved_start_point + 1);
+  }
+
+  return resolved_path;
 }

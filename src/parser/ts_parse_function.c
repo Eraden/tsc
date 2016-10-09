@@ -1,4 +1,15 @@
 #include <cts/parser.h>
+#include <cts/register.h>
+
+static TSParserToken *
+__attribute__(( visibility("hidden")))
+TS_parse_function_return_type(
+    TSFile *__attribute__((__unused__))tsFile,
+    TSParseData *tsParseData
+) {
+  TS_TOKEN_BEGIN(TS_FUNCTION_RETURN_TYPE, tsParseData);
+  TS_TOKEN_END(TS_FUNCTION_RETURN_TYPE)
+}
 
 static void
 __attribute__(( visibility("hidden")))
@@ -73,10 +84,10 @@ TS_parse_function_lookup_return_type(
     TSParseData *tsParseData
 ) {
   TSParserToken *token = tsParseData->parentTSToken;
-  TSFunctionData *data = token->data;
   const wchar_t *tok;
   volatile unsigned char proceed = TRUE;
   volatile unsigned char foundColon = FALSE;
+  TSParserToken *type = NULL;
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -143,7 +154,7 @@ TS_parse_function_lookup_return_type(
           break;
         }
         case L'{': {
-          if (data->returnType == NULL) {
+          if (type == NULL) {
             free((void *) tok);
             ts_token_syntax_error(
                 (const wchar_t *) L"Found colon but type wasn't declared while parsing function!",
@@ -158,7 +169,7 @@ TS_parse_function_lookup_return_type(
           break;
         }
         default: {
-          if (data->returnType != NULL) {
+          if (type != NULL) {
             free((void *) tok);
             ts_token_syntax_error(
                 (wchar_t *) L"Unexpected token while parsing function return type. Return type was already defined!",
@@ -168,14 +179,21 @@ TS_parse_function_lookup_return_type(
             proceed = FALSE;
           } else if (!TS_name_is_valid(tok)) {
             free((void *) tok);
-            ts_token_syntax_error(
-                (wchar_t *) L"Invalid type name for function return type!",
-                tsFile,
-                token
-            );
+            ts_token_syntax_error((wchar_t *) L"Invalid type name for function return type!", tsFile, token);
             proceed = FALSE;
           } else {
-            data->returnType = TS_clone_string(tok);
+            TSParserToken *classToken = TS_find_type(tsFile->file, tok);
+            if (classToken) {
+              tsParseData->token = tok;
+              type = TS_parse_function_return_type(tsFile, tsParseData);
+              TS_push_child(type, classToken);
+              TS_push_child(tsParseData->parentTSToken, type);
+            } else {
+              TS_UNKNOWN_CLASS(tsFile, token, tok);
+              tsParseData->token = tok;
+              type = TS_build_parser_token(TS_CLASS, tsParseData);
+              tsParseData->parentTSToken = type->parent;
+            }
             TS_MOVE_BY(tsParseData, tok);
             free((void *) tok);
           }
@@ -250,12 +268,6 @@ TS_parse_function(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN(TS_FUNCTION, tsParseData)
-
-    TSFunctionData *functionData = calloc(sizeof(TSFunctionData), 1);
-    functionData->name = NULL;
-    functionData->returnType = NULL;
-    token->data = functionData;
-
     const wchar_t *tok;
     volatile unsigned char proceed = TRUE;
 
@@ -302,36 +314,24 @@ TS_parse_function(
                 break;
               }
               default: {
-                ts_token_syntax_error(
-                    (const wchar_t *) L"Missing function name",
-                    tsFile,
-                    token
-                );
+                ts_token_syntax_error((const wchar_t *) L"Missing function name", tsFile, token);
                 proceed = FALSE;
               }
             }
           } else {
-            free((void *) tok);
-            ts_token_syntax_error(
-                (const wchar_t *) L"Missing function name",
-                tsFile,
-                token
-            );
+            TS_MISSING_NAME(tsFile, token, L"function");
             proceed = FALSE;
+            free((void *) tok);
           }
           break;
         }
         default: {
           if (TS_name_is_valid(tok)) {
-            functionData->name = TS_clone_string(tok);
+            token->name = TS_clone_string(tok);
             free((void *) tok);
           } else {
             free((void *) tok);
-            ts_token_syntax_error(
-                (wchar_t *) L"Invalid function name",
-                tsFile,
-                token
-            );
+            ts_token_syntax_error((wchar_t *) L"Invalid function name", tsFile, token);
           }
           proceed = FALSE;
           break;
@@ -352,10 +352,16 @@ TS_free_function(
 ) {
   TS_free_children(token);
 
-  TSFunctionData *data = token->functionData;
+  if (token->name != NULL) {
+    free((void *) token->name);
+  }
   free((void *) token);
-  if (data == NULL) return;
-  if (data->name != NULL) free((void *) data->name);
-  if (data->returnType != NULL) free((void *) data->returnType);
-  free(data);
+}
+
+void
+TS_free_function_return_type(
+    const TSParserToken *token
+) {
+  TS_free_children_from(token, 1);
+  free((void *) token);
 }

@@ -3,6 +3,7 @@
 
 #include "parser/parse_variables.h"
 #include "parser/classes.h"
+#include "parser/parse_extends.h"
 #include "parser/parse_function.h"
 #include "parser/parse_if.h"
 #include "parser/parse_else.h"
@@ -17,6 +18,7 @@
 #include "parser/for/parse_for_let.h"
 #include "parser/for/parse_for_of.h"
 #include "parser/for/parse_for_in.h"
+#include "core/sys.h"
 
 static char **only = NULL;
 static u_long onlySize = 0;
@@ -31,12 +33,13 @@ unsigned char hasOnly(char *str) {
 
 Suite *class_suite(void) {
   Suite *suite = suite_create("Parser");
-
+  if (hasOnly("sys")) parse_sys_suite(suite);
   if (hasOnly("variable")) parse_variables_suite(suite);
   if (hasOnly("function")) parse_functions_suite(suite);
   if (hasOnly("if")) parse_if_conditions_suite(suite);
   if (hasOnly("else")) parse_else_conditions_suite(suite);
   if (hasOnly("class")) parse_classes_suite(suite);
+  if (hasOnly("class") || hasOnly("extends")) parse_extends_suite(suite);
   if (hasOnly("comment") || hasOnly("inline_comment")) parse_inline_comment_suite(suite);
   if (hasOnly("comment") || hasOnly("multiline_comment")) parse_multiline_comment_suite(suite);
   if (hasOnly("new")) parse_new_suite(suite);
@@ -98,13 +101,13 @@ int main(int argc, char **argv) {
   init_log();
   TS_setup_predefined();
 
-  ANY = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"any");
-  NUMBER = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"number");
-  OBJECT = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"Object");
-  STRING_RETURN_TYPE = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"string");
-  STRING = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"String");
-  FUNCTION = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"Function");
-  ARRAY = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"Array");
+  ANY = TS_find_type((const wchar_t *) L"", (const wchar_t *) L"any");
+  NUMBER = TS_find_type((const wchar_t *) L"", (const wchar_t *) L"number");
+  OBJECT = TS_find_type((const wchar_t *) L"", (const wchar_t *) L"Object");
+  STRING_RETURN_TYPE = TS_find_type((const wchar_t *) L"", (const wchar_t *) L"string");
+  STRING = TS_find_type((const wchar_t *) L"", (const wchar_t *) L"String");
+  FUNCTION = TS_find_type((const wchar_t *) L"", (const wchar_t *) L"Function");
+  ARRAY = TS_find_type((const wchar_t *) L"", (const wchar_t *) L"Array");
 
   Suite *s;
   SRunner *sr;

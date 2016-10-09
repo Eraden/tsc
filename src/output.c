@@ -33,8 +33,12 @@ TS_print_for_token(
     case TS_CLASS: {
       break;
     }
-    case TS_FUNCTION:
+    case TS_FUNCTION: {
       break;
+    }
+    case TS_FUNCTION_RETURN_TYPE: {
+      break;
+    }
     case TS_ARROW: {
       break;
     }
@@ -146,6 +150,12 @@ TS_print_for_token(
     case TS_CALL_ARGUMENTS: {
       break;
     }
+    case TS_IMPORT_FROM: {
+      break;
+    }
+    case TS_IMPORTED_TOKENS: {
+      break;
+    }
   }
 }
 
@@ -171,6 +181,9 @@ TS_string_for_token(
       break;
     }
     case TS_FUNCTION: {
+      break;
+    }
+    case TS_FUNCTION_RETURN_TYPE: {
       break;
     }
     case TS_ARROW: {
@@ -282,6 +295,12 @@ TS_string_for_token(
       break;
     }
     case TS_CALL_ARGUMENTS: {
+      break;
+    }
+    case TS_IMPORT_FROM: {
+      break;
+    }
+    case TS_IMPORTED_TOKENS: {
       break;
     }
   }

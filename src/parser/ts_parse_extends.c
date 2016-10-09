@@ -1,4 +1,5 @@
 #include <cts/parser.h>
+#include <cts/register.h>
 
 TSParserToken *
 TS_parse_extends(
@@ -14,11 +15,7 @@ TS_parse_extends(
 
       tok = (const wchar_t *) TS_getToken(tsParseData->stream);
       if (tok == NULL) {
-        ts_token_syntax_error(
-            (wchar_t *) L"Unexpected end of stream while parsing class parent name",
-            tsFile,
-            token
-        );
+        ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing class parent name", tsFile, token);
         break;
       }
 
@@ -36,14 +33,15 @@ TS_parse_extends(
         default: {
           if (!TS_name_is_valid(tok)) {
             free((void *) tok);
-            ts_token_syntax_error(
-                (wchar_t *) L"Invalid parent class name",
-                tsFile,
-                token
-            );
+            ts_token_syntax_error((wchar_t *) L"Invalid parent type name", tsFile, token);
           } else {
             TS_MOVE_BY(tsParseData, tok);
-            token->name = TS_clone_string(tok);
+            TSParserToken *typeToken = TS_find_type(tsFile->file, tok);
+            if (typeToken == NULL) {
+              ts_token_syntax_error((const wchar_t *) L"Unknown type used in extends", tsFile, token);
+            } else {
+              TS_push_child(token, typeToken);
+            }
           }
           proceed = FALSE;
           free((void *) tok);
@@ -59,6 +57,6 @@ void
 TS_free_extends(
     const TSParserToken *token
 ) {
-  if (token->name) free(token->name);
+  TS_free_children_from(token, 1);
   free((void *) token);
 }

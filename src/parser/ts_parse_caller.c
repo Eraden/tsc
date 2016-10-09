@@ -7,7 +7,7 @@ TS_parse_caller(
 ) {
   TS_TOKEN_BEGIN(TS_CALLER, tsParseData)
 
-    token->visibility = TS_MODIFIER_SCOPE;
+    token->modifiers = TS_MODIFIER_SCOPE;
     token->name = (void *) TS_clone_string(tsParseData->token);
 
     volatile unsigned char proceed = TRUE;

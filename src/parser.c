@@ -33,7 +33,7 @@ TS_build_parser_token(
   token->position = tsParseData->position;
   token->character = tsParseData->character;
   token->line = tsParseData->line;
-  token->visibility = TS_MODIFIER_SCOPE;
+  token->modifiers = TS_MODIFIER_SCOPE;
   token->children = NULL;
   token->childrenSize = 0;
   token->parent = tsParseData->parentTSToken;
@@ -59,6 +59,7 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     {(wchar_t *) L"{",          TS_parse_scope_or_json},
     {(wchar_t *) L"extends",    TS_parse_extends},
     {(wchar_t *) L"implements", TS_parse_implements},
+    {(wchar_t *) L"interface",  TS_parse_interface},
     {(wchar_t *) L"new",        TS_parse_new},
     {(wchar_t *) L"//",         TS_parse_inline_comment},
     {(wchar_t *) L"/*",         TS_parse_multiline_comment},
@@ -588,6 +589,9 @@ TS_free_tsToken(
     case TS_FUNCTION:
       TS_free_function(token);
       break;
+    case TS_FUNCTION_RETURN_TYPE:
+      TS_free_function_return_type(token);
+      break;
     case TS_ARROW:
       TS_free_arrow(token);
       break;
@@ -602,12 +606,6 @@ TS_free_tsToken(
       break;
     case TS_DECORATOR:
       TS_free_decorator(token);
-      break;
-    case TS_IMPORT:
-      TS_free_import(token);
-      break;
-    case TS_EXPORT:
-      TS_free_export(token);
       break;
     case TS_DEFAULT:
       TS_free_default(token);
@@ -695,6 +693,24 @@ TS_free_tsToken(
     }
     case TS_CALL_ARGUMENTS: {
       TS_free_call_arguments(token);
+      break;
+    }
+    case TS_EXPORT:
+      TS_free_export(token);
+      break;
+    case TS_IMPORT:
+      TS_free_import(token);
+      break;
+    case TS_IMPORT_FROM: {
+      TS_free_import_from(token);
+      break;
+    }
+    case TS_IMPORTED_TOKENS: {
+      TS_free_imported_tokens(token);
+      break;
+    }
+    case TS_INTERFACE: {
+      TS_free_interface(token);
       break;
     }
   }

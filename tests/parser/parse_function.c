@@ -12,44 +12,33 @@ START_TEST(parse_valid_functions)
 
   // example1
   token = tsFile->tokens[0];
-  data = token->functionData;
   ck_assert(token->tokenType == TS_FUNCTION);
   ck_assert_int_eq(token->childrenSize, 0);
   ck_assert_ptr_eq(token->children, NULL);
-  ck_assert_ptr_ne(data, NULL);
-  ck_assert_ptr_ne(data->name, NULL);
-  ck_assert_wstr_eq(data->name, L"example1");
-  ck_assert_ptr_eq(data->returnType, NULL);
+  ck_assert_ptr_ne(token->name, NULL);
+  ck_assert_wstr_eq(token->name, L"example1");
 
   // example2
   token = tsFile->tokens[1];
-  data = token->functionData;
   ck_assert(token->tokenType == TS_FUNCTION);
   ck_assert_int_eq(token->childrenSize, 1);
   ck_assert_ptr_ne(token->children, NULL);
-  ck_assert_ptr_ne(data, NULL);
-  ck_assert_ptr_ne(data->name, NULL);
-  ck_assert_wstr_eq(data->name, L"example2");
-  ck_assert_ptr_eq(data->returnType, NULL);
-  arg = token->children[0];
+  ck_assert_ptr_ne(token->name, NULL);
+  ck_assert_wstr_eq(token->name, L"example2");  arg = token->children[0];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 1);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first1");
-   ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], ANY);
+  ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], ANY);
 
   // example3
   token = tsFile->tokens[2];
-  data = token->functionData;
   ck_assert(token->tokenType == TS_FUNCTION);
   ck_assert_int_eq(token->childrenSize, 1);
   ck_assert_ptr_ne(token->children, NULL);
-  ck_assert_ptr_ne(data, NULL);
-  ck_assert_ptr_ne(data->name, NULL);
-  ck_assert_wstr_eq(data->name, L"example3");
-  ck_assert_ptr_eq(data->returnType, NULL);
-  arg = token->children[0];
+  ck_assert_ptr_ne(token->name, NULL);
+  ck_assert_wstr_eq(token->name, L"example3");  arg = token->children[0];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
@@ -60,15 +49,11 @@ START_TEST(parse_valid_functions)
 
   // example4
   token = tsFile->tokens[3];
-  data = token->functionData;
   ck_assert(token->tokenType == TS_FUNCTION);
   ck_assert_int_eq(token->childrenSize, 1);
   ck_assert_ptr_ne(token->children, NULL);
-  ck_assert_ptr_ne(data, NULL);
-  ck_assert_ptr_ne(data->name, NULL);
-  ck_assert_wstr_eq(data->name, L"example4");
-  ck_assert_ptr_eq(data->returnType, NULL);
-  arg = token->children[0];
+  ck_assert_ptr_ne(token->name, NULL);
+  ck_assert_wstr_eq(token->name, L"example4");  arg = token->children[0];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 1);
   ck_assert_ptr_ne(arg->children, NULL);
@@ -78,15 +63,11 @@ START_TEST(parse_valid_functions)
 
   // example5
   token = tsFile->tokens[4];
-  data = token->functionData;
   ck_assert(token->tokenType == TS_FUNCTION);
   ck_assert_int_eq(token->childrenSize, 1);
   ck_assert_ptr_ne(token->children, NULL);
-  ck_assert_ptr_ne(data, NULL);
-  ck_assert_ptr_ne(data->name, NULL);
-  ck_assert_wstr_eq(data->name, L"example5");
-  ck_assert_ptr_eq(data->returnType, NULL);
-  arg = token->children[0];
+  ck_assert_ptr_ne(token->name, NULL);
+  ck_assert_wstr_eq(token->name, L"example5");  arg = token->children[0];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
@@ -97,15 +78,11 @@ START_TEST(parse_valid_functions)
 
   // example6
   token = tsFile->tokens[5];
-  data = token->functionData;
   ck_assert(token->tokenType == TS_FUNCTION);
   ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
-  ck_assert_ptr_ne(data, NULL);
-  ck_assert_ptr_ne(data->name, NULL);
-  ck_assert_wstr_eq(data->name, L"example6");
-  ck_assert_ptr_eq(data->returnType, NULL);
-  arg = token->children[0];
+  ck_assert_ptr_ne(token->name, NULL);
+  ck_assert_wstr_eq(token->name, L"example6");  arg = token->children[0];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 1);
   ck_assert_ptr_ne(arg->children, NULL);
@@ -121,15 +98,11 @@ START_TEST(parse_valid_functions)
   ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], ANY);
 
   token = tsFile->tokens[6];
-  data = token->functionData;
   ck_assert(token->tokenType == TS_FUNCTION);
   ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
-  ck_assert_ptr_ne(data, NULL);
-  ck_assert_ptr_ne(data->name, NULL);
-  ck_assert_wstr_eq(data->name, L"example7");
-  ck_assert_ptr_eq(data->returnType, NULL);
-  arg = token->children[0];
+  ck_assert_ptr_ne(token->name, NULL);
+  ck_assert_wstr_eq(token->name, L"example7");  arg = token->children[0];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
@@ -148,15 +121,11 @@ START_TEST(parse_valid_functions)
 
   // example8
   token = tsFile->tokens[7];
-  data = token->data;
   ck_assert(token->tokenType == TS_FUNCTION);
   ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
-  ck_assert_ptr_ne(data, NULL);
-  ck_assert_ptr_ne(data->name, NULL);
-  ck_assert_wstr_eq(data->name, L"example8");
-  ck_assert_ptr_eq(data->returnType, NULL);
-  arg = token->children[0];
+  ck_assert_ptr_ne(token->name, NULL);
+  ck_assert_wstr_eq(token->name, L"example8");  arg = token->children[0];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 1);
   ck_assert_ptr_ne(arg->children, NULL);
@@ -173,15 +142,11 @@ START_TEST(parse_valid_functions)
 
   // example9
   token = tsFile->tokens[8];
-  data = token->data;
   ck_assert(token->tokenType == TS_FUNCTION);
   ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
-  ck_assert_ptr_ne(data, NULL);
-  ck_assert_ptr_ne(data->name, NULL);
-  ck_assert_wstr_eq(data->name, L"example9");
-  ck_assert_ptr_eq(data->returnType, NULL);
-  arg = token->children[0];
+  ck_assert_ptr_ne(token->name, NULL);
+  ck_assert_wstr_eq(token->name, L"example9");  arg = token->children[0];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
@@ -200,15 +165,11 @@ START_TEST(parse_valid_functions)
 
   // example10
   token = tsFile->tokens[9];
-  data = token->data;
-  ck_assert(token->tokenType == TS_FUNCTION);
-  ck_assert_int_eq(token->childrenSize, 0);
-  ck_assert_ptr_eq(token->children, NULL);
-  ck_assert_ptr_ne(data, NULL);
-  ck_assert_ptr_ne(data->name, NULL);
-  ck_assert_wstr_eq(data->name, L"example10");
-  ck_assert_ptr_ne(data->returnType, NULL);
-  ck_assert_wstr_eq(data->returnType, L"any");
+  ck_assert_eq_ts_function(token->tokenType);
+  ck_assert_int_eq(token->childrenSize, 1);
+  ck_assert_ptr_ne(token->children, NULL);
+  ck_assert_eq_ts_function_return_type(token->children[0]->tokenType);
+  ck_assert_wstr_eq(token->name, L"example10");
 
   TS_free_tsFile(tsFile);
 END_TEST

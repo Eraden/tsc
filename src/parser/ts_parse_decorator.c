@@ -19,12 +19,12 @@ TS_parse_decorator_name(
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "decorator call");
+      free((void *) tok);
       break;
 
     } else if (TS_is_keyword(tok)) {
-      TS_MOVE_BY(tsParseData, tok);
-      free((void *) tok);
       TS_UNEXPECTED_TOKEN(tsFile, token, tok, "decorator call");
+      free((void *) tok);
       break;
     }
 

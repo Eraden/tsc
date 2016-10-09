@@ -34,6 +34,7 @@ SET(
     src/parser/ts_parse_array.c
     src/parser/ts_parse_string.c
     src/parser/ts_parse_call_arguments.c
+    src/parser/ts_parse_interface.c
     src/parser.c
 )
 
@@ -82,6 +83,8 @@ IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
       tests/parser/for/parse_for_let.c
       tests/parser/for/parse_for_of.c
       tests/parser/for/parse_for_in.c
+      tests/parser/parse_extends.c
+      tests/core/sys.c
   )
 ENDIF ()
 

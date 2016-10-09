@@ -16,7 +16,16 @@
   file, token )
 #define TS_UNEXPECTED_TOKEN(tsFile, token, tok, type) ts_token_syntax_error( \
   (const wchar_t *) L"Unexpected token while parsing `" type "`", \
-  tsFile, token, tok );
+  tsFile, token, tok ); \
+  ts_token_syntax_error_info(tsFile, (const wchar_t *) L"%ls", tok);
+//#define TS_UNKNOWN_CLASS(tsFile, token, name) ts_token_syntax_error( \
+//  (const wchar_t *) L"Unknown class", tsFile, token ); \
+//  ts_token_syntax_error_info(tsFile, (const wchar_t *) L"%ls", name);
+#define TS_UNKNOWN_CLASS(tsFile, token, name) \
+  ts_token_syntax_error_info(tsFile, (const wchar_t *) L"Unknown class %ls", name);
+#define TS_MISSING_NAME(tsFile, token, type) \
+  ts_token_syntax_error((const wchar_t *) L"Expecting name for:", tsFile, token ); \
+  ts_token_syntax_error_info(tsFile, (const wchar_t *) L"    %ls", (const wchar_t *) type);
 #define TS_UNEXPECTED_GLOBAL_TOKEN(tsFile, token, type) \
   ts_token_syntax_error( \
     (const wchar_t *) L"Unexpected `" type "` in global scope", \
@@ -42,43 +51,47 @@ typedef enum eTSTokenType {
   TS_LET = 2,
   TS_CONST = 3,
   TS_CLASS = 4,
-  TS_FUNCTION = 5,
-  TS_ARROW = 6,
-  TS_IF = 7,
-  TS_ELSE = 8,
-  TS_RETURN = 9,
-  TS_DECORATOR = 10,
-  TS_IMPORT = 11,
-  TS_EXPORT = 12,
-  TS_DEFAULT = 13,
-  TS_SCOPE = 14,
-  TS_EXTENDS = 15,
-  TS_IMPLEMENTS = 16,
-  TS_NEW = 17,
-  TS_CLASS_FIELD = 18,
-  TS_CLASS_METHOD = 19,
-  TS_INLINE_COMMENT = 20,
-  TS_MULTILINE_COMMENT = 21,
-  TS_CONDITION = 22,
-  TS_ARGUMENT = 23,
-  TS_CALLER = 24,
-  TS_SWITCH = 25,
-  TS_CASE = 26,
-  TS_BREAK = 27,
-  TS_FOR = 28,
-  TS_FOR_WITH_CONDITION = 29,
-  TS_FOR_IN = 30,
-  TS_FOR_OF = 31,
-  TS_LOOP_VARIABLES_SECTION = 32,
-  TS_LOOP_CONDITION_SECTION = 33,
-  TS_LOOP_CHANGE_SECTION = 34,
-  TS_OF = 35,
-  TS_IN = 36,
-  TS_JSON = 37,
-  TS_ARRAY = 38,
-  TS_STRING = 39,
-  TS_STRING_TEMPLATE = 40,
-  TS_CALL_ARGUMENTS = 41,
+  TS_CLASS_FIELD = 5,
+  TS_CLASS_METHOD = 6,
+  TS_EXTENDS = 7,
+  TS_IMPLEMENTS = 8,
+  TS_FUNCTION = 9,
+  TS_FUNCTION_RETURN_TYPE = 10,
+  TS_ARROW = 11,
+  TS_IF = 12,
+  TS_ELSE = 13,
+  TS_RETURN = 14,
+  TS_DECORATOR = 15,
+  TS_DEFAULT = 16,
+  TS_SCOPE = 17,
+  TS_NEW = 18,
+  TS_INLINE_COMMENT = 19,
+  TS_MULTILINE_COMMENT = 20,
+  TS_CONDITION = 21,
+  TS_ARGUMENT = 22,
+  TS_CALLER = 23,
+  TS_SWITCH = 24,
+  TS_CASE = 25,
+  TS_BREAK = 26,
+  TS_FOR = 27,
+  TS_FOR_WITH_CONDITION = 28,
+  TS_FOR_IN = 29,
+  TS_FOR_OF = 30,
+  TS_LOOP_VARIABLES_SECTION = 31,
+  TS_LOOP_CONDITION_SECTION = 32,
+  TS_LOOP_CHANGE_SECTION = 33,
+  TS_OF = 34,
+  TS_IN = 35,
+  TS_JSON = 36,
+  TS_ARRAY = 37,
+  TS_STRING = 38,
+  TS_STRING_TEMPLATE = 39,
+  TS_CALL_ARGUMENTS = 40,
+  TS_EXPORT = 41,
+  TS_IMPORT = 42,
+  TS_IMPORT_FROM = 43,
+  TS_IMPORTED_TOKENS = 44,
+  TS_INTERFACE = 45,
   TS_UNKNOWN = 0,
 } __attribute__ ((__packed__)) TSTokenType;
 
@@ -116,7 +129,9 @@ typedef enum eTSModifier {
   TS_MODIFIER_PRIVATE = 1 << 1,
   TS_MODIFIER_PROTECTED = 1 << 2,
   TS_MODIFIER_PUBLIC = 1 << 3,
-  TS_MODIFIER_STATIC = 1 << 4
+  TS_MODIFIER_STATIC = 1 << 4,
+  TS_MODIFIER_GETTER = 1 << 4,
+  TS_MODIFIER_SETTER = 1 << 6,
 } __attribute__ ((__packed__)) TSModifier;
 
 typedef enum eTSParseBracketType {
@@ -134,19 +149,7 @@ typedef struct sTSKeyword {
   TS_token_build_fn callback;
 } TSKeyword;
 
-#define KEYWORDS_SIZE 28
-
-typedef struct sTSFunctionData {
-  const wchar_t *name;
-  const wchar_t *returnType;
-} TSFunctionData;
-
-typedef struct sTSClassData {
-  const wchar_t *name;
-  const wchar_t *parentClass;
-  TSParserToken *__attribute__((__unused__)) implementsInterfaces;
-  u_long __attribute__((__unused__)) implementsInterfacesSize;
-} TSClassData;
+#define KEYWORDS_SIZE 29
 
 typedef struct sTSParseData {
   u_long position;
@@ -164,14 +167,12 @@ typedef struct sTSParserToken {
   u_long position;
   u_long childrenSize;
   TSParserToken **children;
-  TSModifier visibility;
+  TSModifier modifiers;
   TSParserToken *parent;
   union {
     void *data;
     wchar_t *name;
     wchar_t *content;
-    TSClassData *classData;
-    TSFunctionData *functionData;
   };
 } TSParserToken;
 
@@ -199,6 +200,10 @@ void TS_free_unknown(const TSParserToken *token);
 TSParserToken *TS_parse_call_arguments(TSFile *tsFile, TSParseData *tsParseData);
 
 void TS_free_call_arguments(const TSParserToken *token);
+
+TSParserToken *TS_parse_interface(TSFile *tsFile, TSParseData *tsParseData);
+
+void TS_free_interface(const TSParserToken *token);
 
 TSParserToken *TS_parse_string(TSFile *tsFile, TSParseData *tsParseData);
 
@@ -260,6 +265,8 @@ TSParserToken *TS_parse_function(TSFile *tsFile, TSParseData *tsParseData);
 
 void TS_free_function(const TSParserToken *token);
 
+void TS_free_function_return_type(const TSParserToken *token);
+
 TSParserToken *TS_parse_arrow(TSFile *tsFile, TSParseData *tsParseData);
 
 void TS_free_arrow(const TSParserToken *token);
@@ -283,6 +290,10 @@ void TS_free_return(const TSParserToken *token);
 TSParserToken *TS_parse_import(TSFile *tsFile, TSParseData *tsParseData);
 
 void TS_free_import(const TSParserToken *token);
+
+void TS_free_import_from(const TSParserToken *token);
+
+void TS_free_imported_tokens(const TSParserToken *token);
 
 TSParserToken *TS_parse_export(TSFile *tsFile, TSParseData *tsParseData);
 

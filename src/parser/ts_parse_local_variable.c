@@ -54,7 +54,7 @@ TS_parse_local_variable_body(
   TSVariableParseFlag parseFlag = TS_PARSE_VARIABLE_NAME;
   token->name = NULL;
   TSParserToken *value = NULL;
-  TSParserToken *type = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"any");
+  TSParserToken *type = TS_find_type((const wchar_t *) L"", (const wchar_t *) L"any");
   TS_push_child(token, type);
 
   while (proceed) {
@@ -157,7 +157,7 @@ TS_parse_local_variable_body(
           free((void *) tok);
 
         } else if (parseFlag == TS_PARSE_VARIABLE_TYPE) {
-          TSParserToken *currentType = TS_find_class(tsFile->file, tok);
+          TSParserToken *currentType = TS_find_type(tsFile->file, tok);
           if (currentType) {
             token->children[0] = currentType;
           }

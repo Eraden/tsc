@@ -73,7 +73,7 @@ TS_parse_new(
           break;
         }
         default: {
-          TSParserToken *classToken = TS_find_class(tsFile->file, tok);
+          TSParserToken *classToken = TS_find_type(tsFile->file, tok);
           if (classToken) {
             TS_push_child(token, classToken);
           } else {
