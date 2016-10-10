@@ -715,7 +715,7 @@ TS_free_children_from(
   TSParserToken **children = token->children;
   for (; childIndex < token->childrenSize; childIndex++) {
     child = children[0];
-    if (!TS_is_predefined(child)) {
+    if (!TS_is_predefined(child) && !TS_is_type(child)) {
       TS_free_tsToken(child);
     }
     children += 1;
@@ -727,8 +727,7 @@ void
 TS_free_tsFile(
     TSFile *tsFile
 ) {
-
-  for (; tsFile->tokensSize;) {
+  for (;tsFile->tokensSize;) {
     tsFile->tokensSize -= 1;
     TS_free_tsToken(tsFile->tokens[tsFile->tokensSize]);
   }

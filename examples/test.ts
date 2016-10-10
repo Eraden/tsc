@@ -11,6 +11,9 @@ let value = 1;
 const stale = 2;
 var variable = 3;
 
+class Descriptor {
+}
+
 function Component(data: Object, desc: Descriptor={}, s ="", ...rest) {
   if (desc != null) {
     return 2;
@@ -18,8 +21,7 @@ function Component(data: Object, desc: Descriptor={}, s ="", ...rest) {
     return 3;
 }
 
-class Descriptor {
-}
+
 class Some {
   enumerable: boolean = false;
   constructor() {

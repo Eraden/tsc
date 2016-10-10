@@ -344,3 +344,11 @@ unsigned char TS_is_predefined(TSParserToken *token) {
   }
   return FALSE;
 }
+
+unsigned char TS_is_type(TSParserToken *token) {
+  if (token->tokenType != TS_CLASS)
+    return TRUE;
+  if (token->tokenType != TS_INTERFACE)
+    return TRUE;
+  return FALSE;
+}

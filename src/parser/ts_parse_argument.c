@@ -180,8 +180,5 @@ TS_parse_argument(
 }
 
 void TS_free_argument(const TSParserToken *token) {
-  TS_free_children_from(token, 1);
-
-  if (token->name) free((void *) token->name);
-  free((void *) token);
+  TS_free_var(token);
 }
