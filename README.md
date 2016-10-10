@@ -30,8 +30,9 @@ ctest
 - [ ] `--strong` mode
 - [ ] `--strict` mode
 - [ ] `--relax` mode
-- [ ] `-o file` write to file
+- [X] `-o file` write to file
 - [ ] `--tokens` print only types locations and names
+- [X] `-i` reading from standard input
 
 ### Typings
 
@@ -68,11 +69,11 @@ ctest
 - [ ] Print `while` loop
 - [ ] Parse `do {} while` loop
 - [ ] Print `do {} while` loop
-- [ ] Parse `for i` loop
+- [X] Parse `for i` loop
 - [ ] Print `for i` loop
-- [ ] Parse `for in` loop
+- [X] Parse `for in` loop
 - [ ] Print `for in` loop
-- [ ] Parse `for of` loop
+- [X] Parse `for of` loop
 - [ ] Print `for of` loop
 
 ### Logical gates
@@ -110,7 +111,7 @@ ctest
 
 ### Interface
 
-- [ ] Parse empty interface
+- [X] Parse empty interface
 - [ ] Parse interface field requirement
 - [ ] Parse interface method prototype
 
@@ -118,7 +119,7 @@ ctest
 
 - [X] Parse empty class
 - [ ] Print empty class
-- [ ] Support `extends`
+- [X] Support `extends`
 - [ ] Print `extends` as `prototype = Object.create(Parent)`
 - [ ] Support `implements`
 - [ ] Support `friend`
@@ -130,9 +131,9 @@ ctest
 
 ### Methods
 
-- [ ] Parse class method
+- [X] Parse class method
 - [ ] Print class method
-- [ ] Parse class method arguments
+- [X] Parse class method arguments
 - [ ] Print class method arguments
 - [ ] Parse method `super`
 - [ ] Print method `super` as `Parent.prototype.method.call(this)`
@@ -140,7 +141,7 @@ ctest
 
 ### Fields
 
-- [ ] Parse class field
+- [X] Parse class field
 - [ ] Print class field
 
 ### Function
@@ -154,14 +155,14 @@ ctest
 
 ### Validations
 
-- [ ] Types register
+- [X] Types register
 - [ ] Print parse warnings
 - [ ] Print warning about unused variables
 - [ ] Print warning about unused functions
 
 ### Output
 
-- [X] Generate single string for single file (large memory footprint)
+- [ ] Generate single string for single file (large memory footprint)
 - [ ] Generate single string for all fields (large memory footprint)
 - [ ] Print immediately every code part (single file mode)
 - [ ] Print immediately every code part (multiple-file mode with sync)
