@@ -7,7 +7,7 @@ TS_parse_caller(
 ) {
   TS_TOKEN_BEGIN(TS_CALLER, tsParseData)
 
-    token->visibility = TS_MODIFIER_SCOPE;
+    token->modifiers = TS_MODIFIER_SCOPE;
     token->name = (void *) TS_clone_string(tsParseData->token);
 
     volatile unsigned char proceed = TRUE;
@@ -49,6 +49,9 @@ TS_parse_caller(
         case L',':
         case L'(': {
           TS_MOVE_BY(tsParseData, tok);
+          tsParseData->token = tok;
+          TSParserToken *callArguments = TS_parse_call_arguments(tsFile, tsParseData);
+          TS_push_child(token, callArguments);
           free((void *) tok);
           break;
         }
@@ -59,9 +62,7 @@ TS_parse_caller(
           break;
         }
         default: {
-          TS_put_back(tsFile->stream, tok);
-          TSParserToken *argument = TS_parse_argument(tsFile, tsParseData);
-          TS_push_child(token, argument);
+          TS_UNEXPECTED_TOKEN(tsFile, token, tok, "caller");
           free((void *) tok);
           break;
         }

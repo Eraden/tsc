@@ -53,9 +53,12 @@ TS_parse_local_variable_body(
   volatile unsigned char proceed = TRUE;
   TSVariableParseFlag parseFlag = TS_PARSE_VARIABLE_NAME;
   token->name = NULL;
+  token->children = calloc(sizeof(TSParserToken *), 2);
+  token->childrenSize = 2;
   TSParserToken *value = NULL;
-  TSParserToken *type = TS_find_class((const wchar_t *) L"", (const wchar_t *) L"any");
-  TS_push_child(token, type);
+  TSParserToken *type = NULL;
+  token->children[TS_VARIABLE_TYPE] = TS_find_type(tsFile->file, (const wchar_t *) L"any");
+  token->children[TS_VARIABLE_VALUE] = TS_find_type(NULL, (const wchar_t *) L"undefined");
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -133,7 +136,7 @@ TS_parse_local_variable_body(
           break;
         }
         if (parseFlag == TS_PARSE_VARIABLE_NAME) {
-          log_to_file((wchar_t *) L"Setting name of local variable\n");
+          TS_log_to_file((wchar_t *) L"Setting name of local variable\n");
           if (TS_is_keyword(tok)) {
             free((void *) tok);
             ts_token_syntax_error(
@@ -146,20 +149,20 @@ TS_parse_local_variable_body(
           TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
           parseFlag = TS_PARSE_VARIABLE_NONE;
-          log_to_file((wchar_t *) L"    Local variable current name: '%ls'\n", token->name);
+          TS_log_to_file((wchar_t *) L"    Local variable current name: '%ls'\n", token->name);
 
         } else if (parseFlag == TS_PARSE_VARIABLE_VALUE) {
           tsParseData->token = tok;
           value = TS_parse_ts_token(tsFile, tsParseData);
-          if (value) TS_push_child(token, value);
+          if (value) token->children[TS_VARIABLE_VALUE] = value;
           parseFlag = TS_PARSE_VARIABLE_NONE;
           TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
 
         } else if (parseFlag == TS_PARSE_VARIABLE_TYPE) {
-          TSParserToken *currentType = TS_find_class(tsFile->file, tok);
-          if (currentType) {
-            token->children[0] = currentType;
+          type = TS_find_type(tsFile->file, tok);
+          if (type) {
+            token->children[TS_VARIABLE_TYPE] = type;
           }
 
           parseFlag = TS_PARSE_VARIABLE_NONE;
@@ -213,8 +216,7 @@ TS_free_var(
 ) {
   TS_free_children_from(token, 1);
 
-  if (token->name)
-    free(token->name);
+  if (token->name) free((void *) token->name);
   free((void *) token);
 }
 
@@ -222,20 +224,12 @@ void
 TS_free_let(
     const TSParserToken *token
 ) {
-  TS_free_children_from(token, 1);
-
-  if (token->name)
-    free(token->name);
-  free((void *) token);
+  TS_free_var(token);
 }
 
 void
 TS_free_const(
     const TSParserToken *token
 ) {
-  TS_free_children_from(token, 1);
-
-  if (token->name)
-    free(token->name);
-  free((void *) token);
+  TS_free_var(token);
 }

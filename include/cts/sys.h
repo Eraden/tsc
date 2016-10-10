@@ -60,9 +60,13 @@ typedef struct sTSParserSettings {
 } TSParserSettings;
 
 void TS_set_log_level(TSVerbosity verbosity);
+
 unsigned char TS_check_log_level(TSVerbosity verbosity);
 
 void ts_token_syntax_error(const wchar_t *msg, struct sTSFile *tsFile, const struct sTSParserToken *token, ...);
+
+void ts_token_syntax_error_info(struct sTSFile *tsFile, const wchar_t *format, const wchar_t *msg);
+
 void ts_log_position(const wchar_t *file, const u_long character, const u_long line);
 
 const TSParserSettings TS_parse_arguments(int argc, const char **argv);
@@ -70,3 +74,13 @@ const TSParserSettings TS_parse_arguments(int argc, const char **argv);
 wchar_t *TS_join_strings(const wchar_t *, const wchar_t *);
 
 void TS_suppress_logging(void (*fn)(void));
+
+wchar_t *TS_resolve_directory(const wchar_t *absolute_path);
+
+wchar_t *TS_resolve_file(const wchar_t *absolute_path);
+
+wchar_t *TS_resolve_path(const wchar_t *absolute_path, const wchar_t *unresolved_path);
+
+unsigned char TS_is_instance_of(struct sTSParserToken *token, struct sTSParserToken *type);
+
+struct sTSParserToken *TS_type_for_string(const wchar_t *str);

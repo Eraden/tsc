@@ -10,21 +10,20 @@ _TS_type_to_string(const TSTokenType type) {
     case TS_LET: return "TS_LET";
     case TS_CONST: return "TS_CONST";
     case TS_CLASS: return "TS_CLASS";
+    case TS_CLASS_FIELD: return "TS_CLASS_FIELD";
+    case TS_CLASS_METHOD: return "TS_CLASS_METHOD";
+    case TS_EXTENDS: return "TS_EXTENDS";
+    case TS_IMPLEMENTS: return "TS_IMPLEMENTS";
     case TS_FUNCTION: return "TS_FUNCTION";
+    case TS_FUNCTION_RETURN_TYPE: return "TS_FUNCTION_RETURN_TYPE";
     case TS_ARROW: return "TS_ARROW";
     case TS_IF: return "TS_IF";
     case TS_ELSE: return "TS_ELSE";
     case TS_RETURN: return "TS_RETURN";
     case TS_DECORATOR: return "TS_DECORATOR";
-    case TS_IMPORT: return "TS_IMPORT";
-    case TS_EXPORT: return "TS_EXPORT";
     case TS_DEFAULT: return "TS_DEFAULT";
     case TS_SCOPE: return "TS_SCOPE";
-    case TS_EXTENDS: return "TS_EXTENDS";
-    case TS_IMPLEMENTS: return "TS_IMPLEMENTS";
     case TS_NEW: return "TS_NEW";
-    case TS_CLASS_FIELD: return "TS_CLASS_FIELD";
-    case TS_CLASS_METHOD: return "TS_CLASS_METHOD";
     case TS_INLINE_COMMENT: return "TS_INLINE_COMMENT";
     case TS_MULTILINE_COMMENT: return "TS_MULTILINE_COMMENT";
     case TS_CONDITION: return "TS_CONDITION";
@@ -47,6 +46,11 @@ _TS_type_to_string(const TSTokenType type) {
     case TS_STRING: return "TS_STRING";
     case TS_STRING_TEMPLATE: return "TS_STRING_TEMPLATE";
     case TS_CALL_ARGUMENTS: return "TS_CALL_ARGUMENTS";
+    case TS_EXPORT: return "TS_EXPORT";
+    case TS_IMPORT: return "TS_IMPORT";
+    case TS_IMPORT_FROM: return "TS_IMPORT_FROM";
+    case TS_IMPORTED_TOKENS: return "TS_IMPORTED_TOKENS";
+    case TS_INTERFACE: return "TS_INTERFACE";
     case TS_UNKNOWN: return "TS_UNKNOWN";
     default: return " ((unknown type)) ";
   }
@@ -70,6 +74,7 @@ _TS_type_to_string(const TSTokenType type) {
 #define ck_assert_eq_ts_const(type) ck_assert_tsType_eq(type, TS_CONST)
 #define ck_assert_eq_ts_class(type) ck_assert_tsType_eq(type, TS_CLASS)
 #define ck_assert_eq_ts_function(type) ck_assert_tsType_eq(type, TS_FUNCTION)
+#define ck_assert_eq_ts_function_return_type(type) ck_assert_tsType_eq(type, TS_FUNCTION_RETURN_TYPE)
 #define ck_assert_eq_ts_arrow(type) ck_assert_tsType_eq(type, TS_ARROW)
 #define ck_assert_eq_ts_if(type) ck_assert_tsType_eq(type, TS_IF)
 #define ck_assert_eq_ts_else(type) ck_assert_tsType_eq(type, TS_ELSE)

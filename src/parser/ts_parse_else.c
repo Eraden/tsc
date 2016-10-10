@@ -6,7 +6,7 @@ TS_parse_else_body(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  log_to_file((wchar_t *) L"->   parsing as %s body\n", "else");
+  TS_log_to_file((wchar_t *) L"->   parsing as %s body\n", "else");
   const wchar_t *tok;
   TSParserToken *token = tsParseData->parentTSToken;
 
@@ -50,7 +50,7 @@ TS_parse_else_body(
       }
     }
   }
-  log_to_file((wchar_t *) L"->   done %s body\n", "else");
+  TS_log_to_file((wchar_t *) L"->   done %s body\n", "else");
 }
 
 TSParserToken *

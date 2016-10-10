@@ -34,6 +34,7 @@ SET(
     src/parser/ts_parse_array.c
     src/parser/ts_parse_string.c
     src/parser/ts_parse_call_arguments.c
+    src/parser/ts_parse_interface.c
     src/parser.c
 )
 
@@ -82,6 +83,8 @@ IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
       tests/parser/for/parse_for_let.c
       tests/parser/for/parse_for_of.c
       tests/parser/for/parse_for_in.c
+      tests/parser/parse_extends.c
+      tests/core/sys.c
   )
 ENDIF ()
 
@@ -110,6 +113,13 @@ MESSAGE(INFO " Compiler: ${CMAKE_C_COMPILER}")
 IF (NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE CACHE STRING "Debug")
 ENDIF ()
+
+IF (CMAKE_BUILD_TYPE MATCHES "Debug")
+  ADD_DEFINITIONS(-DDEBUG=1)
+ELSE()
+  ADD_DEFINITIONS(-DDEBUG=0)
+ENDIF()
+
 
 MESSAGE(INFO " pre memory validation: ${VALIDATE_MEMORY}")
 MESSAGE(INFO " pre address validation: ${VALIDATE_ADDRESS}")

@@ -9,44 +9,48 @@ START_TEST(parse_valid_switch)
   ck_assert_uint_eq(tsFile->tokensSize, 2);
   ck_assert_ptr_ne(tsFile->tokens, NULL);
 
-  TSParserToken *token, *child, *fnChild;
+  TSParserToken *token, *child, *fnChild, *callArgs, *returnType;
 
   token = tsFile->tokens[0];
   ck_assert_ptr_ne(token, NULL);
-  ck_assert(token->tokenType == TS_SWITCH);
+  ck_assert_eq_ts_switch(token->tokenType);
   ck_assert_uint_eq(token->childrenSize, 3);
   ck_assert_ptr_ne(token->children, NULL);
   child = token->children[0];
   ck_assert_ptr_ne(child, NULL);
-  ck_assert(child->tokenType == TS_CONDITION);
+  ck_assert_eq_ts_condition(child->tokenType);
   ck_assert_ptr_ne(child->name, NULL);
   ck_assert_wstr_eq(child->name, L"1");
   child = token->children[1];
   ck_assert_ptr_ne(child, NULL);
-  ck_assert(child->tokenType == TS_CASE);
+  ck_assert_eq_ts_case(child->tokenType);
   child = token->children[2];
   ck_assert_ptr_ne(child, NULL);
-  ck_assert(child->tokenType == TS_DEFAULT);
+  ck_assert_eq_ts_default(child->tokenType);
 
   token = tsFile->tokens[1];
   ck_assert_ptr_ne(token, NULL);
-  ck_assert(token->tokenType == TS_FUNCTION);
+  ck_assert_eq_ts_function(token->tokenType);
   ck_assert_ptr_ne(token->children, NULL);
-  ck_assert_int_eq(token->childrenSize, 1);
-  fnChild = token->children[0];
+  ck_assert_int_eq(token->childrenSize, 3);
+  callArgs = token->children[0];
+  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
+  returnType = token->children[1];
+  ck_assert_eq_ts_function_return_type(returnType->tokenType);
+  fnChild = token->children[2];
   ck_assert_ptr_ne(fnChild->children, NULL);
   ck_assert_int_eq(fnChild->childrenSize, 3);
   child = fnChild->children[0];
   ck_assert_ptr_ne(child, NULL);
-  ck_assert(child->tokenType == TS_CONDITION);
+  ck_assert_eq_ts_condition(child->tokenType);
   ck_assert_ptr_ne(child->name, NULL);
   ck_assert_wstr_eq(child->name, L"1");
   child = fnChild->children[1];
   ck_assert_ptr_ne(child, NULL);
-  ck_assert(child->tokenType == TS_CASE);
+  ck_assert_eq_ts_case(child->tokenType);
   child = fnChild->children[2];
   ck_assert_ptr_ne(child, NULL);
-  ck_assert(child->tokenType == TS_DEFAULT);
+  ck_assert_eq_ts_default(child->tokenType);
 
   TS_free_tsFile(tsFile);
 END_TEST

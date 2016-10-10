@@ -159,14 +159,14 @@ END_TEST
 void parse_variables_suite(Suite *suite) {
   TCase *tc_variables = tcase_create("Variables");
 
-//  tcase_add_test(tc_variables, parse_valid_variables);
+  tcase_add_test(tc_variables, parse_valid_variables);
 
   tcase_add_test(tc_variables, parse_var_no_name);
-//  tcase_add_test(tc_variables, parse_var_type_without_name);
-//  tcase_add_test(tc_variables, parse_var_value_without_expression);
-//  tcase_add_test(tc_variables, parse_var_with_reserved_word_as_name);
-//  tcase_add_test(tc_variables, parse_let_with_reserved_word_as_name);
-//  tcase_add_test(tc_variables, parse_const_with_reserved_word_as_name);
+  tcase_add_test(tc_variables, parse_var_type_without_name);
+  tcase_add_test(tc_variables, parse_var_value_without_expression);
+  tcase_add_test(tc_variables, parse_var_with_reserved_word_as_name);
+  tcase_add_test(tc_variables, parse_let_with_reserved_word_as_name);
+  tcase_add_test(tc_variables, parse_const_with_reserved_word_as_name);
 
   suite_add_tcase(suite, tc_variables);
 }

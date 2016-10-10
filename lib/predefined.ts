@@ -1,18 +1,20 @@
-class any {}
+interface $___each_entry_callback {
+  (element, index, array): any;
+}
 
-class Object extends any {}
+class Object {}
 
-class String extends any {
+class String {
   constructor(object: any = undefined) {}
 }
 
 class string extends String {}
 
-class Number extends any {}
+class Number {}
 
 class number extends Number {}
 
-class Error extends any {
+class Error extends Object {
   constructor(public message: string) {}
   toString(): string { return this.message; }
 }
@@ -24,18 +26,18 @@ class SyntaxError extends Error {}
 class TypeError extends Error {}
 class URIError extends Error {}
 
-class Function extends any {}
+class Function extends Object {}
 
 class Iterator {
   constructor(private iteratable) {}
 }
-class Boolean extends any {
+class Boolean extends Object {
   constructor(value: any = undefined) {}
   static get length(): number { return 1; }
   toString(): string { if(this) return "true"; else return "false"; }
 }
 
-class Array extends any {
+class Array extends Object {
   static from(object: any): Array { return []; }
   static isArray(object: any): Boolean { return false; }
   static of(...args): Array { return Array.from(args); }
@@ -43,20 +45,20 @@ class Array extends any {
   public concat(...args): Array { return this; }
   public copyWithin(target: Array, start: number = 0, end: number = -1) {}
   public entries(): Iterator { return Iterator(this); }
-  public every(callback: (element, index, array) => {}, thisArg: any = undefined) { callback.call(thisArg || this); }
+  public every(callback: $___each_entry_callback, thisArg: any = undefined) { callback.call(thisArg || this); }
   public fill(value, start: number = 0, end: number = -1) {}
-  public filter(callback: (element, index, array) => {}, thisArg = undefined) { callback.call(thisArg || this); }
-  public find(callback: (element, index, array) => {}, thisArg = undefined): any[] { return callback.call(thisArg || this); }
-  public findIndex(callback: (element, index, array) => {}, thisArg = undefined) { callback.call(thisArg || this); }
-  public forEach(callback: (element, index, array) => {}, thisArg = undefined) { callback.call(thisArg || this); }
+  public filter(callback: $___each_entry_callback, thisArg = undefined) { callback.call(thisArg || this); }
+  public find(callback: $___each_entry_callback, thisArg = undefined): Array { return callback.call(thisArg || this); }
+  public findIndex(callback: $___each_entry_callback, thisArg = undefined) { callback.call(thisArg || this); }
+  public forEach(callback: $___each_entry_callback, thisArg = undefined) { callback.call(thisArg || this); }
   public includes(element: any, start: number = 0): Boolean { if (this) return false; return true; }
   public indexOf(element: any, start: number = 0): number { if (this) return 0; return -1; }
   public join(separator: string = ','): string { return String(this); }
   public keys(): Iterator { return new Iterator(this); }
   public lastIndexOf(element: any, start: number = this.length - 1): number { return this.length; }
-  public map(callback: (element, index, array) => {}, thisArg = undefined) { callback.call(thisArg || this); }
+  public map(callback: $___each_entry_callback, thisArg = undefined) { callback.call(thisArg || this); }
   public pop(): any { if (this) return null; return undefined; }
-  public push(...args: any[]): number { return this.length; }
+  public push(...args: Array): number { return this.length; }
   public reduce() {}
   public reduceRight() {}
   public reverse() {}
