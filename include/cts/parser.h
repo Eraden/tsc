@@ -4,25 +4,26 @@
 #include <cts/log.h>
 
 #define TS_CODE_EVAL "(code eval)"
-#define TS_TOKEN_SECTION_BEGIN(token) log_to_file(L"    -> parsing as %s\n", token);
-#define TS_TOKEN_SECTION_END(token) log_to_file(L"    -> end %s\n", token);
+#define TS_TOKEN_SECTION_BEGIN(token) TS_log_to_file(L"    -> parsing as %s\n", token);
+#define TS_TOKEN_SECTION_END(token) TS_log_to_file(L"    -> end %s\n", token);
 #define TS_STRING_END 1
 #define TS_NEW_TOKEN calloc(sizeof(TSParserToken), 1)
 #define TS_LOOP_SANITY_CHECK(file) if (file->sanity != TS_FILE_VALID) break;
 #define TS_MOVE_BY(data, tok) { u_long m = wcslen(tok); data->position += m; data->character += m; }
 #define TS_NEW_LINE(data, tok) { u_long m = wcslen(tok); data->character = 0; data->position += m; data->line += 1; }
+
 #define TS_UNEXPECTED_END_OF_STREAM(file, token, type) ts_token_syntax_error( \
   (const wchar_t *) L"Unexpected end of stream while parsing `" type "`", \
   file, token )
 #define TS_UNEXPECTED_TOKEN(tsFile, token, tok, type) ts_token_syntax_error( \
   (const wchar_t *) L"Unexpected token while parsing `" type "`", \
   tsFile, token, tok ); \
-  ts_token_syntax_error_info(tsFile, (const wchar_t *) L"%ls", tok);
-//#define TS_UNKNOWN_CLASS(tsFile, token, name) ts_token_syntax_error( \
-//  (const wchar_t *) L"Unknown class", tsFile, token ); \
-//  ts_token_syntax_error_info(tsFile, (const wchar_t *) L"%ls", name);
-#define TS_UNKNOWN_CLASS(tsFile, token, name) \
-  ts_token_syntax_error_info(tsFile, (const wchar_t *) L"Unknown class %ls", name);
+  ts_token_syntax_error_info(tsFile, (const wchar_t *) L"invalid token: \"%ls\"", (wchar_t *) tok);
+#define TS_UNKNOWN_TYPE(tsFile, token, name) ts_token_syntax_error( \
+  (const wchar_t *) L"Unknown type", tsFile, token ); \
+  ts_token_syntax_error_info(tsFile, (const wchar_t *) L"%ls", (wchar_t *) name);
+/*#define TS_UNKNOWN_TYPE(tsFile, token, name) \
+  ts_token_syntax_error_info(tsFile, (const wchar_t *) L"Unknown class %ls", (wchar_t *) name);*/
 #define TS_MISSING_NAME(tsFile, token, type) \
   ts_token_syntax_error((const wchar_t *) L"Expecting name for:", tsFile, token ); \
   ts_token_syntax_error_info(tsFile, (const wchar_t *) L"    %ls", (const wchar_t *) type);
@@ -30,10 +31,14 @@
   ts_token_syntax_error( \
     (const wchar_t *) L"Unexpected `" type "` in global scope", \
     tsFile, token );
-#define TS_GET_TOKEN_MSG(msg, ...) if (TS_check_log_level(TS_VERBOSITY_INFO) == TRUE) log_to_file(msg, __VA_ARGS__);
+
+#if DEBUG == 1
+#define TS_GET_TOKEN_MSG(msg, ...) if (TS_check_log_level(TS_VERBOSITY_INFO) == TRUE) TS_log_to_file(msg, __VA_ARGS__);
+#else
+#define TS_GET_TOKEN_MSG(msg, ...) ;
+#endif
 
 typedef struct sTSParseData TSParseData;
-typedef struct sTSFunctionData TSFunctionData;
 typedef struct sTSKeyword TSKeyword;
 typedef struct sTSParserToken TSParserToken;
 typedef struct sTSFile TSFile;
@@ -363,9 +368,9 @@ void TS_free_tsFile(TSFile *tsFile);
   { \
     TS_MOVE_BY(tsParseData, tsParseData->token); \
     TSParserToken *token = TS_build_parser_token(type, tsParseData); \
-    log_to_file(L"-> parsing as %s\n", #type);
+    TS_log_to_file(L"-> parsing as %s\n", #type);
 #define TS_TOKEN_END(type) \
     tsParseData->parentTSToken = token->parent; \
-    log_to_file(L"-> end %s\n", #type); \
+    TS_log_to_file(L"-> end %s\n", #type); \
     return token; \
   }

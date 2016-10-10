@@ -156,6 +156,9 @@ TS_print_for_token(
     case TS_IMPORTED_TOKENS: {
       break;
     }
+    case TS_INTERFACE: {
+      break;
+    }
   }
 }
 
@@ -303,6 +306,9 @@ TS_string_for_token(
     case TS_IMPORTED_TOKENS: {
       break;
     }
+    case TS_INTERFACE: {
+      break;
+    }
   }
   return NULL;
 }
@@ -312,29 +318,6 @@ TS_print_stream(
     TSFile *tsFile,
     FILE *stream
 ) {
-
-  if (tsFile->tokens == NULL) {
-    return;
-  }
-
-  TSOutputSettings outputSettings;
-  outputSettings.indent = 0;
-  outputSettings.stream = stream;
-
-  const wchar_t *header = TS_output_header();
-  fprintf(stream, "%ls", header);
-  fflush(stream);
-  free((void *) header);
-
-  const u_long size = tsFile->tokensSize;
-  for (u_long i = 0; i < size; i++) {
-    TS_print_for_token(tsFile, tsFile->tokens[i], outputSettings);
-  }
-
-  const wchar_t *footer = TS_output_footer();
-  fprintf(stream, "%ls", footer);
-  fflush(stream);
-  free((void *) footer);
 }
 
 const wchar_t *

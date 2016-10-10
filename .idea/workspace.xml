@@ -1,0 +1,1055 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" assignedExecutableTargets="true" buildAllGenerated="true">
+    <generated>
+      <config projectName="tsc" targetName="ExperimentalConfigure" />
+      <config projectName="tsc" targetName="tsoutput" />
+      <config projectName="tsc" targetName="tsdump" />
+      <config projectName="tsc" targetName="ContinuousSubmit" />
+      <config projectName="tsc" targetName="NightlyTest" />
+      <config projectName="tsc" targetName="NightlyMemCheck" />
+      <config projectName="tsc" targetName="ContinuousCoverage" />
+      <config projectName="tsc" targetName="ExperimentalTest" />
+      <config projectName="tsc" targetName="NightlyCoverage" />
+      <config projectName="tsc" targetName="Continuous" />
+      <config projectName="tsc" targetName="tsparser" />
+      <config projectName="tsc" targetName="tsparse" />
+      <config projectName="tsc" targetName="NightlyConfigure" />
+      <config projectName="tsc" targetName="ExperimentalSubmit" />
+      <config projectName="tsc" targetName="NightlySubmit" />
+      <config projectName="tsc" targetName="ContinuousBuild" />
+      <config projectName="tsc" targetName="ExperimentalStart" />
+      <config projectName="tsc" targetName="NightlyBuild" />
+      <config projectName="tsc" targetName="ContinuousUpdate" />
+      <config projectName="tsc" targetName="Experimental" />
+      <config projectName="tsc" targetName="Nightly" />
+      <config projectName="tsc" targetName="tsc_test" />
+      <config projectName="tsc" targetName="ExperimentalCoverage" />
+      <config projectName="tsc" targetName="ContinuousConfigure" />
+      <config projectName="cts" targetName="cts_test" />
+      <config projectName="tsc" targetName="NightlyMemoryCheck" />
+      <config projectName="tsc" targetName="ExperimentalMemCheck" />
+      <config projectName="tsc" targetName="NightlyStart" />
+      <config projectName="cts" targetName="cts" />
+      <config projectName="tsc" targetName="ContinuousTest" />
+      <config projectName="tsc" targetName="ContinuousStart" />
+      <config projectName="tsc" targetName="tso" />
+      <config projectName="tsc" targetName="tstypes" />
+      <config projectName="tsc" targetName="tsc" />
+      <config projectName="tsc" targetName="NightlyUpdate" />
+      <config projectName="tsc" targetName="ExperimentalBuild" />
+      <config projectName="tsc" targetName="ContinuousMemCheck" />
+      <config projectName="tsc" targetName="ExperimentalUpdate" />
+    </generated>
+  </component>
+  <component name="CMakeSettings" AUTO_RELOAD="true" GENERATION_OPTIONS="-DCMAKE_C_COMPILER=/usr/bin/clang-3.8 -DCMAKE_VERBOSE_MAKEFILE=FALSE -DCMAKE_BUILD_TYPE=Debug -DVALIDATE_MEMORY=TRUE -DTSC_TEST=1" GENERATION_PASS_SYSTEM_ENVIRONMENT="true">
+    <ADDITIONAL_GENERATION_ENVIRONMENT>
+      <envs />
+    </ADDITIONAL_GENERATION_ENVIRONMENT>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c8fe0e5b-7153-49a4-9092-cec999535da6" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/interface/valid.ts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CMakeLists.txt" afterPath="$PROJECT_DIR$/CMakeLists.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/cts/log.h" afterPath="$PROJECT_DIR$/include/cts/log.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/cts/parser.h" afterPath="$PROJECT_DIR$/include/cts/parser.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/cts/register.h" afterPath="$PROJECT_DIR$/include/cts/register.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/cts/sys.h" afterPath="$PROJECT_DIR$/include/cts/sys.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/predefined.ts" afterPath="$PROJECT_DIR$/lib/predefined.ts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/log.c" afterPath="$PROJECT_DIR$/src/log.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main.c" afterPath="$PROJECT_DIR$/src/main.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/output.c" afterPath="$PROJECT_DIR$/src/output.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/parser.c" afterPath="$PROJECT_DIR$/src/parser.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/parser/ts_parse_argument.c" afterPath="$PROJECT_DIR$/src/parser/ts_parse_argument.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/parser/ts_parse_caller.c" afterPath="$PROJECT_DIR$/src/parser/ts_parse_caller.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/parser/ts_parse_class.c" afterPath="$PROJECT_DIR$/src/parser/ts_parse_class.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/parser/ts_parse_decorator.c" afterPath="$PROJECT_DIR$/src/parser/ts_parse_decorator.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/parser/ts_parse_else.c" afterPath="$PROJECT_DIR$/src/parser/ts_parse_else.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/parser/ts_parse_function.c" afterPath="$PROJECT_DIR$/src/parser/ts_parse_function.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/parser/ts_parse_if.c" afterPath="$PROJECT_DIR$/src/parser/ts_parse_if.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/parser/ts_parse_interface.c" afterPath="$PROJECT_DIR$/src/parser/ts_parse_interface.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/parser/ts_parse_local_variable.c" afterPath="$PROJECT_DIR$/src/parser/ts_parse_local_variable.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/register.c" afterPath="$PROJECT_DIR$/src/register.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/sys.c" afterPath="$PROJECT_DIR$/src/sys.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/main.c" afterPath="$PROJECT_DIR$/tests/main.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/parser/parse_function.c" afterPath="$PROJECT_DIR$/tests/parser/parse_function.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/parser/parse_return.c" afterPath="$PROJECT_DIR$/tests/parser/parse_return.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/parser/parse_switch.c" afterPath="$PROJECT_DIR$/tests/parser/parse_switch.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/support/ck_token_type.h" afterPath="$PROJECT_DIR$/tests/support/ck_token_type.h" />
+    </list>
+    <ignored path="tsc.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="tsc" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="CMakeLists.txt" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="301">
+              <caret line="117" column="27" selection-start-line="117" selection-start-column="27" selection-end-line="117" selection-end-column="27" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Adrian Woźniak" />
+      </list>
+    </option>
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_export.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_extends.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_implements.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_import.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_in.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_inline_comment.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_new.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_multiline_comment.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_of.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_return.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_scope.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_switch.c" />
+        <option value="$PROJECT_DIR$/tests/parser/parse_break.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_json.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_if.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_else.c" />
+        <option value="$PROJECT_DIR$/examples/variables/valid.ts" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_string.c" />
+        <option value="$PROJECT_DIR$/tests/parser/parse_variables.c" />
+        <option value="$PROJECT_DIR$/tests/parser/parse_else.c" />
+        <option value="$PROJECT_DIR$/examples/for/let/valid.ts" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_for.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_scope_or_json.c" />
+        <option value="$PROJECT_DIR$/tests/test.h" />
+        <option value="$PROJECT_DIR$/tests/parser/parse_if.c" />
+        <option value="$PROJECT_DIR$/tests/parser/parse_new.c" />
+        <option value="$PROJECT_DIR$/tests/support/ck_token_eq.h" />
+        <option value="$PROJECT_DIR$/tests/parser/classes.c" />
+        <option value="$PROJECT_DIR$/src/output.c" />
+        <option value="$PROJECT_DIR$/src/log.c" />
+        <option value="$PROJECT_DIR$/tests/main.c" />
+        <option value="$PROJECT_DIR$/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/examples/interface/valid.ts" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_caller.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_decorator.c" />
+        <option value="$PROJECT_DIR$/tests/support/ck_token_type.h" />
+        <option value="$PROJECT_DIR$/tests/parser/parse_return.c" />
+        <option value="$PROJECT_DIR$/tests/parser/parse_switch.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_function.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_class.c" />
+        <option value="$PROJECT_DIR$/include/cts/sys.h" />
+        <option value="$PROJECT_DIR$/src/sys.c" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_local_variable.c" />
+        <option value="$PROJECT_DIR$/include/cts/register.h" />
+        <option value="$PROJECT_DIR$/tests/parser/parse_function.c" />
+        <option value="$PROJECT_DIR$/include/cts/parser.h" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_interface.c" />
+        <option value="$PROJECT_DIR$/lib/predefined.ts" />
+        <option value="$PROJECT_DIR$/src/parser/ts_parse_argument.c" />
+        <option value="$PROJECT_DIR$/src/parser.c" />
+        <option value="$PROJECT_DIR$/src/register.c" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
+  <component name="ProjectFrameBounds">
+    <option name="width" value="1920" />
+    <option name="height" value="1044" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>C/C++</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="2" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tsc" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tsc" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tsc" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="settings.editor.selected.configurable" value="CMakeSettings" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="typescript-compiler-editor-notification" value="false" />
+    <property name="js-jscs-nodeInterpreter" value="$USER_HOME$/.nvm/versions/node/v5.4.0/bin/node" />
+    <property name="GO_FMT" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/examples/for/let" />
+      <recent name="$PROJECT_DIR$/examples/for/of" />
+      <recent name="$PROJECT_DIR$/tests/parser/for" />
+      <recent name="$PROJECT_DIR$/tests/parser" />
+      <recent name="$PROJECT_DIR$/examples/variables" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/parser/for" />
+      <recent name="$PROJECT_DIR$/examples/case/condition" />
+      <recent name="$PROJECT_DIR$/tests/support" />
+      <recent name="$PROJECT_DIR$/examples/class" />
+      <recent name="$PROJECT_DIR$/examples" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.cts_test">
+    <configuration default="true" type="BashConfigurationType" factoryName="Bash">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="INTERPRETER_PATH" value="/bin/bash" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tsc" TARGET_NAME="tsc" CONFIG_NAME="Debug" TEST_MODE="SUITE_TEST">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tsc" TARGET_NAME="tsc" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
+      <command value="run-script" />
+      <scripts />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="cts" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-l log -f examples/new/valid.ts" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cts" TARGET_NAME="cts" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cts" RUN_TARGET_NAME="cts">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="cts_test" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="--no-fork" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cts" TARGET_NAME="cts_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cts" RUN_TARGET_NAME="cts_test">
+      <envs />
+      <method />
+    </configuration>
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="Application.cts" />
+      <item index="1" class="java.lang.String" itemvalue="Application.cts_test" />
+    </list>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c8fe0e5b-7153-49a4-9092-cec999535da6" name="Default" comment="" />
+      <created>1467624114586</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1467624114586</updated>
+      <workItem from="1469038482119" duration="4752000" />
+      <workItem from="1469110573316" duration="5488000" />
+      <workItem from="1469170065352" duration="4598000" />
+      <workItem from="1469256888343" duration="14625000" />
+      <workItem from="1469454550671" duration="5750000" />
+      <workItem from="1469788997803" duration="18487000" />
+      <workItem from="1469871397499" duration="34323000" />
+      <workItem from="1469989603955" duration="8313000" />
+      <workItem from="1470000386345" duration="1858000" />
+      <workItem from="1470038859150" duration="23365000" />
+      <workItem from="1470085373219" duration="1423000" />
+      <workItem from="1470208784938" duration="2520000" />
+      <workItem from="1470214654600" duration="4806000" />
+      <workItem from="1470219478021" duration="147000" />
+      <workItem from="1470219639504" duration="135000" />
+      <workItem from="1470219788412" duration="13647000" />
+      <workItem from="1470330880469" duration="1602000" />
+      <workItem from="1470349129214" duration="12182000" />
+      <workItem from="1471873451517" duration="15000" />
+      <workItem from="1471873492419" duration="25000" />
+      <workItem from="1472478002581" duration="9321000" />
+      <workItem from="1472539660311" duration="39189000" />
+      <workItem from="1472662452097" duration="4040000" />
+      <workItem from="1472741749698" duration="618000" />
+      <workItem from="1472743925053" duration="8774000" />
+      <workItem from="1472810106508" duration="1830000" />
+      <workItem from="1472829787241" duration="48000" />
+      <workItem from="1472829847513" duration="13515000" />
+      <workItem from="1473084699504" duration="27000" />
+      <workItem from="1473084737734" duration="10405000" />
+      <workItem from="1473621314687" duration="5000" />
+      <workItem from="1473621335877" duration="1327000" />
+      <workItem from="1473622674528" duration="2666000" />
+      <workItem from="1473684262962" duration="1867000" />
+      <workItem from="1473686956628" duration="5659000" />
+      <workItem from="1473697376053" duration="262000" />
+      <workItem from="1473706113707" duration="2323000" />
+      <workItem from="1473708616967" duration="5837000" />
+      <workItem from="1473714979322" duration="3359000" />
+      <workItem from="1473779053178" duration="6592000" />
+      <workItem from="1473831274056" duration="1713000" />
+      <workItem from="1473861947894" duration="5111000" />
+      <workItem from="1473954449325" duration="8346000" />
+      <workItem from="1474049633294" duration="601000" />
+      <workItem from="1474221906952" duration="1042000" />
+      <workItem from="1474305403030" duration="17000" />
+      <workItem from="1474649028775" duration="944000" />
+      <workItem from="1474655155106" duration="28000" />
+      <workItem from="1474660063648" duration="14708000" />
+      <workItem from="1474796544954" duration="9443000" />
+      <workItem from="1474907288982" duration="5179000" />
+      <workItem from="1474913910134" duration="3183000" />
+      <workItem from="1474980214484" duration="7609000" />
+      <workItem from="1475147568399" duration="21000" />
+      <workItem from="1475180442767" duration="2149000" />
+      <workItem from="1475220587903" duration="3662000" />
+      <workItem from="1475235999981" duration="1000" />
+      <workItem from="1475245246807" duration="12966000" />
+      <workItem from="1475346467012" duration="11053000" />
+      <workItem from="1475591969212" duration="9361000" />
+      <workItem from="1475755307706" duration="3956000" />
+      <workItem from="1475847853850" duration="209000" />
+      <workItem from="1475848073535" duration="3155000" />
+      <workItem from="1476033863590" duration="447000" />
+      <workItem from="1476034321899" duration="6865000" />
+      <workItem from="1476041207811" duration="29573000" />
+    </task>
+    <task id="LOCAL-00001" summary="Parse if and else&#10;Generate string for them&#10;Handle UNKNOWN token by pushing string to data&#10;&#10;Split parser and output to keywords files">
+      <created>1468789278384</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1468789278384</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Add __attribute__&#10;Parse empty class&#10;Print empty class&#10;Update README&#10;">
+      <created>1468910619745</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1468910619745</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Add class field with default value and storing using symbols.&#10;Add class empty methods without arguments.">
+      <created>1469002224346</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1469002224346</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Add meaningful ZERO index for string.&#10;Fix accessibility for class output methods and fields.&#10;Change passing indent for output class members to TSOutputSettings.">
+      <created>1469006069464</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1469006069464</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Fix local variables.&#10;Fix functions.&#10;Move tests to files for vars and fn.">
+      <created>1470238530776</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1470238530776</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Fix circleci">
+      <created>1473715113094</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1473715113094</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Fix circleci">
+      <created>1473715395123</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1473715395123</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Fix circleci">
+      <created>1473744315281</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1473744315281</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Remove  check framework from hard requirements. Update README file">
+      <created>1473955389154</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1473955389154</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Unified token build.&#10;Get token message only in info verbosity.&#10;">
+      <created>1475351130697</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1475351130698</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Fix error messages.">
+      <created>1475405531049</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1475405531049</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Parse brackets in `if` and `else` as scope.&#10;Removing ending bracket in JSON (requires implementation).">
+      <created>1475432427582</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1475432427582</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Fix tests for checking types.">
+      <created>1475851577009</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1475851577009</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="417067000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="0" width="1920" height="1044" extended-state="6" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23405378" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295838" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32283464" sideWeight="0.4967983" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32733408" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295838" sideWeight="0.5044808" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295838" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295838" sideWeight="0.49551925" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295838" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973376" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295838" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.47581553" sideWeight="0.49786553" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="LuaJ" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="Parse if and else&#10;Generate string for them&#10;Handle UNKNOWN token by pushing string to data&#10;&#10;Split parser and output to keywords files" />
+    <MESSAGE value="Add __attribute__&#10;Parse empty class&#10;Print empty class&#10;Update README&#10;" />
+    <MESSAGE value="Add class field with default value and storing using symbols.&#10;Add class empty methods without arguments." />
+    <MESSAGE value="Add meaningful ZERO index for string.&#10;Fix accessibility for class output methods and fields.&#10;Change passing indent for output class members to TSOutputSettings." />
+    <MESSAGE value="Fix local variables.&#10;Fix functions.&#10;Move tests to files for vars and fn." />
+    <MESSAGE value="Fix circleci" />
+    <MESSAGE value="Remove  check framework from hard requirements. Update README file" />
+    <MESSAGE value="Unified token build.&#10;Get token message only in info verbosity.&#10;" />
+    <MESSAGE value="Fix error messages." />
+    <MESSAGE value="Parse brackets in `if` and `else` as scope.&#10;Removing ending bracket in JSON (requires implementation)." />
+    <MESSAGE value="Fix tests for checking types." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix tests for checking types." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/register.c</url>
+          <line>296</line>
+          <option name="timeStamp" value="487" />
+        </line-breakpoint>
+      </breakpoints>
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <option name="time" value="493" />
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="CMakeRunConfiguration">
+        <watch expression="TS_PREDEFINED_FILE" language="ObjectiveC" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <PATH>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="tsc" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="tsc" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+      </PATH_ELEMENT>
+    </PATH>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/parser/ts_parse_string.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="13" column="35" selection-start-line="13" selection-start-column="35" selection-end-line="13" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/parser/parse_else.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="409">
+          <caret line="87" column="0" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="0">
+            <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/parser/for/parse_for_let.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="535">
+          <caret line="49" column="0" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/for/let/valid.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="1" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ts_parse_for.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5621">
+          <caret line="106" column="36" selection-start-line="106" selection-start-column="36" selection-end-line="106" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ts_parse_scope_or_json.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="661">
+          <caret line="73" column="0" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/test.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/test.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/parser/parse_function.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="16" selection-start-line="2" selection-start-column="16" selection-end-line="2" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/parser/parse_if.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="91" column="52" selection-start-line="91" selection-start-column="52" selection-end-line="91" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/functions/valid.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ts_parse_new.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="21" column="7" selection-start-line="21" selection-start-column="7" selection-end-line="21" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/parser/class/multiple_instance_methods.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="928" column="0" selection-start-line="928" selection-start-column="0" selection-end-line="928" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/parser/parse_new.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="40">
+          <caret line="49" column="29" selection-start-line="49" selection-start-column="29" selection-end-line="49" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/new/valid.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="6" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/parser/classes.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="222" column="38" selection-start-line="222" selection-start-column="38" selection-end-line="222" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/class/valid.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/support/ck_token_eq.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="103" selection-start-line="7" selection-start-column="103" selection-end-line="7" selection-end-column="103" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/log.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-302">
+          <caret line="67" column="6" selection-start-line="67" selection-start-column="6" selection-end-line="67" selection-end-column="6" />
+          <folding>
+            <element signature="e#96#160#0" expanded="false" />
+            <element signature="e#1704#2250#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ts_parse_in.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="11" selection-start-line="7" selection-start-column="11" selection-end-line="7" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/parser/parse_extends.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/output.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="319" column="3" selection-start-line="319" selection-start-column="3" selection-end-line="319" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ts_parse_switch.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="14" selection-start-line="7" selection-start-column="14" selection-end-line="7" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/extends/valid.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/interface/valid.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="5" column="42" selection-start-line="5" selection-start-column="42" selection-end-line="5" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/os.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="30" selection-start-line="3" selection-start-column="12" selection-end-line="3" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ts_parse_caller.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="134">
+          <caret line="53" column="44" selection-start-line="53" selection-start-column="31" selection-end-line="53" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ts_parse_decorator.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="108" column="27" selection-start-line="108" selection-start-column="27" selection-end-line="108" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/return/valid.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/switch/valid.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/support/ck_token_type.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="49" column="38" selection-start-line="49" selection-start-column="38" selection-end-line="49" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/functions/missing_return_type">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ts_parse_function.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="535">
+          <caret line="324" column="0" selection-start-line="324" selection-start-column="0" selection-end-line="324" selection-end-column="0" />
+          <folding>
+            <element signature="e#51#1220#0" expanded="false" />
+            <element signature="e#4525#5756#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/parser/parse_return.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="72" column="42" selection-start-line="72" selection-start-column="42" selection-end-line="72" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/parser/parse_switch.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-71">
+          <caret line="34" column="41" selection-start-line="34" selection-start-column="41" selection-end-line="34" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/parser/parse_function.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1219">
+          <caret line="184" column="77" selection-start-line="184" selection-start-column="77" selection-end-line="184" selection-end-column="77" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/sys.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="715">
+          <caret line="465" column="35" selection-start-line="465" selection-start-column="35" selection-end-line="465" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#20#0" expanded="false" />
+            <element signature="e#550#1095#0" expanded="false" />
+            <element signature="e#1097#1326#0" expanded="false" />
+            <element signature="e#1328#2375#0" expanded="false" />
+            <element signature="e#2377#3058#0" expanded="false" />
+            <element signature="e#3060#3270#0" expanded="false" />
+            <element signature="e#3272#3362#0" expanded="false" />
+            <element signature="e#3364#3557#0" expanded="false" />
+            <element signature="e#3559#6916#0" expanded="false" />
+            <element signature="e#6918#7189#0" expanded="false" />
+            <element signature="e#7191#7425#0" expanded="false" />
+            <element signature="e#7427#7898#0" expanded="false" />
+            <element signature="e#7900#8430#0" expanded="false" />
+            <element signature="e#8432#10264#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/cts/sys.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="589">
+          <caret line="77" column="60" selection-start-line="77" selection-start-column="60" selection-end-line="77" selection-end-column="60" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ts_parse_interface.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="125" column="43" selection-start-line="125" selection-start-column="43" selection-end-line="125" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/cts/parser.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-8">
+          <caret line="15" column="18" selection-start-line="15" selection-start-column="18" selection-end-line="15" selection-end-column="18" />
+          <folding>
+            <element signature="e#2268#2381#0" expanded="false" />
+            <element signature="e#3744#3932#0" expanded="false" />
+            <element signature="e#3963#4103#0" expanded="false" />
+            <element signature="e#4138#4272#0" expanded="false" />
+            <element signature="e#4311#4604#0" expanded="false" />
+            <element signature="e#4626#4748#0" expanded="false" />
+            <element signature="e#4778#4851#0" expanded="false" />
+            <element signature="e#4878#4951#0" expanded="false" />
+            <element signature="e#5170#5446#0" expanded="false" />
+            <element signature="e#5375#5443#1" expanded="false" />
+            <element signature="e#5471#5616#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ts_parse_call_arguments.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="445">
+          <caret line="56" column="18" selection-start-line="56" selection-start-column="18" selection-end-line="56" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/main.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="697">
+          <caret line="133" column="0" selection-start-line="133" selection-start-column="0" selection-end-line="133" selection-end-column="0" />
+          <folding>
+            <element signature="e#714#876#0" expanded="false" />
+            <element signature="e#878#2080#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ts_parse_local_variable.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="157" column="45" selection-start-line="157" selection-start-column="45" selection-end-line="157" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/register.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="607">
+          <caret line="338" column="0" selection-start-line="338" selection-start-column="0" selection-end-line="338" selection-end-column="0" />
+          <folding>
+            <element signature="e#640#1275#0" expanded="false" />
+            <element signature="e#1277#1933#0" expanded="false" />
+            <element signature="e#1935#3353#0" expanded="false" />
+            <element signature="e#3355#4156#0" expanded="false" />
+            <element signature="e#8388#8574#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/cts/register.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="486">
+          <caret line="28" column="16" selection-start-line="28" selection-start-column="16" selection-end-line="28" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ts_parse_argument.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="49">
+          <caret line="147" column="52" selection-start-line="147" selection-start-column="52" selection-end-line="147" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/predefined.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-810">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ts_parse_class.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="427">
+          <caret line="500" column="0" selection-start-line="500" selection-start-column="0" selection-end-line="500" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="571">
+          <caret line="732" column="0" selection-start-line="732" selection-start-column="0" selection-end-line="732" selection-end-column="0" />
+          <folding>
+            <element signature="e#167#382#0" expanded="false" />
+            <element signature="e#384#893#0" expanded="false" />
+            <element signature="e#2410#2615#0" expanded="false" />
+            <element signature="e#2617#2794#0" expanded="false" />
+            <element signature="e#2796#3474#0" expanded="false" />
+            <element signature="e#3476#4119#0" expanded="false" />
+            <element signature="e#4121#4585#0" expanded="false" />
+            <element signature="e#4587#5819#0" expanded="false" />
+            <element signature="e#5821#5977#0" expanded="false" />
+            <element signature="e#5979#6533#0" expanded="false" />
+            <element signature="e#6535#13470#0" expanded="false" />
+            <element signature="e#15038#15186#0" expanded="false" />
+            <marker date="1476109307568" expanded="false" signature="481:686" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="301">
+          <caret line="117" column="27" selection-start-line="117" selection-start-column="27" selection-end-line="117" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

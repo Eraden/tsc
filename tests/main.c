@@ -97,8 +97,9 @@ int main(int argc, char **argv) {
     }
   }
 
+  TS_set_log_level(TS_VERBOSITY_DEBUG);
+  TS_init_log();
   TS_set_log_level(ctsVerbose);
-  init_log();
   TS_setup_predefined();
 
   ANY = TS_find_type((const wchar_t *) L"", (const wchar_t *) L"any");

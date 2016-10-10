@@ -88,52 +88,6 @@ TS_parse_decorator_name(
   return name;
 }
 
-static void
-__attribute__((visibility("hidden")))
-__attribute__((section("parse-decorator")))
-TS_parse_decorator_arguments(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TSParserToken *token = tsParseData->parentTSToken;
-  const wchar_t *tok;
-  volatile unsigned char proceed = TRUE;
-
-  while (proceed) {
-    tok = (const wchar_t *) TS_getToken(tsFile->stream);
-
-    if (tok == NULL) {
-      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "decorator call arguments");
-      break;
-    }
-
-    switch (tok[0]) {
-      case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
-      case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
-      case L')': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-        proceed = FALSE;
-        break;
-      }
-      default: {
-        tsParseData->token = tok;
-        TSParserToken *argument = TS_parse_argument(tsFile, tsParseData);
-        free((void *) tok);
-        TS_push_child(token, argument);
-      }
-    }
-  }
-}
-
 TSParserToken *
 __attribute__((section("parse-decorator")))
 TS_parse_decorator(
@@ -149,7 +103,11 @@ TS_parse_decorator(
       free((void *) name);
     }
 
-    if (tsFile->sanity == TS_FILE_VALID) TS_parse_decorator_arguments(tsFile, tsParseData);
+    if (tsFile->sanity == TS_FILE_VALID) {
+      tsParseData->token = (const wchar_t *) L"(";
+      TSParserToken *args = TS_parse_call_arguments(tsFile, tsParseData);
+      TS_push_child(token, args);
+    }
 
   TS_TOKEN_END(TS_DECORATOR)
 }

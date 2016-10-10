@@ -1,16 +1,6 @@
 #include <cts/parser.h>
 #include <cts/register.h>
 
-static TSParserToken *
-__attribute__(( visibility("hidden")))
-TS_parse_function_return_type(
-    TSFile *__attribute__((__unused__))tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_FUNCTION_RETURN_TYPE, tsParseData);
-  TS_TOKEN_END(TS_FUNCTION_RETURN_TYPE)
-}
-
 static void
 __attribute__(( visibility("hidden")))
 TS_parse_function_arguments(
@@ -19,7 +9,6 @@ TS_parse_function_arguments(
 ) {
   TSParserToken *token = tsParseData->parentTSToken;
   const wchar_t *tok;
-  u_short hadStartBracket = FALSE;
   volatile unsigned char proceed = TRUE;
 
   while (proceed) {
@@ -30,20 +19,6 @@ TS_parse_function_arguments(
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "function argument");
       break;
-    }
-
-    if (!hadStartBracket) {
-      if (tok[0] == '(') {
-        hadStartBracket = TRUE;
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-        continue;
-
-      } else {
-        free((void *) tok);
-        ts_token_syntax_error((wchar_t *) L"Function arguments starts before bracket", tsFile, token);
-        break;
-      }
     }
 
     switch (tok[0]) {
@@ -57,19 +32,18 @@ TS_parse_function_arguments(
         free((void *) tok);
         break;
       }
-      case L')': {
+      case L'(': {
         TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
+        tsParseData->token = tok;
+        TSParserToken *callArguments = TS_parse_call_arguments(tsFile, tsParseData);
+        TS_push_child(token, callArguments);
         proceed = FALSE;
+        free((void *) tok);
         break;
       }
 
       default: {
-        TS_put_back(tsFile->stream, tok);
-
-        tsParseData->token = tok;
-        TSParserToken *argument = TS_parse_argument(tsFile, tsParseData);
-        TS_push_child(token, argument);
+        TS_UNEXPECTED_TOKEN(tsFile, token, tok, "function arguments");
         free((void *) tok);
         break;
       }
@@ -87,7 +61,12 @@ TS_parse_function_lookup_return_type(
   const wchar_t *tok;
   volatile unsigned char proceed = TRUE;
   volatile unsigned char foundColon = FALSE;
-  TSParserToken *type = NULL;
+  volatile unsigned char foundType = FALSE;
+  TSParserToken *type = TS_find_type(tsFile->file, (const wchar_t *) L"any");
+  TSParserToken *returnType = TS_build_parser_token(TS_FUNCTION_RETURN_TYPE, tsParseData);
+  tsParseData->parentTSToken = returnType->parent;
+  TS_push_child(returnType, type);
+  TS_push_child(token, returnType);
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -130,75 +109,68 @@ TS_parse_function_lookup_return_type(
     }
   }
 
-  if (foundColon == TRUE) {
-    proceed = TRUE;
-    while (proceed) {
-      TS_LOOP_SANITY_CHECK(tsFile)
+  proceed = foundColon;
+  while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
-      if (tok == NULL) {
-        TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "function return type");
+    if (tok == NULL) {
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "function return type");
+      break;
+    }
+
+    switch (tok[0]) {
+      case L' ': {
+        TS_MOVE_BY(tsParseData, tok);
+        free((void *) tok);
         break;
       }
-
-      switch (tok[0]) {
-        case L' ': {
+      case L'\n': {
+        TS_NEW_LINE(tsParseData, tok);
+        free((void *) tok);
+        break;
+      }
+      case L'{': {
+        if (!foundType) {
+          ts_token_syntax_error(
+              (const wchar_t *) L"Found colon but type wasn't declared while parsing function!",
+              tsFile,
+              token
+          );
+          free((void *) tok);
+        } else {
           TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
-          break;
         }
-        case L'\n': {
-          TS_NEW_LINE(tsParseData, tok);
+        proceed = FALSE;
+        break;
+      }
+      default: {
+        if (foundType) {
           free((void *) tok);
-          break;
-        }
-        case L'{': {
-          if (type == NULL) {
-            free((void *) tok);
-            ts_token_syntax_error(
-                (const wchar_t *) L"Found colon but type wasn't declared while parsing function!",
-                tsFile,
-                token
-            );
-          } else {
-            TS_MOVE_BY(tsParseData, tok);
-            free((void *) tok);
-          }
+          ts_token_syntax_error(
+              (wchar_t *) L"Unexpected token while parsing function return type. Return type was already defined!",
+              tsFile,
+              token
+          );
           proceed = FALSE;
-          break;
-        }
-        default: {
-          if (type != NULL) {
-            free((void *) tok);
-            ts_token_syntax_error(
-                (wchar_t *) L"Unexpected token while parsing function return type. Return type was already defined!",
-                tsFile,
-                token
-            );
-            proceed = FALSE;
-          } else if (!TS_name_is_valid(tok)) {
-            free((void *) tok);
-            ts_token_syntax_error((wchar_t *) L"Invalid type name for function return type!", tsFile, token);
-            proceed = FALSE;
+        } else if (!TS_name_is_valid(tok)) {
+          free((void *) tok);
+          ts_token_syntax_error((wchar_t *) L"Invalid type name for function return type!", tsFile, token);
+          proceed = FALSE;
+        } else {
+          foundType = TRUE;
+          type = TS_find_type(tsFile->file, tok);
+          if (type) {
+            returnType->children[0] = type;
           } else {
-            TSParserToken *classToken = TS_find_type(tsFile->file, tok);
-            if (classToken) {
-              tsParseData->token = tok;
-              type = TS_parse_function_return_type(tsFile, tsParseData);
-              TS_push_child(type, classToken);
-              TS_push_child(tsParseData->parentTSToken, type);
-            } else {
-              TS_UNKNOWN_CLASS(tsFile, token, tok);
-              tsParseData->token = tok;
-              type = TS_build_parser_token(TS_CLASS, tsParseData);
-              tsParseData->parentTSToken = type->parent;
-            }
-            TS_MOVE_BY(tsParseData, tok);
-            free((void *) tok);
+            TS_UNKNOWN_TYPE(tsFile, token, tok);
           }
-          break;
+          TS_MOVE_BY(tsParseData, tok);
+          free((void *) tok);
         }
+        break;
       }
     }
   }
@@ -352,9 +324,7 @@ TS_free_function(
 ) {
   TS_free_children(token);
 
-  if (token->name != NULL) {
-    free((void *) token->name);
-  }
+  if (token->name != NULL) free((void *) token->name);
   free((void *) token);
 }
 

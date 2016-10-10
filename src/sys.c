@@ -1,5 +1,6 @@
 #include <cts/sys.h>
 #include <cts/parser.h>
+#include <cts/register.h>
 
 const unsigned int TS_VERSION_MAJOR = 0;
 const unsigned int TS_VERSION_MINOR = 0;
@@ -100,7 +101,7 @@ ts_token_syntax_error_info(
     tsFile->errorReason = newPointer;
   }
 
-  log_error((wchar_t *) L"    %ls\n", formatted);
+  log_error((wchar_t *) L"      %ls\n", formatted);
 
   free(formatted);
 }
@@ -139,7 +140,7 @@ TS_parse_arguments(
   settings.stream = NULL;
   settings.fileName = NULL;
 
-  init_log();
+  TS_init_log();
 
   for (int i = 1; i < argc; i++) {
     arg = argv[i];
@@ -187,7 +188,7 @@ TS_parse_arguments(
       settings.fileName = argv[++i];
       settings.stream = fopen(settings.fileName, "r");
       if (settings.stream == NULL) {
-        io_panic((wchar_t *) L"Couldn't open source code file\n");
+        TS_io_panic((wchar_t *) L"Couldn't open source code file\n");
       }
     } else if (strcmp(arg, "-c") == 0 || strcmp(arg, "--code") == 0) {
       if (i + 1 >= argc) {
@@ -355,4 +356,113 @@ TS_resolve_path(
   }
 
   return resolved_path;
+}
+
+static unsigned char TS_types_eq(
+    TSParserToken *a,
+    TSParserToken *b
+) {
+  if (b == TS_ANY_TYPE) return TRUE;
+  if (a == b) return TRUE;
+  TSParserToken *child = NULL;
+  TSParserToken **children = a->children;
+  for (u_long index = 0; index < a->childrenSize; index++) {
+    child = children[0];
+    switch (child->tokenType) {
+      case TS_IMPLEMENTS:
+      case TS_EXTENDS: {
+        if (TS_types_eq(a, child)) return TRUE;
+        break;
+      }
+      default: {
+        index = a->childrenSize;
+      }
+    }
+    children += 1;
+  }
+  return FALSE;
+}
+
+unsigned char TS_is_instance_of(
+    struct sTSParserToken *token,
+    struct sTSParserToken *type
+) {
+  switch (token->tokenType) {
+    case TS_ARGUMENT:
+    case TS_VAR:
+    case TS_LET:
+    case TS_CONST:
+    case TS_CLASS_FIELD: {
+      if (token->children) {
+        return TS_types_eq(token->children[0], type);
+      } {
+        return FALSE;
+      }
+    }
+    case TS_CLASS: {
+      return TS_types_eq(token, type);
+    }
+    case TS_FUNCTION:
+    case TS_CLASS_METHOD: {
+      return TS_types_eq(TS_find_type(NULL, (const wchar_t *) L"Function"), type);
+    }
+    case TS_ARROW:
+    case TS_FUNCTION_RETURN_TYPE:
+    case TS_IMPLEMENTS:
+    case TS_EXTENDS: {
+      if (token->children == NULL) return FALSE;
+      else return TS_types_eq(token->children[0], type);
+    }
+    case TS_ARRAY: {
+      return TS_types_eq(TS_find_type(NULL, (const wchar_t *) L"Array"), type);
+    }
+    case TS_STRING:
+    case TS_STRING_TEMPLATE: {
+      return TS_types_eq(TS_find_type(NULL, (const wchar_t *) L"String"), type);
+    }
+    case TS_INLINE_COMMENT:
+    case TS_MULTILINE_COMMENT:
+    case TS_IF:
+    case TS_ELSE:
+    case TS_RETURN:
+    case TS_DECORATOR:
+    case TS_DEFAULT:
+    case TS_SCOPE:
+    case TS_NEW:
+    case TS_CONDITION:
+    case TS_CALLER:
+    case TS_SWITCH:
+    case TS_CASE:
+    case TS_BREAK:
+    case TS_FOR:
+    case TS_FOR_WITH_CONDITION:
+    case TS_FOR_IN:
+    case TS_FOR_OF:
+    case TS_LOOP_VARIABLES_SECTION:
+    case TS_LOOP_CONDITION_SECTION:
+    case TS_LOOP_CHANGE_SECTION:
+    case TS_OF:
+    case TS_IN:
+    case TS_JSON:
+    case TS_CALL_ARGUMENTS:
+    case TS_EXPORT:
+    case TS_IMPORT:
+    case TS_IMPORT_FROM:
+    case TS_IMPORTED_TOKENS:
+    case TS_INTERFACE:
+    case TS_UNKNOWN:
+      return FALSE;
+    default: {
+      return FALSE;
+    }
+  }
+}
+
+struct sTSParserToken *TS_type_for_string(
+    const wchar_t *str
+) {
+  if (str == NULL) return  TS_ANY_TYPE;
+  const u_long len = wcslen(str);
+  if (len == 0) return TS_ANY_TYPE;
+  return TS_ANY_TYPE;
 }

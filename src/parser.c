@@ -134,14 +134,14 @@ TS_push_child(
     TSParserToken *token,
     TSParserToken *child
 ) {
-  log_to_file((wchar_t *) L"%s\n", "Pushing new TSParserToken child to TSParserToken parent");
+  TS_log_to_file((wchar_t *) L"%s\n", "Pushing new TSParserToken child to TSParserToken parent");
   TSParserToken **newPointer = (TSParserToken **) calloc(sizeof(TSParserToken *), token->childrenSize + 1);
   if (token->children != NULL) memcpy(newPointer, token->children, sizeof(TSParserToken *) * token->childrenSize);
   if (token->children != NULL) free(token->children);
   token->children = newPointer;
   token->children[token->childrenSize] = child;
   token->childrenSize += 1;
-  log_to_file((wchar_t *) L"    size increased to: %lu\n", token->childrenSize);
+  TS_log_to_file((wchar_t *) L"    size increased to: %lu\n", token->childrenSize);
 }
 
 static void
@@ -166,7 +166,7 @@ TS_parse_ts_token(
     for (u_short i = 0; i < KEYWORDS_SIZE; i++) {
       TSKeyword k = TS_KEYWORDS[i];
       if (wcscmp(data->token, k.str) == 0) {
-        log_to_file((wchar_t *) L"  -  data->token = \"%ls\"\n  -  k.str = \"%ls\"\n", data->token, k.str);
+        TS_log_to_file((wchar_t *) L"  -  data->token = \"%ls\"\n  -  k.str = \"%ls\"\n", data->token, k.str);
         TSParserToken *token = k.callback(tsFile, data);
         return token;
       }
@@ -489,24 +489,8 @@ TS_parse_stream(
     const char *file,
     FILE *stream
 ) {
-  char full_path[4096];
-  memset(full_path, 0, sizeof(char) * 4096);
-  if (strcmp(file, TS_CODE_EVAL) != 0) {
-    realpath(file, full_path);
-  } else {
-    strcpy(full_path, file);
-  }
-  wchar_t buffer[4096];
-  memset(buffer, 0, sizeof(wchar_t) * 4096);
-  size_t size = mbstowcs(buffer, full_path, 4096);
+  TSFile *tsFile = TS_find_file(file, stream);
 
-  TSFile *tsFile = calloc(sizeof(TSFile), 1);
-  tsFile->tokens = NULL;
-  tsFile->tokensSize = 0;
-  tsFile->stream = stream;
-  wchar_t *filename = calloc(sizeof(wchar_t), size + 1);
-  wcscpy(filename, buffer);
-  tsFile->file = filename;
   if (stream) {
     tsFile->sanity = TS_FILE_VALID;
     tsFile->errorReason = NULL;
@@ -517,8 +501,6 @@ TS_parse_stream(
     wcscpy(tsFile->errorReason, msg);
     fprintf(stderr, "OS error: %s\n", strerror(errno));
   }
-
-  TS_register_file(tsFile);
 
   TSParseData data;
   data.line = 0;
@@ -551,6 +533,7 @@ TS_parse_stream(
 
     free((void *) tok);
   }
+
   if (tsFile->stream) {
     fclose(tsFile->stream);
     tsFile->stream = NULL;
@@ -720,10 +703,7 @@ void
 TS_free_children(
     const TSParserToken *token
 ) {
-  for (u_long childIndex = 0; childIndex < token->childrenSize; childIndex++) {
-    TS_free_tsToken(token->children[childIndex]);
-  }
-  if (token->children != NULL) free(token->children);
+  TS_free_children_from(token, 0);
 }
 
 void
@@ -731,8 +711,14 @@ TS_free_children_from(
     const TSParserToken *token,
     u_long childIndex
 ) {
+  TSParserToken *child = NULL;
+  TSParserToken **children = token->children;
   for (; childIndex < token->childrenSize; childIndex++) {
-    TS_free_tsToken(token->children[childIndex]);
+    child = children[0];
+    if (!TS_is_predefined(child)) {
+      TS_free_tsToken(child);
+    }
+    children += 1;
   }
   if (token->children != NULL) free(token->children);
 }
@@ -741,14 +727,16 @@ void
 TS_free_tsFile(
     TSFile *tsFile
 ) {
-  TS_register_remove_file(tsFile);
 
-  for (u_long index = 0; index < tsFile->tokensSize; index++) {
-    TS_free_tsToken(tsFile->tokens[index]);
+  for (; tsFile->tokensSize;) {
+    tsFile->tokensSize -= 1;
+    TS_free_tsToken(tsFile->tokens[tsFile->tokensSize]);
   }
   if (tsFile->tokens != NULL) free(tsFile->tokens);
   if (tsFile->file) free(tsFile->file);
   if (tsFile->errorReason) free(tsFile->errorReason);
+
+  TS_register_remove_file(tsFile);
 
   free((void *) tsFile);
 }

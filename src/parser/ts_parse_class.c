@@ -182,7 +182,7 @@ TS_parse_class_method(
             TS_push_child(bodyToken, returnType);
             tsParseData->parentTSToken = returnType->parent;
           } else {
-            TS_UNKNOWN_CLASS(tsFile, bodyToken, tok);
+            TS_UNKNOWN_TYPE(tsFile, bodyToken, tok);
           }
 
           TS_MOVE_BY(tsParseData, tok);
@@ -248,7 +248,7 @@ TS_parse_class_member(
               TS_push_child(bodyToken, returnType);
               tsParseData->parentTSToken = returnType->parent;
             } else {
-              TS_UNKNOWN_CLASS(tsFile, bodyToken, type);
+              TS_UNKNOWN_TYPE(tsFile, bodyToken, type);
             }
           }
 

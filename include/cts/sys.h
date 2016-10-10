@@ -80,3 +80,7 @@ wchar_t *TS_resolve_directory(const wchar_t *absolute_path);
 wchar_t *TS_resolve_file(const wchar_t *absolute_path);
 
 wchar_t *TS_resolve_path(const wchar_t *absolute_path, const wchar_t *unresolved_path);
+
+unsigned char TS_is_instance_of(struct sTSParserToken *token, struct sTSParserToken *type);
+
+struct sTSParserToken *TS_type_for_string(const wchar_t *str);

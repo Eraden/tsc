@@ -7,39 +7,53 @@ START_TEST(parse_valid_functions)
   ck_assert_tsFile_valid(tsFile);
   ck_assert_uint_eq(tsFile->tokensSize, 10);
 
-  TSParserToken *token, *arg;
-  TSFunctionData *data;
+  TSParserToken *token, *arg, *callArgs, *returnType;
 
   // example1
   token = tsFile->tokens[0];
   ck_assert(token->tokenType == TS_FUNCTION);
-  ck_assert_int_eq(token->childrenSize, 0);
-  ck_assert_ptr_eq(token->children, NULL);
+  ck_assert_int_eq(token->childrenSize, 2);
+  ck_assert_ptr_ne(token->children, NULL);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"example1");
+  returnType = token->children[1];
+  ck_assert_eq_ts_function_return_type(returnType->tokenType);
+  callArgs = token->children[0];
+  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
 
   // example2
   token = tsFile->tokens[1];
   ck_assert(token->tokenType == TS_FUNCTION);
-  ck_assert_int_eq(token->childrenSize, 1);
+  ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   ck_assert_ptr_ne(token->name, NULL);
-  ck_assert_wstr_eq(token->name, L"example2");  arg = token->children[0];
-  ck_assert(arg->tokenType == TS_ARGUMENT);
-  ck_assert_int_eq(arg->childrenSize, 1);
+  ck_assert_wstr_eq(token->name, L"example2");
+  returnType = token->children[1];
+  ck_assert_eq_ts_function_return_type(returnType->tokenType);
+  callArgs = token->children[0];
+  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
+  arg = callArgs->children[0];
+  ck_assert_eq_ts_argument(arg->tokenType);
+  ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first1");
   ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], ANY);
+  ck_assert_ts_token_eq(arg->children[TS_VARIABLE_VALUE], TS_UNDEFINED_TYPE);
 
   // example3
   token = tsFile->tokens[2];
   ck_assert(token->tokenType == TS_FUNCTION);
-  ck_assert_int_eq(token->childrenSize, 1);
+  ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   ck_assert_ptr_ne(token->name, NULL);
-  ck_assert_wstr_eq(token->name, L"example3");  arg = token->children[0];
-  ck_assert(arg->tokenType == TS_ARGUMENT);
+  ck_assert_wstr_eq(token->name, L"example3");
+  returnType = token->children[1];
+  ck_assert_eq_ts_function_return_type(returnType->tokenType);
+  callArgs = token->children[0];
+  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
+  arg = callArgs->children[0];
+  ck_assert_eq_ts_argument(arg->tokenType);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
@@ -50,25 +64,36 @@ START_TEST(parse_valid_functions)
   // example4
   token = tsFile->tokens[3];
   ck_assert(token->tokenType == TS_FUNCTION);
-  ck_assert_int_eq(token->childrenSize, 1);
+  ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   ck_assert_ptr_ne(token->name, NULL);
-  ck_assert_wstr_eq(token->name, L"example4");  arg = token->children[0];
-  ck_assert(arg->tokenType == TS_ARGUMENT);
-  ck_assert_int_eq(arg->childrenSize, 1);
+  ck_assert_wstr_eq(token->name, L"example4");
+  returnType = token->children[1];
+  ck_assert_eq_ts_function_return_type(returnType->tokenType);
+  callArgs = token->children[0];
+  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
+  arg = callArgs->children[0];
+  ck_assert_eq_ts_argument(arg->tokenType);
+  ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first3");
   ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], NUMBER);
+  ck_assert_ts_token_eq(arg->children[TS_VARIABLE_VALUE], TS_UNDEFINED_TYPE);
 
   // example5
   token = tsFile->tokens[4];
   ck_assert(token->tokenType == TS_FUNCTION);
-  ck_assert_int_eq(token->childrenSize, 1);
+  ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   ck_assert_ptr_ne(token->name, NULL);
-  ck_assert_wstr_eq(token->name, L"example5");  arg = token->children[0];
-  ck_assert(arg->tokenType == TS_ARGUMENT);
+  ck_assert_wstr_eq(token->name, L"example5");
+  returnType = token->children[1];
+  ck_assert_eq_ts_function_return_type(returnType->tokenType);
+  callArgs = token->children[0];
+  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
+  arg = callArgs->children[0];
+  ck_assert_eq_ts_argument(arg->tokenType);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
@@ -82,27 +107,39 @@ START_TEST(parse_valid_functions)
   ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   ck_assert_ptr_ne(token->name, NULL);
-  ck_assert_wstr_eq(token->name, L"example6");  arg = token->children[0];
-  ck_assert(arg->tokenType == TS_ARGUMENT);
-  ck_assert_int_eq(arg->childrenSize, 1);
+  ck_assert_wstr_eq(token->name, L"example6");
+  returnType = token->children[1];
+  ck_assert_eq_ts_function_return_type(returnType->tokenType);
+  callArgs = token->children[0];
+  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
+  arg = callArgs->children[0];
+  ck_assert_eq_ts_argument(arg->tokenType);
+  ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first5");
   ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], ANY);
-  arg = token->children[1];
-  ck_assert(arg->tokenType == TS_ARGUMENT);
-  ck_assert_int_eq(arg->childrenSize, 1);
+  ck_assert_ts_token_eq(arg->children[TS_VARIABLE_VALUE], TS_UNDEFINED_TYPE);
+  arg = callArgs->children[1];
+  ck_assert(arg->tokenType);
+  ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"second5");
   ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], ANY);
+  ck_assert_ts_token_eq(arg->children[TS_VARIABLE_VALUE], TS_UNDEFINED_TYPE);
 
   token = tsFile->tokens[6];
   ck_assert(token->tokenType == TS_FUNCTION);
   ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   ck_assert_ptr_ne(token->name, NULL);
-  ck_assert_wstr_eq(token->name, L"example7");  arg = token->children[0];
+  ck_assert_wstr_eq(token->name, L"example7");
+  returnType = token->children[1];
+  ck_assert_eq_ts_function_return_type(returnType->tokenType);
+  callArgs = token->children[0];
+  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
+  arg = callArgs->children[0];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
@@ -110,7 +147,7 @@ START_TEST(parse_valid_functions)
   ck_assert_wstr_eq(arg->name, L"first6");
   ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], ANY);
   ck_assert_wstr_eq(arg->children[TS_VARIABLE_VALUE]->content, L"1");
-  arg = token->children[1];
+  arg = callArgs->children[1];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
@@ -125,20 +162,27 @@ START_TEST(parse_valid_functions)
   ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   ck_assert_ptr_ne(token->name, NULL);
-  ck_assert_wstr_eq(token->name, L"example8");  arg = token->children[0];
+  ck_assert_wstr_eq(token->name, L"example8");
+  returnType = token->children[1];
+  ck_assert_eq_ts_function_return_type(returnType->tokenType);
+  callArgs = token->children[0];
+  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
+  arg = callArgs->children[0];
   ck_assert(arg->tokenType == TS_ARGUMENT);
-  ck_assert_int_eq(arg->childrenSize, 1);
+  ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first7");
   ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], NUMBER);
-  arg = token->children[1];
+  ck_assert_ts_token_eq(arg->children[TS_VARIABLE_VALUE], TS_UNDEFINED_TYPE);
+  arg = callArgs->children[1];
   ck_assert(arg->tokenType == TS_ARGUMENT);
-  ck_assert_int_eq(arg->childrenSize, 1);
+  ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"second7");
   ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], OBJECT);
+  ck_assert_ts_token_eq(arg->children[TS_VARIABLE_VALUE], TS_UNDEFINED_TYPE);
 
   // example9
   token = tsFile->tokens[8];
@@ -146,7 +190,12 @@ START_TEST(parse_valid_functions)
   ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   ck_assert_ptr_ne(token->name, NULL);
-  ck_assert_wstr_eq(token->name, L"example9");  arg = token->children[0];
+  ck_assert_wstr_eq(token->name, L"example9");
+  returnType = token->children[1];
+  ck_assert_eq_ts_function_return_type(returnType->tokenType);
+  callArgs = token->children[0];
+  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
+  arg = callArgs->children[0];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
@@ -154,7 +203,7 @@ START_TEST(parse_valid_functions)
   ck_assert_wstr_eq(arg->name, L"first8");
   ck_assert_ts_token_eq(arg->children[TS_VARIABLE_TYPE], NUMBER);
   ck_assert_wstr_eq(arg->children[TS_VARIABLE_VALUE]->content, L"234");
-  arg = token->children[1];
+  arg = callArgs->children[1];
   ck_assert(arg->tokenType == TS_ARGUMENT);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
@@ -166,9 +215,13 @@ START_TEST(parse_valid_functions)
   // example10
   token = tsFile->tokens[9];
   ck_assert_eq_ts_function(token->tokenType);
-  ck_assert_int_eq(token->childrenSize, 1);
+  ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
-  ck_assert_eq_ts_function_return_type(token->children[0]->tokenType);
+  returnType = token->children[1];
+  ck_assert_eq_ts_function_return_type(returnType->tokenType);
+  callArgs = token->children[0];
+  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
+  ck_assert_eq_ts_function_return_type(token->children[1]->tokenType);
   ck_assert_wstr_eq(token->name, L"example10");
 
   TS_free_tsFile(tsFile);

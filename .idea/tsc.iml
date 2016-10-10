@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="CPP_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lib" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/core/sys.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/core/sys.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/main.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/test.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/test.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_decorator.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_new.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_inline_comment.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_new.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/for/parse_for_in.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/for/parse_for_of.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/for/parse_for_in.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/for/parse_for_let.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/for/parse_for_of.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/for/parse_for_let.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_return.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_extends.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_return.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_extends.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_else.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_inline_comment.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_else.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_if.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_variables.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_if.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_break.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_multiline_comment.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/class/multiple_instance_fields.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/class/multiple_instance_methods.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/class/multiple_instance_methods.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/class/multiple_instance_fields.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/classes.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_multiline_comment.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_function.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_break.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_function.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_exports.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_variables.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_switch.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_exports.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_switch.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/classes.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests/parser/parse_decorator.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/include" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cmake/FindCheck.cmake" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/build" />
+      <excludeFolder url="file://$MODULE_DIR$/examples" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="Header Search Paths">
+        <CLASSES>
+          <root url="file:///usr/include" />
+          <root url="file:///usr/lib/llvm-3.8/lib/clang/3.8.0/include" />
+          <root url="file:///usr/local/include" />
+        </CLASSES>
+        <SOURCES>
+          <root url="file:///usr/include" />
+          <root url="file:///usr/lib/llvm-3.8/lib/clang/3.8.0/include" />
+          <root url="file:///usr/local/include" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+  </component>
+</module>
