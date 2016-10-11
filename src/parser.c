@@ -6,23 +6,6 @@ TS_append_ts_parser_token(
     TSParserToken *token
 );
 
-static void
-TS_next_line(
-    TSParseData *data
-);
-
-wchar_t *
-TS_clone_string(
-    const wchar_t *string
-) {
-  wchar_t *clone = NULL;
-  if (string) {
-    clone = calloc(sizeof(wchar_t), wcslen(string) + TS_STRING_END);
-    wcscpy(clone, string);
-  }
-  return clone;
-}
-
 TSParserToken *
 TS_build_parser_token(
     TSTokenType tokenType,
@@ -30,9 +13,9 @@ TS_build_parser_token(
 ) {
   TSParserToken *token = TS_NEW_TOKEN;
   token->tokenType = tokenType;
-  token->position = tsParseData->position;
   token->character = tsParseData->character;
   token->line = tsParseData->line;
+  token->usageCount = 0;
   token->modifiers = TS_MODIFIER_SCOPE;
   token->children = NULL;
   token->childrenSize = 0;
@@ -141,7 +124,7 @@ TS_push_child(
   token->children = newPointer;
   token->children[token->childrenSize] = child;
   token->childrenSize += 1;
-  TS_log_to_file((wchar_t *) L"    size increased to: %lu\n", token->childrenSize);
+  TS_log_to_file((wchar_t *) L"    size increased to: %u\n", token->childrenSize);
 }
 
 static void
@@ -177,9 +160,9 @@ TS_parse_ts_token(
   t->content = (void *) TS_clone_string(data->token);
   t->children = NULL;
   t->childrenSize = 0;
+  t->usageCount = 0;
   t->line = data->line;
   t->character = data->character;
-  t->position = data->position;
   t->tokenType = TS_UNKNOWN;
   t->parent = data->parentTSToken;
 
@@ -203,16 +186,6 @@ TS_parse_ts_token(
   }
 
   return t;
-}
-
-static void
-TS_next_line(
-    TSParseData *data
-) {
-  u_long len = wcslen(data->token);
-  data->position += len;
-  data->line += 1;
-  data->character = 0;
 }
 
 static u_short
@@ -502,12 +475,11 @@ TS_parse_stream(
     fprintf(stderr, "OS error: %s\n", strerror(errno));
   }
 
-  TSParseData data;
-  data.line = 0;
-  data.character = 0;
-  data.position = 0;
-  data.stream = stream;
-  data.parentTSToken = NULL;
+  TSParseData *data = calloc(sizeof(TSParseData), 1);
+  data->line = 0;
+  data->character = 0;
+  data->stream = stream;
+  data->parentTSToken = NULL;
 
   if (tsFile->sanity != TS_FILE_VALID)
     return tsFile;
@@ -519,11 +491,11 @@ TS_parse_stream(
     tok = (const wchar_t *) TS_getToken(stream);
     if (tok == NULL) break;
 
-    data.token = tok;
-    if (data.token[0] == '\n') {
-      TS_next_line(&data);
+    data->token = tok;
+    if (data->token[0] == '\n') {
+      TS_NEW_LINE(data, tok);
     } else {
-      TSParserToken *token = TS_parse_ts_token(tsFile, &data);
+      TSParserToken *token = TS_parse_ts_token(tsFile, data);
       if (token->tokenType != TS_UNKNOWN) {
         TS_append_ts_parser_token(tsFile, token);
       } else {
@@ -533,6 +505,8 @@ TS_parse_stream(
 
     free((void *) tok);
   }
+
+  free(data);
 
   if (tsFile->stream) {
     fclose(tsFile->stream);
@@ -694,6 +668,10 @@ TS_free_tsToken(
     }
     case TS_INTERFACE: {
       TS_free_interface(token);
+      break;
+    }
+    case TS_BORROW: {
+      TS_free_borrow(token);
       break;
     }
   }

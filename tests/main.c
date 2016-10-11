@@ -56,6 +56,9 @@ Suite *class_suite(void) {
 
 int main(int argc, char **argv) {
   setlocale(LC_ALL, "");
+
+  fprintf(stderr, "TSParserToken size %lu\n\n", sizeof(TSParserToken));
+
   FILE *errorOutput = tmpfile();
 //  TS_set_error_output(errorOutput);
   TS_set_error_output(stderr);

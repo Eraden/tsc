@@ -239,7 +239,6 @@ __TS_setup_predefined(void) {
     TSFile *tsFile = TS_PREDEFINED_FILE = TS_find_file(TS_PREDEFINED_PATH, NULL);
 
     TSParseData data;
-    data.position = 0;
     data.line = 0;
     data.character = 0;
     data.token = 0;
@@ -251,7 +250,6 @@ __TS_setup_predefined(void) {
     type = TS_ANY_TYPE = TS_build_parser_token(TS_CLASS, &data);
     type->name = TS_clone_string((const wchar_t *) L"any");
     TS_register_type(tsFile, type);
-    data.position = 0;
     data.line = 0;
     data.character = 0;
     data.parentTSToken = 0;
@@ -262,7 +260,6 @@ __TS_setup_predefined(void) {
     TS_push_child(extends, TS_ANY_TYPE);
     TS_push_child(type, extends);
     TS_register_type(tsFile, type);
-    data.position = 0;
     data.line = 0;
     data.character = 0;
     data.parentTSToken = 0;
@@ -273,7 +270,6 @@ __TS_setup_predefined(void) {
     TS_push_child(extends, TS_ANY_TYPE);
     TS_push_child(type, extends);
     TS_register_type(tsFile, type);
-    data.position = 0;
     data.line = 0;
     data.character = 0;
     data.parentTSToken = 0;
@@ -284,7 +280,6 @@ __TS_setup_predefined(void) {
     TS_push_child(extends, TS_ANY_TYPE);
     TS_push_child(type, extends);
     TS_register_type(tsFile, type);
-    data.position = 0;
     data.line = 0;
     data.character = 0;
     data.parentTSToken = 0;

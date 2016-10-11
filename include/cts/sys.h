@@ -63,6 +63,8 @@ void TS_set_log_level(TSVerbosity verbosity);
 
 unsigned char TS_check_log_level(TSVerbosity verbosity);
 
+wchar_t *TS_clone_string(const wchar_t *string) __attribute__((__malloc__));
+
 void ts_token_syntax_error(const wchar_t *msg, struct sTSFile *tsFile, const struct sTSParserToken *token, ...);
 
 void ts_token_syntax_error_info(struct sTSFile *tsFile, const wchar_t *format, const wchar_t *msg);

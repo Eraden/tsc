@@ -14,6 +14,18 @@ static void __attribute__((visibility("hidden"))) TS_info_msg(void);
 static void __attribute__((visibility("hidden")))
 ts_syntax_error(const wchar_t *msg, const wchar_t *file, const u_long line, const u_long character);
 
+wchar_t *
+TS_clone_string(
+    const wchar_t *string
+) {
+  wchar_t *clone = NULL;
+  if (string) {
+    clone = calloc(sizeof(wchar_t), wcslen(string) + TS_STRING_END);
+    wcscpy(clone, string);
+  }
+  return clone;
+}
+
 static void
 TS_info_msg(void) {
   printf(
@@ -61,7 +73,7 @@ ts_token_syntax_error(
   swprintf(
       buffer,
       len,
-      (const wchar_t *) L"Syntax error: %ls\n      Position: %ls:%lu:%lu [file:line:character]\n",
+      (const wchar_t *) L"Syntax error: %ls\n      Position: %ls:%u:%u [file:line:character]\n",
       msg, tsFile->file, token->line + 1, token->character
   );
   tsFile->errorReason = buffer;
@@ -112,7 +124,7 @@ ts_log_position(
     const u_long character,
     const u_long line
 ) {
-  log_error((wchar_t *) L"      Position: %ls:%lu:%lu [file:line:character]\n", file, line + 1, character);
+  log_error((wchar_t *) L"      Position: %ls:%u:%u [file:line:character]\n", file, line + 1, character);
 }
 
 void
@@ -250,8 +262,11 @@ wchar_t *TS_join_strings(const wchar_t *a, const wchar_t *b) {
 }
 
 void TS_suppress_logging(void (*fn)(void)) {
-//  TSVerbosity memo = TS_VERBOSITY_OFF;
+#if DEBUG == 1
   TSVerbosity memo = TS_VERBOSITY_DEBUG;
+#else
+  TSVerbosity memo = TS_VERBOSITY_OFF;
+#endif
   swap(TSVerbosity, ts_current_log_level, memo);
   fn();
   swap(TSVerbosity, ts_current_log_level, memo);

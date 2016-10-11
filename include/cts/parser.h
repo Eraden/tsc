@@ -9,8 +9,8 @@
 #define TS_STRING_END 1
 #define TS_NEW_TOKEN calloc(sizeof(TSParserToken), 1)
 #define TS_LOOP_SANITY_CHECK(file) if (file->sanity != TS_FILE_VALID) break;
-#define TS_MOVE_BY(data, tok) { u_long m = wcslen(tok); data->position += m; data->character += m; }
-#define TS_NEW_LINE(data, tok) { u_long m = wcslen(tok); data->character = 0; data->position += m; data->line += 1; }
+#define TS_MOVE_BY(data, tok) { u_long m = wcslen(tok); data->character += m; }
+#define TS_NEW_LINE(data, tok) { u_long m = wcslen(tok); data->character = 0; data->line += 1; }
 
 #define TS_UNEXPECTED_END_OF_STREAM(file, token, type) ts_token_syntax_error( \
   (const wchar_t *) L"Unexpected end of stream while parsing `" type "`", \
@@ -97,6 +97,7 @@ typedef enum eTSTokenType {
   TS_IMPORT_FROM = 43,
   TS_IMPORTED_TOKENS = 44,
   TS_INTERFACE = 45,
+  TS_BORROW = 46,
   TS_UNKNOWN = 0,
 } __attribute__ ((__packed__)) TSTokenType;
 
@@ -157,9 +158,8 @@ typedef struct sTSKeyword {
 #define KEYWORDS_SIZE 29
 
 typedef struct sTSParseData {
-  u_long position;
-  u_long line;
-  u_long character;
+  u_int line;
+  u_int character;
   const wchar_t *token;
   FILE *stream;
   TSParserToken *parentTSToken;
@@ -167,10 +167,10 @@ typedef struct sTSParseData {
 
 typedef struct sTSParserToken {
   TSTokenType tokenType;
-  u_long line;
-  u_long character;
-  u_long position;
-  u_long childrenSize;
+  u_int line;
+  u_int character;
+  u_int usageCount;
+  u_int childrenSize;
   TSParserToken **children;
   TSModifier modifiers;
   TSParserToken *parent;
@@ -338,13 +338,17 @@ TSParserToken *TS_parse_multiline_comment(TSFile *tsFile, TSParseData *tsParseDa
 
 void TS_free_multiline_comment(const TSParserToken *token);
 
-TSParserToken *TS_parse_caller(TSFile *tsFile, TSParseData *tsParseData);
+//TSParserToken *TS_parse_caller(TSFile *tsFile, TSParseData *tsParseData);
 
 void TS_free_caller(const TSParserToken *token);
 
 TSParserToken *TS_parse_for(TSFile *tsFile, TSParseData *tsParseData);
 
 void TS_free_for(const TSParserToken *token);
+
+TSParserToken *TS_create_borrow(TSParserToken *child, TSParseData *tsParseData);
+
+void TS_free_borrow(const TSParserToken *token);
 
 TSParserToken *TS_parse_ts_token(TSFile *tsFile, TSParseData *data);
 
@@ -355,8 +359,6 @@ void TS_free_children(const TSParserToken *token);
 void TS_free_children_from(const TSParserToken *token, u_long childIndex);
 
 volatile const wchar_t *TS_getToken(FILE *stream) __attribute__((__malloc__));
-
-wchar_t *TS_clone_string(const wchar_t *string) __attribute__((__malloc__));
 
 TSFile *TS_parse_file(const char *fileName);
 
