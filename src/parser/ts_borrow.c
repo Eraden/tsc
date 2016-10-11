@@ -15,6 +15,6 @@ void
 TS_free_borrow(
     const TSParserToken *token
 ) {
-  if (token->childrenSize) free(token->children);
+  TS_free_children_from(token, 1);
   free((void *) token);
 }

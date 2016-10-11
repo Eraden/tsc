@@ -19,6 +19,7 @@
 #include "parser/for/parse_for_of.h"
 #include "parser/for/parse_for_in.h"
 #include "core/sys.h"
+#include "core/operators.h"
 
 static char **only = NULL;
 static u_long onlySize = 0;
@@ -34,6 +35,7 @@ unsigned char hasOnly(char *str) {
 Suite *class_suite(void) {
   Suite *suite = suite_create("Parser");
   if (hasOnly("sys")) parse_sys_suite(suite);
+  if (hasOnly("operators")) parse_operators_suite(suite);
   if (hasOnly("variable")) parse_variables_suite(suite);
   if (hasOnly("function")) parse_functions_suite(suite);
   if (hasOnly("if")) parse_if_conditions_suite(suite);

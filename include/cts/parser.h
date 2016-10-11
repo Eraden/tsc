@@ -98,6 +98,7 @@ typedef enum eTSTokenType {
   TS_IMPORTED_TOKENS = 44,
   TS_INTERFACE = 45,
   TS_BORROW = 46,
+  TS_OPERATOR = 47,
   TS_UNKNOWN = 0,
 } __attribute__ ((__packed__)) TSTokenType;
 
@@ -150,12 +151,15 @@ typedef enum eTSVariableChild {
   TS_VARIABLE_VALUE = 1
 } TSVariableChild;
 
+typedef enum eTSIfChild {
+  TS_IF_CONDITION = 0,
+  TS_IF_SCOPE = 1
+} TSIfChild;
+
 typedef struct sTSKeyword {
   const wchar_t *str;
   TS_token_build_fn callback;
 } TSKeyword;
-
-#define KEYWORDS_SIZE 29
 
 typedef struct sTSParseData {
   u_int line;
@@ -201,6 +205,10 @@ unsigned char TS_name_is_valid(const wchar_t *name);
 void TS_push_child(TSParserToken *token, TSParserToken *child);
 
 void TS_free_unknown(const TSParserToken *token);
+
+TSParserToken *TS_parse_operator(TSFile *tsFile, TSParseData *tsParseData);
+
+void TS_free_operator(const TSParserToken *token);
 
 TSParserToken *TS_parse_call_arguments(TSFile *tsFile, TSParseData *tsParseData);
 
@@ -346,7 +354,7 @@ TSParserToken *TS_parse_for(TSFile *tsFile, TSParseData *tsParseData);
 
 void TS_free_for(const TSParserToken *token);
 
-TSParserToken *TS_create_borrow(TSParserToken *child, TSParseData *tsParseData);
+TSParserToken *__attribute__((__used__))TS_create_borrow(TSParserToken *child, TSParseData *tsParseData);
 
 void TS_free_borrow(const TSParserToken *token);
 

@@ -25,7 +25,24 @@ TS_build_parser_token(
   return token;
 }
 
+static TSParserToken *
+TS_borrow_operator(TSFile *__attribute__((__unused__))tsFile, TSParseData *tsParseData) {
+  TSParserToken *op = NULL;
+  TSParserToken **operators = TS_OPERATORS;
+  for (u_short i = 0; i < TS_OPERATORS_COUNT; i++) {
+    op = operators[0];
+    if (wcscmp(op->content, tsParseData->token) == 0) {
+      break;
+    }
+    operators += 1;
+  }
+  return TS_create_borrow(op, tsParseData);
+}
+
+static const unsigned short int KEYWORDS_SIZE = 29 + 20/*TS_OPERATORS_COUNT*/;
+
 static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
+    // Keywords
     {(wchar_t *) L"var",        TS_parse_var},
     {(wchar_t *) L"let",        TS_parse_let},
     {(wchar_t *) L"const",      TS_parse_const},
@@ -55,6 +72,30 @@ static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
     {(wchar_t *) L"[",          TS_parse_array},
     {(wchar_t *) L"\"",         TS_parse_string},
     {(wchar_t *) L"\'",         TS_parse_string},
+    // Arithmetic Operators
+    {(wchar_t *) L"+",          TS_borrow_operator},
+    {(wchar_t *) L"-",          TS_borrow_operator},
+    {(wchar_t *) L"*",          TS_borrow_operator},
+    {(wchar_t *) L"/",          TS_borrow_operator},
+    {(wchar_t *) L"%",          TS_borrow_operator},
+    {(wchar_t *) L"++",         TS_borrow_operator},
+    {(wchar_t *) L"--",         TS_borrow_operator},
+    // Relational Operators
+    {(wchar_t *) L"==",         TS_borrow_operator},
+    {(wchar_t *) L"===",        TS_borrow_operator},
+    {(wchar_t *) L"!=",         TS_borrow_operator},
+    {(wchar_t *) L">",          TS_borrow_operator},
+    {(wchar_t *) L">=",         TS_borrow_operator},
+    {(wchar_t *) L"<",          TS_borrow_operator},
+    {(wchar_t *) L"<=",         TS_borrow_operator},
+    // Logical Operators
+    {(wchar_t *) L"&&",         TS_borrow_operator},
+    {(wchar_t *) L"||",         TS_borrow_operator},
+    {(wchar_t *) L"!",          TS_borrow_operator},
+    // Bitwise Operators
+    {(wchar_t *) L"&",          TS_borrow_operator},
+    {(wchar_t *) L"|",          TS_borrow_operator},
+    {(wchar_t *) L"^",          TS_borrow_operator},
 };
 
 unsigned char TS_is_keyword(const wchar_t *str) {
@@ -672,6 +713,10 @@ TS_free_tsToken(
     }
     case TS_BORROW: {
       TS_free_borrow(token);
+      break;
+    }
+    case TS_OPERATOR: {
+      TS_free_operator(token);
       break;
     }
   }
