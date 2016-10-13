@@ -325,7 +325,8 @@ __TS_setup_predefined(void) {
     swap(RegisterCollection, TS_PREDEFINED_REGISTER, TS_REGISTER);
     registers_swapped = TRUE;
 
-    TSFile *tsFile = TS_PREDEFINED_FILE = TS_find_file(TS_PREDEFINED_PATH, NULL);
+    const char *path = TS_getUserLibraryPath();
+    TSFile *tsFile = TS_PREDEFINED_FILE = TS_find_file(path, NULL);
 
     TSParseData data;
     TSParserToken *type, *extends;
@@ -360,13 +361,15 @@ __TS_setup_predefined(void) {
     TS_push_child(type, extends);
     TS_register_type(tsFile, type);
 
-    TS_parse_stream(TS_PREDEFINED_PATH, tsFile->stream);
+    TS_parse_stream(path, tsFile->stream);
+    free((void *) path);
 
     if (TS_PREDEFINED_FILE->sanity != TS_FILE_VALID) {
       pthread_mutex_unlock(&TS_PREDEFINED_MUTEX_LOCK);
       registers_swapped = FALSE;
       TS_free_tsFile(TS_PREDEFINED_FILE);
       TS_destroy_register();
+      TS_PREDEFINED_FILE = NULL;
 
       fprintf(stderr, "Predefined classes file is malformed! Exiting...\n");
       exit(5);
@@ -430,4 +433,26 @@ unsigned char TS_is_type(TSParserToken *token) {
   if (token->tokenType != TS_INTERFACE)
     return TRUE;
   return FALSE;
+}
+
+TSParserToken *
+TS_search_in(
+    wchar_t *name,
+    TSParserToken *scope,
+    TSFile *tsFile
+) {
+  if (name == NULL) return NULL;
+  if (scope == NULL && tsFile == NULL) return NULL;
+  if (scope == NULL) {
+    TSParserToken **tokens = tsFile->tokens;
+    TSParserToken *token;
+    for (u_long i = 0, len = tsFile->tokensSize; i < len; i++) {
+      token = tokens[0];
+      if (token->name && wcscmp(token->name, name) == 0) {
+        return token;
+      }
+      tokens += 1;
+    }
+  }
+  return NULL;
 }

@@ -23,6 +23,8 @@
 #else
 #include <sys/unistd.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <pwd.h>
 #endif
 
 #define TS_PARSE_FAILURE_CODE 4
