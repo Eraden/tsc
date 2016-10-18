@@ -176,64 +176,6 @@ TS_parse_function_lookup_return_type(
   }
 }
 
-static void
-__attribute__((visibility("hidden")))
-TS_parse_function_body(
-    TSFile *tsFile,
-    TSParseData *tsParseData,
-    TSParserToken *token
-) {
-  const wchar_t *tok = NULL;
-  // move to bracket '{'
-  volatile unsigned char proceed;
-
-  proceed = TRUE;
-
-  while (proceed) {
-    TS_LOOP_SANITY_CHECK(tsFile)
-
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
-
-    if (tok == NULL) {
-      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "function body");
-      break;
-    }
-    switch (tok[0]) {
-      case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
-      case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
-      case L'}': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-        proceed = FALSE;
-        break;
-      }
-      default: {
-        tsParseData->token = tok;
-        TS_MOVE_BY(tsParseData, tok);
-
-        TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
-
-        free((void *) tok);
-
-        if (child->tokenType != TS_UNKNOWN) {
-          TS_push_child(token, child);
-        } else {
-          TS_free_tsToken(child);
-        }
-        break;
-      }
-    }
-  }
-}
-
 TSParserToken *
 TS_parse_function(
     TSFile *tsFile,
@@ -313,7 +255,8 @@ TS_parse_function(
 
     TS_parse_function_arguments(tsFile, tsParseData);
     TS_parse_function_lookup_return_type(tsFile, tsParseData);
-    TS_parse_function_body(tsFile, tsParseData, token);
+    TSParserToken *body = TS_parse_scope(tsFile, tsParseData);
+    TS_push_child(token, body);
 
   TS_TOKEN_END(TS_FUNCTION);
 }

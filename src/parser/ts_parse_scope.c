@@ -6,7 +6,10 @@ TS_parse_scope_body(
     TSParseData *tsParseData
 ) {
   TSParserToken *token = tsParseData->parentTSToken;
-  const wchar_t *tok;
+  TSParserToken *parent = token->parent;
+  const wchar_t *tok = NULL;
+  const unsigned char IS_BODY = (const unsigned char) (parent && (parent->tokenType == TS_FUNCTION || parent->tokenType == TS_CLASS_METHOD));
+
   while (1) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
@@ -34,10 +37,22 @@ TS_parse_scope_body(
       default: {
         tsParseData->token = tok;
         TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
-        if (child->tokenType != TS_UNKNOWN) {
-          TS_push_child(token, child);
-        } else {
-          TS_free_tsToken(child);
+        switch (child->tokenType) {
+          case TS_UNKNOWN: {
+            TS_free_tsToken(child);
+            break;
+          }
+          case TS_RETURN: {
+            if (IS_BODY) {
+              TS_push_child(token, child);
+            } else {
+              TS_UNEXPECTED_TOKEN(tsFile, child, L"return", "scope");
+            }
+            break;
+          }
+          default: {
+            TS_push_child(token, child);
+          }
         }
         free((void *) tok);
       }

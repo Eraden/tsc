@@ -418,6 +418,8 @@ TS_remove_predefined() {
 }
 
 unsigned char TS_is_predefined(TSParserToken *token) {
+  if ((registers_swapped ? TS_REGISTER : TS_PREDEFINED_REGISTER) == NULL)
+    return FALSE;
   TSRegisterEntry *registered = registers_swapped ? TS_REGISTER[0] : TS_PREDEFINED_REGISTER[0];
   TSParserToken *child = NULL;
   for (u_long index = 0; index < registered->listSize; index++) {
@@ -435,24 +437,61 @@ unsigned char TS_is_type(TSParserToken *token) {
   return FALSE;
 }
 
+//TSParserToken *
+//TS_search_in(
+//    wchar_t *name,
+//    TSParserToken *scope,
+//    TSFile *tsFile
+//) {
+//  if (name == NULL) return NULL;
+//  if (scope == NULL && tsFile == NULL) return NULL;
+//  if (scope == NULL) {
+//    TSParserToken **tokens = tsFile->tokens;
+//    TSParserToken *token;
+//    for (u_long i = 0, len = tsFile->tokensSize; i < len; i++) {
+//      token = tokens[0];
+//      if (token->name && wcscmp(token->name, name) == 0) {
+//        return token;
+//      }
+//      tokens += 1;
+//    }
+//  }
+//  return NULL;
+//}
+
 TSParserToken *
-TS_search_in(
-    wchar_t *name,
-    TSParserToken *scope,
-    TSFile *tsFile
+TS_search_token(
+    TSParserToken *token
 ) {
-  if (name == NULL) return NULL;
-  if (scope == NULL && tsFile == NULL) return NULL;
-  if (scope == NULL) {
-    TSParserToken **tokens = tsFile->tokens;
-    TSParserToken *token;
-    for (u_long i = 0, len = tsFile->tokensSize; i < len; i++) {
-      token = tokens[0];
-      if (token->name && wcscmp(token->name, name) == 0) {
-        return token;
+  if (token->tokenType != TS_UNKNOWN) return token;
+  const wchar_t *name = token->content;
+  volatile TSParserToken *current = token->parent;
+  volatile unsigned char proceed = TRUE;
+  TSParserToken **children = NULL;
+  u_int len = 0, index = 0;
+
+  while (current && proceed) {
+    switch (current->tokenType) {
+      case TS_SCOPE: {
+        len = current->childrenSize;
+        children = current->children;
+        for (index = 0; index < len; index++) {
+          if (wcscmp(name, children[0]->name) == 0) {
+            proceed = FALSE;
+            current = children[0];
+          }
+          children += 1;
+        }
+        break;
       }
-      tokens += 1;
+      case TS_FOR: {
+        break;
+      }
+      default: {
+        //
+      }
     }
+    current = current->parent;
   }
-  return NULL;
+  return (TSParserToken *) current;
 }

@@ -56,32 +56,32 @@ START_TEST(parse_valid_if_condition)
   ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   cond = token->children[0];
-  ck_assert(cond->tokenType == TS_CONDITION);
+  ck_assert_eq_ts_condition(cond->tokenType);
   ck_assert_wstr_eq(cond->content, L"4");
   child = token->children[1];
-  ck_assert(child->tokenType == TS_RETURN);
-  ck_assert_ptr_eq(child->data, NULL);
-  ck_assert_int_eq(child->childrenSize, 1);
+  ck_assert_eq_ts_const(child->tokenType);
+  ck_assert_ptr_ne(child->name, NULL);
+  ck_assert_wstr_eq(child->name, L"x");
 
   token = tsFile->tokens[4];
   ck_assert(token->tokenType == TS_IF);
   ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   cond = token->children[0];
-  ck_assert(cond->tokenType == TS_CONDITION);
+  ck_assert_eq_ts_condition(cond->tokenType);
   ck_assert_wstr_eq(cond->content, L"5");
   scope = token->children[1];
   ck_assert_eq_ts_scope(scope->tokenType);
   child = scope->children[0];
-  ck_assert(child->tokenType == TS_VAR);
+  ck_assert_eq_ts_var(child->tokenType);
   ck_assert_ptr_ne(child->name, NULL);
   ck_assert_wstr_eq(child->name, L"local");
   ck_assert_ptr_eq(child->children[TS_VARIABLE_TYPE], ANY);
   ck_assert_wstr_eq(child->children[TS_VARIABLE_VALUE]->content, L"10");
   child = scope->children[1];
-  ck_assert_eq_ts_return(child->tokenType);
-  ck_assert_ptr_eq(child->data, NULL);
-  ck_assert_int_eq(child->childrenSize, 1);
+  ck_assert_eq_ts_const(child->tokenType);
+  ck_assert_ptr_ne(child->name, NULL);
+  ck_assert_wstr_eq(child->name, L"y");
 
   TS_free_tsFile(tsFile);
 END_TEST

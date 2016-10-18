@@ -65,5 +65,7 @@ unsigned char TS_is_predefined(TSParserToken *token);
 
 unsigned char TS_is_type(TSParserToken *token);
 
-TSParserToken * TS_search_in(wchar_t *name, TSParserToken *scope, TSFile *tsFile);
-TSParserToken * TS_search_in_scope(wchar_t *name, TSParserToken *scope);
+//TSParserToken * TS_search_in(wchar_t *name, TSParserToken *scope, TSFile *tsFile);
+//TSParserToken * TS_search_in_scope(wchar_t *name, TSParserToken *scope);
+
+TSParserToken *TS_search_token(TSParserToken *token);

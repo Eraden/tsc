@@ -473,7 +473,8 @@ unsigned char TS_is_instance_of(
   }
 }
 
-struct sTSParserToken *TS_type_for_string(
+struct sTSParserToken *
+TS_type_for_string(
     const wchar_t *str
 ) {
   if (str == NULL) return  TS_ANY_TYPE;

@@ -6,7 +6,7 @@ START_TEST(parse_valid_else_condition)
   ck_assert_int_eq(tsFile->tokensSize, 4);
   ck_assert_tsFile_valid(tsFile);
 
-  TSParserToken *token, *child, *retValue, *scope;
+  TSParserToken *token, *child, *retValue, *scope, *val;
 
   // 1
   token = tsFile->tokens[0];
@@ -33,13 +33,9 @@ START_TEST(parse_valid_else_condition)
   ck_assert_eq_ts_else(child->tokenType);
 
   child = child->children[0];
-  ck_assert_eq_ts_return(child->tokenType);
-  ck_assert_int_eq(child->childrenSize, 1);
-  ck_assert_ptr_ne(child->children, NULL);
-  retValue = child->children[0];
-  ck_assert_eq_ts_unknown(retValue->tokenType);
-  ck_assert_ptr_ne(retValue->name, NULL);
-  ck_assert_wstr_eq(retValue->name, L"10");
+  ck_assert_eq_ts_const(child->tokenType);
+  ck_assert_ptr_ne(child->name, NULL);
+  ck_assert_wstr_eq(child->name, L"a");
 
   // 3
   token = tsFile->tokens[2];
@@ -76,7 +72,7 @@ START_TEST(parse_valid_else_condition)
   ck_assert_int_eq(scope->childrenSize, 2);
   ck_assert_ptr_ne(scope->children, NULL);
 
-  TSParserToken *val = scope->children[0];
+  val = scope->children[0];
   ck_assert_eq_ts_var(val->tokenType);
   ck_assert_ptr_ne(val->data, NULL);
   ck_assert_ptr_ne(val->name, NULL);
@@ -84,14 +80,10 @@ START_TEST(parse_valid_else_condition)
 //  ck_assert_ptr_ne(data->value, NULL);
 //  ck_assert_wstr_eq(data->value, L"30");
 
-  TSParserToken *ret = scope->children[1];
-  ck_assert_eq_ts_return(ret->tokenType);
-  ck_assert_ulong_eq(ret->childrenSize, 1);
-  ck_assert_ptr_ne(ret->children, NULL);
-  TSParserToken *retVal = ret->children[0];
-  ck_assert_eq_ts_unknown(retVal->tokenType);
-  ck_assert_ptr_ne(retVal->content, NULL);
-  ck_assert_wstr_eq(retVal->content, L"20");
+  val = scope->children[1];
+  ck_assert_eq_ts_const(val->tokenType);
+  ck_assert_ptr_ne(val->name, NULL);
+  ck_assert_wstr_eq(val->name, L"b");
 
   TS_free_tsFile(tsFile);
 END_TEST
