@@ -20,6 +20,7 @@
 #include "parser/for/parse_for_in.h"
 #include "core/sys.h"
 #include "core/operators.h"
+#include "core/borrows.h"
 
 static char **only = NULL;
 static u_long onlySize = 0;
@@ -53,6 +54,7 @@ Suite *class_suite(void) {
   if (hasOnly("for") || hasOnly("for-let")) parse_for_let_suite(suite);
   if (hasOnly("for") || hasOnly("for-of")) parse_for_of_suite(suite);
   if (hasOnly("for") || hasOnly("for-in")) parse_for_in_suite(suite);
+  if (hasOnly("borrows")) parse_borrows_suite(suite);
   return suite;
 }
 

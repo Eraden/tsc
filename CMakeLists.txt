@@ -81,6 +81,7 @@ IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
       tests/parser/parse_extends.c
       tests/core/operators.c
       tests/core/sys.c
+      tests/core/borrows.c
   )
 ENDIF ()
 

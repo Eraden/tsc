@@ -5,7 +5,7 @@
 #define _ck_assert_ts_token(X, OP, Y) do { \
   TSParserToken* _ck_x = (X); \
   TSParserToken* _ck_y = (Y); \
-  ck_assert_msg(_ck_x OP _ck_y, "Assertion '%s' failed: %s == %lu, %s == %lu", #X" "#OP" "#Y, #X, _ck_x, #Y, _ck_y); \
+  ck_assert_msg(_ck_x OP _ck_y, "Assertion '%s' failed: %s == %lu, %s == %lu (\"%ls\" != \"%ls\")", #X" "#OP" "#Y, #X, _ck_x, #Y, _ck_y, _ck_x->content, _ck_y->content); \
 } while (0)
 
 #define ck_assert_ts_token_eq(X, Y) _ck_assert_ts_token(X, ==, Y)

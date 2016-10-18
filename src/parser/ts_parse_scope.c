@@ -1,4 +1,5 @@
 #include <cts/parser.h>
+#include <cts/register.h>
 
 static void
 TS_parse_scope_body(
@@ -8,7 +9,19 @@ TS_parse_scope_body(
   TSParserToken *token = tsParseData->parentTSToken;
   TSParserToken *parent = token->parent;
   const wchar_t *tok = NULL;
-  const unsigned char IS_BODY = (const unsigned char) (parent && (parent->tokenType == TS_FUNCTION || parent->tokenType == TS_CLASS_METHOD));
+
+  unsigned char IS_BODY;
+  switch (parent ? parent->tokenType : TS_UNKNOWN) {
+    case TS_FUNCTION:
+    case TS_CLASS_METHOD: {
+      IS_BODY = TRUE;
+      break;
+    }
+    default: {
+      IS_BODY = FALSE;
+      break;
+    }
+  }
 
   while (1) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -39,7 +52,12 @@ TS_parse_scope_body(
         TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
         switch (child->tokenType) {
           case TS_UNKNOWN: {
-            TS_free_tsToken(child);
+            TSParserToken *type = TS_search_token(child);
+            if (type == NULL || type == child) {
+              TS_free_tsToken(child);
+            } else {
+              TS_push_child(token, TS_create_borrow(type, tsParseData));
+            }
             break;
           }
           case TS_RETURN: {

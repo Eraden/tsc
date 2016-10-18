@@ -14,6 +14,7 @@
 #include "support/ck_tsFile_sanity.h"
 #include "support/ck_token_type.h"
 #include "support/ck_token_eq.h"
+#include "support/borrow.h"
 
 TSParserToken *ANY;
 TSParserToken *NUMBER;

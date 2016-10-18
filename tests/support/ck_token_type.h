@@ -51,6 +51,7 @@ _TS_type_to_string(const TSTokenType type) {
     case TS_IMPORT_FROM: return "TS_IMPORT_FROM";
     case TS_IMPORTED_TOKENS: return "TS_IMPORTED_TOKENS";
     case TS_INTERFACE: return "TS_INTERFACE";
+    case TS_BORROW: return "TS_BORROW";
     case TS_UNKNOWN: return "TS_UNKNOWN";
     default: return " ((unknown type)) ";
   }
@@ -107,3 +108,4 @@ _TS_type_to_string(const TSTokenType type) {
 #define ck_assert_eq_ts_loop_change_section(type) ck_assert_tsType_eq(type, TS_LOOP_CHANGE_SECTION);
 #define ck_assert_eq_ts_unknown(type) ck_assert_tsType_eq(type, TS_UNKNOWN)
 #define ck_assert_eq_ts_call_arguments(type) ck_assert_tsType_eq(type, TS_CALL_ARGUMENTS)
+#define ck_assert_eq_ts_borrow(type) ck_assert_tsType_eq(type, TS_BORROW)

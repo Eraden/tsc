@@ -279,6 +279,7 @@ TS_getToken(
 
   while (!feof(stream)) {
     c = (wchar_t) fgetwc(stream);
+
     switch (c) {
 //      case WEOF:
       case -1:
@@ -363,18 +364,53 @@ TS_getToken(
         }
         break;
       }
+      case L'>':
+      case L'<':
+      case L'!': {
+        if (tok == NULL) {
+          u_long len = 2;
+          wchar_t char1 = (wchar_t) fgetwc(stream);
+          wchar_t char2 = (wchar_t) fgetwc(stream);
+          if (char1 == L'=') {
+            len += 1;
+          } else {
+            ungetwc((wint_t) char1, stream);
+            char1 = 0;
+          }
+          if (char1 == L'=' && char2 == L'=') {
+            len += 1;
+          } else {
+            ungetwc((wint_t) char2, stream);
+            char2 = 0;
+          }
+          wchar_t *newPointer = calloc(sizeof(wchar_t), len + TS_STRING_END);
+          newPointer[0] = c;
+          if (char1) newPointer[1] = char1;
+          if (char2) newPointer[2] = char2;
+
+          tok = newPointer;
+          return tok;
+        } else {
+          ungetwc((wint_t) c, stream);
+          TS_GET_TOKEN_MSG(
+              (wchar_t *) L"# Putting back since token ('%ls') exists and contains invalid characters...\n",
+              tok
+          )
+          return tok;
+        }
+        break;
+      }
       case L'=': {
         TS_GET_TOKEN_MSG((wchar_t *) L"# '=' character building token...\n", tok)
         if (tok == NULL || (tok[0] == c && prev == c)) {
           const size_t size = tok == NULL ? 1 : wcslen((const wchar_t *) tok) + 1;
 
           wchar_t *newPointer = calloc(sizeof(wchar_t), size + TS_STRING_END);
-          if (tok != NULL) wcscpy(newPointer, (const void *) tok);
-          if (tok != NULL) free((void *) tok);
-
-          newPointer[0] = c;
-          if (size == 2) newPointer[1] = c;
-          if (size == 3) newPointer[2] = c;
+          if (tok != NULL) {
+            wcscpy(newPointer, (const void *) tok);
+            free((void *) tok);
+          }
+          newPointer[size - 1] = c;
           prev = c;
 
           tok = newPointer;
@@ -382,8 +418,12 @@ TS_getToken(
 
           ungetwc((wint_t) next, stream);
 
-          if (next != c) return tok;
-          if (size == 3) return tok;
+          if (next != L'=') {
+            return tok;
+          }
+          if (size == 3) {
+            return tok;
+          }
         } else {
           ungetwc((wint_t) c, stream);
           TS_GET_TOKEN_MSG(
@@ -407,7 +447,6 @@ TS_getToken(
       case L'.':
       case L':':
       case L';':
-      case L'!':
       case L'#':
       case L'\\':
       case L'%':

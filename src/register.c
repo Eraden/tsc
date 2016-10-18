@@ -468,6 +468,7 @@ TS_search_token(
   volatile TSParserToken *current = token->parent;
   volatile unsigned char proceed = TRUE;
   TSParserToken **children = NULL;
+  TSParserToken *child = NULL;
   u_int len = 0, index = 0;
 
   while (current && proceed) {
@@ -476,9 +477,10 @@ TS_search_token(
         len = current->childrenSize;
         children = current->children;
         for (index = 0; index < len; index++) {
-          if (wcscmp(name, children[0]->name) == 0) {
+          child = children[0];
+          if (child->name && wcscmp(name, child->name) == 0) {
             proceed = FALSE;
-            current = children[0];
+            current = child;
           }
           children += 1;
         }
@@ -491,7 +493,7 @@ TS_search_token(
         //
       }
     }
-    current = current->parent;
+    if (proceed) current = current->parent;
   }
   return (TSParserToken *) current;
 }
