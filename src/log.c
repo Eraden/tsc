@@ -3,6 +3,8 @@
 static FILE *TS_error_file = NULL;
 #define TS_error_stream TS_error_file
 
+static void TS_create_log_directory(void);
+
 void
 TS_set_error_output(FILE *file) {
   TS_error_file = file;
@@ -17,7 +19,7 @@ TS_io_panic(
 }
 
 static void
-TS_create_log_directory() {
+TS_create_log_directory(void) {
   const int perm = S_IRWXU | S_IRWXG | S_IROTH;
 
   const int result = mkdir("./log", perm);

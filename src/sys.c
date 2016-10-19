@@ -5,14 +5,14 @@
 const unsigned int TS_VERSION_MAJOR = 0;
 const unsigned int TS_VERSION_MINOR = 0;
 const unsigned int TS_VERSION_PATCH = 1;
+
 FILE *TS_output_stream = NULL;
 
-static TSVerbosity __attribute__((visibility("hidden"))) ts_current_log_level = TS_VERBOSITY_ERROR;
+static TSVerbosity ts_current_log_level = TS_VERBOSITY_ERROR;
 
-static void __attribute__((visibility("hidden"))) TS_info_msg(void);
+static void TS_info_msg(void);
 
-static void __attribute__((visibility("hidden")))
-ts_syntax_error(const wchar_t *msg, const wchar_t *file, const u_long line, const u_long character);
+static void ts_syntax_error(const wchar_t *msg, const wchar_t *file, const u_long line, const u_long character);
 
 wchar_t *
 TS_clone_string(

@@ -39,9 +39,9 @@ TS_borrow_operator(TSFile *__attribute__((__unused__))tsFile, TSParseData *tsPar
   return TS_create_borrow(op, tsParseData);
 }
 
-static const unsigned short int KEYWORDS_SIZE = 29 + 20/*TS_OPERATORS_COUNT*/;
+static unsigned short int KEYWORDS_SIZE = 29 + 20/*TS_OPERATORS_COUNT*/;
 
-static const TSKeyword TS_KEYWORDS[KEYWORDS_SIZE] = {
+static TSKeyword TS_KEYWORDS[29 + 20] = {
     // Keywords
     {(wchar_t *) L"var",        TS_parse_var},
     {(wchar_t *) L"let",        TS_parse_let},
@@ -230,7 +230,6 @@ TS_parse_ts_token(
 }
 
 static u_short
-__attribute__((visibility("hidden")))
 TS_valid_char_for_token(
     wchar_t c
 ) {
@@ -793,9 +792,15 @@ TS_free_tsFile(
     tsFile->tokensSize -= 1;
     TS_free_tsToken(tsFile->tokens[tsFile->tokensSize]);
   }
-  if (tsFile->tokens != NULL) free(tsFile->tokens);
-  if (tsFile->file) free(tsFile->file);
-  if (tsFile->errorReason) free(tsFile->errorReason);
+  if (tsFile->tokens != NULL) {
+    free(tsFile->tokens);
+  }
+  if (tsFile->file) {
+    free(tsFile->file);
+  }
+  if (tsFile->errorReason) {
+    free(tsFile->errorReason);
+  }
 
   TS_register_remove_file(tsFile);
 

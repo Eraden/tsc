@@ -1,42 +1,41 @@
 #include <cts/register.h>
 
 // Predefined TS types
-TSParserToken *__attribute__((__used__)) TS_ANY_TYPE = NULL;
-TSParserToken *__attribute__((__used__)) TS_UNDEFINED_TYPE = NULL;
-TSParserToken *__attribute__((__used__)) TS_NULL_TYPE = NULL;
+TSParserToken __attribute__((__used__)) *TS_ANY_TYPE = NULL;
+TSParserToken __attribute__((__used__)) *TS_UNDEFINED_TYPE = NULL;
+TSParserToken __attribute__((__used__)) *TS_NULL_TYPE = NULL;
 
 // Arithmetic Operators
-TSParserToken *__attribute__((__used__)) TS_PLUS = NULL;
-TSParserToken *__attribute__((__used__)) TS_MINUS = NULL;
-TSParserToken *__attribute__((__used__)) TS_MULTIPLY = NULL;
-TSParserToken *__attribute__((__used__)) TS_DIVIDE = NULL;
-TSParserToken *__attribute__((__used__)) TS_MODULO = NULL;
-TSParserToken *__attribute__((__used__)) TS_INCREMENT = NULL;
-TSParserToken *__attribute__((__used__)) TS_DECREMENT = NULL;
+TSParserToken __attribute__((__used__)) *TS_PLUS = NULL;
+TSParserToken __attribute__((__used__)) *TS_MINUS = NULL;
+TSParserToken __attribute__((__used__)) *TS_MULTIPLY = NULL;
+TSParserToken __attribute__((__used__)) *TS_DIVIDE = NULL;
+TSParserToken __attribute__((__used__)) *TS_MODULO = NULL;
+TSParserToken __attribute__((__used__)) *TS_INCREMENT = NULL;
+TSParserToken __attribute__((__used__)) *TS_DECREMENT = NULL;
 
 // Relational Operators
-TSParserToken *__attribute__((__used__)) TS_EQUAL = NULL;
-TSParserToken *__attribute__((__used__)) TS_SAME = NULL;
-TSParserToken *__attribute__((__used__)) TS_NOT_EQUAL = NULL;
-TSParserToken *__attribute__((__used__)) TS_GREATER = NULL;
-TSParserToken *__attribute__((__used__)) TS_GREATER_OR_EQUAL = NULL;
-TSParserToken *__attribute__((__used__)) TS_LESS = NULL;
-TSParserToken *__attribute__((__used__)) TS_LESS_OR_EQUAL = NULL;
+TSParserToken __attribute__((__used__)) *TS_EQUAL = NULL;
+TSParserToken __attribute__((__used__)) *TS_SAME = NULL;
+TSParserToken __attribute__((__used__)) *TS_NOT_EQUAL = NULL;
+TSParserToken __attribute__((__used__)) *TS_GREATER = NULL;
+TSParserToken __attribute__((__used__)) *TS_GREATER_OR_EQUAL = NULL;
+TSParserToken __attribute__((__used__)) *TS_LESS = NULL;
+TSParserToken __attribute__((__used__)) *TS_LESS_OR_EQUAL = NULL;
 
 // Logical Operators
-TSParserToken *__attribute__((__used__)) TS_LOGICAL_AND = NULL;
-TSParserToken *__attribute__((__used__)) TS_LOGICAL_OR = NULL;
-TSParserToken *__attribute__((__used__)) TS_LOGICAL_NOT = NULL;
+TSParserToken __attribute__((__used__)) *TS_LOGICAL_AND = NULL;
+TSParserToken __attribute__((__used__)) *TS_LOGICAL_OR = NULL;
+TSParserToken __attribute__((__used__)) *TS_LOGICAL_NOT = NULL;
 
 // Bitwise Operators
-TSParserToken *__attribute__((__used__)) TS_BITWISE_AND = NULL;
-TSParserToken *__attribute__((__used__)) TS_BITWISE_OR = NULL;
-TSParserToken *__attribute__((__used__)) TS_BITWISE_XOR = NULL;
+TSParserToken __attribute__((__used__)) *TS_BITWISE_AND = NULL;
+TSParserToken __attribute__((__used__)) *TS_BITWISE_OR = NULL;
+TSParserToken __attribute__((__used__)) *TS_BITWISE_XOR = NULL;
 
 static unsigned char registers_swapped = FALSE;
 
 static pthread_mutex_t
-__attribute__(( visibility("hidden")))
     CLASS_REGISTER_MUTEX_LOCK,
     FILE_REGISTER_MUTEX_LOCK,
     TS_PREDEFINED_MUTEX_LOCK;
@@ -45,7 +44,6 @@ RegisterCollection
 TS_REGISTER = NULL;
 
 static u_long
-__attribute__(( visibility("hidden")))
     TS_REGISTER_SIZE = 0;
 
 TSFile *TS_PREDEFINED_FILE = NULL;
@@ -54,7 +52,6 @@ RegisterCollection
 TS_PREDEFINED_REGISTER = NULL;
 
 static u_long
-__attribute__(( visibility("hidden")))
     TS_PREDEFINED_REGISTER_SIZE = 0;
 
 TSParserToken **TS_OPERATORS = NULL;
@@ -315,7 +312,6 @@ __TS_setup_operators(void) {
 }
 
 static void
-__attribute__((visibility("hidden")))
 __TS_setup_predefined(void) {
   if (TS_PREDEFINED_REGISTER == NULL) {
     __TS_setup_operators();

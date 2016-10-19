@@ -17,37 +17,37 @@ TSParserToken **TS_OPERATORS;
 const unsigned short int TS_OPERATORS_COUNT;
 
 // Predefined TS types
-TSParserToken *__attribute__((__used__)) TS_ANY_TYPE;
-TSParserToken *__attribute__((__used__)) TS_UNDEFINED_TYPE;
-TSParserToken *__attribute__((__used__))TS_NULL_TYPE;
+TSParserToken __attribute__((__used__)) *TS_ANY_TYPE;
+TSParserToken __attribute__((__used__)) *TS_UNDEFINED_TYPE;
+TSParserToken __attribute__((__used__)) *TS_NULL_TYPE;
 
 // Arithmetic Operators
-TSParserToken *__attribute__((__used__)) TS_PLUS;
-TSParserToken *__attribute__((__used__)) TS_MINUS;
-TSParserToken *__attribute__((__used__)) TS_MULTIPLY;
-TSParserToken *__attribute__((__used__)) TS_DIVIDE;
-TSParserToken *__attribute__((__used__)) TS_MODULO;
-TSParserToken *__attribute__((__used__)) TS_INCREMENT;
-TSParserToken *__attribute__((__used__)) TS_DECREMENT;
+TSParserToken __attribute__((__used__)) *TS_PLUS;
+TSParserToken __attribute__((__used__)) *TS_MINUS;
+TSParserToken __attribute__((__used__)) *TS_MULTIPLY;
+TSParserToken __attribute__((__used__)) *TS_DIVIDE;
+TSParserToken __attribute__((__used__)) *TS_MODULO;
+TSParserToken __attribute__((__used__)) *TS_INCREMENT;
+TSParserToken __attribute__((__used__)) *TS_DECREMENT;
 
 // Relational Operators
-TSParserToken *__attribute__((__used__)) TS_EQUAL;
-TSParserToken *__attribute__((__used__)) TS_SAME;
-TSParserToken *__attribute__((__used__)) TS_NOT_EQUAL;
-TSParserToken *__attribute__((__used__)) TS_GREATER;
-TSParserToken *__attribute__((__used__)) TS_GREATER_OR_EQUAL;
-TSParserToken *__attribute__((__used__)) TS_LESS;
-TSParserToken *__attribute__((__used__)) TS_LESS_OR_EQUAL;
+TSParserToken __attribute__((__used__)) *TS_EQUAL;
+TSParserToken __attribute__((__used__)) *TS_SAME;
+TSParserToken __attribute__((__used__)) *TS_NOT_EQUAL;
+TSParserToken __attribute__((__used__)) *TS_GREATER;
+TSParserToken __attribute__((__used__)) *TS_GREATER_OR_EQUAL;
+TSParserToken __attribute__((__used__)) *TS_LESS;
+TSParserToken __attribute__((__used__)) *TS_LESS_OR_EQUAL;
 
 // Logical Operators
-TSParserToken *__attribute__((__used__)) TS_LOGICAL_AND;
-TSParserToken *__attribute__((__used__)) TS_LOGICAL_OR;
-TSParserToken *__attribute__((__used__)) TS_LOGICAL_NOT;
+TSParserToken __attribute__((__used__)) *TS_LOGICAL_AND;
+TSParserToken __attribute__((__used__)) *TS_LOGICAL_OR;
+TSParserToken __attribute__((__used__)) *TS_LOGICAL_NOT;
 
 // Bitwise Operators
-TSParserToken *__attribute__((__used__)) TS_BITWISE_AND;
-TSParserToken *__attribute__((__used__)) TS_BITWISE_OR;
-TSParserToken *__attribute__((__used__)) TS_BITWISE_XOR;
+TSParserToken __attribute__((__used__)) *TS_BITWISE_AND;
+TSParserToken __attribute__((__used__)) *TS_BITWISE_OR;
+TSParserToken __attribute__((__used__)) *TS_BITWISE_XOR;
 
 TSRegisterEntry *TS_register_file(TSFile *tsFile);
 void TS_register_remove_file(TSFile *file);

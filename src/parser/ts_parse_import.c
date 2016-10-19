@@ -1,7 +1,6 @@
 #include <cts/register.h>
 
 static void
-__attribute__((visibility("hidden")))
 TS_parse_import_resolve_imports(
     TSParserToken *importsToken,
     TSFile *importedFile
@@ -25,7 +24,6 @@ TS_parse_import_resolve_imports(
 }
 
 static TSParserToken *
-__attribute__((visibility("hidden")))
 TS_parse_import_from(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -110,7 +108,6 @@ TS_parse_import_from(
 }
 
 static TSParserToken *
-__attribute__((visibility("hidden")))
 TS_parse_import_from_file(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -158,7 +155,6 @@ TS_parse_import_from_file(
 }
 
 static TSParserToken *
-__attribute__((visibility("hidden")))
 TS_parse_import_imported_tokens(
     TSFile *tsFile,
     TSParseData *tsParseData

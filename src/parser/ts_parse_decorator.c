@@ -1,7 +1,6 @@
 #include <cts/parser.h>
 
 static wchar_t *
-__attribute__((visibility("hidden")))
 __attribute__((section("parse-decorator")))
 TS_parse_decorator_name(
     TSFile *tsFile,

@@ -3,9 +3,12 @@
 // STRING
 
 static const wchar_t *
-__attribute__(( visibility("hidden")))
 __attribute__(( section("output-header")))
-TS_output_header_symbol_polyfill() {
+TS_output_header_symbol_polyfill(void);
+
+static const wchar_t *
+__attribute__(( section("output-header")))
+TS_output_header_symbol_polyfill(void) {
   return (const wchar_t *) L"if (!('Symbol' in window)) {\n"
         "  var symbolCounter = 0;\n"
         "  function HiddenSymbol(description) { this.description = description; this.index = symbolCounter++; }\n"
@@ -18,7 +21,7 @@ TS_output_header_symbol_polyfill() {
         "if (!('iterator' in window.Symbol)) window.Symbol.iterator = Symbol('Symbol.iterator');\n";
 }
 
-const wchar_t *
+extern const wchar_t *
 __attribute__((__malloc__))
 TS_output_header(void) {
   wchar_t *string = NULL;

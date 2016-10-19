@@ -1,7 +1,6 @@
 #include <cts/register.h>
 
 static unsigned char
-__attribute__((visibility("hidden")))
 TS_parse_argument_done(
     TSFile *tsFile,
     TSParseData *tsParseData,

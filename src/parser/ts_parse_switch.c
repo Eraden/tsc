@@ -94,7 +94,6 @@ TS_parse_switch_skip_to_body(
 }
 
 static TSParserToken *
-__attribute__((__visibility__("hidden")))
 TS_parse_switch_body(
     TSFile *tsFile,
     TSParseData *tsParseData

@@ -1,4 +1,4 @@
-#import <cts/parser.h>
+#include <cts/parser.h>
 
 TSParserToken *
 TS_parse_export(

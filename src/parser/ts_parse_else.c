@@ -1,7 +1,6 @@
 #include <cts/parser.h>
 
 static void
-__attribute__(( visibility("hidden")))
 TS_parse_else_body(
     TSFile *tsFile,
     TSParseData *tsParseData

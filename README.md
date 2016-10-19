@@ -6,6 +6,8 @@ This is C typescript compiler. It can compile typescript file faster than normal
 
 * `check` - if build with `-DTSC_TEST=1` requires test framework for c language, this creates tests which check internal pre-compiler functionalities
 
+Please do not use clang-3.8 because build crash on it.
+
 ## Build
 
 ```bash

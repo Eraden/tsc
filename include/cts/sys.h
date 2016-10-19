@@ -43,6 +43,7 @@
 const unsigned int TS_VERSION_MAJOR;
 const unsigned int TS_VERSION_MINOR;
 const unsigned int TS_VERSION_PATCH;
+
 FILE *TS_output_stream;
 
 struct sTSFile;

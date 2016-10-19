@@ -15,7 +15,7 @@ TS_parse_extends(
 
       tok = (const wchar_t *) TS_getToken(tsParseData->stream);
       if (tok == NULL) {
-        ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing class parent name", tsFile, token);
+        TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "class parent name");
         break;
       }
 

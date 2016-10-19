@@ -10,7 +10,7 @@ typedef struct sTSOutputSettings {
   FILE *stream;
 } TSOutputSettings;
 
-const wchar_t *
+extern const wchar_t *
 __attribute__((__malloc__))
 TS_output_header(void);
 

@@ -1,7 +1,6 @@
 #include <cts/parser.h>
 
 static void
-__attribute__(( visibility("hidden")))
 TS_parse_if_body(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -48,7 +47,6 @@ TS_parse_if_body(
 }
 
 static void
-__attribute__(( visibility("hidden")))
 TS_parse_if_conditions(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -154,7 +152,6 @@ TS_parse_if_conditions(
 }
 
 static void
-__attribute__(( visibility("hidden")))
 TS_lookup_else(
     TSFile *tsFile,
     TSParseData *tsParseData

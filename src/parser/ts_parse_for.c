@@ -97,7 +97,6 @@ TS_resolve_for_token_type(
 }
 
 static void
-__attribute__((__visibility__("hidden")))
 TS_parse_for_head_for_of(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -182,7 +181,6 @@ TS_parse_for_head_for_of(
 }
 
 static void
-__attribute__((__visibility__("hidden")))
 TS_parse_for_head_for_in(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -267,7 +265,6 @@ TS_parse_for_head_for_in(
 }
 
 static void
-__attribute__((__visibility__("hidden")))
 TS_parse_for_head_for_with_condition(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -356,7 +353,6 @@ TS_parse_for_head_for_with_condition(
 }
 
 static TSParserToken *
-__attribute__((__visibility__("hidden")))
 TS_parse_for_head(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -385,7 +381,6 @@ TS_parse_for_head(
 }
 
 TSParserToken *
-__attribute__((__visibility__("hidden")))
 TS_parse_for_body(
     TSFile *tsFile,
     TSParseData *tsParseData

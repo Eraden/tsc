@@ -4,8 +4,11 @@
 const char *TS_LIBRARY_PATH = LIBRARY_OUTPUT_PATH;
 const char *TS_PREDEFINED_PATH = LIBRARY_OUTPUT_PATH"/predefined.ts";
 
+static const char *TS_getHome(void);
+static const char *TS_getLibraryPath(void);
+
 static const char *
-TS_getHome() {
+TS_getHome(void) {
 #ifdef __APPLE__
   return getenv("HOME");
 #else
@@ -14,7 +17,7 @@ TS_getHome() {
 #endif
 }
 
-static const char *TS_getLibraryPath() {
+static const char *TS_getLibraryPath(void) {
   char *path = calloc(sizeof(char), strlen(TS_PREDEFINED_PATH) + 1);
   strcpy(path, TS_PREDEFINED_PATH);
   return path;

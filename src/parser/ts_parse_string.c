@@ -61,6 +61,8 @@ TS_free_string(
     const TSParserToken *token
 ) {
   TS_free_children(token);
-  if (token->content) free(token->content);
+  if (token->content) {
+    free(token->content);
+  }
   free((void *) token);
 }

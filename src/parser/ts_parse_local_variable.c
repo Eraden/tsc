@@ -2,7 +2,6 @@
 #include <cts/register.h>
 
 static void
-__attribute__((visibility("hidden")))
 TS_parse_local_variable_done(
     TSFile *tsFile,
     TSParseData *tsParseData,
@@ -43,7 +42,6 @@ TS_parse_local_variable_done(
 }
 
 static void
-__attribute__((visibility("hidden")))
 TS_parse_local_variable_body(
     TSFile *tsFile,
     TSParseData *tsParseData

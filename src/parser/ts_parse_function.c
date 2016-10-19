@@ -2,7 +2,6 @@
 #include <cts/register.h>
 
 static void
-__attribute__(( visibility("hidden")))
 TS_parse_function_arguments(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -52,7 +51,6 @@ TS_parse_function_arguments(
 }
 
 static void
-__attribute((visibility("hidden")))
 TS_parse_function_lookup_return_type(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -255,6 +253,7 @@ TS_parse_function(
 
     TS_parse_function_arguments(tsFile, tsParseData);
     TS_parse_function_lookup_return_type(tsFile, tsParseData);
+    tsParseData->token = (const wchar_t *) L"{";
     TSParserToken *body = TS_parse_scope(tsFile, tsParseData);
     TS_push_child(token, body);
 

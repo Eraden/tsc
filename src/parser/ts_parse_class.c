@@ -2,7 +2,6 @@
 #include <cts/register.h>
 
 static wchar_t *
-__attribute__((visibility("hidden")))
 TS_class_name_from_parent(
     TSParseData *tsParseData,
     TSParserToken *token,
@@ -29,7 +28,6 @@ TS_class_name_from_parent(
 }
 
 static void
-__attribute__((visibility("hidden")))
 TS_parse_class_head(
     TSFile *tsFile,
     TSParseData *tsParseData,
@@ -76,9 +74,9 @@ TS_parse_class_head(
               extends = child;
               TS_push_child(token, child);
             } else {
-              TS_free_tsToken(child);
               ts_token_syntax_error((wchar_t *) L"Unexpected parent name. Class can have only one parent", tsFile, token);
               proceed = FALSE;
+              TS_free_tsToken(child);
             }
             break;
           }
@@ -102,7 +100,6 @@ TS_parse_class_head(
 }
 
 static void
-__attribute__((visibility("hidden")))
 TS_parse_class_method(
     TSFile *tsFile,
     TSParseData *tsParseData,
@@ -195,7 +192,6 @@ TS_parse_class_method(
 }
 
 static TSParserToken *
-__attribute__((visibility("hidden")))
 TS_parse_class_member(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -343,7 +339,6 @@ TS_parse_class_member(
 }
 
 static void
-__attribute__((visibility("hidden")))
 TS_parse_class_body(
     TSFile *tsFile,
     TSParseData *tsParseData,

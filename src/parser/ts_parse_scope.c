@@ -9,6 +9,7 @@ TS_parse_scope_body(
   TSParserToken *token = tsParseData->parentTSToken;
   TSParserToken *parent = token->parent;
   const wchar_t *tok = NULL;
+  volatile unsigned char proceed = TRUE;
 
   unsigned char IS_BODY;
   switch (parent ? parent->tokenType : TS_UNKNOWN) {
@@ -23,7 +24,7 @@ TS_parse_scope_body(
     }
   }
 
-  while (1) {
+  while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
@@ -44,8 +45,9 @@ TS_parse_scope_body(
       }
       case L'}': {
         TS_MOVE_BY(tsParseData, tok);
+        proceed = FALSE;
         free((void *) tok);
-        return;
+        break;
       }
       default: {
         tsParseData->token = tok;
@@ -65,6 +67,7 @@ TS_parse_scope_body(
               TS_push_child(token, child);
             } else {
               TS_UNEXPECTED_TOKEN(tsFile, child, L"return", "scope");
+              TS_free_tsToken(child);
             }
             break;
           }
@@ -73,6 +76,7 @@ TS_parse_scope_body(
           }
         }
         free((void *) tok);
+        break;
       }
     }
   }

@@ -20,7 +20,7 @@ START_TEST(parse_valid_functions)
   ck_assert_tsFile_valid(tsFile);
   ck_assert_uint_eq(tsFile->tokensSize, 10);
 
-  TSParserToken *token, *arg, *callArgs, *returnType;
+  TSParserToken *token, *arg, *callArgs;
 
   // example1
   token = tsFile->tokens[0];

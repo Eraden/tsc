@@ -38,6 +38,17 @@
 #define TS_GET_TOKEN_MSG(msg, ...) ;
 #endif
 
+#define TS_TOKEN_BEGIN(type, tsParseData) \
+  { \
+    TS_MOVE_BY(tsParseData, tsParseData->token); \
+    TSParserToken *token = TS_build_parser_token(type, tsParseData); \
+    TS_log_to_file(L"-> parsing as %s\n", #type);
+#define TS_TOKEN_END(type) \
+    tsParseData->parentTSToken = token->parent; \
+    TS_log_to_file(L"-> end %s\n", #type); \
+    return token; \
+  }
+
 typedef struct sTSParseData TSParseData;
 typedef struct sTSKeyword TSKeyword;
 typedef struct sTSParserToken TSParserToken;
@@ -373,14 +384,3 @@ TSFile *TS_parse_file(const char *fileName);
 TSFile *TS_parse_stream(const char *file, FILE *stream);
 
 void TS_free_tsFile(TSFile *tsFile);
-
-#define TS_TOKEN_BEGIN(type, tsParseData) \
-  { \
-    TS_MOVE_BY(tsParseData, tsParseData->token); \
-    TSParserToken *token = TS_build_parser_token(type, tsParseData); \
-    TS_log_to_file(L"-> parsing as %s\n", #type);
-#define TS_TOKEN_END(type) \
-    tsParseData->parentTSToken = token->parent; \
-    TS_log_to_file(L"-> end %s\n", #type); \
-    return token; \
-  }
