@@ -15,6 +15,7 @@ typedef struct sTSRegisterEntry {
 
 TSParserToken **TS_OPERATORS;
 const unsigned short int TS_OPERATORS_COUNT;
+TSFile *TS_PREDEFINED_FILE;
 
 // Predefined TS types
 TSParserToken __attribute__((__used__)) *TS_ANY_TYPE;
@@ -64,8 +65,5 @@ void TS_remove_predefined(void);
 unsigned char TS_is_predefined(TSParserToken *token);
 
 unsigned char TS_is_type(TSParserToken *token);
-
-//TSParserToken * TS_search_in(wchar_t *name, TSParserToken *scope, TSFile *tsFile);
-//TSParserToken * TS_search_in_scope(wchar_t *name, TSParserToken *scope);
 
 TSParserToken *TS_search_token(TSParserToken *token);

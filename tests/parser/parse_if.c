@@ -72,6 +72,7 @@ START_TEST(parse_valid_if_condition)
   ck_assert_wstr_eq(cond->content, L"5");
   scope = token->children[1];
   ck_assert_eq_ts_scope(scope->tokenType);
+  ck_assert_uint_eq(scope->childrenSize, 2);
   child = scope->children[0];
   ck_assert_eq_ts_var(child->tokenType);
   ck_assert_ptr_ne(child->name, NULL);

@@ -433,63 +433,112 @@ unsigned char TS_is_type(TSParserToken *token) {
   return FALSE;
 }
 
-//TSParserToken *
-//TS_search_in(
-//    wchar_t *name,
-//    TSParserToken *scope,
-//    TSFile *tsFile
-//) {
-//  if (name == NULL) return NULL;
-//  if (scope == NULL && tsFile == NULL) return NULL;
-//  if (scope == NULL) {
-//    TSParserToken **tokens = tsFile->tokens;
-//    TSParserToken *token;
-//    for (u_long i = 0, len = tsFile->tokensSize; i < len; i++) {
-//      token = tokens[0];
-//      if (token->name && wcscmp(token->name, name) == 0) {
-//        return token;
-//      }
-//      tokens += 1;
-//    }
-//  }
-//  return NULL;
-//}
+static TSParserToken *TS_search_token_in_token(TSParserToken *token, wchar_t *name);
+static TSParserToken *TS_search_token_in_for(TSParserToken *token, wchar_t *name);
+static TSParserToken *TS_search_token_in_if(TSParserToken *token, wchar_t *name);
+static TSParserToken *TS_search_token_in_scope(TSParserToken *token, wchar_t *name);
 
-TSParserToken *
+static TSParserToken *
+TS_search_token_in_for(
+    TSParserToken *token,
+    wchar_t *name
+) {
+  if (token->childrenSize < 1) return NULL;
+  TSParserToken *head = token->children[0];
+  switch (head->tokenType) {
+    case TS_FOR_WITH_CONDITION: {
+      if (head->childrenSize < 1) return NULL;
+      TSParserToken *variables = head->children[0];
+      return TS_search_token_in_scope(variables, name);
+    }
+    case TS_FOR_IN:
+    case TS_FOR_OF: {
+      if (head->childrenSize < 1) return NULL;
+      TSParserToken *variable = head->children[0];
+      if (variable && variable->name && wcscmp(variable->name, name) == 0) return variable;
+      else return NULL;
+    }
+    default: return NULL;
+  }
+}
+
+static TSParserToken *
+TS_search_token_in_scope(
+    TSParserToken *token,
+    wchar_t *name
+) {
+  TSParserToken **children = token->children;
+  TSParserToken *child = NULL, *found = NULL;
+  for (u_int index = 0, len = token->childrenSize; index < len; index++) {
+    child = children[0];
+    if (child && child->name && wcscmp(child->name, name) == 0) {
+      found = child;
+      break;
+    }
+    children += 1;
+  }
+  return found;
+}
+
+static TSParserToken *
+TS_search_token_in_if(
+    TSParserToken *token,
+    wchar_t *name
+) {
+  TSParserToken **children = token->children;
+  TSParserToken *child = NULL, *found = NULL;
+  for (u_int index = 0, len = token->childrenSize; index < len; index++) {
+    child = children[0];
+    if (child && child->name && child->tokenType == TS_SCOPE) {
+      found = TS_search_token_in_scope(child, name);
+      break;
+    }
+    children += 1;
+  }
+  return found;
+}
+
+static TSParserToken *
+TS_search_token_in_token(
+    TSParserToken *token,
+    wchar_t *name
+) {
+  switch (token->tokenType) {
+    case TS_SCOPE: {
+      return TS_search_token_in_scope(token, name);
+    }
+    case TS_IF:
+    case TS_ELSE: {
+      return TS_search_token_in_if(token, name);
+    }
+    case TS_FOR: {
+      return TS_search_token_in_for(token, name);
+    }
+    case TS_UNKNOWN: {
+      return NULL;
+    }
+    default: {
+      return NULL;
+    }
+  }
+}
+
+extern TSParserToken *
 TS_search_token(
     TSParserToken *token
 ) {
   if (token->tokenType != TS_UNKNOWN) return token;
-  const wchar_t *name = token->content;
+  wchar_t *name = token->content;
   volatile TSParserToken *current = token->parent;
-  volatile unsigned char proceed = TRUE;
-  TSParserToken **children = NULL;
-  TSParserToken *child = NULL;
-  u_int len = 0, index = 0;
+  TSParserToken *found = NULL;
 
-  while (current && proceed) {
-    switch (current->tokenType) {
-      case TS_SCOPE: {
-        len = current->childrenSize;
-        children = current->children;
-        for (index = 0; index < len; index++) {
-          child = children[0];
-          if (child->name && wcscmp(name, child->name) == 0) {
-            proceed = FALSE;
-            current = child;
-          }
-          children += 1;
-        }
-        break;
-      }
-      case TS_FOR: {
-        break;
-      }
-      default: {
-        //
-      }
+  while (current) {
+    found = TS_search_token_in_token((TSParserToken *) current, name);
+    if (found) {
+      break;
+    } else {
+      current = current->parent;
     }
-    if (proceed) current = current->parent;
   }
-  return (TSParserToken *) current;
+  return found;
 }
