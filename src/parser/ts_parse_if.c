@@ -129,15 +129,6 @@ TS_parse_if_conditions(
         TS_MOVE_BY(tsParseData, tok);
         TSParserToken *child = TS_build_parser_token(TS_CONDITION, tsParseData);
         child->name = (void *) TS_clone_string(tok);
-
-        // FIXME replace with push child!
-//        TSParserToken **newPointer = (TSParserToken **) calloc(sizeof(TSParserToken *), data->conditionsSize + 1);
-//        if (data->conditions != NULL)
-//          memcpy(newPointer, data->conditions, sizeof(TSParserToken *) * data->conditionsSize);
-//        free(data->conditions);
-//        data->conditions = newPointer;
-//        data->conditions[data->conditionsSize] = child;
-//        data->conditionsSize += 1;
         TS_push_child(token, child);
         conditionsCount += 1;
 
