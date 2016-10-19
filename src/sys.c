@@ -473,12 +473,34 @@ unsigned char TS_is_instance_of(
   }
 }
 
-struct sTSParserToken *
-TS_type_for_string(
-    const wchar_t *str
+void
+TS_type_from_string(
+    TSFile *tsFile,
+    TSParserToken *unknown
 ) {
-  if (str == NULL) return  TS_ANY_TYPE;
-  const u_long len = wcslen(str);
-  if (len == 0) return TS_ANY_TYPE;
-  return TS_ANY_TYPE;
+  wchar_t *str = unknown->content;
+  u_long len = wcslen(str);
+  TSTokenType type = unknown->tokenType;
+  if (type != TS_UNKNOWN) return;
+
+  wchar_t c = 0;
+  unsigned char foundDot = FALSE;
+
+  for (u_int i = 0; i < len; i++) {
+    c = str[i];
+    if (isdigit(c) && i == 0) {
+      type = TS_NUMBER;
+    } else if (c == L'.' && type == TS_NUMBER) {
+      if (!foundDot) {
+        foundDot = TRUE;
+      } else {
+        ts_token_syntax_error(
+            (const wchar_t *) L"Invalid token",
+            tsFile, unknown
+        );
+      }
+    }
+  }
+
+  unknown->tokenType = type;
 }

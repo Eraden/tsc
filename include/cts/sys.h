@@ -88,4 +88,4 @@ wchar_t *TS_resolve_path(const wchar_t *absolute_path, const wchar_t *unresolved
 
 unsigned char TS_is_instance_of(struct sTSParserToken *token, struct sTSParserToken *type);
 
-struct sTSParserToken *TS_type_for_string(const wchar_t *str);
+void TS_type_from_string(struct sTSFile *tsFile, struct sTSParserToken *unknown);

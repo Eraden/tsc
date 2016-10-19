@@ -73,6 +73,7 @@ TS_parse_scope_body(
           }
           default: {
             TS_push_child(token, child);
+            break;
           }
         }
         free((void *) tok);

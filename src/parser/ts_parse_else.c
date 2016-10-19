@@ -36,8 +36,8 @@ TS_parse_else_body(
       case L';': {
         TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
-
-        return;
+        proceed = FALSE;
+        break;
       }
       default: {
         tsParseData->token = tok;

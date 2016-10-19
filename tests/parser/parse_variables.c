@@ -28,7 +28,6 @@ START_TEST(parse_valid_variables)
 //  ck_assert_ptr_eq(data->value, NULL);
 
   token = tsFile->tokens[2];
-
   ck_assert_eq_ts_var(token->tokenType);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"c");

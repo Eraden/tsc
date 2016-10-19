@@ -676,6 +676,7 @@ TS_free_tsToken(
     case TS_CONDITION:
       TS_free_condition(token);
       break;
+    case TS_NUMBER:
     case TS_UNKNOWN:
       TS_free_unknown(token);
       break;

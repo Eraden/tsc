@@ -152,6 +152,7 @@ TS_parse_local_variable_body(
         } else if (parseFlag == TS_PARSE_VARIABLE_VALUE) {
           tsParseData->token = tok;
           value = TS_parse_ts_token(tsFile, tsParseData);
+          TS_type_from_string(tsFile, value);
           if (value) token->children[TS_VARIABLE_VALUE] = value;
           parseFlag = TS_PARSE_VARIABLE_NONE;
           TS_MOVE_BY(tsParseData, tok);

@@ -10,9 +10,15 @@ TS_parse_return(
     const wchar_t *tok;
     volatile unsigned char proceed = TRUE;
 
-    if (token->parent == NULL) {
+    TSParserToken *current = token->parent;
+    while (current) {
+      if (current->tokenType == TS_FUNCTION || current->tokenType == TS_CLASS_METHOD) {
+        break;
+      }
+      current = current->parent;
+    }
+    if (!current) {
       TS_UNEXPECTED_GLOBAL_TOKEN(tsFile, token, "return")
-      proceed = FALSE;
     }
 
     while (proceed) {

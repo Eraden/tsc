@@ -110,6 +110,7 @@ typedef enum eTSTokenType {
   TS_INTERFACE = 45,
   TS_BORROW = 46,
   TS_OPERATOR = 47,
+  TS_NUMBER = 48,
   TS_UNKNOWN = 0,
 } __attribute__ ((__packed__)) TSTokenType;
 
