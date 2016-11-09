@@ -1,4 +1,4 @@
-{
+function a() {
   // inline comment
   if (1) { return 1; }
 }
@@ -24,6 +24,7 @@ function Component(data: Object, desc: Descriptor={}, s ="", ...rest) {
 
 class Some {
   enumerable: boolean = false;
+
   constructor() {
     if (1) this.enumerable = true;
   }

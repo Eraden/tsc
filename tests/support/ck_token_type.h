@@ -42,6 +42,7 @@ _TS_type_to_string(const TSTokenType type) {
     case TS_OF: return "TS_OF";
     case TS_IN: return "TS_IN";
     case TS_JSON: return "TS_JSON";
+    case TS_JSON_ENTRY: return "TS_JSON_ENTRY";
     case TS_ARRAY: return "TS_ARRAY";
     case TS_STRING: return "TS_STRING";
     case TS_STRING_TEMPLATE: return "TS_STRING_TEMPLATE";
@@ -86,6 +87,7 @@ _TS_type_to_string(const TSTokenType type) {
 #define ck_assert_eq_ts_default(type) ck_assert_tsType_eq(type, TS_DEFAULT)
 #define ck_assert_eq_ts_scope(type) ck_assert_tsType_eq(type, TS_SCOPE)
 #define ck_assert_eq_ts_json(type) ck_assert_tsType_eq(type, TS_JSON)
+#define ck_assert_eq_ts_json_entry(type) ck_assert_tsType_eq(type, TS_JSON_ENTRY)
 #define ck_assert_eq_ts_extends(type) ck_assert_tsType_eq(type, TS_EXTENDS)
 #define ck_assert_eq_ts_implements(type) ck_assert_tsType_eq(type, TS_IMPLEMENTS)
 #define ck_assert_eq_ts_new(type) ck_assert_tsType_eq(type, TS_NEW)
@@ -109,3 +111,4 @@ _TS_type_to_string(const TSTokenType type) {
 #define ck_assert_eq_ts_unknown(type) ck_assert_tsType_eq(type, TS_UNKNOWN)
 #define ck_assert_eq_ts_call_arguments(type) ck_assert_tsType_eq(type, TS_CALL_ARGUMENTS)
 #define ck_assert_eq_ts_borrow(type) ck_assert_tsType_eq(type, TS_BORROW)
+#define ck_assert_eq_ts_string(type) ck_assert_tsType_eq(type, TS_STRING)

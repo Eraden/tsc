@@ -708,6 +708,10 @@ TS_free_tsToken(
       TS_free_json(token);
       break;
     }
+    case TS_JSON_ENTRY: {
+      TS_free_json_entry(token);
+      break;
+    }
     case TS_ARRAY:
       TS_free_array(token);
       break;

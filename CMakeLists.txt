@@ -79,6 +79,7 @@ IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
       tests/parser/for/parse_for_of.c
       tests/parser/for/parse_for_in.c
       tests/parser/parse_extends.c
+      tests/parser/parse_json.c
       tests/core/operators.c
       tests/core/sys.c
       tests/core/borrows.c
@@ -300,7 +301,7 @@ INSTALL(DIRECTORY lib DESTINATION lib)
 
 IF (CMAKE_BUILD_TYPE MATCHES "Debug")
   SET(LIBRARY_OUTPUT_PATH ${cts_SOURCE_DIR}/lib)
-ELSE()
-  SET(LIBRARY_OUTPUT_PATH ${CMAKE_INSTALL_PREFIX}/lib)
+#ELSE()
+#  SET(LIBRARY_OUTPUT_PATH ${CMAKE_INSTALL_PREFIX}/lib)
 ENDIF()
 ADD_DEFINITIONS(-DLIBRARY_OUTPUT_PATH="${LIBRARY_OUTPUT_PATH}")

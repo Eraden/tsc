@@ -17,7 +17,8 @@ TS_parse_scope_or_json(
       case TS_LET:
       case TS_CONST:
       case TS_RETURN:
-      case TS_ARGUMENT: {
+      case TS_ARGUMENT:
+      case TS_JSON_ENTRY: {
         type = TS_PARSE_BRACKET_AS_JSON;
         break;
       }

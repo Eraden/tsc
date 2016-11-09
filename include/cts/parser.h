@@ -111,6 +111,7 @@ typedef enum eTSTokenType {
   TS_BORROW = 46,
   TS_OPERATOR = 47,
   TS_NUMBER = 48,
+  TS_JSON_ENTRY = 49,
   TS_UNKNOWN = 0,
 } __attribute__ ((__packed__)) TSTokenType;
 
@@ -163,10 +164,10 @@ typedef enum eTSVariableChild {
   TS_VARIABLE_VALUE = 1
 } TSVariableChild;
 
-typedef enum eTSIfChild {
-  TS_IF_CONDITION = 0,
-  TS_IF_SCOPE = 1
-} TSIfChild;
+typedef enum eTSJSONEntryType {
+  TS_JSON_KEY = 0,
+  TS_JSON_VALUE = 1
+} TSJSONEntryType;
 
 typedef struct sTSKeyword {
   const wchar_t *str;
@@ -333,6 +334,8 @@ TSParserToken *TS_parse_scope_or_json(TSFile *tsFile, TSParseData *tsParseData);
 TSParserToken *TS_parse_json(TSFile *tsFile, TSParseData *tsParseData);
 
 void TS_free_json(const TSParserToken *token);
+
+void TS_free_json_entry(const TSParserToken *token);
 
 TSParserToken *TS_parse_scope(TSFile *tsFile, TSParseData *tsParseData);
 

@@ -7,20 +7,23 @@ TS_parse_scope_body(
     TSParseData *tsParseData
 ) {
   TSParserToken *token = tsParseData->parentTSToken;
-  TSParserToken *parent = token->parent;
   const wchar_t *tok = NULL;
   volatile unsigned char proceed = TRUE;
 
-  unsigned char IS_BODY;
-  switch (parent ? parent->tokenType : TS_UNKNOWN) {
-    case TS_FUNCTION:
-    case TS_CLASS_METHOD: {
-      IS_BODY = TRUE;
-      break;
-    }
-    default: {
-      IS_BODY = FALSE;
-      break;
+  unsigned char IS_BODY = FALSE;
+  TSParserToken *current = token->parent;
+  while (current) {
+    switch (current->tokenType) {
+      case TS_FUNCTION:
+      case TS_CLASS_METHOD: {
+        IS_BODY = TRUE;
+        current = NULL;
+        break;
+      }
+      default: {
+        current = current->parent;
+        break;
+      }
     }
   }
 
