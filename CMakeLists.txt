@@ -80,6 +80,7 @@ IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
       tests/parser/for/parse_for_in.c
       tests/parser/parse_extends.c
       tests/parser/parse_json.c
+      tests/parser/parse_implements.c
       tests/core/operators.c
       tests/core/sys.c
       tests/core/borrows.c

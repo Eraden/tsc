@@ -22,6 +22,7 @@
 #include "core/operators.h"
 #include "core/borrows.h"
 #include "parser/parse_json.h"
+#include "parser/parse_implements.h"
 
 static char **only = NULL;
 static u_long onlySize = 0;
@@ -57,6 +58,7 @@ Suite *class_suite(void) {
   if (hasOnly("for") || hasOnly("for-in")) parse_for_in_suite(suite);
   if (hasOnly("borrows")) parse_borrows_suite(suite);
   if (hasOnly("json")) parse_json(suite);
+  if (hasOnly("implements")) parse_implements_suite(suite);
   return suite;
 }
 

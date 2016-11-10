@@ -90,6 +90,7 @@ _TS_type_to_string(const TSTokenType type) {
 #define ck_assert_eq_ts_json_entry(type) ck_assert_tsType_eq(type, TS_JSON_ENTRY)
 #define ck_assert_eq_ts_extends(type) ck_assert_tsType_eq(type, TS_EXTENDS)
 #define ck_assert_eq_ts_implements(type) ck_assert_tsType_eq(type, TS_IMPLEMENTS)
+#define ck_assert_eq_ts_interface(type) ck_assert_tsType_eq(type, TS_INTERFACE)
 #define ck_assert_eq_ts_new(type) ck_assert_tsType_eq(type, TS_NEW)
 #define ck_assert_eq_ts_class_field(type) ck_assert_tsType_eq(type, TS_CLASS_FIELD)
 #define ck_assert_eq_ts_class_method(type) ck_assert_tsType_eq(type, TS_CLASS_METHOD)

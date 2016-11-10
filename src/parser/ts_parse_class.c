@@ -66,7 +66,6 @@ TS_parse_class_head(
       default: {
         tsParseData->token = tok;
         TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
-        free((void *) tok);
 
         switch (child->tokenType) {
           case TS_EXTENDS: {
@@ -74,7 +73,8 @@ TS_parse_class_head(
               extends = child;
               TS_push_child(token, child);
             } else {
-              ts_token_syntax_error((wchar_t *) L"Unexpected parent name. Class can have only one parent", tsFile, token);
+              ts_token_syntax_error((wchar_t *) L"Unexpected parent name. Class can have only one parent", tsFile,
+                                    token);
               proceed = FALSE;
               TS_free_tsToken(child);
             }
@@ -84,15 +84,14 @@ TS_parse_class_head(
             TS_push_child(token, child);
             break;
           }
-          case TS_UNKNOWN: {
-            TS_free_unknown(child);
-            break;
-          }
+          case TS_UNKNOWN:
           default: {
+            TS_UNEXPECTED_TOKEN(tsFile, child, tok, "class head");
             TS_free_tsToken(child);
             break;
           }
         }
+        free((void *) tok);
         break;
       }
     }
@@ -452,28 +451,24 @@ TS_parse_class(
         }
         default: {
           if (wcscmp((const wchar_t *) L"extends", tok) == 0 || wcscmp((const wchar_t *) L"implements", tok) == 0) {
+            TS_put_back(tsFile->stream, tok);
             token->name = TS_class_name_from_parent(tsParseData, token, tok);
             if (token->name == NULL) {
               free((void *) tok);
-              ts_token_syntax_error((wchar_t *) L"Missing class name", tsFile, token);
-              proceed = FALSE;
-              break;
+              TS_MISSING_NAME(tsFile, token, "class");
             }
-          } else if (TS_is_keyword(tok) == 1) {
+          } else if (TS_is_keyword(tok) == TRUE) {
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "class name");
             free((void *) tok);
-            proceed = FALSE;
-            break;
+
+          } else if (TS_name_is_valid(tok) == FALSE) {
+            ts_token_syntax_error((wchar_t *) L"Invalid class name", tsFile, token);
+            free((void *) tok);
 
           } else {
-            if (TS_name_is_valid(tok) == 0) {
-              free((void *) tok);
-              ts_token_syntax_error((wchar_t *) L"Invalid class name", tsFile, token);
-            } else {
-              token->name = TS_clone_string(tok);
-              TS_MOVE_BY(tsParseData, tok);
-              free((void *) tok);
-            }
+            token->name = TS_clone_string(tok);
+            TS_MOVE_BY(tsParseData, tok);
+            free((void *) tok);
           }
           proceed = FALSE;
           break;
