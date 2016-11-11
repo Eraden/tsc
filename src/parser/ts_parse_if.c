@@ -14,6 +14,7 @@ TS_parse_if_body(
     TS_LOOP_SANITY_CHECK(tsFile)
 
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "`if` body (looking for brackets)");
       break;
@@ -52,8 +53,9 @@ TS_parse_if_conditions(
     TSParseData *tsParseData
 ) {
   TSParserToken *token = tsParseData->parentTSToken;
-  const wchar_t *tok;
+  const wchar_t *tok = NULL;
   volatile unsigned char proceed = TRUE;
+
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
@@ -92,10 +94,12 @@ TS_parse_if_conditions(
 
   proceed = TRUE;
   volatile unsigned long conditionsCount = 0;
+
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "`if` conditions");
       break;
@@ -126,16 +130,15 @@ TS_parse_if_conditions(
         break;
       }
       default: {
-        TS_MOVE_BY(tsParseData, tok);
-        TSParserToken *child = TS_build_parser_token(TS_CONDITION, tsParseData);
-        child->name = (void *) TS_clone_string(tok);
-        TS_push_child(token, child);
+        TS_put_back(tsFile->stream, tok);
+
+        tsParseData->token = tok;
+        TSParserToken *condition = TS_parse_condition(tsFile, tsParseData);
+        TS_push_child(token, condition);
         conditionsCount += 1;
 
-        TS_MOVE_BY(tsParseData, tok);
-
         free((void *) tok);
-        tsParseData->parentTSToken = child->parent;
+        tsParseData->parentTSToken = condition->parent;
         break;
       }
     }
@@ -150,10 +153,12 @@ TS_lookup_else(
   TSParserToken *token = tsParseData->parentTSToken;
   const wchar_t *tok = NULL;
   volatile unsigned char proceed = TRUE;
+
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+
     if (tok == NULL) {
       return;
     }

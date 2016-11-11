@@ -10,27 +10,13 @@ TS_parse_scope_body(
   const wchar_t *tok = NULL;
   volatile unsigned char proceed = TRUE;
 
-  unsigned char IS_BODY = FALSE;
-  TSParserToken *current = token->parent;
-  while (current) {
-    switch (current->tokenType) {
-      case TS_FUNCTION:
-      case TS_CLASS_METHOD: {
-        IS_BODY = TRUE;
-        current = NULL;
-        break;
-      }
-      default: {
-        current = current->parent;
-        break;
-      }
-    }
-  }
+  unsigned char IS_BODY = (unsigned char) (TS_isEmbeddedIn(token, TS_CLASS_METHOD) || TS_isEmbeddedIn(token, TS_FUNCTION));
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "scope");
       break;
@@ -55,13 +41,24 @@ TS_parse_scope_body(
       default: {
         tsParseData->token = tok;
         TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
+
         switch (child->tokenType) {
           case TS_UNKNOWN: {
-            TSParserToken *type = TS_search_token(child);
-            if (type == NULL || type == child) {
+            TSParserToken *resolved = TS_search_token(child);
+
+            if (resolved == child) {
+              TS_push_child(token, child);
+            } else if (resolved) {
+              TS_push_child(token, TS_create_borrow(resolved, tsParseData));
+              // Replaced with new borrow
               TS_free_tsToken(child);
             } else {
-              TS_push_child(token, TS_create_borrow(type, tsParseData));
+              // TODO:
+              // Temporary ignore missing definition for:
+              // instance.call();
+              // `.` needs to be implemented!
+              // TS_UNEXPECTED_TOKEN(tsFile, child, tok, "scope");
+              TS_free_tsToken(child);
             }
             break;
           }

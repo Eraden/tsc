@@ -158,7 +158,11 @@ TS_parse_class_method(
           TS_put_back(tsFile->stream, tok);
           tsParseData->token = tok;
           TSParserToken *argument = TS_parse_call_arguments(tsFile, tsParseData);
-          TS_push_child(bodyToken, argument);
+          if (argument) {
+            TS_push_child(bodyToken, argument);
+          } else {
+            // TODO error
+          }
 
           free((void *) tok);
         } else if (parseFlag == TS_PARSE_CLASS_MEMBER_METHOD_BODY) {
@@ -174,9 +178,9 @@ TS_parse_class_method(
           TSParserToken *classToken = TS_find_type(tsFile->file, tok);
           if (classToken) {
             TSParserToken *returnType = TS_build_parser_token(TS_FUNCTION_RETURN_TYPE, tsParseData);
-            TS_push_child(returnType, classToken);
-            TS_push_child(bodyToken, returnType);
             tsParseData->parentTSToken = returnType->parent;
+            TS_push_child(returnType, TS_create_borrow(classToken, tsParseData));
+            TS_push_child(bodyToken, returnType);
           } else {
             TS_UNKNOWN_TYPE(tsFile, bodyToken, tok);
           }
@@ -200,6 +204,7 @@ TS_parse_class_member(
   TSClassParseFlag parseFlag = TS_PARSE_CLASS_MEMBER_NAME;
 
   TSParserToken *bodyToken = TS_build_parser_token(TS_UNKNOWN, tsParseData);
+  tsParseData->parentTSToken = bodyToken->parent;
   bodyToken->modifiers = TS_MODIFIER_PRIVATE;
 
   wchar_t *name = NULL;
@@ -233,21 +238,23 @@ TS_parse_class_member(
           proceed = FALSE;
         } else {
           bodyToken->tokenType = TS_CLASS_METHOD;
+          tsParseData->parentTSToken = bodyToken;
 
           bodyToken->name = TS_clone_string(name);
           if (type) {
             TSParserToken *classToken = TS_find_type(tsFile->file, type);
             if (classToken) {
               TSParserToken *returnType = TS_build_parser_token(TS_FUNCTION_RETURN_TYPE, tsParseData);
-              TS_push_child(returnType, classToken);
-              TS_push_child(bodyToken, returnType);
               tsParseData->parentTSToken = returnType->parent;
+              TS_push_child(returnType, TS_create_borrow(classToken, tsParseData));
+              TS_push_child(bodyToken, returnType);
             } else {
               TS_UNKNOWN_TYPE(tsFile, bodyToken, type);
             }
           }
 
           TS_parse_class_method(tsFile, tsParseData, bodyToken);
+          tsParseData->parentTSToken = bodyToken->parent;
 
           proceed = FALSE;
           free((void *) tok);
@@ -276,12 +283,12 @@ TS_parse_class_member(
         if (tokenType == NULL) {
           tokenType = TS_find_type(tsFile->file, (const wchar_t *) L"any");
         }
-        TS_push_child(bodyToken, tokenType);
+        TS_push_child(bodyToken, TS_create_borrow(tokenType, tsParseData));
 
         TSParserToken *tokenValue = TS_build_parser_token(TS_UNKNOWN, tsParseData);
+        tsParseData->parentTSToken = tokenValue->parent;
         tokenValue->content = TS_clone_string(value);
         TS_push_child(bodyToken, tokenValue);
-        tsParseData->parentTSToken = tokenValue->parent;
 
         proceed = FALSE;
         free((void *) tok);
@@ -388,7 +395,6 @@ TS_parse_class_body(
           TS_free_tsToken(child);
 
           child = TS_parse_class_member(tsFile, tsParseData);
-
         }
 
         TS_push_child(token, child);
@@ -409,6 +415,7 @@ TS_parse_class(
 
     const wchar_t *tok;
     volatile unsigned char proceed = TRUE;
+
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile);
 

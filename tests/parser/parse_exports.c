@@ -3,34 +3,40 @@
 START_TEST(parse_valid_export)
   TSFile *tsFile = TS_parse_file("./examples/export/valid.ts");
   ck_assert_tsFile_valid(tsFile);
-  ck_assert_uint_eq(tsFile->tokensSize, 4);
+  ck_assert_uint_eq(tsFile->tokensSize, 6);
   ck_assert_ptr_ne(tsFile->tokens, NULL);
 
-  TSParserToken *token, *exported;
+  TSParserToken *token = NULL, *exported = NULL, *semicolon = NULL;
 
   token = tsFile->tokens[0];
-  ck_assert(token->tokenType == TS_EXPORT);
+  ck_assert_eq_ts_export(token->tokenType);
   ck_assert_uint_eq(token->childrenSize, 1);
   exported = token->children[0];
-  ck_assert(exported->tokenType == TS_FUNCTION);
+  ck_assert_eq_ts_function(exported->tokenType);
 
   token = tsFile->tokens[1];
-  ck_assert(token->tokenType == TS_EXPORT);
+  ck_assert_eq_ts_export(token->tokenType);
   ck_assert_uint_eq(token->childrenSize, 1);
   exported = token->children[0];
-  ck_assert(exported->tokenType == TS_VAR);
+  ck_assert_eq_ts_var(exported->tokenType);
 
-  token = tsFile->tokens[2];
-  ck_assert(token->tokenType == TS_EXPORT);
-  ck_assert_uint_eq(token->childrenSize, 1);
-  exported = token->children[0];
-  ck_assert(exported->tokenType == TS_CONST);
+  semicolon = tsFile->tokens[2];
+  ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
   token = tsFile->tokens[3];
-  ck_assert(token->tokenType == TS_EXPORT);
+  ck_assert_eq_ts_export(token->tokenType);
   ck_assert_uint_eq(token->childrenSize, 1);
   exported = token->children[0];
-  ck_assert(exported->tokenType == TS_CLASS);
+  ck_assert_eq_ts_const(exported->tokenType);
+
+  semicolon = tsFile->tokens[4];
+  ck_assert_eq_ts_semicolon(semicolon->tokenType);
+
+  token = tsFile->tokens[5];
+  ck_assert_eq_ts_export(token->tokenType);
+  ck_assert_uint_eq(token->childrenSize, 1);
+  exported = token->children[0];
+  ck_assert_eq_ts_class(exported->tokenType);
 
   TS_free_tsFile(tsFile);
 END_TEST

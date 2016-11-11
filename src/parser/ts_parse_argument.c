@@ -43,8 +43,8 @@ TS_parse_argument(
     token->childrenSize = 2;
     TSParserToken *value = NULL;
     TSParserToken *type = NULL;
-    token->children[TS_VARIABLE_TYPE] = TS_ANY_TYPE;
-    token->children[TS_VARIABLE_VALUE] = TS_UNDEFINED_TYPE;
+    token->children[TS_VARIABLE_TYPE] = TS_create_borrow(TS_ANY_TYPE, tsParseData);
+    token->children[TS_VARIABLE_VALUE] = TS_create_borrow(TS_UNDEFINED_TYPE, tsParseData);
 
     volatile unsigned char proceed = TRUE;
     TSVariableParseFlag parseFlag = TS_PARSE_VARIABLE_NAME;
@@ -145,10 +145,13 @@ TS_parse_argument(
           } else if (parseFlag == TS_PARSE_VARIABLE_VALUE) {
             tsParseData->token = tok;
             value = TS_find_type(tsFile->file, tok);
-            if (!value) {
+            if (value == NULL) {
               value = TS_parse_ts_token(tsFile, tsParseData);
-              tsParseData->parentTSToken = value->parent;
+              tsParseData->parentTSToken = token;
+            } else {
+              value = TS_create_borrow(value, tsParseData);
             }
+            TS_free_borrow(token->children[TS_VARIABLE_VALUE]);
             token->children[TS_VARIABLE_VALUE] = value;
             parseFlag = TS_PARSE_VARIABLE_NONE;
 
@@ -157,7 +160,8 @@ TS_parse_argument(
             if (tok[0] != L'(') {
               type = TS_find_type(tsFile->file, tok);
               if (type) {
-                token->children[TS_VARIABLE_TYPE] = type;
+                TS_free_borrow(token->children[TS_VARIABLE_TYPE]);
+                token->children[TS_VARIABLE_TYPE] = TS_create_borrow(type, tsParseData);
               } else {
                 TS_UNKNOWN_TYPE(tsFile, token, tok);
               }

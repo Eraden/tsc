@@ -3,17 +3,17 @@
 START_TEST(parse_valid_json)
   TSFile *tsFile = TS_parse_file("./examples/json/valid.ts");
   ck_assert_tsFile_valid(tsFile);
-  ck_assert_uint_eq(tsFile->tokensSize, 3);
+  ck_assert_uint_eq(tsFile->tokensSize, 6);
   ck_assert_ptr_ne(tsFile->tokens, NULL);
 
-  TSParserToken *variable = NULL, *json = NULL, *jsonEntry = NULL, *key = NULL, *value = NULL;
+  TSParserToken *variable = NULL, *json = NULL, *jsonEntry = NULL, *key = NULL, *value = NULL, *semicolon = NULL;
 
   variable = tsFile->tokens[0];
   ck_assert_ptr_ne(variable, NULL);
   ck_assert_eq_ts_var(variable->tokenType);
   ck_assert_ptr_ne(variable->children, NULL);
   ck_assert_uint_eq(variable->childrenSize, 2);
-  ck_assert_ts_token_eq(variable->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(variable->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
   json = variable->children[TS_VARIABLE_VALUE];
   ck_assert_ptr_ne(json, NULL);
   ck_assert_eq_ts_json(json->tokenType);
@@ -29,12 +29,15 @@ START_TEST(parse_valid_json)
   value = jsonEntry->children[TS_JSON_VALUE];
   ck_assert_ptr_ne(value, NULL);
 
-  variable = tsFile->tokens[1];
+  semicolon = tsFile->tokens[1];
+  ck_assert_eq_ts_semicolon(semicolon->tokenType);
+
+  variable = tsFile->tokens[2];
   ck_assert_ptr_ne(variable, NULL);
   ck_assert_eq_ts_var(variable->tokenType);
   ck_assert_ptr_ne(variable->children, NULL);
   ck_assert_uint_eq(variable->childrenSize, 2);
-  ck_assert_ts_token_eq(variable->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(variable->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
   json = variable->children[TS_VARIABLE_VALUE];
   ck_assert_ptr_ne(json, NULL);
   ck_assert_eq_ts_json(json->tokenType);
@@ -60,12 +63,15 @@ START_TEST(parse_valid_json)
   value = jsonEntry->children[TS_JSON_VALUE];
   ck_assert_ptr_ne(value, NULL);
 
-  variable = tsFile->tokens[2];
+  semicolon = tsFile->tokens[3];
+  ck_assert_eq_ts_semicolon(semicolon->tokenType);
+
+  variable = tsFile->tokens[4];
   ck_assert_ptr_ne(variable, NULL);
   ck_assert_eq_ts_var(variable->tokenType);
   ck_assert_ptr_ne(variable->children, NULL);
   ck_assert_uint_eq(variable->childrenSize, 2);
-  ck_assert_ts_token_eq(variable->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(variable->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
   json = variable->children[TS_VARIABLE_VALUE];
   ck_assert_ptr_ne(json, NULL);
   ck_assert_eq_ts_json(json->tokenType);
@@ -81,6 +87,9 @@ START_TEST(parse_valid_json)
   value = jsonEntry->children[TS_JSON_VALUE];
   ck_assert_ptr_ne(value, NULL);
   ck_assert_eq_ts_json(value->tokenType);
+
+  semicolon = tsFile->tokens[5];
+  ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
   TS_free_tsFile(tsFile);
 END_TEST

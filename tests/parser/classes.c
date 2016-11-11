@@ -5,11 +5,12 @@
 START_TEST(parse_valid_classes_file)
   TSFile *tsFile = TS_parse_file("./examples/class/valid.ts");
 
-  TSParserToken *classToken;
-  TSParserToken *childToken;
+  TSParserToken *classToken = NULL;
+  TSParserToken *childToken = NULL;
+  TSParserToken *semicolon = NULL;
 
   ck_assert_tsFile_valid(tsFile);
-  ck_assert_int_eq(tsFile->tokensSize, 11);
+  ck_assert_int_eq(tsFile->tokensSize, 12);
 
   // 1
   classToken = tsFile->tokens[0];
@@ -32,7 +33,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->modifiers == TS_MODIFIER_PRIVATE);
 
   ck_assert_wstr_eq(childToken->name, L"field_1");
-  ck_assert_ts_token_eq(childToken->children[TS_VARIABLE_TYPE], ANY);
+  TS_check_validate_borrow(childToken->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
 
   // 3
   classToken = tsFile->tokens[2];
@@ -47,7 +48,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->modifiers == TS_MODIFIER_PRIVATE);
 
   ck_assert_wstr_eq(childToken->name, L"field_2");
-  ck_assert_ts_token_eq(childToken->children[TS_VARIABLE_TYPE], ANY);
+  TS_check_validate_borrow(childToken->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
 
   // 4
   classToken = tsFile->tokens[3];
@@ -62,7 +63,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->modifiers == TS_MODIFIER_PROTECTED);
 
   ck_assert_wstr_eq(childToken->name, L"field_3");
-  ck_assert_ts_token_eq(childToken->children[TS_VARIABLE_TYPE], ANY);
+  TS_check_validate_borrow(childToken->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
 
   // 5
   classToken = tsFile->tokens[4];
@@ -77,7 +78,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->modifiers == TS_MODIFIER_PUBLIC);
 
   ck_assert_wstr_eq(childToken->name, L"field_4");
-  ck_assert_ts_token_eq(childToken->children[TS_VARIABLE_TYPE], ANY);
+  TS_check_validate_borrow(childToken->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
 
   // 6
   classToken = tsFile->tokens[5];
@@ -156,7 +157,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->modifiers == TS_MODIFIER_PRIVATE);
 
   ck_assert_wstr_eq(childToken->name, L"foo");
-  ck_assert_ts_token_eq(childToken->children[TS_VARIABLE_TYPE], ANY);
+  TS_check_validate_borrow(childToken->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
 
   childToken = classToken->children[1];
   ck_assert_eq_ts_class_method(childToken->tokenType);
@@ -168,13 +169,17 @@ START_TEST(parse_valid_classes_file)
 
   // 11
   TSParserToken *token = tsFile->tokens[10];
-  ck_assert(token->tokenType == TS_CONST);
+  ck_assert_eq_ts_const(token->tokenType);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"TEST");
   ck_assert_uint_eq(token->childrenSize, 2);
-  ck_assert_ts_token_eq(token->children[TS_VARIABLE_TYPE], ANY);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
   TSParserToken *variableValue = token->children[TS_VARIABLE_VALUE];
   ck_assert_eq_ts_class(variableValue->tokenType);
+
+  // 12
+  semicolon = tsFile->tokens[11];
+  ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
   TS_free_tsFile(tsFile);
 END_TEST

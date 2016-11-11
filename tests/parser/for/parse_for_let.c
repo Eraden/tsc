@@ -64,10 +64,14 @@ START_TEST(parse_valid_for_let)
 
   body = token->children[1];
   ck_assert_eq_ts_scope(body->tokenType);
-  ck_assert_ulong_eq(body->childrenSize, 1);
+  ck_assert_ulong_eq(body->childrenSize, 2);
   ck_assert_ptr_ne(body->children, NULL);
   child = body->children[0];
   ck_assert_eq_ts_var(child->tokenType);
+
+  TSParserToken *semicolon = body->children[1];
+  ck_assert_ptr_ne(semicolon, NULL);
+  ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
   TS_free_tsFile(tsFile);
 END_TEST

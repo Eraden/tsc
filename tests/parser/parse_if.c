@@ -4,9 +4,9 @@ START_TEST(parse_valid_if_condition)
   TSFile *tsFile = TS_parse_file("./examples/if/valid.ts");
 
   ck_assert_tsFile_valid(tsFile);
-  ck_assert_int_eq(tsFile->tokensSize, 5);
+  ck_assert_int_eq(tsFile->tokensSize, 6);
 
-  TSParserToken *token, *cond, *child, *scope;
+  TSParserToken *token = NULL, *cond = NULL, *data = NULL, *scope = NULL, *constToken = NULL, *varToken = NULL, *semicolon = NULL;
 
   token = tsFile->tokens[0];
   ck_assert(token->tokenType == TS_IF);
@@ -14,10 +14,11 @@ START_TEST(parse_valid_if_condition)
   ck_assert_ptr_ne(token->children, NULL);
   cond = token->children[0];
   ck_assert_eq_ts_condition(cond->tokenType);
-  ck_assert_wstr_eq(cond->content, L"1");
+  ck_assert_ptr_ne(cond->children, NULL);
+  data = cond->children[0];
+  ck_assert_wstr_eq(data->content, L"1");
   cond = token->children[1];
-  ck_assert_eq_ts_unknown(cond->tokenType);
-  ck_assert_wstr_eq(cond->content, L";");
+  ck_assert_eq_ts_semicolon(cond->tokenType);
 
   token = tsFile->tokens[1];
   ck_assert(token->tokenType == TS_IF);
@@ -25,7 +26,9 @@ START_TEST(parse_valid_if_condition)
   ck_assert_ptr_ne(token->children, NULL);
   cond = token->children[0];
   ck_assert_eq_ts_condition(cond->tokenType);
-  ck_assert_wstr_eq(cond->content, L"2");
+  ck_assert_ptr_ne(cond->children, NULL);
+  data = cond->children[0];
+  ck_assert_wstr_eq(data->content, L"2");
   scope = token->children[1];
   ck_assert_eq_ts_scope(scope->tokenType);
 
@@ -35,54 +38,81 @@ START_TEST(parse_valid_if_condition)
   ck_assert_ptr_ne(token->children, NULL);
   cond = token->children[0];
   ck_assert(cond->tokenType == TS_CONDITION);
-  ck_assert_wstr_eq(cond->content, L"3");
+  ck_assert_ptr_ne(cond->children, NULL);
+  data = cond->children[0];
+  ck_assert_wstr_eq(data->content, L"3");
   cond = token->children[1];
   ck_assert(cond->tokenType == TS_CONDITION);
-  ck_assert_wstr_eq(cond->content, L"==");
+  ck_assert_ptr_ne(cond->children, NULL);
+  data = cond->children[0];
+  TS_check_validate_borrow(data, TS_EQUAL);
   cond = token->children[2];
   ck_assert(cond->tokenType == TS_CONDITION);
-  ck_assert_wstr_eq(cond->content, L"2");
+  ck_assert_ptr_ne(cond->children, NULL);
+  data = cond->children[0];
+  ck_assert_wstr_eq(data->content, L"2");
   cond = token->children[3];
   ck_assert(cond->tokenType == TS_CONDITION);
-  ck_assert_wstr_eq(cond->content, L"&&");
+  ck_assert_ptr_ne(cond->children, NULL);
+  data = cond->children[0];
+  TS_check_validate_borrow(data, TS_LOGICAL_AND);
   cond = token->children[4];
   ck_assert(cond->tokenType == TS_CONDITION);
-  ck_assert_wstr_eq(cond->content, L"true");
+  ck_assert_ptr_ne(cond->children, NULL);
+  data = cond->children[0];
+  ck_assert_wstr_eq(data->content, L"true");
   scope = token->children[5];
   ck_assert_eq_ts_scope(scope->tokenType);
 
   token = tsFile->tokens[3];
-  ck_assert(token->tokenType == TS_IF);
+  ck_assert_eq_ts_if(token->tokenType);
   ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   cond = token->children[0];
   ck_assert_eq_ts_condition(cond->tokenType);
-  ck_assert_wstr_eq(cond->content, L"4");
-  child = token->children[1];
-  ck_assert_eq_ts_const(child->tokenType);
-  ck_assert_ptr_ne(child->name, NULL);
-  ck_assert_wstr_eq(child->name, L"x");
+  ck_assert_ptr_ne(cond->children, NULL);
+  data = cond->children[0];
+  ck_assert_wstr_eq(data->content, L"4");
+  constToken = token->children[1];
+  ck_assert_eq_ts_const(constToken->tokenType);
+  ck_assert_ptr_ne(constToken->name, NULL);
+  ck_assert_ptr_ne(constToken->children, NULL);
+  ck_assert_wstr_eq(constToken->name, L"x");
 
   token = tsFile->tokens[4];
-  ck_assert(token->tokenType == TS_IF);
+  ck_assert_eq_ts_semicolon(token->tokenType);
+
+  token = tsFile->tokens[5];
+  ck_assert_eq_ts_if(token->tokenType);
   ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   cond = token->children[0];
   ck_assert_eq_ts_condition(cond->tokenType);
-  ck_assert_wstr_eq(cond->content, L"5");
+  ck_assert_ptr_ne(cond->children, NULL);
+  data = cond->children[0];
+  ck_assert_wstr_eq(data->content, L"5");
   scope = token->children[1];
   ck_assert_eq_ts_scope(scope->tokenType);
-  ck_assert_uint_eq(scope->childrenSize, 2);
-  child = scope->children[0];
-  ck_assert_eq_ts_var(child->tokenType);
-  ck_assert_ptr_ne(child->name, NULL);
-  ck_assert_wstr_eq(child->name, L"local");
-  ck_assert_ptr_eq(child->children[TS_VARIABLE_TYPE], ANY);
-  ck_assert_wstr_eq(child->children[TS_VARIABLE_VALUE]->content, L"10");
-  child = scope->children[1];
-  ck_assert_eq_ts_const(child->tokenType);
-  ck_assert_ptr_ne(child->name, NULL);
-  ck_assert_wstr_eq(child->name, L"y");
+  ck_assert_uint_eq(scope->childrenSize, 4);
+
+  varToken = scope->children[0];
+  ck_assert_eq_ts_var(varToken->tokenType);
+  ck_assert_ptr_ne(varToken->name, NULL);
+  ck_assert_wstr_eq(varToken->name, L"local");
+  TS_check_validate_borrow(varToken->children[TS_VARIABLE_TYPE], ANY);
+  ck_assert_wstr_eq(varToken->children[TS_VARIABLE_VALUE]->content, L"10");
+
+  semicolon = scope->children[1];
+  ck_assert_eq_ts_semicolon(semicolon->tokenType);
+
+  constToken = scope->children[2];
+  ck_assert_eq_ts_const(constToken->tokenType);
+  ck_assert_ptr_ne(constToken->name, NULL);
+  ck_assert_wstr_eq(constToken->name, L"y");
+  TS_check_validate_borrow(constToken->children[TS_VARIABLE_TYPE], ANY);
+
+  semicolon = scope->children[3];
+  ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
   TS_free_tsFile(tsFile);
 END_TEST

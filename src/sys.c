@@ -61,12 +61,7 @@ ts_token_syntax_error(
     ...
 ) {
   tsFile->sanity = TS_FILE_SYNTAX_ERROR;
-  ts_syntax_error(
-      msg,
-      tsFile->file,
-      token->character,
-      token->line
-  );
+  ts_syntax_error(msg, tsFile->file, token->character, token->line);
 
   u_long len = wcslen(msg) + wcslen(tsFile->file) + 60;
   wchar_t *buffer = calloc(sizeof(wchar_t), len);
@@ -494,10 +489,7 @@ TS_type_from_string(
       if (!foundDot) {
         foundDot = TRUE;
       } else {
-        ts_token_syntax_error(
-            (const wchar_t *) L"Invalid token",
-            tsFile, unknown
-        );
+        ts_token_syntax_error((const wchar_t *) L"Invalid token", tsFile, unknown);
       }
     }
   }

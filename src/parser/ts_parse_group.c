@@ -1,21 +1,17 @@
-#include <cts/parser.h>
+#include "cts/register.h"
 
-TSParserToken *
-TS_parse_condition(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_CONDITION, tsParseData)
-
+TSParserToken *TS_parse_group(TSFile *tsFile, TSParseData *tsParseData) {
+  TS_TOKEN_BEGIN(TS_GROUP, tsParseData);
+    unsigned char proceed = TRUE;
     const wchar_t *tok = NULL;
-    volatile unsigned char proceed = TRUE;
 
     while (proceed) {
-      TS_LOOP_SANITY_CHECK(tsFile)
+      TS_LOOP_SANITY_CHECK(tsFile);
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_getToken(tsFile->stream);
+
       if (tok == NULL) {
-        TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "condition");
+        TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "group");
         break;
       }
       switch (tok[0]) {
@@ -30,37 +26,28 @@ TS_parse_condition(
           break;
         }
         case L')': {
-          TS_put_back(tsFile->stream, tok);
-          proceed = FALSE;
+          TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
+          proceed = FALSE;
           break;
         }
         default: {
-          TS_MOVE_BY(tsParseData, tok);
-
           tsParseData->token = tok;
           TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
-
           if (child) {
             TS_push_child(token, child);
           } else {
             // TODO: error
           }
-
-          proceed = FALSE;
-
           free((void *) tok);
           break;
         }
       }
     }
-
-  TS_TOKEN_END(TS_CONDITION)
+  TS_TOKEN_END(TS_GROUP)
 }
 
-void TS_free_condition(const TSParserToken *token) {
+void TS_free_group(const TSParserToken *token) {
   TS_free_children(token);
-  if (token->content) free(token->content);
   free((void *) token);
 }
-

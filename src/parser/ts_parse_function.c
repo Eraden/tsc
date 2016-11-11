@@ -63,7 +63,7 @@ TS_parse_function_lookup_return_type(
   TSParserToken *type = TS_find_type(tsFile->file, (const wchar_t *) L"any");
   TSParserToken *returnType = TS_build_parser_token(TS_FUNCTION_RETURN_TYPE, tsParseData);
   tsParseData->parentTSToken = returnType->parent;
-  TS_push_child(returnType, type);
+  TS_push_child(returnType, TS_create_borrow(type, tsParseData));
   TS_push_child(token, returnType);
 
   while (proceed) {
@@ -108,6 +108,7 @@ TS_parse_function_lookup_return_type(
   }
 
   proceed = foundColon;
+
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
@@ -161,7 +162,8 @@ TS_parse_function_lookup_return_type(
           foundType = TRUE;
           type = TS_find_type(tsFile->file, tok);
           if (type) {
-            returnType->children[0] = type;
+            TS_free_borrow(returnType->children[0]);
+            returnType->children[0] = TS_create_borrow(type, tsParseData);
           } else {
             TS_UNKNOWN_TYPE(tsFile, token, tok);
           }
@@ -180,7 +182,7 @@ TS_parse_function(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN(TS_FUNCTION, tsParseData)
-    const wchar_t *tok;
+    const wchar_t *tok = NULL;
     volatile unsigned char proceed = TRUE;
 
     while (proceed) {
@@ -274,6 +276,6 @@ void
 TS_free_function_return_type(
     const TSParserToken *token
 ) {
-  TS_free_children_from(token, 1);
+  TS_free_children(token);
   free((void *) token);
 }

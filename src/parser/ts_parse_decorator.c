@@ -7,7 +7,7 @@ TS_parse_decorator_name(
     TSParseData *tsParseData,
     TSParserToken *token
 ) {
-  const wchar_t *tok;
+  const wchar_t *tok = NULL;
   volatile unsigned char proceed = TRUE;
   wchar_t *name = NULL;
 
@@ -20,22 +20,17 @@ TS_parse_decorator_name(
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "decorator call");
       free((void *) tok);
       break;
-
-    } else if (TS_is_keyword(tok)) {
-      TS_UNEXPECTED_TOKEN(tsFile, token, tok, "decorator call");
-      free((void *) tok);
-      break;
     }
 
     switch (tok[0]) {
       case L'(': {
         TS_MOVE_BY(tsParseData, tok);
         if (name == NULL) {
-          ts_token_syntax_error(
-              (const wchar_t *) L"Missing decorator name",
-              tsFile,
-              token
-          );
+          ts_token_syntax_error((const wchar_t *) L"Missing decorator name", tsFile, token);
+        } else {
+          tsParseData->token = tok;
+          TSParserToken *callArgs = TS_parse_call_arguments(tsFile, tsParseData);
+          TS_push_child(token, callArgs);
         }
         free((void *) tok);
         proceed = FALSE;
@@ -48,20 +43,20 @@ TS_parse_decorator_name(
         TS_MOVE_BY(tsParseData, tok);
         free((void *) tok);
         if (!name) {
-          ts_token_syntax_error(
-              (const wchar_t *) L"Unexpected white character in decorator call function name",
-              tsFile,
-              token
-          );
+          ts_token_syntax_error((const wchar_t *) L"Unexpected white character in decorator call function name", tsFile, token);
         }
         proceed = FALSE;
         break;
       }
       default: {
-        wchar_t *newPointer = TS_join_strings(name, tok);
-        if (name) free(name);
-        name = newPointer;
-        TS_MOVE_BY(tsParseData, tok);
+        if (TS_name_is_valid(tok) && !TS_is_keyword(tok)) {
+          wchar_t *newPointer = TS_join_strings(name, tok);
+          if (name) free(name);
+          name = newPointer;
+          TS_MOVE_BY(tsParseData, tok);
+        } else {
+          TS_UNEXPECTED_TOKEN(tsFile, token, tok, "call decorator");
+        }
         free((void *) tok);
         break;
       }

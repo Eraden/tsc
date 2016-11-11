@@ -9,6 +9,7 @@ _TS_type_to_string(const TSTokenType type) {
     case TS_VAR: return "TS_VAR";
     case TS_LET: return "TS_LET";
     case TS_CONST: return "TS_CONST";
+    case TS_SEMICOLON: return "TS_SEMICOLON";
     case TS_CLASS: return "TS_CLASS";
     case TS_CLASS_FIELD: return "TS_CLASS_FIELD";
     case TS_CLASS_METHOD: return "TS_CLASS_METHOD";
@@ -30,6 +31,8 @@ _TS_type_to_string(const TSTokenType type) {
     case TS_ARGUMENT: return "TS_ARGUMENT";
     case TS_CALLER: return "TS_CALLER";
     case TS_SWITCH: return "TS_SWITCH";
+    case TS_SWITCH_CONDITIONS: return "TS_SWITCH_CONDITIONS";
+    case TS_SWITCH_BODY: return "TS_SWITCH_BODY";
     case TS_CASE: return "TS_CASE";
     case TS_BREAK: return "TS_BREAK";
     case TS_FOR: return "TS_FOR";
@@ -74,6 +77,7 @@ _TS_type_to_string(const TSTokenType type) {
 #define ck_assert_eq_ts_var(type) ck_assert_tsType_eq(type, TS_VAR)
 #define ck_assert_eq_ts_let(type) ck_assert_tsType_eq(type, TS_LET)
 #define ck_assert_eq_ts_const(type) ck_assert_tsType_eq(type, TS_CONST)
+#define ck_assert_eq_ts_semicolon(type) ck_assert_tsType_eq(type, TS_SEMICOLON)
 #define ck_assert_eq_ts_class(type) ck_assert_tsType_eq(type, TS_CLASS)
 #define ck_assert_eq_ts_function(type) ck_assert_tsType_eq(type, TS_FUNCTION)
 #define ck_assert_eq_ts_function_return_type(type) ck_assert_tsType_eq(type, TS_FUNCTION_RETURN_TYPE)
@@ -100,6 +104,8 @@ _TS_type_to_string(const TSTokenType type) {
 #define ck_assert_eq_ts_argument(type) ck_assert_tsType_eq(type, TS_ARGUMENT)
 #define ck_assert_eq_ts_caller(type) ck_assert_tsType_eq(type, TS_CALLER)
 #define ck_assert_eq_ts_switch(type) ck_assert_tsType_eq(type, TS_SWITCH)
+#define ck_assert_eq_ts_switch_conditions(type) ck_assert_tsType_eq(type, TS_SWITCH_CONDITIONS)
+#define ck_assert_eq_ts_switch_body(type) ck_assert_tsType_eq(type, TS_SWITCH_BODY)
 #define ck_assert_eq_ts_case(type) ck_assert_tsType_eq(type, TS_CASE)
 #define ck_assert_eq_ts_break(type) ck_assert_tsType_eq(type, TS_BREAK)
 #define ck_assert_eq_ts_for(type) ck_assert_tsType_eq(type, TS_FOR)

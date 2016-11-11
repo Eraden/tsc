@@ -10,6 +10,7 @@ TS_parse_extends(
 
     const wchar_t *tok;
     volatile unsigned char proceed = TRUE;
+
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
@@ -32,7 +33,6 @@ TS_parse_extends(
         }
         default: {
           if (!TS_name_is_valid(tok)) {
-            free((void *) tok);
             ts_token_syntax_error((wchar_t *) L"Invalid parent type name", tsFile, token);
           } else {
             TS_MOVE_BY(tsParseData, tok);
@@ -40,7 +40,7 @@ TS_parse_extends(
             if (typeToken == NULL) {
               ts_token_syntax_error((const wchar_t *) L"Unknown type used in extends", tsFile, token);
             } else {
-              TS_push_child(token, typeToken);
+              TS_push_child(token, TS_create_borrow(typeToken, tsParseData));
             }
           }
           proceed = FALSE;
@@ -57,6 +57,6 @@ void
 TS_free_extends(
     const TSParserToken *token
 ) {
-  TS_free_children_from(token, 1);
+  TS_free_children(token);
   free((void *) token);
 }

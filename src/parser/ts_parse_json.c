@@ -38,6 +38,7 @@ TS_parse_json_entry(
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "json entry");
           }
           tsParseData->parentTSToken = token;
+          free(tok);
           break;
         }
         case L':': {

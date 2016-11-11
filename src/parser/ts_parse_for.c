@@ -15,6 +15,7 @@ TS_resolve_for_token_type(
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
+
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
 
     if (tok == NULL) {
@@ -106,8 +107,10 @@ TS_parse_for_head_for_of(
   TSForIterationParseFlag flag = TS_PARSE_FOR_VARIABLE;
 
   volatile unsigned char proceed = TRUE;
+
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
+
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
 
     if (tok == NULL) {
@@ -190,8 +193,10 @@ TS_parse_for_head_for_in(
   TSForIterationParseFlag flag = TS_PARSE_FOR_VARIABLE;
 
   volatile unsigned char proceed = TRUE;
+
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
+
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
 
     if (tok == NULL) {
@@ -244,15 +249,12 @@ TS_parse_for_head_for_in(
           case TS_PARSE_FOR_COLLECTION: {
             if (TS_is_keyword(tok)) {
               TS_free_tsToken(child);
-              ts_token_syntax_error(
-                  (const wchar_t *) L"Unexpected keyword while parsing `for in` collection",
-                  tsFile, child
-              );
-            } else if (child->tokenType == TS_UNKNOWN) {
+              ts_token_syntax_error((const wchar_t *) L"Unexpected keyword while parsing `for in` collection", tsFile, child);
+            } else if (child->tokenType == TS_UNKNOWN || child->tokenType == TS_COLON) {
               TS_push_child(head, child);
             } else {
-              TS_free_tsToken(child);
               TS_UNEXPECTED_TOKEN(tsFile, child, tok, "for in, expecting to get collection");
+              TS_free_tsToken(child);
             }
             break;
           }
@@ -280,9 +282,12 @@ TS_parse_for_head_for_with_condition(
   TS_push_child(head, current);
 
   volatile unsigned char proceed = TRUE;
+
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
+
     tok = (const wchar_t *) TS_getToken(tsFile->stream);
+
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, head, "for head");
       break;
@@ -448,8 +453,10 @@ TS_parse_for(
 
     const wchar_t *tok = NULL;
     volatile unsigned char proceed = TRUE;
+
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile);
+
       tok = (const wchar_t *) TS_getToken(tsFile->stream);
 
       if (tok == NULL) {

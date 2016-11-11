@@ -7,17 +7,10 @@ TS_parse_return(
 ) {
   TS_TOKEN_BEGIN(TS_RETURN, tsParseData)
 
-    const wchar_t *tok;
+    const wchar_t *tok = NULL;
     volatile unsigned char proceed = TRUE;
 
-    TSParserToken *current = token->parent;
-    while (current) {
-      if (current->tokenType == TS_FUNCTION || current->tokenType == TS_CLASS_METHOD) {
-        break;
-      }
-      current = current->parent;
-    }
-    if (!current) {
+    if (!(TS_isEmbeddedIn(token, TS_CLASS_METHOD) || TS_isEmbeddedIn(token, TS_FUNCTION))) {
       TS_UNEXPECTED_GLOBAL_TOKEN(tsFile, token, "return")
     }
 

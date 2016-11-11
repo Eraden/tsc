@@ -9,9 +9,8 @@ TS_parse_else_body(
   const wchar_t *tok;
   TSParserToken *token = tsParseData->parentTSToken;
 
-  unsigned char proceed;
+  unsigned char proceed = TRUE;
 
-  proceed = TRUE;
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 

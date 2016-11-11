@@ -37,6 +37,7 @@ SET(
     src/parser/ts_parse_interface.c
     src/parser/ts_borrow.c
     src/parser/ts_parse_arithmetic_operator.c
+    src/parser/ts_parse_group.c
     src/parser.c
 )
 
@@ -151,7 +152,7 @@ MESSAGE(INFO " post address validation: ${VALIDATE_ADDRESS}")
 IF (CMAKE_BUILD_TYPE MATCHES "Debug" AND CMAKE_C_COMPILER MATCHES "clang")
   IF (VALIDATE_MEMORY MATCHES "TRUE")
     MESSAGE(INFO " Setting up memory sanitizer")
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=memory -fsanitize-memory-track-origins=2 -fno-omit-frame-pointer")
+    SET("${CMAKE_C_FLAGS} -g -fsanitize=memory -fsanitize-memory-track-origins=2 -fno-omit-frame-pointer")
   ENDIF ()
 
   IF (VALIDATE_ADDRESS MATCHES "TRUE")

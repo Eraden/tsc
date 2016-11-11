@@ -1,11 +1,5 @@
 #include <cts/register.h>
 
-static void
-TS_append_ts_parser_token(
-    TSFile *tsFile,
-    TSParserToken *token
-);
-
 TSParserToken *
 TS_build_parser_token(
     TSTokenType tokenType,
@@ -39,9 +33,9 @@ TS_borrow_operator(TSFile *__attribute__((__unused__))tsFile, TSParseData *tsPar
   return TS_create_borrow(op, tsParseData);
 }
 
-static unsigned short int KEYWORDS_SIZE = 29 + 20/*TS_OPERATORS_COUNT*/;
+static unsigned short int KEYWORDS_SIZE = 30 + 20/*TS_OPERATORS_COUNT*/;
 
-static TSKeyword TS_KEYWORDS[29 + 20] = {
+static TSKeyword TS_KEYWORDS[30 + 20] = {
     // Keywords
     {(wchar_t *) L"var",        TS_parse_var},
     {(wchar_t *) L"let",        TS_parse_let},
@@ -72,6 +66,7 @@ static TSKeyword TS_KEYWORDS[29 + 20] = {
     {(wchar_t *) L"[",          TS_parse_array},
     {(wchar_t *) L"\"",         TS_parse_string},
     {(wchar_t *) L"\'",         TS_parse_string},
+    {(wchar_t *) L"(",          TS_parse_group},
     // Arithmetic Operators
     {(wchar_t *) L"+",          TS_borrow_operator},
     {(wchar_t *) L"-",          TS_borrow_operator},
@@ -165,10 +160,11 @@ TS_push_child(
   token->children = newPointer;
   token->children[token->childrenSize] = child;
   token->childrenSize += 1;
+//  child->parent = token;
   TS_log_to_file((wchar_t *) L"    size increased to: %u\n", token->childrenSize);
 }
 
-static void
+void
 TS_append_ts_parser_token(
     TSFile *tsFile,
     TSParserToken *token
@@ -198,28 +194,41 @@ TS_parse_ts_token(
   }
 
   TSParserToken *t = calloc(sizeof(TSParserToken), 1);
-  t->content = (void *) TS_clone_string(data->token);
+  t->content = TS_clone_string(data->token);
   t->children = NULL;
   t->childrenSize = 0;
   t->usageCount = 0;
   t->line = data->line;
   t->character = data->character;
-  t->tokenType = TS_UNKNOWN;
   t->parent = data->parentTSToken;
 
-  if (data->parentTSToken == NULL && data->token != NULL) {
+  if (data->token) {
     switch (data->token[0]) {
-      case L' ':
-      case L'\n':
       case L';': {
+        t->tokenType = TS_SEMICOLON;
+        break;
+      }
+      case L'.': {
+        t->tokenType = TS_COLON;
         break;
       }
       default: {
-        ts_token_syntax_error(
-            (const wchar_t *) L"Unknown token in global scope!",
-            tsFile,
-            t
-        );
+        t->tokenType = TS_UNKNOWN;
+        break;
+      }
+    }
+  } else {
+    t->tokenType = TS_UNKNOWN;
+  }
+
+  if (data->parentTSToken == NULL && data->token != NULL && t->tokenType == TS_UNKNOWN) {
+    switch (data->token[0]) {
+      case L' ':
+      case L'\n': {
+        break;
+      }
+      default: {
+        ts_token_syntax_error((const wchar_t *) L"Unknown token in global scope!", tsFile, t);
         fwprintf(stderr, (const wchar_t *) L"      invalid token: '%ls'\n", t->content);
         break;
       }
@@ -227,6 +236,13 @@ TS_parse_ts_token(
   }
 
   return t;
+}
+
+void TS_rollback_token(TSFile *tsFile, TSParseData *data, TSParserToken *token) {
+  TS_put_back(tsFile->stream, data->token);
+  data->line = data->line - (token->line - data->line);
+  data->character = data->character - (token->character - data->character);
+  TS_free_tsToken(token);
 }
 
 static u_short
@@ -370,18 +386,21 @@ TS_getToken(
           u_long len = 2;
           wchar_t char1 = (wchar_t) fgetwc(stream);
           wchar_t char2 = (wchar_t) fgetwc(stream);
-          if (char1 == L'=') {
-            len += 1;
-          } else {
-            ungetwc((wint_t) char1, stream);
-            char1 = 0;
-          }
+
           if (char1 == L'=' && char2 == L'=') {
             len += 1;
           } else {
             ungetwc((wint_t) char2, stream);
             char2 = 0;
           }
+
+          if (char1 == L'=') {
+            len += 1;
+          } else {
+            ungetwc((wint_t) char1, stream);
+            char1 = 0;
+          }
+
           wchar_t *newPointer = calloc(sizeof(wchar_t), len + TS_STRING_END);
           newPointer[0] = c;
           if (char1) newPointer[1] = char1;
@@ -392,9 +411,7 @@ TS_getToken(
         } else {
           ungetwc((wint_t) c, stream);
           TS_GET_TOKEN_MSG(
-              (wchar_t *) L"# Putting back since token ('%ls') exists and contains invalid characters...\n",
-              tok
-          )
+              (wchar_t *) L"# Putting back since token ('%ls') exists and contains invalid characters...\n", tok)
           return tok;
         }
         break;
@@ -435,7 +452,7 @@ TS_getToken(
       }
       case L'@':
       case L'\'':
-      case L'"':
+      case L'\"':
       case L'{':
       case L'}':
       case L'(':
@@ -676,16 +693,21 @@ TS_free_tsToken(
     case TS_CONDITION:
       TS_free_condition(token);
       break;
-    case TS_NUMBER:
-    case TS_UNKNOWN:
-      TS_free_unknown(token);
-      break;
     case TS_CALLER:
       TS_free_caller(token);
       break;
-    case TS_SWITCH:
+    case TS_SWITCH: {
       TS_free_switch(token);
       break;
+    }
+    case TS_SWITCH_CONDITIONS: {
+      TS_free_switch_conditions(token);
+      break;
+    }
+    case TS_SWITCH_BODY: {
+      TS_free_switch_body(token);
+      break;
+    }
     case TS_CASE:
       TS_free_case(token);
       break;
@@ -754,13 +776,30 @@ TS_free_tsToken(
       TS_free_interface(token);
       break;
     }
-    case TS_BORROW: {
-      TS_free_borrow(token);
+    case TS_INTERFACE_BODY: {
+      TS_free_interface_body(token);
       break;
     }
     case TS_OPERATOR: {
       TS_free_operator(token);
       break;
+    }
+    case TS_GROUP: {
+      TS_free_group(token);
+      break;
+    }
+    case TS_BORROW: {
+      TS_free_borrow(token);
+      break;
+    }
+    case TS_NUMBER:
+    case TS_SEMICOLON:
+    case TS_COLON:
+    case TS_UNKNOWN:
+      TS_free_unknown(token);
+      break;
+    default: {
+      fprintf(stderr, "\n\nfree for unknown type!\n\n");
     }
   }
 }
@@ -779,10 +818,16 @@ TS_free_children_from(
 ) {
   TSParserToken *child = NULL;
   TSParserToken **children = token->children;
+  children += childIndex;
   for (; childIndex < token->childrenSize; childIndex++) {
     child = children[0];
-    if (!TS_is_predefined(child) && !TS_is_type(child)) {
+    if (child) {
       TS_free_tsToken(child);
+    } else {
+      fprintf(stderr, "/***********************************************\n");
+      fprintf(stderr, "found null-pointer in children!\n");
+      fprintf(stderr, "  consider this as a bug and please report\n");
+      fprintf(stderr, "***********************************************/\n");
     }
     children += 1;
   }
@@ -793,7 +838,7 @@ void
 TS_free_tsFile(
     TSFile *tsFile
 ) {
-  for (;tsFile->tokensSize;) {
+  for (; tsFile->tokensSize;) {
     tsFile->tokensSize -= 1;
     TS_free_tsToken(tsFile->tokens[tsFile->tokensSize]);
   }
@@ -810,4 +855,15 @@ TS_free_tsFile(
   TS_register_remove_file(tsFile);
 
   free((void *) tsFile);
+}
+
+unsigned char TS_isEmbeddedIn(TSParserToken *token, TSTokenType type) {
+  TSParserToken *parent = token->parent;
+  while (parent) {
+    if (parent->tokenType == type) {
+      return TRUE;
+    }
+    parent = parent->parent;
+  }
+  return FALSE;
 }

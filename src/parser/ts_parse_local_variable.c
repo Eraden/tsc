@@ -55,8 +55,8 @@ TS_parse_local_variable_body(
   token->childrenSize = 2;
   TSParserToken *value = NULL;
   TSParserToken *type = NULL;
-  token->children[TS_VARIABLE_TYPE] = TS_find_type(tsFile->file, (const wchar_t *) L"any");
-  token->children[TS_VARIABLE_VALUE] = TS_find_type(NULL, (const wchar_t *) L"undefined");
+  token->children[TS_VARIABLE_TYPE] = TS_create_borrow(TS_find_type(tsFile->file, (const wchar_t *) L"any"), tsParseData);
+  token->children[TS_VARIABLE_VALUE] = TS_create_borrow(TS_find_type(NULL, (const wchar_t *) L"undefined"), tsParseData);
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -137,9 +137,7 @@ TS_parse_local_variable_body(
           TS_log_to_file((wchar_t *) L"Setting name of local variable\n");
           if (TS_is_keyword(tok)) {
             free((void *) tok);
-            ts_token_syntax_error(
-                (const wchar_t *) L"Local variable name cannot use reserved word", tsFile, token
-            );
+            ts_token_syntax_error((const wchar_t *) L"Local variable name cannot use reserved word", tsFile, token);
             proceed = FALSE;
             break;
           }
@@ -156,7 +154,10 @@ TS_parse_local_variable_body(
             TS_type_from_string(tsFile, value);
           }
           if (value) {
+            TS_free_borrow(token->children[TS_VARIABLE_VALUE]);
             token->children[TS_VARIABLE_VALUE] = value;
+          } else {
+            // TODO error
           }
           parseFlag = TS_PARSE_VARIABLE_NONE;
           TS_MOVE_BY(tsParseData, tok);
@@ -165,7 +166,8 @@ TS_parse_local_variable_body(
         } else if (parseFlag == TS_PARSE_VARIABLE_TYPE) {
           type = TS_find_type(tsFile->file, tok);
           if (type) {
-            token->children[TS_VARIABLE_TYPE] = type;
+            TS_free_borrow(token->children[TS_VARIABLE_TYPE]);
+            token->children[TS_VARIABLE_TYPE] = TS_create_borrow(type, tsParseData);
           }
 
           parseFlag = TS_PARSE_VARIABLE_NONE;
@@ -217,7 +219,7 @@ void
 TS_free_var(
     const TSParserToken *token
 ) {
-  TS_free_children_from(token, 1);
+  TS_free_children(token);
 
   if (token->name) free((void *) token->name);
   free((void *) token);

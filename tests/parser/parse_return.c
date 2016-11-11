@@ -4,7 +4,7 @@ START_TEST(parse_valid_return)
   TSFile *tsFile = TS_parse_file("./examples/return/valid.ts");
   ck_assert_uint_eq(tsFile->tokensSize, 5);
 
-  TSParserToken *token, *ret, *returned, *callArgs, *returnType, *scope;
+  TSParserToken *token = NULL, *ret = NULL, *returned = NULL, *callArgs = NULL, *returnType = NULL, *scope = NULL, *semicolon = NULL;
 
   token = tsFile->tokens[0];
   ck_assert_eq_ts_function(token->tokenType);
@@ -17,11 +17,13 @@ START_TEST(parse_valid_return)
   scope = token->children[2];
   ck_assert_eq_ts_scope(scope->tokenType);
   ck_assert_ptr_ne(scope->children, NULL);
-  ck_assert_uint_eq(scope->childrenSize, 1);
+  ck_assert_uint_eq(scope->childrenSize, 2);
   ret = scope->children[0];
   ck_assert_eq_ts_return(ret->tokenType);
   ck_assert_uint_eq(ret->childrenSize, 0);
   ck_assert_ptr_eq(ret->children, NULL);
+  semicolon = scope->children[1];
+  ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
   token = tsFile->tokens[1];
   ck_assert_eq_ts_function(token->tokenType);
@@ -34,7 +36,7 @@ START_TEST(parse_valid_return)
   scope = token->children[2];
   ck_assert_eq_ts_scope(scope->tokenType);
   ck_assert_ptr_ne(scope->children, NULL);
-  ck_assert_uint_eq(scope->childrenSize, 1);
+  ck_assert_uint_eq(scope->childrenSize, 2);
   ret = scope->children[0];
   ck_assert_eq_ts_return(ret->tokenType);
   ck_assert_uint_eq(ret->childrenSize, 1);
@@ -43,6 +45,8 @@ START_TEST(parse_valid_return)
   ck_assert_eq_ts_unknown(returned->tokenType);
   ck_assert_ptr_ne(returned->name, NULL);
   ck_assert_wstr_eq(returned->name, L"1");
+  semicolon = scope->children[1];
+  ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
   token = tsFile->tokens[2];
   ck_assert_eq_ts_function(token->tokenType);
@@ -55,13 +59,15 @@ START_TEST(parse_valid_return)
   scope = token->children[2];
   ck_assert_eq_ts_scope(scope->tokenType);
   ck_assert_ptr_ne(scope->children, NULL);
-  ck_assert_uint_eq(scope->childrenSize, 1);
+  ck_assert_uint_eq(scope->childrenSize, 2);
   ret = scope->children[0];
   ck_assert_eq_ts_return(ret->tokenType);
   ck_assert_uint_eq(ret->childrenSize, 1);
   ck_assert_ptr_ne(ret->children, NULL);
   returned = ret->children[0];
   ck_assert_eq_ts_json(returned->tokenType);
+  semicolon = scope->children[1];
+  ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
   token = tsFile->tokens[3];
   ck_assert_eq_ts_function(token->tokenType);
@@ -74,7 +80,7 @@ START_TEST(parse_valid_return)
   scope = token->children[2];
   ck_assert_eq_ts_scope(scope->tokenType);
   ck_assert_ptr_ne(scope->children, NULL);
-  ck_assert_uint_eq(scope->childrenSize, 1);
+  ck_assert_uint_eq(scope->childrenSize, 2);
   ret = scope->children[0];
   ck_assert(ret->tokenType == TS_RETURN);
   ck_assert_uint_eq(ret->childrenSize, 1);
@@ -83,6 +89,8 @@ START_TEST(parse_valid_return)
   ck_assert_eq_ts_unknown(returned->tokenType);
   ck_assert_ptr_ne(returned->name, NULL);
   ck_assert_wstr_eq(returned->name, L"true");
+  semicolon = scope->children[1];
+  ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
   token = tsFile->tokens[4];
   ck_assert_eq_ts_function(token->tokenType);
@@ -95,7 +103,7 @@ START_TEST(parse_valid_return)
   scope = token->children[2];
   ck_assert_eq_ts_scope(scope->tokenType);
   ck_assert_ptr_ne(scope->children, NULL);
-  ck_assert_uint_eq(scope->childrenSize, 1);
+  ck_assert_uint_eq(scope->childrenSize, 2);
   ret = scope->children[0];
   ck_assert_eq_ts_return(ret->tokenType);
   ck_assert_uint_eq(ret->childrenSize, 1);
@@ -104,6 +112,8 @@ START_TEST(parse_valid_return)
   ck_assert_eq_ts_unknown(returned->tokenType);
   ck_assert_ptr_ne(returned->name, NULL);
   ck_assert_wstr_eq(returned->name, L"false");
+  semicolon = scope->children[1];
+  ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
   TS_free_tsFile(tsFile);
 END_TEST

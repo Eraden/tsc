@@ -51,7 +51,7 @@ TS_parse_implements(
           } else {
             TSParserToken *definition = TS_find_type(tsFile->file, tok);
             if (definition) {
-              TS_push_child(token, definition);
+              TS_push_child(token, TS_create_borrow(definition, tsParseData));
             } else {
               TS_MISSING_NAME(tsFile, token, "implements");
             }
@@ -68,5 +68,6 @@ void
 TS_free_implements(
     const TSParserToken *token
 ) {
+  TS_free_children(token);
   free((void *) token);
 }

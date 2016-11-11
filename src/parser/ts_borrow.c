@@ -5,6 +5,7 @@ TS_create_borrow(
     TSParserToken *child,
     TSParseData *tsParseData
 ) {
+  tsParseData->token = (const wchar_t *) L"";
   TS_TOKEN_BEGIN(TS_BORROW, tsParseData)
     TS_push_child(token, child);
     child->usageCount += 1;

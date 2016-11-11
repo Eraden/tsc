@@ -274,6 +274,5 @@ TS_free_imported_tokens(
 ) {
   // TODO find proper tokens in imported file
   TS_free_children(token);
-//  if (token->children) free(token->children);
   free((void *) token);
 }

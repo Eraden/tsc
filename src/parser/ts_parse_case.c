@@ -15,11 +15,7 @@ TS_parse_case(
       tok = (const wchar_t *) TS_getToken(tsFile->stream);
 
       if (tok == NULL) {
-        ts_token_syntax_error(
-            (const wchar_t *) L"Unexpected end of stream while parsing case condition",
-            tsFile,
-            token
-        );
+        TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "case condition");
         break;
       }
       switch (tok[0]) {
@@ -45,28 +41,29 @@ TS_parse_case(
           tsParseData->token = tok;
 
           if (token->childrenSize == 1) {
-            ts_token_syntax_error(
-                (const wchar_t *) L"Unexpected token while parsing case condition. Only one condition is allowed!",
-                tsFile,
-                token
-            );
-            free((void *) tok);
+            TS_UNEXPECTED_TOKEN(tsFile, token, tok, "case condition. Only one is allowed!");
             proceed = FALSE;
           } else {
             TS_put_back(tsFile->stream, tok);
+            tsParseData->token = (const wchar_t *) L"";
 
             TSParserToken *child = TS_parse_condition(tsFile, tsParseData);
             if (child) {
               TS_push_child(token, child);
+            } else {
+              // todo error
             }
-            free((void *) tok);
           }
+          free((void *) tok);
           break;
         }
       }
     }
 
     proceed = TRUE;
+
+    TSParserToken *scope = NULL;
+
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
@@ -88,19 +85,44 @@ TS_parse_case(
           free((void *) tok);
           break;
         }
-        case L';': {
-          TS_NEW_LINE(tsParseData, tok);
-          free((void *) tok);
-          proceed = FALSE;
-          break;
-        }
         default: {
           tsParseData->token = tok;
-          TS_put_back(tsFile->stream, tok);
-
           TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
           if (child) {
-            TS_push_child(token, child);
+            switch (child->tokenType) {
+              case TS_SEMICOLON: {
+                if (!scope) {
+                  scope = TS_build_parser_token(TS_SCOPE, tsParseData);
+                  tsParseData->parentTSToken = scope->parent;
+                  TS_push_child(token, scope);
+                }
+                TS_push_child(scope, child);
+                proceed = FALSE;
+                break;
+              }
+              case TS_CASE:
+              case TS_DEFAULT: {
+                TS_rollback_token(tsFile, tsParseData, child);
+                proceed = FALSE;
+                break;
+              }
+              case TS_SCOPE: {
+                TS_push_child(token, child);
+                proceed = FALSE;
+                break;
+              }
+              default: {
+                if (!scope) {
+                  scope = TS_build_parser_token(TS_SCOPE, tsParseData);
+                  tsParseData->parentTSToken = scope->parent;
+                  TS_push_child(token, scope);
+                }
+                TS_push_child(scope, child);
+                break;
+              }
+            }
+          } else {
+            // todo error
           }
           free((void *) tok);
           break;

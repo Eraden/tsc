@@ -38,27 +38,29 @@ unsigned char hasOnly(char *str) {
 Suite *class_suite(void) {
   Suite *suite = suite_create("Parser");
   if (hasOnly("sys")) parse_sys_suite(suite);
-  if (hasOnly("operators")) parse_operators_suite(suite);
-  if (hasOnly("variable")) parse_variables_suite(suite);
-  if (hasOnly("function")) parse_functions_suite(suite);
-  if (hasOnly("if")) parse_if_conditions_suite(suite);
-  if (hasOnly("else")) parse_else_conditions_suite(suite);
-  if (hasOnly("class")) parse_classes_suite(suite);
-  if (hasOnly("class") || hasOnly("extends")) parse_extends_suite(suite);
+  if (hasOnly("break")) parse_break_suite(suite);
+
   if (hasOnly("comment") || hasOnly("inline_comment")) parse_inline_comment_suite(suite);
   if (hasOnly("comment") || hasOnly("multiline_comment")) parse_multiline_comment_suite(suite);
-  if (hasOnly("new")) parse_new_suite(suite);
-  if (hasOnly("export")) parse_exports_suite(suite);
-  if (hasOnly("return")) parse_return_keyword_suite(suite);
-  if (hasOnly("decorator")) parse_decorator_suite(suite);
-  if (hasOnly("switch")) parse_switch_suite(suite);
-  if (hasOnly("break")) parse_break_suite(suite);
-  if (hasOnly("for") || hasOnly("for-let")) parse_for_let_suite(suite);
-  if (hasOnly("for") || hasOnly("for-of")) parse_for_of_suite(suite);
-  if (hasOnly("for") || hasOnly("for-in")) parse_for_in_suite(suite);
   if (hasOnly("borrows")) parse_borrows_suite(suite);
   if (hasOnly("json")) parse_json(suite);
   if (hasOnly("implements")) parse_implements_suite(suite);
+  if (hasOnly("operators")) parse_operators_suite(suite);
+  if (hasOnly("function")) parse_functions_suite(suite);
+  if (hasOnly("if")) parse_if_conditions_suite(suite);
+  if (hasOnly("else")) parse_else_conditions_suite(suite);
+  if (hasOnly("export")) parse_exports_suite(suite);
+  if (hasOnly("return")) parse_return_keyword_suite(suite);
+  if (hasOnly("decorator")) parse_decorator_suite(suite);
+
+  if (hasOnly("variable")) parse_variables_suite(suite); // missing semicolons in test
+  if (hasOnly("class")) parse_classes_suite(suite);
+  if (hasOnly("class") || hasOnly("extends")) parse_extends_suite(suite);
+  if (hasOnly("new")) parse_new_suite(suite);
+  if (hasOnly("switch")) parse_switch_suite(suite);
+  if (hasOnly("for") || hasOnly("for-let")) parse_for_let_suite(suite);
+  if (hasOnly("for") || hasOnly("for-of")) parse_for_of_suite(suite);
+  if (hasOnly("for") || hasOnly("for-in")) parse_for_in_suite(suite);
   return suite;
 }
 
@@ -68,8 +70,8 @@ int main(int argc, char **argv) {
   fprintf(stderr, "TSParserToken size %lu\n\n", sizeof(TSParserToken));
 
   FILE *errorOutput = tmpfile();
-//  TS_set_error_output(errorOutput);
-  TS_set_error_output(stderr);
+  TS_set_error_output(errorOutput);
+//  TS_set_error_output(stderr);
 
   enum print_output output_type = CK_NORMAL;
   enum fork_status should_fork = CK_FORK;
@@ -111,6 +113,7 @@ int main(int argc, char **argv) {
   TS_set_log_level(TS_VERBOSITY_DEBUG);
   TS_init_log();
   TS_set_log_level(ctsVerbose);
+//  TS_set_log_level(TS_VERBOSITY_INFO);
   TS_setup_predefined();
 
   ANY = TS_find_type((const wchar_t *) L"", (const wchar_t *) L"any");

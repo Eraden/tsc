@@ -1,5 +1,189 @@
 #include <cts/register.h>
 
+static TSParserToken *
+TS_parse_interface_field(
+    TSFile *tsFile,
+    TSParseData *tsParseData
+) {
+  TSParserToken *token = TS_parse_var(tsFile, tsParseData);
+  token->tokenType = TS_CLASS_FIELD;
+  return token;
+}
+
+static TSParserToken *
+TS_parse_interface_method(
+    TSFile *tsFile,
+    TSParseData *tsParseData
+) {
+  TS_TOKEN_BEGIN(TS_CLASS_METHOD, tsParseData);
+    const wchar_t *tok = NULL;
+    volatile unsigned char proceed = TRUE;
+    // arguments, returnType
+    token->childrenSize = 2;
+    token->children = calloc(sizeof(TSParserToken *), token->childrenSize);
+    token->children[TS_INTERFACE_METHOD_ARGUMENTS] = NULL;
+    tsParseData->token = (const wchar_t *) L"";
+    TSParserToken *returnType = token->children[TS_INTERFACE_METHOD_RETURN_TYPE] = TS_build_parser_token(
+        TS_FUNCTION_RETURN_TYPE, tsParseData);
+    TS_push_child(returnType, TS_create_borrow(TS_ANY_TYPE, tsParseData));
+
+    TSClassParseFlag flag = TS_PARSE_CLASS_MEMBER_NAME;
+
+    while (proceed) {
+      TS_LOOP_SANITY_CHECK(tsFile)
+
+      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+
+      if (tok == NULL) {
+        TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "interface method");
+        break;
+      }
+
+      switch (tok[0]) {
+        case L' ': {
+          TS_MOVE_BY(tsParseData, tok);
+          free((void *) tok);
+          break;
+        }
+        case L'\n': {
+          TS_NEW_LINE(tsParseData, tok);
+          proceed = FALSE;
+          free((void *) tok);
+          break;
+        }
+        case L'(': {
+          tsParseData->token = tok;
+          TSParserToken *callArgs = TS_parse_call_arguments(tsFile, tsParseData);
+          token->children[TS_INTERFACE_METHOD_ARGUMENTS] = callArgs;
+          free((void *) tok);
+          break;
+        }
+        case L';': {
+          TS_MOVE_BY(tsParseData, tok);
+          proceed = FALSE;
+          free((void *) tok);
+          break;
+        }
+        case L':': {
+          TS_MOVE_BY(tsParseData, tok);
+          flag = TS_PARSE_CLASS_MEMBER_METHOD_RETURN_TYPE;
+          free((void *) tok);
+          break;
+        }
+        default: {
+          switch (flag) {
+            case TS_PARSE_CLASS_MEMBER_METHOD_RETURN_TYPE: {
+              TS_MOVE_BY(tsParseData, tok);
+              TSParserToken *type = TS_find_type(tsFile->file, tok);
+              TS_free_borrow(returnType->children[TS_VARIABLE_TYPE]);
+              returnType->children[TS_VARIABLE_TYPE] = TS_create_borrow(type, tsParseData);
+              flag = TS_PARSE_CLASS_MEMBER_NAME;
+              free((void *) tok);
+              break;
+            }
+            default: {
+              TS_MOVE_BY(tsParseData, tok);
+              if (token->content == NULL) {
+                token->content = TS_clone_string(tok);
+              } else {
+                TS_UNEXPECTED_TOKEN(tsFile, token, tok, "interface method");
+              }
+              free((void *) tok);
+              break;
+            }
+          }
+          break;
+        }
+      }
+    }
+  TS_TOKEN_END(TS_CLASS_METHOD)
+}
+
+TSParserToken *
+TS_parse_interface_body(
+    TSFile *tsFile,
+    TSParseData *tsParseData
+) {
+  TS_TOKEN_BEGIN(TS_INTERFACE_BODY, tsParseData);
+    const wchar_t *tok = NULL;
+    volatile unsigned char proceed = TRUE;
+
+    wchar_t *buffer = NULL;
+
+    while (proceed) {
+      TS_LOOP_SANITY_CHECK(tsFile)
+
+      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+
+      if (tok == NULL) {
+        TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "interface body");
+        break;
+      }
+
+      switch (tok[0]) {
+        case L'\n': {
+          TS_NEW_LINE(tsParseData, tok);
+          if (buffer) {
+            TS_put_back(tsFile->stream, buffer);
+            TS_put_back(tsFile->stream, tok);
+            TSParserToken *field = TS_parse_interface_field(tsFile, tsParseData);
+            if (field) TS_push_child(token, field);
+            free(buffer);
+            buffer = NULL;
+          }
+          free((void *) tok);
+          break;
+        }
+        case L'}': {
+          TS_MOVE_BY(tsParseData, tok);
+          if (buffer) {
+            TS_put_back(tsFile->stream, buffer);
+            TS_put_back(tsFile->stream, tok);
+            TSParserToken *field = TS_parse_interface_field(tsFile, tsParseData);
+            if (field) TS_push_child(token, field);
+            free(buffer);
+            buffer = NULL;
+          }
+          proceed = FALSE;
+          free((void *) tok);
+          break;
+        }
+        case L';': {
+          TS_MOVE_BY(tsParseData, tok);
+          if (buffer) {
+            TS_put_back(tsFile->stream, buffer);
+            TS_put_back(tsFile->stream, tok);
+            TSParserToken *field = TS_parse_interface_field(tsFile, tsParseData);
+            if (field) TS_push_child(token, field);
+            free(buffer);
+            buffer = NULL;
+          }
+          free((void *) tok);
+          break;
+        }
+        case L'(': {
+          if (buffer) TS_put_back(tsFile->stream, buffer);
+          TS_put_back(tsFile->stream, tok);
+          TSParserToken *method = TS_parse_interface_method(tsFile, tsParseData);
+          TS_push_child(token, method);
+          free((void *) tok);
+          free(buffer);
+          buffer = NULL;
+          break;
+        }
+        default: {
+          wchar_t *tmp = TS_join_strings(buffer, tok);
+          free(buffer);
+          buffer = tmp;
+          free((void *) tok);
+          break;
+        }
+      }
+    }
+
+  TS_TOKEN_END(TS_INTERFACE_BODY);
+}
+
 TSParserToken *
 TS_parse_interface(
     TSFile *tsFile,
@@ -10,10 +194,10 @@ TS_parse_interface(
       ts_token_syntax_error((const wchar_t *) L"Interface must be in global scope!", tsFile, token);
     }
 
-    const wchar_t *tok;
+    const wchar_t *tok = NULL;
     volatile unsigned char proceed;
 
-    proceed = (volatile unsigned char) (tsFile->sanity == TS_FILE_VALID);
+    proceed = TRUE;
 
     // name and goto {
     while (proceed) {
@@ -67,212 +251,10 @@ TS_parse_interface(
         }
       }
     }
-    // body
-    proceed = (volatile unsigned char) (tsFile->sanity == TS_FILE_VALID);
-    TSParserToken *child = NULL, *returnType = NULL, *callArgs = NULL, *type = NULL;
-    TSClassParseFlag flag = TS_PARSE_CLASS_MEMBER_NAME;
 
-    while (proceed) {
-      TS_LOOP_SANITY_CHECK(tsFile)
+    TSParserToken *body = TS_parse_interface_body(tsFile, tsParseData);
+    TS_push_child(token, body);
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
-
-      if (tok == NULL) {
-        TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "interface");
-        break;
-      }
-
-      switch (tok[0]) {
-        case L' ': {
-          TS_MOVE_BY(tsParseData, tok);
-          free((void *) tok);
-          break;
-        }
-        case L'\n': {
-          TS_NEW_LINE(tsParseData, tok);
-          if (child) TS_push_child(token, child);
-          child = NULL;
-          returnType = NULL;
-          free((void *) tok);
-          break;
-        }
-        case L'}': {
-          TS_MOVE_BY(tsParseData, tok);
-          proceed = FALSE;
-          free((void *) tok);
-          break;
-        }
-        case L';': {
-          TS_MOVE_BY(tsParseData, tok);
-          child = NULL;
-          free((void *) tok);
-          break;
-        }
-        case L':': {
-          TS_MOVE_BY(tsParseData, tok);
-          if (child == NULL) {
-            TS_UNEXPECTED_TOKEN(tsFile, token, tok, "interface");
-          } else {
-            TS_MOVE_BY(tsParseData, tok);
-            switch (child->tokenType) {
-              case TS_CLASS_METHOD:
-              case TS_FUNCTION: {
-                flag = TS_PARSE_CLASS_MEMBER_METHOD_RETURN_TYPE;
-                break;
-              }
-              case TS_CONST:
-              case TS_VAR:
-              case TS_UNKNOWN: {
-                flag = TS_PARSE_CLASS_MEMBER_TYPE;
-                break;
-              }
-              default: {
-                break;
-              }
-            }
-
-          }
-          free((void *) tok);
-          break;
-        }
-        case L'(': {
-          TS_MOVE_BY(tsParseData, tok);
-          if (child == NULL) {
-            tsParseData->token = (const wchar_t *) L"";
-            child = TS_build_parser_token(TS_FUNCTION, tsParseData);
-            tsParseData->token = tok;
-            callArgs = TS_parse_call_arguments(tsFile, tsParseData);
-            TS_push_child(child, callArgs);
-            tsParseData->parentTSToken = child->parent;
-            returnType = TS_build_parser_token(TS_FUNCTION_RETURN_TYPE, tsParseData);
-            type = TS_find_type(tsFile->file, (const wchar_t *) L"any");
-            if (type) {
-              TS_push_child(returnType, type);
-            } else {
-              TS_UNKNOWN_TYPE(tsFile, token, L"any");
-            }
-            TS_push_child(child, returnType);
-            tsParseData->parentTSToken = child->parent;
-          } else {
-            flag = TS_PARSE_CLASS_MEMBER_METHOD_ARGUMENTS;
-          }
-          free((void *) tok);
-          break;
-        }
-        case L'=': {
-          if (child == NULL) {
-            TS_UNEXPECTED_TOKEN(tsFile, token, tok, "interface");
-          } else {
-            TS_MOVE_BY(tsParseData, tok);
-            flag = TS_PARSE_CLASS_MEMBER_VALUE;
-          }
-          free((void *) tok);
-          break;
-        }
-        case L'{': {
-          TS_MOVE_BY(tsParseData, tok);
-          flag = TS_PARSE_CLASS_MEMBER_METHOD_BODY;
-          TS_UNEXPECTED_TOKEN(tsFile, token, tok, "interface member");
-          proceed = FALSE;
-          free((void *) tok);
-          break;
-        }
-        default: {
-          switch (flag) {
-            case TS_PARSE_CLASS_MEMBER_NAME: {
-              if (TS_is_keyword(tok)) {
-                TS_UNEXPECTED_TOKEN(tsFile, token, tok, "interface member name");
-              } else {
-                tsParseData->token = tok;
-                child = TS_parse_ts_token(tsFile, tsParseData);
-              }
-              break;
-            }
-            case TS_PARSE_CLASS_MEMBER_METHOD_RETURN_TYPE: {
-              if (child == NULL) {
-                TS_UNEXPECTED_TOKEN(tsFile, token, tok, "interface member return type");
-              } else {
-                TS_MOVE_BY(tsParseData, tok);
-                type = TS_find_type(tsFile->file, tok);
-                if (type) {
-                  TS_push_child(child, type);
-                } else {
-                  TS_UNKNOWN_TYPE(tsFile, token, tok);
-                }
-                returnType->children[0] = type;
-                child = NULL;
-                flag = TS_PARSE_CLASS_MEMBER_NAME;
-              }
-              break;
-            }
-            case TS_PARSE_CLASS_MEMBER_TYPE: {
-              if (child == NULL) {
-                TS_UNEXPECTED_TOKEN(tsFile, token, tok, "interface member return type");
-              } else {
-                TS_MOVE_BY(tsParseData, tok);
-                type = TS_find_type(tsFile->file, tok);
-                if (type) {
-                  TS_push_child(child, type);
-                } else {
-                  TS_UNKNOWN_TYPE(tsFile, token, tok);
-                }
-                TS_push_child(token, child);
-                child = NULL;
-                returnType = NULL;
-                flag = TS_PARSE_CLASS_MEMBER_NAME;
-              }
-              break;
-            }
-            case TS_PARSE_CLASS_MEMBER_METHOD_ARGUMENTS: {
-              if (child == NULL) {
-                TS_UNEXPECTED_TOKEN(tsFile, token, tok, "interface member return type");
-              } else {
-                TS_MOVE_BY(tsParseData, tok);
-                token->tokenType = TS_CLASS_METHOD;
-                tsParseData->token = tok;
-                callArgs = TS_parse_call_arguments(tsFile, tsParseData);
-                TS_push_child(child, callArgs);
-                returnType = TS_build_parser_token(TS_FUNCTION_RETURN_TYPE, tsParseData);
-                type = TS_find_type(tsFile->file, (const wchar_t *) L"any");
-                if (type) {
-                  TS_push_child(returnType, type);
-                } else {
-                  TS_UNKNOWN_TYPE(tsFile, token, L"any");
-                }
-                TS_push_child(child, returnType);
-                tsParseData->parentTSToken = child->parent;
-                flag = TS_PARSE_CLASS_MEMBER_NAME;
-              }
-              break;
-            }
-            case TS_PARSE_CLASS_MEMBER_VALUE: {
-              if (child == NULL) {
-                TS_UNEXPECTED_TOKEN(tsFile, token, tok, "interface member return type");
-              } else {
-                if (child->children == NULL) {
-                  type = TS_find_type(tsFile->file, (const wchar_t *) L"any");
-                  if (type) {
-                    TS_push_child(child, type);
-                  } else {
-                    TS_UNKNOWN_TYPE(tsFile, token, L"any");
-                  }
-                }
-                tsParseData->token = tok;
-                TSParserToken *value = TS_parse_ts_token(tsFile, tsParseData);
-                TS_push_child(child, value);
-                TS_push_child(token, child);
-                child = NULL;
-                returnType = NULL;
-              }
-              break;
-            }
-            case TS_PARSE_CLASS_MEMBER_METHOD_BODY:break;
-          }
-          free((void *) tok);
-          break;
-        }
-      }
-    }
     TS_register_type(tsFile, token);
   TS_TOKEN_END(TS_INTERFACE)
 }
@@ -283,5 +265,13 @@ TS_free_interface(
 ) {
   TS_free_children(token);
   if (token->name) free(token->name);
+  free((void *) token);
+}
+
+void
+TS_free_interface_body(
+    const TSParserToken *token
+) {
+  TS_free_children(token);
   free((void *) token);
 }

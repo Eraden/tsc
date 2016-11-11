@@ -4,27 +4,33 @@ START_TEST(parse_valid_switch)
   TSFile *tsFile = TS_parse_file("./examples/switch/valid.ts");
 
   ck_assert_ptr_ne(tsFile, NULL);
-  ck_assert(tsFile->sanity == TS_FILE_VALID);
+  ck_assert_tsFile_valid(tsFile);
 
   ck_assert_uint_eq(tsFile->tokensSize, 2);
   ck_assert_ptr_ne(tsFile->tokens, NULL);
 
-  TSParserToken *token, *child, *fnChild, *callArgs, *returnType, *scope;
+  TSParserToken *token = NULL, *child = NULL, *fnChild = NULL, *callArgs = NULL, *returnType = NULL,
+      *scope = NULL, *conditions = NULL, *switchBody = NULL;
 
   token = tsFile->tokens[0];
   ck_assert_ptr_ne(token, NULL);
   ck_assert_eq_ts_switch(token->tokenType);
-  ck_assert_uint_eq(token->childrenSize, 3);
+  ck_assert_uint_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
-  child = token->children[0];
+  conditions = token->children[TS_SWITCH_CONDITIONS_INDEX];
+  ck_assert_eq_ts_switch_conditions(conditions->tokenType);
+  ck_assert_ptr_ne(conditions->children, NULL);
+  child = conditions->children[0];
   ck_assert_ptr_ne(child, NULL);
   ck_assert_eq_ts_condition(child->tokenType);
-  ck_assert_ptr_ne(child->name, NULL);
-  ck_assert_wstr_eq(child->name, L"1");
-  child = token->children[1];
+  switchBody = token->children[TS_SWITCH_BODY_INDEX];
+  ck_assert_ptr_ne(switchBody, NULL);
+  ck_assert_eq_ts_switch_body(switchBody->tokenType);
+  ck_assert_ptr_ne(switchBody->children, NULL);
+  child = switchBody->children[0];
   ck_assert_ptr_ne(child, NULL);
   ck_assert_eq_ts_case(child->tokenType);
-  child = token->children[2];
+  child = switchBody->children[1];
   ck_assert_ptr_ne(child, NULL);
   ck_assert_eq_ts_default(child->tokenType);
 
@@ -44,16 +50,21 @@ START_TEST(parse_valid_switch)
   fnChild = scope->children[0];
   ck_assert_eq_ts_switch(fnChild->tokenType);
   ck_assert_ptr_ne(fnChild->children, NULL);
-  ck_assert_int_eq(fnChild->childrenSize, 3);
-  child = fnChild->children[0];
+  ck_assert_int_eq(fnChild->childrenSize, 2);
+  conditions = fnChild->children[TS_SWITCH_CONDITIONS_INDEX];
+  ck_assert_eq_ts_switch_conditions(conditions->tokenType);
+  ck_assert_ptr_ne(conditions->children, NULL);
+  child = conditions->children[0];
   ck_assert_ptr_ne(child, NULL);
   ck_assert_eq_ts_condition(child->tokenType);
-  ck_assert_ptr_ne(child->name, NULL);
-  ck_assert_wstr_eq(child->name, L"1");
-  child = fnChild->children[1];
+  switchBody = fnChild->children[TS_SWITCH_BODY_INDEX];
+  ck_assert_ptr_ne(switchBody, NULL);
+  ck_assert_eq_ts_switch_body(switchBody->tokenType);
+  ck_assert_ptr_ne(switchBody->children, NULL);
+  child = switchBody->children[0];
   ck_assert_ptr_ne(child, NULL);
   ck_assert_eq_ts_case(child->tokenType);
-  child = fnChild->children[2];
+  child = switchBody->children[1];
   ck_assert_ptr_ne(child, NULL);
   ck_assert_eq_ts_default(child->tokenType);
 

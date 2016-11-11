@@ -16,6 +16,7 @@ TS_parse_export(
 
     volatile unsigned char proceed = TRUE;
     const wchar_t *tok = NULL;
+
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 

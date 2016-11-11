@@ -29,7 +29,7 @@ START_TEST(parse_valid_implements)
   ck_assert_uint_eq(implements->childrenSize, 1);
   ck_assert_ptr_ne(implements->children, NULL);
   definition = implements->children[0];
-  ck_assert_ptr_eq(definition, interface1Token);
+  TS_check_validate_borrow(definition, interface1Token);
 
   interface2Token = tsFile->tokens[2];
   ck_assert_ptr_ne(interface2Token, NULL);
@@ -47,7 +47,7 @@ START_TEST(parse_valid_implements)
   ck_assert_uint_eq(implements->childrenSize, 1);
   ck_assert_ptr_ne(implements->children, NULL);
   definition = implements->children[0];
-  ck_assert_ptr_eq(definition, interface1Token);
+  TS_check_validate_borrow(definition, interface1Token);
 
   implements = classToken->children[1];
   ck_assert_ptr_ne(implements, NULL);
@@ -55,7 +55,7 @@ START_TEST(parse_valid_implements)
   ck_assert_uint_eq(implements->childrenSize, 1);
   ck_assert_ptr_ne(implements->children, NULL);
   definition = implements->children[0];
-  ck_assert_ptr_eq(definition, interface2Token);
+  TS_check_validate_borrow(definition, interface2Token);
 
   TS_free_tsFile(tsFile);
 END_TEST

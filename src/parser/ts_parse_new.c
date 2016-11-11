@@ -75,9 +75,9 @@ TS_parse_new(
         default: {
           TSParserToken *classToken = TS_find_type(tsFile->file, tok);
           if (classToken) {
-            TS_push_child(token, classToken);
+            TS_push_child(token, TS_create_borrow(classToken, tsParseData));
           } else {
-            ts_token_syntax_error((const wchar_t *) L"Instantialization of unknown class", tsFile, token);
+            ts_token_syntax_error((const wchar_t *) L"Instantiation of unknown class", tsFile, token);
           }
 
           free((void *) tok);
@@ -93,7 +93,7 @@ void
 TS_free_new(
     const TSParserToken *token
 ) {
-  TS_free_children_from(token, 1);
+  TS_free_children(token);
 
   if (token->data) free(token->data);
   free((void *) token);

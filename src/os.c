@@ -1,7 +1,7 @@
 #include <cts/os.h>
 #include <cts/sys.h>
 
-const char *TS_LIBRARY_PATH = LIBRARY_OUTPUT_PATH;
+const char __attribute__((__used__))*TS_LIBRARY_PATH = LIBRARY_OUTPUT_PATH;
 const char *TS_PREDEFINED_PATH = LIBRARY_OUTPUT_PATH"/predefined.ts";
 
 static const char *TS_getHome(void);

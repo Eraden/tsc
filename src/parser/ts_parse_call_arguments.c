@@ -28,16 +28,9 @@ TS_parse_call_arguments(
           break;
         }
         case L'\n': {
-          if (token->childrenSize == 0) {
-            free((void *) tok);
-            ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found new line.", tsFile, token);
-            proceed = FALSE;
-            break;
-          } else {
-            proceed = FALSE;
-            TS_put_back(tsParseData->stream, tok);
-            free((void *) tok);
-          }
+          TS_NEW_LINE(tsParseData, tok);
+          free((void *) tok);
+          proceed = FALSE;
           break;
         }
         case L')': {
@@ -53,7 +46,8 @@ TS_parse_call_arguments(
           if (child == NULL) {
             ts_token_syntax_error((const wchar_t *) L"Expecting call argument but nothing was found", tsFile, token);
           } else if (child->tokenType != TS_ARGUMENT) {
-            ts_token_syntax_error((const wchar_t *) L"Unexpected token while parsing call arguments", tsFile, child);
+            TS_UNEXPECTED_TOKEN(tsFile, child, tok, "call arguments");
+            TS_free_tsToken(child);
           } else {
             TS_push_child(token, child);
           }
