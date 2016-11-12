@@ -10,27 +10,15 @@ TS_parse_local_variable_done(
   TSParserToken *token = tsParseData->parentTSToken;
   switch (parseFlag) {
     case TS_PARSE_VARIABLE_NAME: {
-      ts_token_syntax_error(
-          (wchar_t *) L"Missing variable name",
-          tsFile,
-          token
-      );
+      ts_token_syntax_error((wchar_t *) L"Missing variable name", tsFile, token);
       break;
     }
     case TS_PARSE_VARIABLE_TYPE: {
-      ts_token_syntax_error(
-          (wchar_t *) L"Expect variable type but none provided",
-          tsFile,
-          token
-      );
+      ts_token_syntax_error((wchar_t *) L"Expect variable type but none provided", tsFile, token);
       break;
     }
     case TS_PARSE_VARIABLE_VALUE: {
-      ts_token_syntax_error(
-          (wchar_t *) L"Expect variable default value but none provided",
-          tsFile,
-          token
-      );
+      ts_token_syntax_error((wchar_t *) L"Expect variable default value but none provided", tsFile, token);
       break;
     }
     case TS_PARSE_VARIABLE_NONE: {
@@ -75,11 +63,7 @@ TS_parse_local_variable_body(
       }
       case L'\n': {
         free((void *) tok);
-        ts_token_syntax_error(
-            (wchar_t *) L"New line in variable definition is not allowed!",
-            tsFile,
-            token
-        );
+        ts_token_syntax_error((wchar_t *) L"New line in variable definition is not allowed!", tsFile, token);
         proceed = FALSE;
         break;
       }

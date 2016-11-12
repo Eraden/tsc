@@ -2,3 +2,5 @@ build
 **/*~
 lib/*.a
 .idea
+doc/*.png
+doc/*.log

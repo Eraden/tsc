@@ -329,10 +329,7 @@ TS_parse_for_head_for_with_condition(
             break;
           }
           case TS_PARSE_FOR_CHANGE: {
-            ts_token_syntax_error(
-                (const wchar_t *) L"Unexpected semicolon while parsing for with condition head",
-                tsFile, current
-            );
+            ts_token_syntax_error((const wchar_t *) L"Unexpected semicolon while parsing for with condition head", tsFile, current);
             break;
           }
         }
@@ -342,17 +339,35 @@ TS_parse_for_head_for_with_condition(
       default: {
         tsParseData->token = tok;
         TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
+        switch (flag) {
+          case TS_PARSE_FOR_VARIABLES: {
+            switch (child->tokenType) {
+              case TS_LET:
+              case TS_VAR: {
+                TS_push_child(current, child);
+                break;
+              }
+              case TS_CONST:
+              default: {
+                TS_free_tsToken(child);
+                TS_UNEXPECTED_TOKEN(tsFile, child, tok, "for variables section");
+                break;
+              }
+            }
+            break;
+          }
+          default: {
+            TS_push_child(current, child);
+            break;
+          }
+        }
         free((void *) tok);
-        TS_push_child(current, child);
         break;
       }
     }
   }
   if (flag != TS_PARSE_FOR_CHANGE) {
-    ts_token_syntax_error(
-        (const wchar_t *) L"Unexpected end of for head",
-        tsFile, head
-    );
+    ts_token_syntax_error((const wchar_t *) L"Unexpected end of for head", tsFile, head);
   }
   tsParseData->parentTSToken = head->parent;
 }

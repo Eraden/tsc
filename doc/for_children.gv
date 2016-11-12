@@ -1,0 +1,221 @@
+digraph for_children {
+  center=1;
+
+  subgraph borrows {
+    pack = true;
+    packmode = clust;
+    pad=2.0;
+
+    TS_BORROW [ margin=0.3 ];
+
+    TS_BORROW -> TS_CLASS;
+    TS_BORROW -> TS_INTERFACE;
+  }
+
+  subgraph variables {
+    pack = true;
+    packmode = clust;
+    pad=2.0;
+
+    TS_LOCAL_VARIABLE [ label="((local variable))" margin=0.3 ];
+
+    TS_LOCAL_VARIABLE -> TS_CONST [ arrowhead="dot" ];
+    TS_LOCAL_VARIABLE -> TS_LET [ arrowhead="dot" ];
+    TS_LOCAL_VARIABLE -> TS_VAR [ arrowhead="dot" ];
+
+    TS_CONST -> TS_BORROW [ constraint=false ];
+    TS_LET -> TS_BORROW [ constraint=false ];
+    TS_VAR -> TS_BORROW [ constraint=false ];
+
+    TS_CONST_NOT_ALLOWED [label="const not allowed" shape=box constraint=false];
+
+    subgraph variables_entries {
+      pack = true;
+      packMode = clust;
+
+      TS_LOCAL_VARIABLE_TYPE [ label="(( type [index 0] ))" ];
+      TS_LOCAL_VARIABLE_VALUE [ label="(( value [index 1] ))" arrowhead="dot" ];
+    }
+
+    TS_CONST -> TS_LOCAL_VARIABLE_TYPE [ arrowhead="dot" ];
+    TS_CONST -> TS_LOCAL_VARIABLE_VALUE [ arrowhead="dot" ];
+
+    TS_VAR -> TS_LOCAL_VARIABLE_TYPE [arrowhead="dot" ];
+    TS_VAR -> TS_LOCAL_VARIABLE_VALUE [arrowhead="dot" ];
+
+    TS_LET -> TS_LOCAL_VARIABLE_TYPE [ arrowhead="dot" ];
+    TS_LET -> TS_LOCAL_VARIABLE_VALUE [ arrowhead="dot" ];
+
+    TS_LOCAL_VARIABLE_TYPE -> TS_BORROW [ constraint=false ];
+    TS_LOCAL_VARIABLE_TYPE -> TS_NUMBER [ constraint=false ];
+  }
+
+  subgraph operators {
+    pack = true;
+    packmode = clust;
+    pad=2.0;
+
+    TS_OPERATOR [ pag=2.0 page=3 ];
+
+    TS_OPERATOR -> TS_NUMBER;
+    TS_OPERATOR -> TS_BORROW;
+
+    TS_DOT -> TS_BORROW;
+    TS_DOT -> TS_NUMBER;
+
+    TS_IN -> TS_BORROW;
+    TS_IN -> TS_DOT;
+    TS_OF -> TS_BOTTOW;
+    TS_OF -> TS_DOT;
+  }
+
+
+  subgraph global {
+    pack = true;
+    packmode = clust;
+    center=1;
+    pad=2.0;
+
+    TS_GLOBAL_SCOPE [ label="((global scope))" pad=1.3 margin=0.3 page=1 ];
+
+    subgraph global_only {
+      pack = true;
+      packmode = clust;
+      pad=2.0;
+
+      TS_IMPORT -> TS_BORROW [ constraint=false ];
+      TS_IMPORT -> TS_FILE [ constraint=true arrowhead=circle ];
+      TS_EXPORT -> TS_BORROW [ constraint=false ];
+
+      TS_GLOBAL_SCOPE -> TS_CLASS [ constraint=true ];
+      TS_GLOBAL_SCOPE -> TS_INTERFACE [ constraint=true ];
+      TS_GLOBAL_SCOPE -> TS_EXPORT [ constraint=true ];
+      TS_GLOBAL_SCOPE -> TS_IMPORT [ constraint=true ];
+    }
+
+    TS_GLOBAL_SCOPE -> TS_SCOPE [ constraint=false ];
+    TS_GLOBAL_SCOPE -> TS_FOR [ constraint=false ];
+    TS_GLOBAL_SCOPE -> TS_LOCAL_VARIABLE [ constraint=false ];
+    TS_GLOBAL_SCOPE -> TS_SWITCH [ constraint=false ];
+    TS_GLOBAL_SCOPE -> TS_FUNCTION [ constraint=false ];
+    TS_GLOBAL_SCOPE -> TS_OPERATOR [ constraint=false ];
+  }
+
+  subgraph scope {
+    pack = true;
+    packmode = clust;
+    pad=2.0;
+    page=2;
+
+    TS_SCOPE [ margin=0.3 ];
+
+    TS_SCOPE -> TS_SCOPE;
+    TS_SCOPE -> TS_LOCAL_VARIABLE;
+    TS_SCOPE -> TS_SWITCH;
+    TS_SCOPE -> TS_OPERATOR;
+  }
+
+  subgraph functions {
+    pack = true;
+    packmode = clust;
+    pad=2.0;
+
+    TS_FUNCTION -> TS_CALL_ARGUMENTS;
+    TS_FUNCTION -> TS_SCOPE [ dir="both" ];
+  }
+
+  subgraph switch {
+    pack = true;
+    packmode = clust;
+    pad=2.0;
+
+    TS_SWITCH -> TS_SWITCH_CONDITIONS;
+    TS_SWITCH -> TS_SWITCH_BODY;
+
+    TS_SWITCH_CONDITIONS -> TS_CONDITION;
+    TS_SWITCH_BODY -> TS_CASE;
+    TS_SWITCH_BODY -> TS_DEFAULT;
+    TS_CASE -> TS_SCOPE [ constraint=false ];
+    TS_CASE -> TS_CONDITION;
+    TS_DEFAULT -> TS_SCOPE [ constraint=false ];
+  }
+
+  subgraph types {
+    pack = true;
+    packmode = clust;
+    pad=2.0;
+
+    TS_CLASS -> TS_CLASS_METHOD;
+    TS_CLASS -> TS_CLASS_FIELD;
+
+    TS_INTERFACE -> TS_CLASS_METHOD;
+    TS_INTERFACE -> TS_CLASS_FIELD;
+
+    TS_CLASS_METHOD -> TS_CALL_ARGUMENTS;
+    TS_CLASS_METHOD -> TS_SCOPE;
+  }
+
+  subgraph conditions {
+    pack = true;
+    packmode = clust;
+    pad=2.0;
+
+    TS_CONDITION -> TS_UNKNOWN;
+    TS_CONDITION -> TS_BORROW;
+    TS_CONDITION -> TS_GROUP;
+  }
+
+  subgraph groups {
+    pad=2.0;
+    pack = true;
+    packmode = clust;
+
+    TS_GROUP -> TS_UNKNOWN;
+    TS_GROUP -> TS_OPERATOR;
+    TS_GROUP -> TS_BORROW;
+  }
+
+  subgraph for {
+    pack = true;
+    packmode = clust;
+    label="for";
+    center=1;
+    pad=2.0;
+
+    TS_FOR [ pad=5.0 page=6 ];
+
+    TS_FOR_COLLECTION [ label="((multiple tokens))" ];
+
+    TS_FOR -> TS_FOR_WITH_CONDITION [ arrowhead="dot" ];
+    TS_FOR -> TS_FOR_IN [ arrowhead="dot" ];
+    TS_FOR -> TS_FOR_OF [ arrowhead="dot" ];
+
+    TS_FOR -> TS_SCOPE [ dir="both" constraint=false ];
+
+    subgraph for_with_condition {
+      TS_FOR_WITH_CONDITION -> TS_LOOP_VARIABLES_SECTION;
+      TS_FOR_WITH_CONDITION -> TS_LOOP_CONDITION_SECTION;
+      TS_FOR_WITH_CONDITION -> TS_LOOP_CHANGE_SECTION;
+    }
+
+    subgraph for_in {
+      TS_FOR_IN -> TS_LOOP_VARIABLES_SECTION;
+      TS_FOR_IN -> TS_IN;
+      TS_FOR_IN -> TS_FOR_COLLECTION;
+    }
+
+    subgraph for_of {
+      TS_FOR_OF -> TS_LOOP_VARIABLES_SECTION;
+      TS_FOR_OF -> TS_OF;
+      TS_FOR_OF -> TS_FOR_COLLECTION;
+    }
+
+    TS_LOOP_VARIABLES_SECTION -> TS_LOCAL_VARIABLE;
+    TS_LOOP_VARIABLES_SECTION -> TS_CONST_NOT_ALLOWED;
+
+    TS_LOOP_CONDITION_SECTION -> TS_CONDITION;
+    TS_LOOP_CHANGE_SECTION -> TS_BORROW;
+    TS_LOOP_CHANGE_SECTION -> TS_OPERATOR;
+  }
+}
+
