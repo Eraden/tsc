@@ -57,28 +57,28 @@ START_TEST(parse_valid_new_keyword)
   ck_assert_ptr_ne(semicolon, NULL);
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(parse_invalid_new_keyword)
   TSFile *tsFile = TS_parse_file("./examples/new/unexpected_new_line");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(parse_invalid_new_keyword_with_new_line)
   TSFile *tsFile = TS_parse_file("./examples/new/unexpected_end_of_stream");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(parse_invalid_new_keyword_with_end)
   TSFile *tsFile = TS_parse_file("./examples/new/unexpected_colon");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_new_suite(Suite *suite) {

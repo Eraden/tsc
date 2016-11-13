@@ -36,7 +36,7 @@ TS_parse_import_from(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (wchar_t *) TS_getToken(tsFile->stream);
+      tok = (wchar_t *) TS_get_token(tsFile->stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "import from");
@@ -59,7 +59,7 @@ TS_parse_import_from(
         case L';': {
           TS_MOVE_BY(tsParseData, tok);
           if (token->children == NULL) {
-            ts_token_syntax_error((const wchar_t *) L"Unexpected `;` while parsing `import from`", tsFile, token);
+            TS_token_syntax_error((const wchar_t *) L"Unexpected `;` while parsing `import from`", tsFile, token);
           }
           free((void *) tok);
           proceed = FALSE;
@@ -82,15 +82,16 @@ TS_parse_import_from(
               token->data = TS_parse_file(path);
               free(path);
             } else {
-              ts_token_syntax_error(
+              TS_token_syntax_error(
                   (const wchar_t *) L"Could not resolve relative path for imported file",
                   tsFile, token
               );
-              ts_token_syntax_error_info(tsFile, (const wchar_t *) L"%ls", string->content);
+              TS_token_syntax_error_info(tsFile, (const wchar_t *) L"%ls", string->content);
             }
             TS_push_child(token, string);
           } else {
-            ts_token_syntax_error((const wchar_t *) L"Expecting string while parsing `import from` but nothing was found", tsFile, token);
+            TS_token_syntax_error(
+                (const wchar_t *) L"Expecting string while parsing `import from` but nothing was found", tsFile, token);
           }
           proceed = FALSE;
           free(tok);
@@ -120,7 +121,7 @@ TS_parse_import_from_file(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (wchar_t *) TS_getToken(tsFile->stream);
+    tok = (wchar_t *) TS_get_token(tsFile->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "import");
@@ -167,7 +168,7 @@ TS_parse_import_imported_tokens(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (wchar_t *) TS_getToken(tsFile->stream);
+      tok = (wchar_t *) TS_get_token(tsFile->stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "import tokens");
@@ -205,7 +206,7 @@ TS_parse_import_imported_tokens(
         default: {
           if (TS_is_keyword(tok)) {
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "import");
-          } else if (!TS_name_is_valid(tok)) {
+          } else if (!TS_name_isValid(tok)) {
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "import");
           } else if (IMPORT_STARTED) {
             tsParseData->token = tok;
@@ -213,7 +214,8 @@ TS_parse_import_imported_tokens(
             if (unknown) {
               TS_push_child(token, unknown);
             } else {
-              ts_token_syntax_error((const wchar_t *) L"Expecting token while parsing `import` but nothing was found", tsFile, token);
+              TS_token_syntax_error((const wchar_t *) L"Expecting token while parsing `import` but nothing was found",
+                                    tsFile, token);
             }
           } else {
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "import");
@@ -256,7 +258,7 @@ TS_free_import_from(
     const TSParserToken *token
 ) {
   TS_free_children(token);
-  if (token->data) TS_free_tsFile(token->data);
+  if (token->data) TS_free_ts_file(token->data);
   free((void *) token);
 }
 

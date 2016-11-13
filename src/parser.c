@@ -21,10 +21,11 @@ TS_build_parser_token(
   return token;
 }
 
-static unsigned short int KEYWORDS_SIZE = 32 + 20/*TS_OPERATORS_COUNT*/;
+static unsigned short int KEYWORDS_SIZE = 33 + 20/*TS_OPERATORS_COUNT*/;
 
-static TSKeyword TS_KEYWORDS[32 + 20] = {
+static TSKeyword TS_KEYWORDS[33 + 20] = {
     // Keywords
+    {(wchar_t *) L"namespace",  TS_parse_namespace},
     {(wchar_t *) L"var",        TS_parse_var},
     {(wchar_t *) L"let",        TS_parse_let},
     {(wchar_t *) L"const",      TS_parse_const},
@@ -43,8 +44,6 @@ static TSKeyword TS_KEYWORDS[32 + 20] = {
     {(wchar_t *) L"implements", TS_parse_implements},
     {(wchar_t *) L"interface",  TS_parse_interface},
     {(wchar_t *) L"new",        TS_parse_new},
-    {(wchar_t *) L"//",         TS_parse_inline_comment},
-    {(wchar_t *) L"/*",         TS_parse_multiline_comment},
     {(wchar_t *) L"switch",     TS_parse_switch},
     {(wchar_t *) L"case",       TS_parse_case},
     {(wchar_t *) L"break",      TS_parse_break},
@@ -57,6 +56,8 @@ static TSKeyword TS_KEYWORDS[32 + 20] = {
     {(wchar_t *) L"\"",         TS_parse_string},
     {(wchar_t *) L"\'",         TS_parse_string},
     {(wchar_t *) L"(",          TS_parse_group},
+    {(wchar_t *) L"//",         TS_parse_inline_comment},
+    {(wchar_t *) L"/*",         TS_parse_multiline_comment},
     // Arithmetic Operators
     {(wchar_t *) L"+",          TS_parse_operator_advanced},
     {(wchar_t *) L"-",          TS_parse_operator_advanced},
@@ -98,7 +99,7 @@ void TS_put_back(FILE *stream, volatile const wchar_t *value) {
 }
 
 unsigned char
-TS_name_is_valid(
+TS_name_isValid(
     const wchar_t *name
 ) {
   if (name == NULL) return 0;
@@ -219,7 +220,7 @@ TS_parse_ts_token(
         break;
       }
       default: {
-        ts_token_syntax_error((const wchar_t *) L"Unknown token in global scope!", tsFile, t);
+        TS_token_syntax_error((const wchar_t *) L"Unknown token in global scope!", tsFile, t);
         fwprintf(stderr, (const wchar_t *) L"      invalid token: '%ls'\n", t->content);
         break;
       }
@@ -233,11 +234,11 @@ void TS_rollback_token(TSFile *tsFile, TSParseData *data, TSParserToken *token) 
   TS_put_back(tsFile->stream, data->token);
   data->line = data->line - (token->line - data->line);
   data->character = data->character - (token->character - data->character);
-  TS_free_tsToken(token);
+  TS_free_ts_token(token);
 }
 
 static u_short
-TS_valid_char_for_token(
+TS_validCharForToken(
     wchar_t c
 ) {
   switch (c) {
@@ -274,7 +275,7 @@ TS_valid_char_for_token(
 }
 
 volatile const wchar_t *
-TS_getToken(
+TS_get_token(
     FILE *stream
 ) {
   if (stream == NULL) return NULL;
@@ -502,7 +503,7 @@ TS_getToken(
         }
       }
       default: {
-        if (TS_valid_char_for_token(prev)) {
+        if (TS_validCharForToken(prev)) {
           TS_GET_TOKEN_MSG(
               (wchar_t *) L"-- parse default, prev was '%lc' and is valid for token, token is: '%ls'\n", prev, tok
           );
@@ -578,7 +579,7 @@ TS_parse_stream(
   while (1) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
-    tok = (const wchar_t *) TS_getToken(stream);
+    tok = (const wchar_t *) TS_get_token(stream);
     if (tok == NULL) break;
 
     data->token = tok;
@@ -589,7 +590,7 @@ TS_parse_stream(
       if (token->tokenType != TS_UNKNOWN) {
         TS_append_ts_parser_token(tsFile, token);
       } else {
-        TS_free_tsToken(token);
+        TS_free_ts_token(token);
       }
     }
 
@@ -617,7 +618,7 @@ TS_free_unknown(
 }
 
 void
-TS_free_tsToken(
+TS_free_ts_token(
     const TSParserToken *token
 ) {
   switch (token->tokenType) {
@@ -794,6 +795,10 @@ TS_free_tsToken(
     case TS_UNKNOWN:
       TS_free_unknown(token);
       break;
+    case TS_NAMESPACE: {
+      TS_free_namespace(token);
+      break;
+    }
     default: {
       fprintf(stderr, "\n\nfree for unknown type!\n\n");
     }
@@ -818,7 +823,7 @@ TS_free_children_from(
   for (; childIndex < token->childrenSize; childIndex++) {
     child = children[0];
     if (child) {
-      TS_free_tsToken(child);
+      TS_free_ts_token(child);
     } else {
       fprintf(stderr, "/***********************************************\n");
       fprintf(stderr, "found null-pointer in children!\n");
@@ -831,12 +836,12 @@ TS_free_children_from(
 }
 
 void
-TS_free_tsFile(
+TS_free_ts_file(
     TSFile *tsFile
 ) {
   for (; tsFile->tokensSize;) {
     tsFile->tokensSize -= 1;
-    TS_free_tsToken(tsFile->tokens[tsFile->tokensSize]);
+    TS_free_ts_token(tsFile->tokens[tsFile->tokensSize]);
   }
   if (tsFile->tokens != NULL) {
     free(tsFile->tokens);
@@ -853,7 +858,7 @@ TS_free_tsFile(
   free((void *) tsFile);
 }
 
-unsigned char TS_isEmbeddedIn(TSParserToken *token, TSTokenType type) {
+unsigned char TS_is_embedded_in(TSParserToken *token, TSTokenType type) {
   TSParserToken *parent = token->parent;
   while (parent) {
     if (parent->tokenType == type) {

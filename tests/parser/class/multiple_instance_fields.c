@@ -737,7 +737,7 @@ START_TEST(parse_class_with_complex_fields)
   //  ck_assert_ptr_eq(fieldData->type, NULL);
   // ck_assert_ptr_eq(fieldData->value, NULL);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_class_with_multiple_instance_fields_suite(TCase *tc_class) {

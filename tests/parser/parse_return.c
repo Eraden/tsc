@@ -115,14 +115,14 @@ START_TEST(parse_valid_return)
   semicolon = scope->children[1];
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(parse_invalid_export_with_unexpected_end_of_stream)
   TSFile *tsFile = TS_parse_file("./examples/return/without_function");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_return_keyword_suite(Suite *suite) {

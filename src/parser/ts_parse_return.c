@@ -10,14 +10,14 @@ TS_parse_return(
     const wchar_t *tok = NULL;
     volatile unsigned char proceed = TRUE;
 
-    if (!(TS_isEmbeddedIn(token, TS_CLASS_METHOD) || TS_isEmbeddedIn(token, TS_FUNCTION))) {
+    if (!(TS_is_embedded_in(token, TS_CLASS_METHOD) || TS_is_embedded_in(token, TS_FUNCTION))) {
       TS_UNEXPECTED_GLOBAL_TOKEN(tsFile, token, "return")
     }
 
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
       if (tok == NULL) {
         break;

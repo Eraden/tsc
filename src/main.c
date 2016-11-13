@@ -18,7 +18,7 @@ int main(int argc, const char **argv) {
     fclose(tsFile->stream);
     tsFile->stream = NULL;
   }
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 
   TS_destroy_register();
   TS_remove_predefined();

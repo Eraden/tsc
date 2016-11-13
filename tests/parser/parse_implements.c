@@ -57,7 +57,7 @@ START_TEST(parse_valid_implements)
   definition = implements->children[0];
   TS_check_validate_borrow(definition, interface2Token);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_implements_suite(Suite *suite) {

@@ -41,6 +41,7 @@ SET(
     src/parser/ts_parse_arithmetic_operator.c
     src/parser/ts_parse_group.c
     src/parser/ts_parse_operator.c
+    src/parser/ts_parse_namespace.c
     src/parser.c
 )
 
@@ -218,6 +219,8 @@ ADD_TEST(NAME cli_blank_with_blank_file_and_level_off COMMAND ./cts -f ./example
 ADD_TEST(NAME cli_eval_source COMMAND ./cts -c 'var\ a')
 
 ADD_TEST(NAME test_file COMMAND ./cts -f ./examples/test.ts)
+
+ADD_TEST(NAME namespace COMMAND ./cts -f ./examples/namespace/valid.ts)
 
 ADD_TEST(NAME functions COMMAND ./cts -f ./examples/functions/valid.ts)
 

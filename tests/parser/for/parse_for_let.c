@@ -73,7 +73,7 @@ START_TEST(parse_valid_for_let)
   ck_assert_ptr_ne(semicolon, NULL);
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_for_let_suite(Suite *suite)

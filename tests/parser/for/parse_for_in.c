@@ -53,7 +53,7 @@ START_TEST(parse_valid_for_in)
   ck_assert_ptr_ne(semicolon, NULL);
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_for_in_suite(Suite *suite)

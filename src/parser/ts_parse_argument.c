@@ -9,15 +9,15 @@ TS_parse_argument_done(
   TSParserToken *token = tsParseData->parentTSToken;
   switch (parseFlag) {
     case TS_PARSE_VARIABLE_NAME: {
-      ts_token_syntax_error((wchar_t *) L"Missing argument name", tsFile, token);
+      TS_token_syntax_error((wchar_t *) L"Missing argument name", tsFile, token);
       break;
     }
     case TS_PARSE_VARIABLE_TYPE: {
-      ts_token_syntax_error((wchar_t *) L"Expect argument type but none provided", tsFile, token);
+      TS_token_syntax_error((wchar_t *) L"Expect argument type but none provided", tsFile, token);
       break;
     }
     case TS_PARSE_VARIABLE_VALUE: {
-      ts_token_syntax_error((wchar_t *) L"Expect argument default value but none provided", tsFile, token);
+      TS_token_syntax_error((wchar_t *) L"Expect argument default value but none provided", tsFile, token);
       break;
     }
     case TS_PARSE_VARIABLE_NONE: {
@@ -52,7 +52,7 @@ TS_parse_argument(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "argument");
@@ -84,10 +84,10 @@ TS_parse_argument(
           free((void *) tok);
 
           if (token->name == NULL) {
-            ts_token_syntax_error((wchar_t *) L"Assigning to argument without name", tsFile, token);
+            TS_token_syntax_error((wchar_t *) L"Assigning to argument without name", tsFile, token);
             proceed = FALSE;
           } else if (parseFlag == TS_PARSE_VARIABLE_TYPE) {
-            ts_token_syntax_error((const wchar_t *) L"Assigning to argument when expect type", tsFile, token);
+            TS_token_syntax_error((const wchar_t *) L"Assigning to argument when expect type", tsFile, token);
             proceed = FALSE;
           } else {
             parseFlag = TS_PARSE_VARIABLE_VALUE;
@@ -105,14 +105,14 @@ TS_parse_argument(
         }
         case L':': {
           if (token->name == NULL) {
-            ts_token_syntax_error(
+            TS_token_syntax_error(
                 (wchar_t *) L"Unexpected argument type definition. Argument has no name",
                 tsFile, token
             );
             proceed = FALSE;
 
           } else if (parseFlag >= TS_PARSE_VARIABLE_TYPE) {
-            ts_token_syntax_error(
+            TS_token_syntax_error(
                 (wchar_t *) L"Unexpected argument type definition. Type was already declared",
                 tsFile, token
             );

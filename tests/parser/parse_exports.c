@@ -38,19 +38,19 @@ START_TEST(parse_valid_export)
   exported = token->children[0];
   ck_assert_eq_ts_class(exported->tokenType);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(parse_invalid_export_with_newline)
   TSFile *tsFile = TS_parse_file("./examples/export/unexpected_new_line");
   ck_assert_tsFile_syntax_error(tsFile);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(parse_invalid_export_with_unexpected_end_of_stream)
   TSFile *tsFile = TS_parse_file("./examples/export/unexpected_end_of_stream");
   ck_assert_tsFile_syntax_error(tsFile);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_exports_suite(Suite *suite) {

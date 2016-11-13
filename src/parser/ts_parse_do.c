@@ -9,7 +9,7 @@ TS_parse_do_scope(
   unsigned char proceed = TRUE;
 
   while (proceed) {
-    tok = (wchar_t *) TS_getToken(tsFile->stream);
+    tok = (wchar_t *) TS_get_token(tsFile->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, tsParseData->parentTSToken, "do body");
@@ -50,7 +50,7 @@ void TS_parse_do_while(TSFile *tsFile, TSParseData *tsParseData) {
   wchar_t *tok = NULL;
 
   while (proceed) {
-    tok = (wchar_t *) TS_getToken(tsFile->stream);
+    tok = (wchar_t *) TS_get_token(tsFile->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, tsParseData->parentTSToken, "do while");
@@ -78,7 +78,7 @@ void TS_parse_do_while(TSFile *tsFile, TSParseData *tsParseData) {
             }
             default: {
               TS_UNEXPECTED_TOKEN(tsFile, conditions, "do while", "do")
-              TS_free_tsToken(conditions);
+              TS_free_ts_token(conditions);
               break;
             }
           }

@@ -12,7 +12,7 @@ TS_parse_switch_body(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_getToken(tsFile->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "switch body");
@@ -48,7 +48,7 @@ TS_parse_switch_body(
             }
             default: {
               TS_UNEXPECTED_TOKEN(tsFile, child, tok, "switch body");
-              TS_free_tsToken(child);
+              TS_free_ts_token(child);
               break;
             }
           }
@@ -78,7 +78,7 @@ TS_parse_switch(
 
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
-      tok = (const wchar_t *) TS_getToken(tsFile->stream);
+      tok = (const wchar_t *) TS_get_token(tsFile->stream);
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "switch head");
         break;
@@ -115,7 +115,7 @@ TS_parse_switch(
     proceed = TRUE;
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
-      tok = (const wchar_t *) TS_getToken(tsFile->stream);
+      tok = (const wchar_t *) TS_get_token(tsFile->stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "switch body");

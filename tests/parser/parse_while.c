@@ -46,7 +46,7 @@ START_TEST(parse_valid_while)
   ck_assert_eq_ts_condition(condition->tokenType);
   ck_assert_eq_ts_scope(scope->tokenType);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_while_suite(Suite *suite) {

@@ -101,21 +101,21 @@ START_TEST(parse_valid_if_condition)
   semicolon = scope->children[3];
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(parse_if_without_args)
   TSFile *tsFile = TS_parse_file("./examples/if/no_args");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert_tsFile_syntax_error(tsFile);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(parse_if_without_end_bracket)
   TSFile *tsFile = TS_parse_file("./examples/if/no_ending_bracket");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert_tsFile_syntax_error(tsFile);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_if_conditions_suite(Suite *suite) {

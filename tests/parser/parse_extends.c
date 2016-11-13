@@ -18,7 +18,7 @@ START_TEST(parse_valid_extends)
   classToken = tsFile->tokens[2];
   ck_assert_eq_ts_class(classToken->tokenType);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_extends_suite(Suite *suite) {

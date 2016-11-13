@@ -13,7 +13,7 @@ TS_parse_default_body(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
-    tok = (const wchar_t *) TS_getToken(tsFile->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "default");
@@ -92,7 +92,7 @@ TS_parse_default(
   TS_TOKEN_BEGIN(TS_DEFAULT, tsParseData)
 
     if (token->parent == NULL) {
-      ts_token_syntax_error((const wchar_t *) L"Unexpected `default` without `switch` or `export`", tsFile, token);
+      TS_token_syntax_error((const wchar_t *) L"Unexpected `default` without `switch` or `export`", tsFile, token);
     }
 
     const wchar_t *tok = NULL;
@@ -101,7 +101,7 @@ TS_parse_default(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile);
 
-      tok = (const wchar_t *) TS_getToken(tsFile->stream);
+      tok = (const wchar_t *) TS_get_token(tsFile->stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "default");
@@ -140,7 +140,7 @@ TS_parse_default(
       }
     }
 
-    if (TS_isEmbeddedIn(token, TS_SWITCH)) {
+    if (TS_is_embedded_in(token, TS_SWITCH)) {
       TSParserToken *scope = TS_parse_default_body(tsFile, tsParseData);
       if (scope) TS_push_child(token, scope);
     }

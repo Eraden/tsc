@@ -16,7 +16,7 @@ TS_parse_caller(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
       if (tok == NULL) {
         if (token->data == NULL) {

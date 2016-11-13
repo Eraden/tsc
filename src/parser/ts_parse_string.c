@@ -13,7 +13,7 @@ TS_parse_string(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile);
 
-      tok = (wchar_t *) TS_getToken(tsFile->stream);
+      tok = (wchar_t *) TS_get_token(tsFile->stream);
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "string");
         break;

@@ -323,7 +323,7 @@ __TS_setup_predefined(void) {
     swap(RegisterCollection, TS_PREDEFINED_REGISTER, TS_REGISTER);
     registers_swapped = TRUE;
 
-    const char *path = TS_getUserLibraryPath();
+    const char *path = TS_get_user_library_path();
     TSFile *tsFile = TS_PREDEFINED_FILE = TS_find_file(path, NULL);
 
     TSParseData data;
@@ -400,7 +400,7 @@ __TS_setup_predefined(void) {
       fprintf(stderr, "Predefined classes file is malformed! Exiting...\n");
       fprintf(stderr, "  %ls\n", TS_PREDEFINED_FILE->errorReason);
 
-      TS_free_tsFile(TS_PREDEFINED_FILE);
+      TS_free_ts_file(TS_PREDEFINED_FILE);
       TS_destroy_register();
       TS_PREDEFINED_FILE = NULL;
       exit(5);
@@ -432,7 +432,7 @@ TS_remove_predefined() {
     swap(RegisterCollection, TS_PREDEFINED_REGISTER, TS_REGISTER);
     registers_swapped = TRUE;
 
-    TS_free_tsFile(TS_PREDEFINED_FILE);
+    TS_free_ts_file(TS_PREDEFINED_FILE);
     TS_destroy_register();
 
     TSParserToken **operators = TS_OPERATORS;

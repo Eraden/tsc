@@ -12,25 +12,22 @@
 #define TS_MOVE_BY(data, tok) { u_long m = wcslen(tok); data->character += m; }
 #define TS_NEW_LINE(data, tok) { u_long m = wcslen(tok); data->character = 0; data->line += 1; }
 
-#define TS_UNEXPECTED_END_OF_STREAM(file, token, type) ts_token_syntax_error( \
+#define TS_UNEXPECTED_END_OF_STREAM(file, token, type) TS_token_syntax_error( \
   (const wchar_t *) L"Unexpected end of stream while parsing `" type "`", \
   file, token )
-#define TS_UNEXPECTED_TOKEN(tsFile, token, tok, type) ts_token_syntax_error( \
-  (const wchar_t *) L"Unexpected token while parsing `" type "`", \
-  tsFile, token, tok ); \
-  ts_token_syntax_error_info(tsFile, (const wchar_t *) L"invalid token: \"%ls\"", (wchar_t *) tok);
-#define TS_UNKNOWN_TYPE(tsFile, token, name) ts_token_syntax_error( \
+#define TS_UNEXPECTED_TOKEN(tsFile, token, tok, type) TS_token_syntax_error( \
+  (const wchar_t *) L"Unexpected token while parsing `" type "`", tsFile, token, tok ); \
+  TS_token_syntax_error_info(tsFile, (const wchar_t *) L"invalid token: \"%ls\"", (wchar_t *) tok);
+#define TS_UNKNOWN_TYPE(tsFile, token, name) TS_token_syntax_error( \
   (const wchar_t *) L"Unknown type", tsFile, token ); \
-  ts_token_syntax_error_info(tsFile, (const wchar_t *) L"%ls", (wchar_t *) name);
+  TS_token_syntax_error_info(tsFile, (const wchar_t *) L"%ls", (wchar_t *) name);
 /*#define TS_UNKNOWN_TYPE(tsFile, token, name) \
-  ts_token_syntax_error_info(tsFile, (const wchar_t *) L"Unknown class %ls", (wchar_t *) name);*/
+  TS_token_syntax_error_info(tsFile, (const wchar_t *) L"Unknown class %ls", (wchar_t *) name);*/
 #define TS_MISSING_NAME(tsFile, token, type) \
-  ts_token_syntax_error((const wchar_t *) L"Expecting name for:", tsFile, token ); \
-  ts_token_syntax_error_info(tsFile, (const wchar_t *) L"    %ls", (const wchar_t *) type);
+  TS_token_syntax_error((const wchar_t *) L"Expecting name for:", tsFile, token ); \
+  TS_token_syntax_error_info(tsFile, (const wchar_t *) L"    %ls", (const wchar_t *) type);
 #define TS_UNEXPECTED_GLOBAL_TOKEN(tsFile, token, type) \
-  ts_token_syntax_error( \
-    (const wchar_t *) L"Unexpected `" type "` in global scope", \
-    tsFile, token );
+  TS_token_syntax_error((const wchar_t *) L"Unexpected `" type "` in global scope", tsFile, token );
 
 #if DEBUG == 1
 #define TS_GET_TOKEN_MSG(msg, ...) if (TS_check_log_level(TS_VERBOSITY_INFO) == TRUE) TS_log_to_file(msg, __VA_ARGS__);
@@ -136,6 +133,7 @@ typedef enum eTSTokenType {
   TS_OPERATOR,
   TS_NUMBER,
   TS_GROUP,
+  TS_NAMESPACE,
 } __attribute__ ((__packed__)) TSTokenType;
 
 typedef enum sTSClassParseFlag {
@@ -250,7 +248,7 @@ TSParserToken *TS_build_parser_token(TSTokenType tokenType, TSParseData *tsParse
 
 void TS_put_back(FILE *stream, volatile const wchar_t *value);
 
-unsigned char TS_name_is_valid(const wchar_t *name);
+unsigned char TS_name_isValid(const wchar_t *name);
 
 void TS_push_child(TSParserToken *token, TSParserToken *child);
 
@@ -424,6 +422,10 @@ TSParserToken *TS_parse_do(TSFile *tsFile, TSParseData *tsParseData);
 
 void TS_free_do(const TSParserToken *token);
 
+TSParserToken *TS_parse_namespace(TSFile *tsFile, TSParseData *tsParseData);
+
+void TS_free_namespace(const TSParserToken *token);
+
 TSParserToken *__attribute__((__used__))TS_create_borrow(TSParserToken *child, TSParseData *tsParseData);
 
 void TS_free_borrow(const TSParserToken *token);
@@ -432,18 +434,18 @@ TSParserToken *TS_parse_ts_token(TSFile *tsFile, TSParseData *data);
 
 void TS_rollback_token(TSFile *tsFile, TSParseData *data, TSParserToken *token);
 
-void TS_free_tsToken(const TSParserToken *token);
+void TS_free_ts_token(const TSParserToken *token);
 
 void TS_free_children(const TSParserToken *token);
 
 void TS_free_children_from(const TSParserToken *token, u_long childIndex);
 
-volatile const wchar_t *TS_getToken(FILE *stream) __attribute__((__malloc__));
+volatile const wchar_t *TS_get_token(FILE *stream) __attribute__((__malloc__));
 
 TSFile *TS_parse_file(const char *fileName);
 
 TSFile *TS_parse_stream(const char *file, FILE *stream);
 
-void TS_free_tsFile(TSFile *tsFile);
+void TS_free_ts_file(TSFile *tsFile);
 
-unsigned char TS_isEmbeddedIn(TSParserToken *token, TSTokenType type);
+unsigned char TS_is_embedded_in(TSParserToken *token, TSTokenType type);

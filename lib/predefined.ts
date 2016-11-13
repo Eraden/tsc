@@ -98,19 +98,20 @@ class Promise extends Object {}
 class Proxy extends Object {}
 class Reflect extends Object {}
 class RegExp extends Object {}
-class SIMD extends Object {}
-// class SIMD.Bool16x8 {}
-// class SIMD.Bool32x4 {}
-// class SIMD.Bool64x2 {}
-// class SIMD.Bool8x16 {}
-// class SIMD.Float32x4 {}
-// class SIMD.Float64x2 {}
-// class SIMD.Int16x8 {}
-// class SIMD.Int32x4 {}
-// class SIMD.Int8x16 {}
-// class SIMD.Uint16x8 {}
-// class SIMD.Uint32x4 {}
-// class SIMD.Uint8x16 {}
+namespace SIMD {
+  class Bool16x8 {}
+  class Bool32x4 {}
+  class Bool64x2 {}
+  class Bool8x16 {}
+  class Float32x4 {}
+  class Float64x2 {}
+  class Int16x8 {}
+  class Int32x4 {}
+  class Int8x16 {}
+  class Uint16x8 {}
+  class Uint32x4 {}
+  class Uint8x16 {}
+}
 class Set extends Object {}
 class SharedArrayBuffer extends Object {}
 class StopIteration extends Object {}

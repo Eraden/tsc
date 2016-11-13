@@ -13,7 +13,7 @@ TS_parse_implements(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (wchar_t *) TS_getToken(tsFile->stream);
+      tok = (wchar_t *) TS_get_token(tsFile->stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "json");
@@ -46,7 +46,7 @@ TS_parse_implements(
         default: {
           if (TS_is_keyword(tok)) {
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "implements");
-          } else if (TS_name_is_valid(tok) == FALSE) {
+          } else if (TS_name_isValid(tok) == FALSE) {
             TS_MISSING_NAME(tsFile, token, "implements");
           } else {
             TSParserToken *definition = TS_find_type(tsFile->file, tok);

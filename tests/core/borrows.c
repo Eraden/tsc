@@ -20,7 +20,7 @@ START_TEST(check_borroms)
   scope = token->children[2];
   ck_assert_eq_ts_scope(scope->tokenType);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void

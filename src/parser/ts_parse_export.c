@@ -7,8 +7,8 @@ TS_parse_export(
 ) {
   TS_TOKEN_BEGIN(TS_EXPORT, tsParseData)
 
-    if (token->parent != NULL) {
-      ts_token_syntax_error(
+    if (token->parent != NULL && !TS_is_embedded_in(token, TS_NAMESPACE)) {
+      TS_token_syntax_error(
           (const wchar_t *) L"Unexpected parent for export. Export can be declared only in global scope.",
           tsFile, token
       );
@@ -20,7 +20,7 @@ TS_parse_export(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
       if (tok == NULL) {
         if (token->childrenSize == 1)
@@ -40,7 +40,7 @@ TS_parse_export(
         case L'\n': {
           if (token->childrenSize == 0) {
             free((void *) tok);
-            ts_token_syntax_error(
+            TS_token_syntax_error(
                 (wchar_t *) L"Expecting expression after `export` keyword. Found new line.",
                 tsFile,
                 token

@@ -94,7 +94,7 @@ START_TEST(parse_valid_else_condition)
   semicolon = scope->children[3];
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_else_conditions_suite(Suite *suite) {

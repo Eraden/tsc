@@ -8,7 +8,7 @@ TS_parse_condition(
 ) {
   TS_TOKEN_BEGIN(TS_CONDITION, tsParseData)
     if (token->parent == NULL) {
-      ts_token_syntax_error((const wchar_t *) L"Invalid condition parent", tsFile, token);
+      TS_token_syntax_error((const wchar_t *) L"Invalid condition parent", tsFile, token);
     } else {
       switch (token->parent->tokenType) {
         case TS_SWITCH:
@@ -18,7 +18,7 @@ TS_parse_condition(
           break;
         }
         default: {
-          ts_token_syntax_error((const wchar_t *) L"Invalid condition parent", tsFile, token);
+          TS_token_syntax_error((const wchar_t *) L"Invalid condition parent", tsFile, token);
           break;
         }
       }
@@ -30,7 +30,7 @@ TS_parse_condition(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "condition");
@@ -50,7 +50,7 @@ TS_parse_condition(
         }
         case L')': {
           if (token->childrenSize == 0) {
-            ts_token_syntax_error((const wchar_t *) L"Empty condition", tsFile, token);
+            TS_token_syntax_error((const wchar_t *) L"Empty condition", tsFile, token);
             free((void *) tok);
             break;
           }
@@ -63,7 +63,7 @@ TS_parse_condition(
               break;
             }
             default: {
-              ts_token_syntax_error((const wchar_t *) L"Invalid condition parent", tsFile, token);
+              TS_token_syntax_error((const wchar_t *) L"Invalid condition parent", tsFile, token);
               break;
             }
           }
@@ -72,7 +72,7 @@ TS_parse_condition(
         }
         case L':': {
           if (token->childrenSize == 0) {
-            ts_token_syntax_error((const wchar_t *) L"Empty condition", tsFile, token);
+            TS_token_syntax_error((const wchar_t *) L"Empty condition", tsFile, token);
             free((void *) tok);
             break;
           }
@@ -83,7 +83,7 @@ TS_parse_condition(
               break;
             }
             default: {
-              ts_token_syntax_error((const wchar_t *) L"Invalid condition parent", tsFile, token);
+              TS_token_syntax_error((const wchar_t *) L"Invalid condition parent", tsFile, token);
               break;
             }
           }
@@ -105,7 +105,7 @@ TS_parse_condition(
           // Operators will override this value
           if (token->childrenSize > 0) {
             TS_UNEXPECTED_TOKEN(tsFile, child, child->name, "condition");
-            TS_free_tsToken(child);
+            TS_free_ts_token(child);
             free((void *) tok);
             break;
           }
@@ -118,10 +118,10 @@ TS_parse_condition(
               if (!resolved) resolved = TS_find_type(tsFile->file, unresolved->name);
               if (!resolved) {
                 TS_UNEXPECTED_TOKEN(tsFile, unresolved, unresolved->name, "condition");
-                TS_free_tsToken(unresolved);
+                TS_free_ts_token(unresolved);
               } else {
                 resolved = TS_create_borrow(resolved, tsParseData);
-                TS_free_tsToken(unresolved);
+                TS_free_ts_token(unresolved);
               }
               break;
             }

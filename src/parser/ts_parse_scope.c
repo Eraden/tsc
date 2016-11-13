@@ -10,12 +10,13 @@ TS_parse_scope_body(
   const wchar_t *tok = NULL;
   volatile unsigned char proceed = TRUE;
 
-  unsigned char IS_BODY = (unsigned char) (TS_isEmbeddedIn(token, TS_CLASS_METHOD) || TS_isEmbeddedIn(token, TS_FUNCTION));
+  unsigned char IS_BODY = (unsigned char) (TS_is_embedded_in(token, TS_CLASS_METHOD) ||
+      TS_is_embedded_in(token, TS_FUNCTION));
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "scope");
@@ -51,14 +52,14 @@ TS_parse_scope_body(
             } else if (resolved) {
               TS_push_child(token, TS_create_borrow(resolved, tsParseData));
               // Replaced with new borrow
-              TS_free_tsToken(child);
+              TS_free_ts_token(child);
             } else {
               // TODO:
               // Temporary ignore missing definition for:
               // instance.call();
               // `.` needs to be implemented!
               // TS_UNEXPECTED_TOKEN(tsFile, child, tok, "scope");
-              TS_free_tsToken(child);
+              TS_free_ts_token(child);
             }
             break;
           }
@@ -67,7 +68,7 @@ TS_parse_scope_body(
               TS_push_child(token, child);
             } else {
               TS_UNEXPECTED_TOKEN(tsFile, child, L"return", "scope");
-              TS_free_tsToken(child);
+              TS_free_ts_token(child);
             }
             break;
           }

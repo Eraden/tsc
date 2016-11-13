@@ -14,7 +14,7 @@ TS_parse_extends(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "class parent name");
         break;
@@ -32,13 +32,13 @@ TS_parse_extends(
           break;
         }
         default: {
-          if (!TS_name_is_valid(tok)) {
-            ts_token_syntax_error((wchar_t *) L"Invalid parent type name", tsFile, token);
+          if (!TS_name_isValid(tok)) {
+            TS_token_syntax_error((wchar_t *) L"Invalid parent type name", tsFile, token);
           } else {
             TS_MOVE_BY(tsParseData, tok);
             TSParserToken *typeToken = TS_find_type(tsFile->file, tok);
             if (typeToken == NULL) {
-              ts_token_syntax_error((const wchar_t *) L"Unknown type used in extends", tsFile, token);
+              TS_token_syntax_error((const wchar_t *) L"Unknown type used in extends", tsFile, token);
             } else {
               TS_push_child(token, TS_create_borrow(typeToken, tsParseData));
             }

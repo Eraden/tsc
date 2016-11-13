@@ -60,7 +60,7 @@ START_TEST(parse_valid_switch)
   ck_assert_ptr_ne(child, NULL);
   ck_assert_eq_ts_default(child->tokenType);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 // SWITCH
@@ -69,14 +69,14 @@ START_TEST(switch_head_unexpected_end_of_stream)
   TSFile *tsFile = TS_parse_file("./examples/switch/head/unexpected_end_of_stream");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert_tsFile_syntax_error(tsFile);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(switch_head_unexpected_token)
   TSFile *tsFile = TS_parse_file("./examples/switch/head/unexpected_token");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert_tsFile_syntax_error(tsFile);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 // switch body
@@ -84,14 +84,14 @@ START_TEST(switch_body_unexpected_end_of_stream)
   TSFile *tsFile = TS_parse_file("./examples/switch/body/unexpected_end_of_stream");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert_tsFile_syntax_error(tsFile);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(switch_body_unexpected_token)
   TSFile *tsFile = TS_parse_file("./examples/switch/body/unexpected_token");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert_tsFile_syntax_error(tsFile);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 // switch conditions
@@ -99,14 +99,14 @@ START_TEST(switch_conditions_unexpected_end_of_stream)
   TSFile *tsFile = TS_parse_file("./examples/switch/conditions/unexpected_end_of_stream");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert_tsFile_syntax_error(tsFile);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(switch_conditions_unexpected_token)
   TSFile *tsFile = TS_parse_file("./examples/switch/conditions/unexpected_token");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert_tsFile_syntax_error(tsFile);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 // CASE
@@ -115,7 +115,7 @@ START_TEST(case_body_unexpected_end_of_stream)
   TSFile *tsFile = TS_parse_file("./examples/case/body/unexpected_end_of_stream");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert_tsFile_syntax_error(tsFile);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 // case conditions
@@ -123,14 +123,14 @@ START_TEST(case_conditions_unexpected_end_of_stream)
   TSFile *tsFile = TS_parse_file("./examples/case/conditions/unexpected_end_of_stream");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert_tsFile_syntax_error(tsFile);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(case_conditions_unexpected_token)
   TSFile *tsFile = TS_parse_file("./examples/case/conditions/unexpected_token");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert_tsFile_syntax_error(tsFile);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_switch_suite(Suite *suite)

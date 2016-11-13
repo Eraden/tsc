@@ -18,7 +18,7 @@ TS_parse_operator_right_operand(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
-    tok = (wchar_t *) TS_getToken(tsFile->stream);
+    tok = (wchar_t *) TS_get_token(tsFile->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, tsParseData->parentTSToken, "operator right operand");
@@ -38,7 +38,7 @@ TS_parse_operator_right_operand(
       }
       default: {
         proceed = FALSE;
-        if (!TS_is_keyword(tok) && TS_name_is_valid(tok)) {
+        if (!TS_is_keyword(tok) && TS_name_isValid(tok)) {
           proceed = FALSE;
         } else {
           TS_UNEXPECTED_TOKEN(tsFile, tsParseData->parentTSToken, tok, "operator right operand");
@@ -76,7 +76,7 @@ TS_parse_operator_resolvePrev(
     }
     if (resolved != NULL) {
       data->prev = TS_create_borrow(resolved, tsParseData);
-      TS_free_tsToken(unresolved);
+      TS_free_ts_token(unresolved);
     } else {
       TS_UNEXPECTED_TOKEN(tsFile, unresolved, unresolved->name, "operator left operand");
     }
@@ -110,10 +110,10 @@ TS_parse_operator_resolveNext(
       }
       if (resolved) {
         data->next = TS_create_borrow(resolved, tsParseData);
-        TS_free_tsToken(unresolved);
+        TS_free_ts_token(unresolved);
       } else {
         TS_UNEXPECTED_TOKEN(tsFile, unresolved, tok, "right operand");
-        TS_free_tsToken(unresolved);
+        TS_free_ts_token(unresolved);
         data->done = TRUE;
       }
     }
@@ -153,7 +153,7 @@ static void TS_parse_operator_a_op_b(
     TSParseOperatorData *data
 ) {
   if (data->prev == NULL) {
-    ts_token_syntax_error((const wchar_t *) L"Missing previous token for operator a op b", tsFile, data->token);
+    TS_token_syntax_error((const wchar_t *) L"Missing previous token for operator a op b", tsFile, data->token);
     return;
   }
   TS_parse_operator_resolveNext(tsFile, tsParseData, data);
@@ -186,7 +186,7 @@ static void TS_parse_operator_a_op_b(
       }
       default: {
         TS_UNEXPECTED_TOKEN(tsFile, data->prev, data->tok, "right operand");
-        if (data->next) TS_free_tsToken(data->next);
+        if (data->next) TS_free_ts_token(data->next);
         break;
       }
     }
@@ -213,7 +213,7 @@ static void TS_parse_operator_op_a(
     }
     default: {
       TS_UNEXPECTED_TOKEN(tsFile, data->next, data->tok, "invalid right operand");
-      TS_free_tsToken(data->next);
+      TS_free_ts_token(data->next);
       break;
     }
   }
@@ -228,7 +228,7 @@ static void TS_parse_operator_a_op(
     TSParseOperatorData *data
 ) {
   if (data->prev == NULL) {
-    ts_token_syntax_error((const wchar_t *) L"Missing previous token for operator a op b", tsFile, data->token);
+    TS_token_syntax_error((const wchar_t *) L"Missing previous token for operator a op b", tsFile, data->token);
     return;
   }
 
@@ -306,7 +306,7 @@ TS_parse_operator_advanced(
         switch (data.next->tokenType) {
           case TS_NUMBER: {
             wchar_t *name = TS_join_strings(data.token->name, data.next->content);
-            TS_free_tsToken(data.next);
+            TS_free_ts_token(data.next);
             data.next = NULL;
             free(data.token->name);
             data.token->name = name;

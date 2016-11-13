@@ -12,11 +12,11 @@ TS_parse_call_arguments(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
       if (tok == NULL) {
         if (token->data == NULL) {
-          ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing `new` keyword.", tsFile, token);
+          TS_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing `new` keyword.", tsFile, token);
           break;
         } else break;
       }
@@ -44,10 +44,10 @@ TS_parse_call_arguments(
           tsParseData->token = tok;
           TSParserToken *child = TS_parse_argument(tsFile, tsParseData);
           if (child == NULL) {
-            ts_token_syntax_error((const wchar_t *) L"Expecting call argument but nothing was found", tsFile, token);
+            TS_token_syntax_error((const wchar_t *) L"Expecting call argument but nothing was found", tsFile, token);
           } else if (child->tokenType != TS_ARGUMENT) {
             TS_UNEXPECTED_TOKEN(tsFile, child, tok, "call arguments");
-            TS_free_tsToken(child);
+            TS_free_ts_token(child);
           } else {
             TS_push_child(token, child);
           }

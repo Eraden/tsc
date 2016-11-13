@@ -32,7 +32,7 @@ TS_parse_interface_method(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "interface method");
@@ -113,7 +113,7 @@ TS_parse_interface_body(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "interface body");
@@ -191,7 +191,7 @@ TS_parse_interface(
 ) {
   TS_TOKEN_BEGIN(TS_INTERFACE, tsParseData)
     if (token->parent != NULL) {
-      ts_token_syntax_error((const wchar_t *) L"Interface must be in global scope!", tsFile, token);
+      TS_token_syntax_error((const wchar_t *) L"Interface must be in global scope!", tsFile, token);
     }
 
     const wchar_t *tok = NULL;
@@ -203,7 +203,7 @@ TS_parse_interface(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "interface");
@@ -240,8 +240,8 @@ TS_parse_interface(
             }
           } else if (TS_is_keyword(tok)) {
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "interface");
-          } else if (token->name == NULL && TS_name_is_valid(tok) == FALSE) {
-            ts_token_syntax_error((const wchar_t *) L"Not suitable interface name", tsFile, token);
+          } else if (token->name == NULL && TS_name_isValid(tok) == FALSE) {
+            TS_token_syntax_error((const wchar_t *) L"Not suitable interface name", tsFile, token);
           } else if (token->name == NULL) {
             TS_MOVE_BY(tsParseData, tok);
             token->name = TS_clone_string(tok);

@@ -50,11 +50,11 @@ ts_syntax_error(
     const u_long character
 ) {
   log_error((wchar_t *) L"Syntax error: %ls\n", msg);
-  ts_log_position(file, line, character);
+  TS_log_position(file, line, character);
 }
 
 void
-ts_token_syntax_error(
+TS_token_syntax_error(
     const wchar_t *msg,
     TSFile *tsFile,
     const TSParserToken *token,
@@ -90,7 +90,7 @@ ts_token_syntax_error(
 }
 
 void
-ts_token_syntax_error_info(
+TS_token_syntax_error_info(
     struct sTSFile *tsFile,
     const wchar_t *format,
     const wchar_t *msg
@@ -114,7 +114,7 @@ ts_token_syntax_error_info(
 }
 
 void
-ts_log_position(
+TS_log_position(
     const wchar_t *file,
     const u_long character,
     const u_long line
@@ -489,7 +489,7 @@ TS_type_from_string(
       if (!foundDot) {
         foundDot = TRUE;
       } else {
-        ts_token_syntax_error((const wchar_t *) L"Invalid token", tsFile, unknown);
+        TS_token_syntax_error((const wchar_t *) L"Invalid token", tsFile, unknown);
       }
     }
   }

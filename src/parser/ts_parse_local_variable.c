@@ -10,15 +10,15 @@ TS_parse_local_variable_done(
   TSParserToken *token = tsParseData->parentTSToken;
   switch (parseFlag) {
     case TS_PARSE_VARIABLE_NAME: {
-      ts_token_syntax_error((wchar_t *) L"Missing variable name", tsFile, token);
+      TS_token_syntax_error((wchar_t *) L"Missing variable name", tsFile, token);
       break;
     }
     case TS_PARSE_VARIABLE_TYPE: {
-      ts_token_syntax_error((wchar_t *) L"Expect variable type but none provided", tsFile, token);
+      TS_token_syntax_error((wchar_t *) L"Expect variable type but none provided", tsFile, token);
       break;
     }
     case TS_PARSE_VARIABLE_VALUE: {
-      ts_token_syntax_error((wchar_t *) L"Expect variable default value but none provided", tsFile, token);
+      TS_token_syntax_error((wchar_t *) L"Expect variable default value but none provided", tsFile, token);
       break;
     }
     case TS_PARSE_VARIABLE_NONE: {
@@ -49,7 +49,7 @@ TS_parse_local_variable_body(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
     if (tok == NULL) {
       TS_parse_local_variable_done(tsFile, tsParseData, parseFlag);
@@ -63,7 +63,7 @@ TS_parse_local_variable_body(
       }
       case L'\n': {
         free((void *) tok);
-        ts_token_syntax_error((wchar_t *) L"New line in variable definition is not allowed!", tsFile, token);
+        TS_token_syntax_error((wchar_t *) L"New line in variable definition is not allowed!", tsFile, token);
         proceed = FALSE;
         break;
       }
@@ -121,7 +121,7 @@ TS_parse_local_variable_body(
           TS_log_to_file((wchar_t *) L"Setting name of local variable\n");
           if (TS_is_keyword(tok)) {
             free((void *) tok);
-            ts_token_syntax_error((const wchar_t *) L"Local variable name cannot use reserved word", tsFile, token);
+            TS_token_syntax_error((const wchar_t *) L"Local variable name cannot use reserved word", tsFile, token);
             proceed = FALSE;
             break;
           }

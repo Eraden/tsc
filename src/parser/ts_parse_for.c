@@ -16,7 +16,7 @@ TS_resolve_for_token_type(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
-    tok = (const wchar_t *) TS_getToken(tsFile->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "for");
@@ -111,7 +111,7 @@ TS_parse_for_head_for_of(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
-    tok = (const wchar_t *) TS_getToken(tsFile->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, head, "for of head");
@@ -145,7 +145,7 @@ TS_parse_for_head_for_of(
               TS_push_child(head, current);
               flag = TS_PARSE_FOR_ITERATION_KEYWORD;
             } else {
-              TS_free_tsToken(current);
+              TS_free_ts_token(current);
               TS_UNEXPECTED_TOKEN(tsFile, current, tok, "for of variable name");
             }
             break;
@@ -155,22 +155,22 @@ TS_parse_for_head_for_of(
               TS_push_child(head, current);
               flag = TS_PARSE_FOR_COLLECTION;
             } else {
-              TS_free_tsToken(current);
+              TS_free_ts_token(current);
               TS_UNEXPECTED_TOKEN(tsFile, current, tok, "for of, expecting to get `of`");
             }
             break;
           }
           case TS_PARSE_FOR_COLLECTION: {
             if (TS_is_keyword(tok) && current->tokenType != TS_ARRAY) {
-              TS_free_tsToken(current);
-              ts_token_syntax_error(
+              TS_free_ts_token(current);
+              TS_token_syntax_error(
                   (const wchar_t *) L"Unexpected keyword while parsing `for of` collection",
                   tsFile, current
               );
             } else if (current->tokenType == TS_UNKNOWN || current->tokenType == TS_ARRAY) {
               TS_push_child(head, current);
             } else {
-              TS_free_tsToken(current);
+              TS_free_ts_token(current);
               TS_UNEXPECTED_TOKEN(tsFile, current, tok, "for of, expecting to collection`");
             }
             break;
@@ -197,7 +197,7 @@ TS_parse_for_head_for_in(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
-    tok = (const wchar_t *) TS_getToken(tsFile->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, head, "for in head");
@@ -231,7 +231,7 @@ TS_parse_for_head_for_in(
               TS_push_child(head, child);
               flag = TS_PARSE_FOR_ITERATION_KEYWORD;
             } else {
-              TS_free_tsToken(child);
+              TS_free_ts_token(child);
               TS_UNEXPECTED_TOKEN(tsFile, child, tok, "for in variable name");
             }
             break;
@@ -241,20 +241,21 @@ TS_parse_for_head_for_in(
               TS_push_child(head, child);
               flag = TS_PARSE_FOR_COLLECTION;
             } else {
-              TS_free_tsToken(child);
+              TS_free_ts_token(child);
               TS_UNEXPECTED_TOKEN(tsFile, child, tok, "for in, expecting to get `in`");
             }
             break;
           }
           case TS_PARSE_FOR_COLLECTION: {
             if (TS_is_keyword(tok)) {
-              TS_free_tsToken(child);
-              ts_token_syntax_error((const wchar_t *) L"Unexpected keyword while parsing `for in` collection", tsFile, child);
+              TS_free_ts_token(child);
+              TS_token_syntax_error((const wchar_t *) L"Unexpected keyword while parsing `for in` collection", tsFile,
+                                    child);
             } else if (child->tokenType == TS_UNKNOWN || child->tokenType == TS_COLON) {
               TS_push_child(head, child);
             } else {
               TS_UNEXPECTED_TOKEN(tsFile, child, tok, "for in, expecting to get collection");
-              TS_free_tsToken(child);
+              TS_free_ts_token(child);
             }
             break;
           }
@@ -286,7 +287,7 @@ TS_parse_for_head_for_with_condition(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
-    tok = (const wchar_t *) TS_getToken(tsFile->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, head, "for head");
@@ -329,7 +330,8 @@ TS_parse_for_head_for_with_condition(
             break;
           }
           case TS_PARSE_FOR_CHANGE: {
-            ts_token_syntax_error((const wchar_t *) L"Unexpected semicolon while parsing for with condition head", tsFile, current);
+            TS_token_syntax_error((const wchar_t *) L"Unexpected semicolon while parsing for with condition head",
+                                  tsFile, current);
             break;
           }
         }
@@ -349,7 +351,7 @@ TS_parse_for_head_for_with_condition(
               }
               case TS_CONST:
               default: {
-                TS_free_tsToken(child);
+                TS_free_ts_token(child);
                 TS_UNEXPECTED_TOKEN(tsFile, child, tok, "for variables section");
                 break;
               }
@@ -367,7 +369,7 @@ TS_parse_for_head_for_with_condition(
     }
   }
   if (flag != TS_PARSE_FOR_CHANGE) {
-    ts_token_syntax_error((const wchar_t *) L"Unexpected end of for head", tsFile, head);
+    TS_token_syntax_error((const wchar_t *) L"Unexpected end of for head", tsFile, head);
   }
   tsParseData->parentTSToken = head->parent;
 }
@@ -394,7 +396,7 @@ TS_parse_for_head(
       break;
     }
     default: {
-      ts_token_syntax_error((const wchar_t *) L"Invalid for head", tsFile, head);
+      TS_token_syntax_error((const wchar_t *) L"Invalid for head", tsFile, head);
     }
   }
   return head;
@@ -413,7 +415,7 @@ TS_parse_for_body(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
-    tok = (const wchar_t *) TS_getToken(tsFile->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, tsParseData->parentTSToken, "for body");
@@ -472,7 +474,7 @@ TS_parse_for(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile);
 
-      tok = (const wchar_t *) TS_getToken(tsFile->stream);
+      tok = (const wchar_t *) TS_get_token(tsFile->stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "for");

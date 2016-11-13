@@ -14,7 +14,7 @@ TS_parse_multiline_comment(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "multiline comment");
         break;

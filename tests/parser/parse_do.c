@@ -50,7 +50,7 @@ START_TEST(parse_valid_do)
   ck_assert_eq_ts_while(whileToken->tokenType);
   ck_assert_eq_ts_scope(scope->tokenType);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_do_suite(Suite *suite) {

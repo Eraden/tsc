@@ -31,7 +31,7 @@ TS_parse_scope_or_json(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
-    tok = (wchar_t *) TS_getToken(tsFile->stream);
+    tok = (wchar_t *) TS_get_token(tsFile->stream);
 
     if (!tok) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, tsParseData->parentTSToken, "scope or json");

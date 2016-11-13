@@ -40,7 +40,7 @@ TS_parse_class_head(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "class header");
@@ -73,10 +73,10 @@ TS_parse_class_head(
               extends = child;
               TS_push_child(token, child);
             } else {
-              ts_token_syntax_error((wchar_t *) L"Unexpected parent name. Class can have only one parent", tsFile,
+              TS_token_syntax_error((wchar_t *) L"Unexpected parent name. Class can have only one parent", tsFile,
                                     token);
               proceed = FALSE;
-              TS_free_tsToken(child);
+              TS_free_ts_token(child);
             }
             break;
           }
@@ -87,7 +87,7 @@ TS_parse_class_head(
           case TS_UNKNOWN:
           default: {
             TS_UNEXPECTED_TOKEN(tsFile, child, tok, "class head");
-            TS_free_tsToken(child);
+            TS_free_ts_token(child);
             break;
           }
         }
@@ -112,7 +112,7 @@ TS_parse_class_method(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, bodyToken, "class header");
       break;
@@ -214,7 +214,7 @@ TS_parse_class_member(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, bodyToken, "class member");
@@ -234,7 +234,7 @@ TS_parse_class_member(
       }
       case L'(': {
         if (name == NULL) {
-          ts_token_syntax_error((wchar_t *) L"Missing class method name", tsFile, bodyToken);
+          TS_token_syntax_error((wchar_t *) L"Missing class method name", tsFile, bodyToken);
           proceed = FALSE;
         } else {
           bodyToken->tokenType = TS_CLASS_METHOD;
@@ -357,7 +357,7 @@ TS_parse_class_body(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "class body member");
       break;
@@ -392,7 +392,7 @@ TS_parse_class_body(
 
         if (child->tokenType == TS_UNKNOWN) {
           TS_put_back(tsParseData->stream, child->content);
-          TS_free_tsToken(child);
+          TS_free_ts_token(child);
 
           child = TS_parse_class_member(tsFile, tsParseData);
         }
@@ -419,7 +419,7 @@ TS_parse_class(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile);
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "class name");
         break;
@@ -440,14 +440,14 @@ TS_parse_class(
             token->name = TS_class_name_from_parent(tsParseData, token, tok);
             if (token->name == NULL) {
               free((void *) tok);
-              ts_token_syntax_error((wchar_t *) L"Missing class name", tsFile, token);
+              TS_token_syntax_error((wchar_t *) L"Missing class name", tsFile, token);
               proceed = FALSE;
               break;
             }
             TS_put_back(tsParseData->stream, tok);
           } else {
             free((void *) tok);
-            ts_token_syntax_error((wchar_t *) L"Missing class name", tsFile, token);
+            TS_token_syntax_error((wchar_t *) L"Missing class name", tsFile, token);
             proceed = FALSE;
             break;
           }
@@ -468,8 +468,8 @@ TS_parse_class(
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "class name");
             free((void *) tok);
 
-          } else if (TS_name_is_valid(tok) == FALSE) {
-            ts_token_syntax_error((wchar_t *) L"Invalid class name", tsFile, token);
+          } else if (TS_name_isValid(tok) == FALSE) {
+            TS_token_syntax_error((wchar_t *) L"Invalid class name", tsFile, token);
             free((void *) tok);
 
           } else {

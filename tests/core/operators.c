@@ -288,7 +288,7 @@ START_TEST(parse_valid_operators_advenced)
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
   // done
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
   TS_experimentalFlag = TS_DISABLE_EXPERIMENTAL;
 END_TEST
 

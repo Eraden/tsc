@@ -13,7 +13,7 @@ TS_parse_json_entry(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (wchar_t *) TS_getToken(tsFile->stream);
+      tok = (wchar_t *) TS_get_token(tsFile->stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "json");
@@ -62,9 +62,9 @@ TS_parse_json_entry(
                 TS_push_child(token, key);
               } else if (key) {
                 TS_UNEXPECTED_TOKEN(tsFile, key, tok, "json entry key");
-                TS_free_tsToken(key);
+                TS_free_ts_token(key);
               } else {
-                ts_token_syntax_error((const wchar_t *) L"Parse json key failed. No token returned!", tsFile, token);
+                TS_token_syntax_error((const wchar_t *) L"Parse json key failed. No token returned!", tsFile, token);
               }
               break;
             }
@@ -102,7 +102,7 @@ TS_parse_json(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (wchar_t *) TS_getToken(tsFile->stream);
+      tok = (wchar_t *) TS_get_token(tsFile->stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "json");

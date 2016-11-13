@@ -181,7 +181,7 @@ START_TEST(parse_valid_classes_file)
   semicolon = tsFile->tokens[11];
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 
@@ -191,28 +191,28 @@ START_TEST(parse_class_with_invalid_name)
   TSFile *file = TS_parse_file("./examples/class/invalid_class_name");
   ck_assert_ptr_ne(file, NULL);
   ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 START_TEST(parse_class_without_name)
   TSFile *file = TS_parse_file("./examples/class/missing_class_name");
   ck_assert_ptr_ne(file, NULL);
   ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 START_TEST(parse_class_with_multiple_super_class)
   TSFile *file = TS_parse_file("./examples/class/multiple_super_class");
   ck_assert_ptr_ne(file, NULL);
   ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 START_TEST(parse_class_member_without_ending)
   TSFile *file = TS_parse_file("./examples/class/missing_class_ending");
   ck_assert_ptr_ne(file, NULL);
   ck_assert(file->sanity == TS_FILE_SYNTAX_ERROR);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 void parse_classes_suite(Suite *suite) {

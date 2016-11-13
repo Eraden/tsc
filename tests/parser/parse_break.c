@@ -4,7 +4,7 @@ START_TEST(parse_valid_break)
   TSFile *tsFile = TS_parse_file("./examples/break/valid.ts");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert(tsFile->sanity == TS_FILE_VALID);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(break_unexpected_token)
@@ -20,7 +20,7 @@ START_TEST(break_unexpected_token)
            tsFile->file
   );
 //  ck_assert_wstr_eq(tsFile->errorReason, error);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void

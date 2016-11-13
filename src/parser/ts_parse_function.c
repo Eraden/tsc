@@ -13,7 +13,7 @@ TS_parse_function_arguments(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "function argument");
@@ -69,7 +69,7 @@ TS_parse_function_lookup_return_type(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "function return type");
@@ -112,7 +112,7 @@ TS_parse_function_lookup_return_type(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "function return type");
@@ -132,7 +132,7 @@ TS_parse_function_lookup_return_type(
       }
       case L'{': {
         if (!foundType) {
-          ts_token_syntax_error(
+          TS_token_syntax_error(
               (const wchar_t *) L"Found colon but type wasn't declared while parsing function!",
               tsFile,
               token
@@ -148,15 +148,15 @@ TS_parse_function_lookup_return_type(
       default: {
         if (foundType) {
           free((void *) tok);
-          ts_token_syntax_error(
+          TS_token_syntax_error(
               (wchar_t *) L"Unexpected token while parsing function return type. Return type was already defined!",
               tsFile,
               token
           );
           proceed = FALSE;
-        } else if (!TS_name_is_valid(tok)) {
+        } else if (!TS_name_isValid(tok)) {
           free((void *) tok);
-          ts_token_syntax_error((wchar_t *) L"Invalid type name for function return type!", tsFile, token);
+          TS_token_syntax_error((wchar_t *) L"Invalid type name for function return type!", tsFile, token);
           proceed = FALSE;
         } else {
           foundType = TRUE;
@@ -188,7 +188,7 @@ TS_parse_function(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "function");
@@ -228,7 +228,7 @@ TS_parse_function(
                 break;
               }
               default: {
-                ts_token_syntax_error((const wchar_t *) L"Missing function name", tsFile, token);
+                TS_token_syntax_error((const wchar_t *) L"Missing function name", tsFile, token);
                 proceed = FALSE;
               }
             }
@@ -240,12 +240,12 @@ TS_parse_function(
           break;
         }
         default: {
-          if (TS_name_is_valid(tok)) {
+          if (TS_name_isValid(tok)) {
             token->name = TS_clone_string(tok);
             free((void *) tok);
           } else {
             free((void *) tok);
-            ts_token_syntax_error((wchar_t *) L"Invalid function name", tsFile, token);
+            TS_token_syntax_error((wchar_t *) L"Invalid function name", tsFile, token);
           }
           proceed = FALSE;
           break;

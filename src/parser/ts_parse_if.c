@@ -13,7 +13,7 @@ TS_parse_if_body(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "`if` body (looking for brackets)");
@@ -58,7 +58,7 @@ TS_parse_if_conditions(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, tsParseData->parentTSToken, "`if` conditions");
@@ -106,7 +106,7 @@ TS_lookup_else(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
     if (tok == NULL) {
       return;

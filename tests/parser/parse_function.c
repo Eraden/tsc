@@ -196,56 +196,56 @@ START_TEST(parse_valid_functions)
   ck_assert_eq_ts_function_return_type(token->children[1]->tokenType);
   ck_assert_wstr_eq(token->name, L"example10");
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(parse_function_with_missing_return_type)
   TSFile *file = TS_parse_file("./examples/functions/missing_return_type");
   ck_assert_ptr_ne(file, NULL);
   ck_assert_tsFile_syntax_error(file);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 START_TEST(parse_function_with_invalid_return_type)
   TSFile *file = TS_parse_file("./examples/functions/invalid_return_type");
   ck_assert_ptr_ne(file, NULL);
   ck_assert_tsFile_syntax_error(file);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 START_TEST(parse_function_with_invalid_return_type_name)
   TSFile *file = TS_parse_file("./examples/functions/invalid_return_type_name");
   ck_assert_ptr_ne(file, NULL);
   ck_assert_tsFile_syntax_error(file);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 START_TEST(parse_function_with_invalid_arg_without_name)
   TSFile *file = TS_parse_file("./examples/functions/missing_arg_name");
   ck_assert_ptr_ne(file, NULL);
   ck_assert_tsFile_syntax_error(file);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 START_TEST(parse_function_with_invalid_arg_with_missing_type)
   TSFile *file = TS_parse_file("./examples/functions/missing_arg_type");
   ck_assert_ptr_ne(file, NULL);
   ck_assert_tsFile_syntax_error(file);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 START_TEST(parse_function_with_invalid_arg_with_missing_value)
   TSFile *file = TS_parse_file("./examples/functions/missing_arg_value");
   ck_assert_ptr_ne(file, NULL);
   ck_assert_tsFile_syntax_error(file);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 START_TEST(parse_function_with_invalid_arg_skipping_to_next_before_giving_arg_name)
   TSFile *file = TS_parse_file("./examples/functions/missing_first_arg_name");
   ck_assert_ptr_ne(file, NULL);
   ck_assert_tsFile_syntax_error(file);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 void parse_functions_suite(Suite *suite) {

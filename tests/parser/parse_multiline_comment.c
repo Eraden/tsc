@@ -27,14 +27,14 @@ START_TEST(parse_valid_multiline_comment)
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L" Single line comment ");
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(parse_miltiline_comment_with_no_ending)
   TSFile *tsFile = TS_parse_file("./examples/multiline_comment/missing_ending");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_multiline_comment_suite(Suite *suite) {

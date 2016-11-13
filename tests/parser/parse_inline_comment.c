@@ -32,8 +32,8 @@ START_TEST(parse_valid_inline_comment)
   ck_assert_uint_eq(token->childrenSize, 0);
   ck_assert_ptr_eq(token->children, NULL);
   ck_assert_ptr_eq(token->name, NULL);
-  
-  TS_free_tsFile(tsFile);
+
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_inline_comment_suite(Suite *suite) {

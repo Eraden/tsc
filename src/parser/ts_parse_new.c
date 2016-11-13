@@ -13,11 +13,11 @@ TS_parse_new(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_getToken(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
 
       if (tok == NULL) {
         if (token->data == NULL) {
-          ts_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing `new` keyword.", tsFile, token);
+          TS_token_syntax_error((wchar_t *) L"Unexpected end of stream while parsing `new` keyword.", tsFile, token);
           break;
         } else break;
       }
@@ -31,7 +31,7 @@ TS_parse_new(
         case L'\n': {
           if (token->childrenSize == 0) {
             free((void *) tok);
-            ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found new line.", tsFile, token);
+            TS_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found new line.", tsFile, token);
             proceed = FALSE;
             break;
           } else {
@@ -44,7 +44,7 @@ TS_parse_new(
         case L';': {
           if (token->childrenSize == 0) {
             free((void *) tok);
-            ts_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found `;`.", tsFile, token);
+            TS_token_syntax_error((wchar_t *) L"Expecting class after `new` keyword. Found `;`.", tsFile, token);
             proceed = FALSE;
             break;
           } else {
@@ -61,7 +61,7 @@ TS_parse_new(
           if (arguments) {
             TS_push_child(token, arguments);
           } else {
-            ts_token_syntax_error((const wchar_t *) L"Expecting call arguments but nothing was found", tsFile, token);
+            TS_token_syntax_error((const wchar_t *) L"Expecting call arguments but nothing was found", tsFile, token);
           }
           free((void *) tok);
           break;
@@ -77,7 +77,7 @@ TS_parse_new(
           if (classToken) {
             TS_push_child(token, TS_create_borrow(classToken, tsParseData));
           } else {
-            ts_token_syntax_error((const wchar_t *) L"Instantiation of unknown class", tsFile, token);
+            TS_token_syntax_error((const wchar_t *) L"Instantiation of unknown class", tsFile, token);
           }
 
           free((void *) tok);

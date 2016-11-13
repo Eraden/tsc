@@ -733,7 +733,7 @@ START_TEST(parse_class_with_complex_methods)
   ck_assert_wstr_eq(child->name, L"private_method_24");
   ck_assert_ptr_ne(child->children, NULL);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 void parse_class_with_multiple_instance_methods_suite(TCase *tc_class) {

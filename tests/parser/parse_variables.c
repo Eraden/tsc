@@ -166,49 +166,49 @@ START_TEST(parse_valid_variables)
   ck_assert_ptr_ne(semicolon, NULL);
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
-  TS_free_tsFile(tsFile);
+  TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(parse_var_no_name)
   TSFile *file = TS_parse_file("./examples/variables/no_name");
   ck_assert_ptr_ne(file, NULL);
   ck_assert_tsFile_syntax_error(file);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 START_TEST(parse_var_type_without_name)
   TSFile *file = TS_parse_file("./examples/variables/missing_type");
   ck_assert_ptr_ne(file, NULL);
   ck_assert_tsFile_syntax_error(file);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 START_TEST(parse_var_value_without_expression)
   TSFile *file = TS_parse_file("./examples/variables/missing_value");
   ck_assert_ptr_ne(file, NULL);
   ck_assert_tsFile_syntax_error(file);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 START_TEST(parse_var_with_reserved_word_as_name)
   TSFile *file = TS_parse_file("./examples/variables/var_name_reserved_word");
   ck_assert_ptr_ne(file, NULL);
   ck_assert_tsFile_syntax_error(file);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 START_TEST(parse_let_with_reserved_word_as_name)
   TSFile *file = TS_parse_file("./examples/variables/let_name_reserved_word");
   ck_assert_ptr_ne(file, NULL);
   ck_assert_tsFile_syntax_error(file);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 START_TEST(parse_const_with_reserved_word_as_name)
   TSFile *file = TS_parse_file("./examples/variables/const_name_reserved_word");
   ck_assert_ptr_ne(file, NULL);
   ck_assert_tsFile_syntax_error(file);
-  TS_free_tsFile(file);
+  TS_free_ts_file(file);
 END_TEST
 
 void parse_variables_suite(Suite *suite) {

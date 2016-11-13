@@ -9,7 +9,7 @@ TS_parse_while_conditions(
   unsigned char proceed = TRUE;
 
   while (proceed) {
-    tok = (wchar_t *) TS_getToken(tsFile->stream);
+    tok = (wchar_t *) TS_get_token(tsFile->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, tsParseData->parentTSToken, "while conditions");
@@ -56,7 +56,7 @@ TS_parse_while_scope(
   unsigned char proceed = TRUE;
 
   while (proceed) {
-    tok = (wchar_t *) TS_getToken(tsFile->stream);
+    tok = (wchar_t *) TS_get_token(tsFile->stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, tsParseData->parentTSToken, "while body");
