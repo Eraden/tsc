@@ -1,0 +1,19 @@
+digraph operators {
+  center = 1;
+  pad = 1.0;
+  forcelabels=true;
+
+  op_1 [ label="TS_OPERATOR" ];
+  op_2 [ label="TS_OPERATOR" ];
+  group [ label="TS_GROUP" ];
+  number [ label="TS_NUMBER" ];
+  borrow [ label="TS_BORROW" ];
+
+  op_1 -> op_2;
+  op_1 -> group;
+  op_1 -> number;
+  op_1 -> borrow;
+  op_2 -> group;
+  op_2 -> number;
+  op_2 -> borrow;
+}
