@@ -13,8 +13,8 @@ START_TEST(parse_valid_json)
   ck_assert_eq_ts_var(variable->tokenType);
   ck_assert_ptr_ne(variable->children, NULL);
   ck_assert_uint_eq(variable->childrenSize, 2);
-  TS_check_validate_borrow(variable->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
-  json = variable->children[TS_VARIABLE_VALUE];
+  TS_check_validate_borrow(variable->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
+  json = variable->children[TS_VARIABLE_VALUE_INDEX];
   ck_assert_ptr_ne(json, NULL);
   ck_assert_eq_ts_json(json->tokenType);
   ck_assert_uint_eq(json->childrenSize, 1);
@@ -37,8 +37,8 @@ START_TEST(parse_valid_json)
   ck_assert_eq_ts_var(variable->tokenType);
   ck_assert_ptr_ne(variable->children, NULL);
   ck_assert_uint_eq(variable->childrenSize, 2);
-  TS_check_validate_borrow(variable->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
-  json = variable->children[TS_VARIABLE_VALUE];
+  TS_check_validate_borrow(variable->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
+  json = variable->children[TS_VARIABLE_VALUE_INDEX];
   ck_assert_ptr_ne(json, NULL);
   ck_assert_eq_ts_json(json->tokenType);
   ck_assert_uint_eq(json->childrenSize, 2);
@@ -71,8 +71,8 @@ START_TEST(parse_valid_json)
   ck_assert_eq_ts_var(variable->tokenType);
   ck_assert_ptr_ne(variable->children, NULL);
   ck_assert_uint_eq(variable->childrenSize, 2);
-  TS_check_validate_borrow(variable->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
-  json = variable->children[TS_VARIABLE_VALUE];
+  TS_check_validate_borrow(variable->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
+  json = variable->children[TS_VARIABLE_VALUE_INDEX];
   ck_assert_ptr_ne(json, NULL);
   ck_assert_eq_ts_json(json->tokenType);
   ck_assert_uint_eq(json->childrenSize, 1);

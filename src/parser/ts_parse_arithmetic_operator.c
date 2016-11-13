@@ -16,5 +16,6 @@ TS_free_operator(
 ) {
   if (token->content)
     free(token->content);
+  TS_free_children(token);
   free((void *) token);
 }

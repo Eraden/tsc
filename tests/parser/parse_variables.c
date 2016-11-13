@@ -19,7 +19,7 @@ START_TEST(parse_valid_variables)
   ck_assert_eq_ts_var(token->tokenType);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"a");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
   
   semicolon = tsFile->tokens[1];
   ck_assert_ptr_ne(semicolon, NULL);
@@ -29,7 +29,7 @@ START_TEST(parse_valid_variables)
   ck_assert_eq_ts_var(token->tokenType);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"b");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_NUMBER_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_NUMBER_TYPE);
 
   semicolon = tsFile->tokens[3];
   ck_assert_ptr_ne(semicolon, NULL);
@@ -39,7 +39,7 @@ START_TEST(parse_valid_variables)
   ck_assert_eq_ts_var(token->tokenType);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"c");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
 
   semicolon = tsFile->tokens[5];
   ck_assert_ptr_ne(semicolon, NULL);
@@ -49,7 +49,7 @@ START_TEST(parse_valid_variables)
   ck_assert_eq_ts_var(token->tokenType);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"d");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_NUMBER_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_NUMBER_TYPE);
 
   semicolon = tsFile->tokens[7];
   ck_assert_ptr_ne(semicolon, NULL);
@@ -60,7 +60,7 @@ START_TEST(parse_valid_variables)
   ck_assert_eq_ts_let(token->tokenType);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"e");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
 
   semicolon = tsFile->tokens[9];
   ck_assert_ptr_ne(semicolon, NULL);
@@ -71,7 +71,7 @@ START_TEST(parse_valid_variables)
   ck_assert_eq_ts_let(token->tokenType);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"f");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_NUMBER_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_NUMBER_TYPE);
 
   semicolon = tsFile->tokens[11];
   ck_assert_ptr_ne(semicolon, NULL);
@@ -81,7 +81,7 @@ START_TEST(parse_valid_variables)
   ck_assert_eq_ts_let(token->tokenType);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"g");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
 
   semicolon = tsFile->tokens[13];
   ck_assert_ptr_ne(semicolon, NULL);
@@ -91,7 +91,7 @@ START_TEST(parse_valid_variables)
   ck_assert_eq_ts_let(token->tokenType);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"h");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_NUMBER_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_NUMBER_TYPE);
 
   semicolon = tsFile->tokens[15];
   ck_assert_ptr_ne(semicolon, NULL);
@@ -101,7 +101,7 @@ START_TEST(parse_valid_variables)
   token = tsFile->tokens[16];
   ck_assert_eq_ts_const(token->tokenType);
   ck_assert_wstr_eq(token->name, L"i");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
 
   semicolon = tsFile->tokens[17];
   ck_assert_ptr_ne(semicolon, NULL);
@@ -111,7 +111,7 @@ START_TEST(parse_valid_variables)
   ck_assert(token->tokenType == TS_CONST);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"j");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_NUMBER_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_NUMBER_TYPE);
 
   semicolon = tsFile->tokens[19];
   ck_assert_ptr_ne(semicolon, NULL);
@@ -121,7 +121,7 @@ START_TEST(parse_valid_variables)
   ck_assert_eq_ts_const(token->tokenType);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"k");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
 
   semicolon = tsFile->tokens[21];
   ck_assert_ptr_ne(semicolon, NULL);
@@ -131,7 +131,7 @@ START_TEST(parse_valid_variables)
   ck_assert(token->tokenType == TS_CONST);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"l");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_NUMBER_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_NUMBER_TYPE);
 
   semicolon = tsFile->tokens[23];
   ck_assert_ptr_ne(semicolon, NULL);
@@ -142,25 +142,25 @@ START_TEST(parse_valid_variables)
   token = tsFile->tokens[24];
   ck_assert_eq_ts_var(token->tokenType);
   ck_assert_wstr_eq(token->name, L"m");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
 
   token = tsFile->tokens[25];
   ck_assert_eq_ts_var(token->tokenType);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"n");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_NUMBER_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_NUMBER_TYPE);
 
   token = tsFile->tokens[26];
   ck_assert_eq_ts_var(token->tokenType);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"o");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
 
   token = tsFile->tokens[27];
   ck_assert_eq_ts_var(token->tokenType);
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"p");
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_STRING_TYPE);
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_STRING_TYPE);
 
   semicolon = tsFile->tokens[28];
   ck_assert_ptr_ne(semicolon, NULL);

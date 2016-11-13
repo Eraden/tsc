@@ -8,6 +8,7 @@ START_TEST(parse_valid_if_condition)
 
   TSParserToken *token = NULL, *cond = NULL, *data = NULL, *scope = NULL, *constToken = NULL, *varToken = NULL, *semicolon = NULL;
 
+  // if (1);
   token = tsFile->tokens[0];
   ck_assert(token->tokenType == TS_IF);
   ck_assert_int_eq(token->childrenSize, 2);
@@ -20,6 +21,7 @@ START_TEST(parse_valid_if_condition)
   cond = token->children[1];
   ck_assert_eq_ts_semicolon(cond->tokenType);
 
+  // if (2) {}
   token = tsFile->tokens[1];
   ck_assert(token->tokenType == TS_IF);
   ck_assert_int_eq(token->childrenSize, 2);
@@ -32,38 +34,20 @@ START_TEST(parse_valid_if_condition)
   scope = token->children[1];
   ck_assert_eq_ts_scope(scope->tokenType);
 
+  // if (3==2 && true) {}
   token = tsFile->tokens[2];
   ck_assert(token->tokenType == TS_IF);
-  ck_assert_int_eq(token->childrenSize, 6);
+  ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);
   cond = token->children[0];
   ck_assert(cond->tokenType == TS_CONDITION);
-  ck_assert_ptr_ne(cond->children, NULL);
+  ck_assert_uint_eq(cond->childrenSize, 1);
   data = cond->children[0];
-  ck_assert_wstr_eq(data->content, L"3");
-  cond = token->children[1];
-  ck_assert(cond->tokenType == TS_CONDITION);
-  ck_assert_ptr_ne(cond->children, NULL);
-  data = cond->children[0];
-  TS_check_validate_borrow(data, TS_EQUAL);
-  cond = token->children[2];
-  ck_assert(cond->tokenType == TS_CONDITION);
-  ck_assert_ptr_ne(cond->children, NULL);
-  data = cond->children[0];
-  ck_assert_wstr_eq(data->content, L"2");
-  cond = token->children[3];
-  ck_assert(cond->tokenType == TS_CONDITION);
-  ck_assert_ptr_ne(cond->children, NULL);
-  data = cond->children[0];
-  TS_check_validate_borrow(data, TS_LOGICAL_AND);
-  cond = token->children[4];
-  ck_assert(cond->tokenType == TS_CONDITION);
-  ck_assert_ptr_ne(cond->children, NULL);
-  data = cond->children[0];
-  ck_assert_wstr_eq(data->content, L"true");
-  scope = token->children[5];
+  ck_assert_eq_ts_operator(data->tokenType);
+  scope = token->children[1];
   ck_assert_eq_ts_scope(scope->tokenType);
 
+  // if (4) const x = 2;
   token = tsFile->tokens[3];
   ck_assert_eq_ts_if(token->tokenType);
   ck_assert_int_eq(token->childrenSize, 2);
@@ -72,6 +56,7 @@ START_TEST(parse_valid_if_condition)
   ck_assert_eq_ts_condition(cond->tokenType);
   ck_assert_ptr_ne(cond->children, NULL);
   data = cond->children[0];
+  ck_assert_eq_ts_number(data->tokenType);
   ck_assert_wstr_eq(data->content, L"4");
   constToken = token->children[1];
   ck_assert_eq_ts_const(constToken->tokenType);
@@ -82,6 +67,7 @@ START_TEST(parse_valid_if_condition)
   token = tsFile->tokens[4];
   ck_assert_eq_ts_semicolon(token->tokenType);
 
+  // if (5) { var local = 10; const y = 1; }
   token = tsFile->tokens[5];
   ck_assert_eq_ts_if(token->tokenType);
   ck_assert_int_eq(token->childrenSize, 2);
@@ -90,6 +76,7 @@ START_TEST(parse_valid_if_condition)
   ck_assert_eq_ts_condition(cond->tokenType);
   ck_assert_ptr_ne(cond->children, NULL);
   data = cond->children[0];
+  ck_assert_eq_ts_number(data->tokenType);
   ck_assert_wstr_eq(data->content, L"5");
   scope = token->children[1];
   ck_assert_eq_ts_scope(scope->tokenType);
@@ -99,8 +86,8 @@ START_TEST(parse_valid_if_condition)
   ck_assert_eq_ts_var(varToken->tokenType);
   ck_assert_ptr_ne(varToken->name, NULL);
   ck_assert_wstr_eq(varToken->name, L"local");
-  TS_check_validate_borrow(varToken->children[TS_VARIABLE_TYPE], ANY);
-  ck_assert_wstr_eq(varToken->children[TS_VARIABLE_VALUE]->content, L"10");
+  TS_check_validate_borrow(varToken->children[TS_VARIABLE_TYPE_INDEX], ANY);
+  ck_assert_wstr_eq(varToken->children[TS_VARIABLE_VALUE_INDEX]->content, L"10");
 
   semicolon = scope->children[1];
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
@@ -109,7 +96,7 @@ START_TEST(parse_valid_if_condition)
   ck_assert_eq_ts_const(constToken->tokenType);
   ck_assert_ptr_ne(constToken->name, NULL);
   ck_assert_wstr_eq(constToken->name, L"y");
-  TS_check_validate_borrow(constToken->children[TS_VARIABLE_TYPE], ANY);
+  TS_check_validate_borrow(constToken->children[TS_VARIABLE_TYPE_INDEX], ANY);
 
   semicolon = scope->children[3];
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
@@ -120,14 +107,14 @@ END_TEST
 START_TEST(parse_if_without_args)
   TSFile *tsFile = TS_parse_file("./examples/if/no_args");
   ck_assert_ptr_ne(tsFile, NULL);
-  ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
+  ck_assert_tsFile_syntax_error(tsFile);
   TS_free_tsFile(tsFile);
 END_TEST
 
 START_TEST(parse_if_without_end_bracket)
   TSFile *tsFile = TS_parse_file("./examples/if/no_ending_bracket");
   ck_assert_ptr_ne(tsFile, NULL);
-  ck_assert(tsFile->sanity == TS_FILE_SYNTAX_ERROR);
+  ck_assert_tsFile_syntax_error(tsFile);
   TS_free_tsFile(tsFile);
 END_TEST
 

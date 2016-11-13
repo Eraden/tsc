@@ -42,7 +42,7 @@ START_TEST(parse_valid_return)
   ck_assert_uint_eq(ret->childrenSize, 1);
   ck_assert_ptr_ne(ret->children, NULL);
   returned = ret->children[0];
-  ck_assert_eq_ts_unknown(returned->tokenType);
+  ck_assert_eq_ts_number(returned->tokenType);
   ck_assert_ptr_ne(returned->name, NULL);
   ck_assert_wstr_eq(returned->name, L"1");
   semicolon = scope->children[1];

@@ -50,6 +50,7 @@ TS_parse_case(
             TSParserToken *child = TS_parse_condition(tsFile, tsParseData);
             if (child) {
               TS_push_child(token, child);
+              proceed = FALSE;
             } else {
               // todo error
             }

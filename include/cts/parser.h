@@ -40,8 +40,8 @@
 
 #define TS_TOKEN_BEGIN(type, tsParseData) \
   { \
-    TS_MOVE_BY(tsParseData, tsParseData->token); \
     TSParserToken *token = TS_build_parser_token(type, tsParseData); \
+    TS_MOVE_BY(tsParseData, tsParseData->token); \
     TS_log_to_file(L"-> parsing as %s\n", #type);
 #define TS_TOKEN_END(type) \
     tsParseData->parentTSToken = token->parent; \
@@ -49,15 +49,21 @@
     return token; \
   }
 
-#define TS_INTERFACE_METHOD_ARGUMENTS 0
-#define TS_INTERFACE_METHOD_RETURN_TYPE 1
+#define TS_INTERFACE_METHOD_ARGUMENTS_INDEX 0
+#define TS_INTERFACE_METHOD_RETURN_TYPE_INDEX 1
 
 #define TS_SWITCH_CONDITIONS_INDEX 0
 #define TS_SWITCH_BODY_INDEX 1
 
-#define TS_CLASS_METHOD_ARGUMENTS 0
-#define TS_CLASS_METHOD_RETURN_TYPE 1
-#define TS_CLASS_METHOD_BODY 2
+#define TS_CLASS_METHOD_ARGUMENTS_INDEX 0
+#define TS_CLASS_METHOD_RETURN_TYPE_INDEX 1
+#define TS_CLASS_METHOD_BODY_INDEX 2
+
+#define TS_VARIABLE_TYPE_INDEX 0
+#define TS_VARIABLE_VALUE_INDEX 1
+
+#define TS_OPERATOR_A_INDEX 0
+#define TS_OPERATOR_B_INDEX 1
 
 typedef struct sTSParseData TSParseData;
 typedef struct sTSKeyword TSKeyword;
@@ -100,7 +106,6 @@ typedef enum eTSTokenType {
   TS_ARGUMENT,
   TS_CALLER,
   TS_SWITCH,
-  TS_SWITCH_CONDITIONS,
   TS_SWITCH_BODY,
   TS_CASE,
   TS_BREAK,
@@ -166,7 +171,7 @@ typedef enum eTSModifier {
   TS_MODIFIER_PROTECTED = 1 << 2,
   TS_MODIFIER_PUBLIC = 1 << 3,
   TS_MODIFIER_STATIC = 1 << 4,
-  TS_MODIFIER_GETTER = 1 << 4,
+  TS_MODIFIER_GETTER = 1 << 5,
   TS_MODIFIER_SETTER = 1 << 6,
 } __attribute__ ((__packed__)) TSModifier;
 
@@ -175,15 +180,17 @@ typedef enum eTSParseBracketType {
   TS_PARSE_BRACKET_AS_JSON = 2,
 } __attribute__ ((__packed__)) TSParseBracketType;
 
-typedef enum eTSVariableChild {
-  TS_VARIABLE_TYPE = 0,
-  TS_VARIABLE_VALUE = 1
-} TSVariableChild;
-
 typedef enum eTSJSONEntryType {
   TS_JSON_KEY = 0,
   TS_JSON_VALUE = 1
 } TSJSONEntryType;
+
+typedef enum eTSExperimental {
+  TS_ENABLE_EXPERIMENTAL = 1,
+  TS_DISABLE_EXPERIMENTAL = 0
+} TSExperimental;
+
+TSExperimental TS_experimentalFlag;
 
 typedef struct sTSKeyword {
   const wchar_t *str;
@@ -223,6 +230,16 @@ typedef struct sTSFile {
   TSFileSanity sanity;
 } TSFile;
 
+typedef struct sTSParseOperatorData {
+  TSParserToken *token;
+  TSParserToken *parent;
+  TSParserToken *prev;
+  TSParserToken *next;
+  unsigned int lastIndex;
+  unsigned char done;
+  const wchar_t *tok;
+} TSParseOperatorData;
+
 void TS_append_ts_parser_token(TSFile *tsFile, TSParserToken *token);
 
 unsigned char TS_is_keyword(const wchar_t *str);
@@ -238,6 +255,8 @@ void TS_push_child(TSParserToken *token, TSParserToken *child);
 void TS_free_unknown(const TSParserToken *token);
 
 TSParserToken *TS_parse_operator(TSFile *tsFile, TSParseData *tsParseData);
+
+TSParserToken *TS_parse_operator_advanced(TSFile *tsFile, TSParseData *tsParseData);
 
 void TS_free_operator(const TSParserToken *token);
 

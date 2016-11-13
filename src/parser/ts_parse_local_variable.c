@@ -43,8 +43,8 @@ TS_parse_local_variable_body(
   token->childrenSize = 2;
   TSParserToken *value = NULL;
   TSParserToken *type = NULL;
-  token->children[TS_VARIABLE_TYPE] = TS_create_borrow(TS_find_type(tsFile->file, (const wchar_t *) L"any"), tsParseData);
-  token->children[TS_VARIABLE_VALUE] = TS_create_borrow(TS_find_type(NULL, (const wchar_t *) L"undefined"), tsParseData);
+  token->children[TS_VARIABLE_TYPE_INDEX] = TS_create_borrow(TS_find_type(tsFile->file, (const wchar_t *) L"any"), tsParseData);
+  token->children[TS_VARIABLE_VALUE_INDEX] = TS_create_borrow(TS_find_type(NULL, (const wchar_t *) L"undefined"), tsParseData);
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -138,8 +138,8 @@ TS_parse_local_variable_body(
             TS_type_from_string(tsFile, value);
           }
           if (value) {
-            TS_free_borrow(token->children[TS_VARIABLE_VALUE]);
-            token->children[TS_VARIABLE_VALUE] = value;
+            TS_free_borrow(token->children[TS_VARIABLE_VALUE_INDEX]);
+            token->children[TS_VARIABLE_VALUE_INDEX] = value;
           } else {
             // TODO error
           }
@@ -150,8 +150,8 @@ TS_parse_local_variable_body(
         } else if (parseFlag == TS_PARSE_VARIABLE_TYPE) {
           type = TS_find_type(tsFile->file, tok);
           if (type) {
-            TS_free_borrow(token->children[TS_VARIABLE_TYPE]);
-            token->children[TS_VARIABLE_TYPE] = TS_create_borrow(type, tsParseData);
+            TS_free_borrow(token->children[TS_VARIABLE_TYPE_INDEX]);
+            token->children[TS_VARIABLE_TYPE_INDEX] = TS_create_borrow(type, tsParseData);
           }
 
           parseFlag = TS_PARSE_VARIABLE_NONE;

@@ -1,60 +1,6 @@
 #include <cts/parser.h>
 
 static TSParserToken *
-TS_parse_switch_conditions(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_SWITCH_CONDITIONS, tsParseData)
-
-    unsigned char proceed = TRUE;
-    const wchar_t *tok = NULL;
-
-    while (proceed) {
-      TS_LOOP_SANITY_CHECK(tsFile)
-
-      tok = (const wchar_t *) TS_getToken(tsFile->stream);
-
-      if (tok == NULL) {
-        TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "switch conditions");
-        break;
-      }
-      switch (tok[0]) {
-        case L' ': {
-          TS_MOVE_BY(tsParseData, tok);
-          free((void *) tok);
-          break;
-        }
-        case L'\n': {
-          TS_NEW_LINE(tsParseData, tok);
-          free((void *) tok);
-          break;
-        }
-        case L')': {
-          TS_MOVE_BY(tsParseData, tok);
-          free((void *) tok);
-          proceed = FALSE;
-          break;
-        }
-        default: {
-          tsParseData->token = tok;
-          TS_put_back(tsFile->stream, tok);
-
-          TSParserToken *child = TS_parse_condition(tsFile, tsParseData);
-          if (child) {
-            TS_push_child(token, child);
-          } else {
-            // TODO: error
-          }
-          free((void *) tok);
-          break;
-        }
-      }
-    }
-  TS_TOKEN_END(TS_SWITCH_CONDITIONS);
-}
-
-static TSParserToken *
 TS_parse_switch_body(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -128,7 +74,7 @@ TS_parse_switch(
     unsigned char proceed = TRUE;
     const wchar_t *tok = NULL;
 
-    TSParserToken *conditions = NULL, *scope = NULL;
+    TSParserToken *condition = NULL, *scope = NULL;
 
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
@@ -151,9 +97,9 @@ TS_parse_switch(
         case L'(': {
           TS_MOVE_BY(tsParseData, tok);
           free((void *) tok);
-          conditions = TS_parse_switch_conditions(tsFile, tsParseData);
-          if (conditions) {
-            TS_push_child(token, conditions);
+          condition = TS_parse_condition(tsFile, tsParseData);
+          if (condition) {
+            TS_push_child(token, condition);
           }
           proceed = FALSE;
           break;

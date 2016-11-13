@@ -335,6 +335,24 @@ __TS_setup_predefined(void) {
     type->name = TS_clone_string((const wchar_t *) L"any");
     TS_append_ts_parser_token(tsFile, type);
     TS_register_type(tsFile, type);
+    // this
+    data = TS_build_parse_data();
+    type = TS_build_parser_token(TS_INTERFACE, &data);
+    type->name = TS_clone_string((const wchar_t *) L"this");
+    TS_append_ts_parser_token(tsFile, type);
+    TS_register_type(tsFile, type);
+    // true
+    data = TS_build_parse_data();
+    type = TS_build_parser_token(TS_INTERFACE, &data);
+    type->name = TS_clone_string((const wchar_t *) L"true");
+    TS_append_ts_parser_token(tsFile, type);
+    TS_register_type(tsFile, type);
+    // false
+    data = TS_build_parse_data();
+    type = TS_build_parser_token(TS_INTERFACE, &data);
+    type->name = TS_clone_string((const wchar_t *) L"false");
+    TS_append_ts_parser_token(tsFile, type);
+    TS_register_type(tsFile, type);
     // object
     data = TS_build_parse_data();
     type = TS_build_parser_token(TS_CLASS, &data);
@@ -378,11 +396,13 @@ __TS_setup_predefined(void) {
     if (TS_PREDEFINED_FILE->sanity != TS_FILE_VALID) {
       pthread_mutex_unlock(&TS_PREDEFINED_MUTEX_LOCK);
       registers_swapped = FALSE;
+
+      fprintf(stderr, "Predefined classes file is malformed! Exiting...\n");
+      fprintf(stderr, "  %ls\n", TS_PREDEFINED_FILE->errorReason);
+
       TS_free_tsFile(TS_PREDEFINED_FILE);
       TS_destroy_register();
       TS_PREDEFINED_FILE = NULL;
-
-      fprintf(stderr, "Predefined classes file is malformed! Exiting...\n");
       exit(5);
     } else {
       TS_NUMBER_TYPE = TS_find_type(TS_PREDEFINED_FILE->file, (const wchar_t *) L"number");
@@ -431,35 +451,6 @@ TS_remove_predefined() {
   pthread_mutex_unlock(&TS_PREDEFINED_MUTEX_LOCK);
 }
 
-unsigned char TS_is_predefined(TSParserToken *token) {
-//  if ((registers_swapped ? TS_REGISTER : TS_PREDEFINED_REGISTER) == NULL)
-//    return FALSE;
-//  if (registers_swapped)
-//    return FALSE;
-//  TSRegisterEntry *registered = registers_swapped ? TS_REGISTER[0] : TS_PREDEFINED_REGISTER[0];
-//  TSParserToken *child = NULL;
-//  for (u_long index = 0; index < registered->listSize; index++) {
-//    child = registered->classList[index];
-//    if (child == token) {
-//      return TRUE;
-//    }
-//  }
-  return FALSE;
-}
-
-unsigned char TS_is_type(TSParserToken *token) {
-//  if ((registers_swapped ? TS_REGISTER : TS_PREDEFINED_REGISTER) == NULL)
-//    return FALSE;
-//  switch (token->tokenType) {
-//    case TS_CLASS:
-//    case TS_INTERFACE:
-//      return TRUE;
-//    default:
-//      return FALSE;
-//  }
-  return FALSE;
-}
-
 static TSParserToken *TS_search_token_in_token(TSParserToken *token, wchar_t *name);
 static TSParserToken *TS_search_token_in_for(TSParserToken *token, wchar_t *name);
 static TSParserToken *TS_search_token_in_if(TSParserToken *token, wchar_t *name);
@@ -474,11 +465,10 @@ TS_search_token_in_for(
 ) {
   if (token->childrenSize < 1) return NULL;
   TSParserToken *head = token->children[0];
-  switch (head->tokenType) {
+  switch (token->tokenType) {
     case TS_FOR_WITH_CONDITION: {
       if (head->childrenSize < 1) return NULL;
-      TSParserToken *variables = head->children[0];
-      return TS_search_token_in_scope(variables, name);
+      return TS_search_token_in_scope(head, name);
     }
     case TS_FOR_IN:
     case TS_FOR_OF: {
@@ -589,7 +579,10 @@ TS_search_token_in_token(
     case TS_ELSE: {
       return TS_search_token_in_if(token, name);
     }
-    case TS_FOR: {
+    case TS_FOR:
+    case TS_FOR_WITH_CONDITION:
+    case TS_FOR_IN:
+    case TS_FOR_OF: {
       return TS_search_token_in_for(token, name);
     }
     case TS_FUNCTION:
@@ -600,7 +593,11 @@ TS_search_token_in_token(
       return NULL;
     }
     default: {
-      return NULL;
+      if (token->parent) {
+        return TS_search_token_in_token(token->parent, name);
+      } else {
+        return NULL;
+      }
     }
   }
 }

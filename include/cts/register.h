@@ -64,8 +64,4 @@ void TS_destroy_register(void);
 void TS_setup_predefined(void);
 void TS_remove_predefined(void);
 
-unsigned char TS_is_predefined(TSParserToken *token);
-
-unsigned char TS_is_type(TSParserToken *token);
-
 TSParserToken *TS_search_token(TSParserToken *token);

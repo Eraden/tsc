@@ -38,6 +38,7 @@ SET(
     src/parser/ts_borrow.c
     src/parser/ts_parse_arithmetic_operator.c
     src/parser/ts_parse_group.c
+    src/parser/ts_parse_operator.c
     src/parser.c
 )
 

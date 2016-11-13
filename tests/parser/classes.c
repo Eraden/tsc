@@ -33,7 +33,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->modifiers == TS_MODIFIER_PRIVATE);
 
   ck_assert_wstr_eq(childToken->name, L"field_1");
-  TS_check_validate_borrow(childToken->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(childToken->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
 
   // 3
   classToken = tsFile->tokens[2];
@@ -48,7 +48,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->modifiers == TS_MODIFIER_PRIVATE);
 
   ck_assert_wstr_eq(childToken->name, L"field_2");
-  TS_check_validate_borrow(childToken->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(childToken->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
 
   // 4
   classToken = tsFile->tokens[3];
@@ -63,7 +63,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->modifiers == TS_MODIFIER_PROTECTED);
 
   ck_assert_wstr_eq(childToken->name, L"field_3");
-  TS_check_validate_borrow(childToken->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(childToken->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
 
   // 5
   classToken = tsFile->tokens[4];
@@ -78,7 +78,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->modifiers == TS_MODIFIER_PUBLIC);
 
   ck_assert_wstr_eq(childToken->name, L"field_4");
-  TS_check_validate_borrow(childToken->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(childToken->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
 
   // 6
   classToken = tsFile->tokens[5];
@@ -157,7 +157,7 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->modifiers == TS_MODIFIER_PRIVATE);
 
   ck_assert_wstr_eq(childToken->name, L"foo");
-  TS_check_validate_borrow(childToken->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
+  TS_check_validate_borrow(childToken->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
 
   childToken = classToken->children[1];
   ck_assert_eq_ts_class_method(childToken->tokenType);
@@ -173,8 +173,8 @@ START_TEST(parse_valid_classes_file)
   ck_assert_ptr_ne(token->name, NULL);
   ck_assert_wstr_eq(token->name, L"TEST");
   ck_assert_uint_eq(token->childrenSize, 2);
-  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE], TS_ANY_TYPE);
-  TSParserToken *variableValue = token->children[TS_VARIABLE_VALUE];
+  TS_check_validate_borrow(token->children[TS_VARIABLE_TYPE_INDEX], TS_ANY_TYPE);
+  TSParserToken *variableValue = token->children[TS_VARIABLE_VALUE_INDEX];
   ck_assert_eq_ts_class(variableValue->tokenType);
 
   // 12

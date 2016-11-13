@@ -1,5 +1,7 @@
 #include <cts/register.h>
 
+TSExperimental TS_experimentalFlag = TS_DISABLE_EXPERIMENTAL;
+
 TSParserToken *
 TS_build_parser_token(
     TSTokenType tokenType,
@@ -17,20 +19,6 @@ TS_build_parser_token(
   token->data = NULL;
   tsParseData->parentTSToken = token;
   return token;
-}
-
-static TSParserToken *
-TS_borrow_operator(TSFile *__attribute__((__unused__))tsFile, TSParseData *tsParseData) {
-  TSParserToken *op = NULL;
-  TSParserToken **operators = TS_OPERATORS;
-  for (u_short i = 0; i < TS_OPERATORS_COUNT; i++) {
-    op = operators[0];
-    if (wcscmp(op->content, tsParseData->token) == 0) {
-      break;
-    }
-    operators += 1;
-  }
-  return TS_create_borrow(op, tsParseData);
 }
 
 static unsigned short int KEYWORDS_SIZE = 30 + 20/*TS_OPERATORS_COUNT*/;
@@ -68,29 +56,29 @@ static TSKeyword TS_KEYWORDS[30 + 20] = {
     {(wchar_t *) L"\'",         TS_parse_string},
     {(wchar_t *) L"(",          TS_parse_group},
     // Arithmetic Operators
-    {(wchar_t *) L"+",          TS_borrow_operator},
-    {(wchar_t *) L"-",          TS_borrow_operator},
-    {(wchar_t *) L"*",          TS_borrow_operator},
-    {(wchar_t *) L"/",          TS_borrow_operator},
-    {(wchar_t *) L"%",          TS_borrow_operator},
-    {(wchar_t *) L"++",         TS_borrow_operator},
-    {(wchar_t *) L"--",         TS_borrow_operator},
+    {(wchar_t *) L"+",          TS_parse_operator_advanced},
+    {(wchar_t *) L"-",          TS_parse_operator_advanced},
+    {(wchar_t *) L"*",          TS_parse_operator_advanced},
+    {(wchar_t *) L"/",          TS_parse_operator_advanced},
+    {(wchar_t *) L"%",          TS_parse_operator_advanced},
+    {(wchar_t *) L"++",         TS_parse_operator_advanced},
+    {(wchar_t *) L"--",         TS_parse_operator_advanced},
     // Relational Operators
-    {(wchar_t *) L"==",         TS_borrow_operator},
-    {(wchar_t *) L"===",        TS_borrow_operator},
-    {(wchar_t *) L"!=",         TS_borrow_operator},
-    {(wchar_t *) L">",          TS_borrow_operator},
-    {(wchar_t *) L">=",         TS_borrow_operator},
-    {(wchar_t *) L"<",          TS_borrow_operator},
-    {(wchar_t *) L"<=",         TS_borrow_operator},
+    {(wchar_t *) L"==",         TS_parse_operator_advanced},
+    {(wchar_t *) L"===",        TS_parse_operator_advanced},
+    {(wchar_t *) L"!=",         TS_parse_operator_advanced},
+    {(wchar_t *) L">",          TS_parse_operator_advanced},
+    {(wchar_t *) L">=",         TS_parse_operator_advanced},
+    {(wchar_t *) L"<",          TS_parse_operator_advanced},
+    {(wchar_t *) L"<=",         TS_parse_operator_advanced},
     // Logical Operators
-    {(wchar_t *) L"&&",         TS_borrow_operator},
-    {(wchar_t *) L"||",         TS_borrow_operator},
-    {(wchar_t *) L"!",          TS_borrow_operator},
+    {(wchar_t *) L"&&",         TS_parse_operator_advanced},
+    {(wchar_t *) L"||",         TS_parse_operator_advanced},
+    {(wchar_t *) L"!",          TS_parse_operator_advanced},
     // Bitwise Operators
-    {(wchar_t *) L"&",          TS_borrow_operator},
-    {(wchar_t *) L"|",          TS_borrow_operator},
-    {(wchar_t *) L"^",          TS_borrow_operator},
+    {(wchar_t *) L"&",          TS_parse_operator_advanced},
+    {(wchar_t *) L"|",          TS_parse_operator_advanced},
+    {(wchar_t *) L"^",          TS_parse_operator_advanced},
 };
 
 unsigned char TS_is_keyword(const wchar_t *str) {
@@ -214,6 +202,7 @@ TS_parse_ts_token(
       }
       default: {
         t->tokenType = TS_UNKNOWN;
+        TS_type_from_string(tsFile, t);
         break;
       }
     }
@@ -276,9 +265,9 @@ TS_valid_char_for_token(
     case L'%':
     case L'\n':
     case L' ':
-      return 0;
+      return FALSE;
     default:
-      return 1;
+      return TRUE;
   }
 }
 
@@ -371,7 +360,9 @@ TS_getToken(
 
           ungetwc((wint_t) next, stream);
 
-          if (next != c) return tok;
+          if (next != c && next != L'=') {
+            return tok;
+          }
         } else {
           ungetwc((wint_t) c, stream);
           TS_GET_TOKEN_MSG((wchar_t *) L"# token: '%ls' [single token + else]\n", tok);
@@ -418,7 +409,8 @@ TS_getToken(
       }
       case L'=': {
         TS_GET_TOKEN_MSG((wchar_t *) L"# '=' character building token...\n", tok)
-        if (tok == NULL || (tok[0] == c && prev == c)) {
+        if (tok == NULL || (tok[0] == c && prev == c) ||
+            (prev == L'-' || prev == L'+' || prev == L'|' || prev == L'&')) {
           const size_t size = tok == NULL ? 1 : wcslen((const wchar_t *) tok) + 1;
 
           wchar_t *newPointer = calloc(sizeof(wchar_t), size + TS_STRING_END);
@@ -698,10 +690,6 @@ TS_free_tsToken(
       break;
     case TS_SWITCH: {
       TS_free_switch(token);
-      break;
-    }
-    case TS_SWITCH_CONDITIONS: {
-      TS_free_switch_conditions(token);
       break;
     }
     case TS_SWITCH_BODY: {

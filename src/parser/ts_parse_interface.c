@@ -21,9 +21,9 @@ TS_parse_interface_method(
     // arguments, returnType
     token->childrenSize = 2;
     token->children = calloc(sizeof(TSParserToken *), token->childrenSize);
-    token->children[TS_INTERFACE_METHOD_ARGUMENTS] = NULL;
+    token->children[TS_INTERFACE_METHOD_ARGUMENTS_INDEX] = NULL;
     tsParseData->token = (const wchar_t *) L"";
-    TSParserToken *returnType = token->children[TS_INTERFACE_METHOD_RETURN_TYPE] = TS_build_parser_token(
+    TSParserToken *returnType = token->children[TS_INTERFACE_METHOD_RETURN_TYPE_INDEX] = TS_build_parser_token(
         TS_FUNCTION_RETURN_TYPE, tsParseData);
     TS_push_child(returnType, TS_create_borrow(TS_ANY_TYPE, tsParseData));
 
@@ -54,7 +54,7 @@ TS_parse_interface_method(
         case L'(': {
           tsParseData->token = tok;
           TSParserToken *callArgs = TS_parse_call_arguments(tsFile, tsParseData);
-          token->children[TS_INTERFACE_METHOD_ARGUMENTS] = callArgs;
+          token->children[TS_INTERFACE_METHOD_ARGUMENTS_INDEX] = callArgs;
           free((void *) tok);
           break;
         }
@@ -75,8 +75,8 @@ TS_parse_interface_method(
             case TS_PARSE_CLASS_MEMBER_METHOD_RETURN_TYPE: {
               TS_MOVE_BY(tsParseData, tok);
               TSParserToken *type = TS_find_type(tsFile->file, tok);
-              TS_free_borrow(returnType->children[TS_VARIABLE_TYPE]);
-              returnType->children[TS_VARIABLE_TYPE] = TS_create_borrow(type, tsParseData);
+              TS_free_borrow(returnType->children[TS_VARIABLE_TYPE_INDEX]);
+              returnType->children[TS_VARIABLE_TYPE_INDEX] = TS_create_borrow(type, tsParseData);
               flag = TS_PARSE_CLASS_MEMBER_NAME;
               free((void *) tok);
               break;

@@ -1,4 +1,4 @@
-#include <cts/parser.h>
+#include <cts/register.h>
 
 static void
 TS_parse_if_body(
@@ -52,7 +52,6 @@ TS_parse_if_conditions(
     TSFile *tsFile,
     TSParseData *tsParseData
 ) {
-  TSParserToken *token = tsParseData->parentTSToken;
   const wchar_t *tok = NULL;
   volatile unsigned char proceed = TRUE;
 
@@ -62,7 +61,7 @@ TS_parse_if_conditions(
     tok = (const wchar_t *) TS_getToken(tsParseData->stream);
 
     if (tok == NULL) {
-      ts_token_syntax_error((wchar_t *) L"Unexpected end of `if` conditions", tsFile, token);
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, tsParseData->parentTSToken, "`if` conditions");
       break;
     }
 
@@ -79,66 +78,16 @@ TS_parse_if_conditions(
       }
       case L'(': {
         TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-        proceed = FALSE;
-        break;
-      }
-      default: {
-        TS_UNEXPECTED_TOKEN(tsFile, token, tok, "`if` conditions");
-        proceed = FALSE;
-        break;
-      }
-    }
-  }
-  // after (
-
-  proceed = TRUE;
-  volatile unsigned long conditionsCount = 0;
-
-  while (proceed) {
-    TS_LOOP_SANITY_CHECK(tsFile)
-
-    tok = (const wchar_t *) TS_getToken(tsParseData->stream);
-
-    if (tok == NULL) {
-      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "`if` conditions");
-      break;
-    }
-    switch (tok[0]) {
-      case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
-      case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
-      case L')': {
-        if (conditionsCount == 0) {
-          ts_token_syntax_error(
-              (const wchar_t *) L"Unexpected end of `if` conditions. No condition given!",
-              tsFile,
-              token
-          );
-        } else {
-          TS_MOVE_BY(tsParseData, tok);
-        }
-        free((void *) tok);
-        proceed = FALSE;
-        break;
-      }
-      default: {
-        TS_put_back(tsFile->stream, tok);
-
         tsParseData->token = tok;
         TSParserToken *condition = TS_parse_condition(tsFile, tsParseData);
-        TS_push_child(token, condition);
-        conditionsCount += 1;
-
+        TS_push_child(tsParseData->parentTSToken, condition);
+        proceed = FALSE;
         free((void *) tok);
-        tsParseData->parentTSToken = condition->parent;
+        break;
+      }
+      default: {
+        TS_UNEXPECTED_TOKEN(tsFile, tsParseData->parentTSToken, tok, "`if` conditions");
+        proceed = FALSE;
         break;
       }
     }

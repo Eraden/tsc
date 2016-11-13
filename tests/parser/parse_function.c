@@ -42,9 +42,9 @@ START_TEST(parse_valid_functions)
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first1");
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE], ANY);
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE_INDEX], ANY);
 //  ck_assert_ts_token_eq();
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_VALUE], TS_UNDEFINED_TYPE);
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_VALUE_INDEX], TS_UNDEFINED_TYPE);
 
   // example3
   token = tsFile->tokens[2];
@@ -59,8 +59,8 @@ START_TEST(parse_valid_functions)
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first2");
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE], ANY);
-  ck_assert_wstr_eq(arg->children[TS_VARIABLE_VALUE]->content, L"1");
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE_INDEX], ANY);
+  ck_assert_wstr_eq(arg->children[TS_VARIABLE_VALUE_INDEX]->content, L"1");
 
   // example4
   token = tsFile->tokens[3];
@@ -75,8 +75,8 @@ START_TEST(parse_valid_functions)
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first3");
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE], NUMBER);
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_VALUE], TS_UNDEFINED_TYPE);
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE_INDEX], NUMBER);
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_VALUE_INDEX], TS_UNDEFINED_TYPE);
 
   // example5
   token = tsFile->tokens[4];
@@ -91,8 +91,8 @@ START_TEST(parse_valid_functions)
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first4");
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE], NUMBER);
-  ck_assert_wstr_eq(arg->children[TS_VARIABLE_VALUE]->content, L"234");
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE_INDEX], NUMBER);
+  ck_assert_wstr_eq(arg->children[TS_VARIABLE_VALUE_INDEX]->content, L"234");
 
   // example6
   token = tsFile->tokens[5];
@@ -107,16 +107,16 @@ START_TEST(parse_valid_functions)
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first5");
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE], ANY);
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_VALUE], TS_UNDEFINED_TYPE);
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE_INDEX], ANY);
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_VALUE_INDEX], TS_UNDEFINED_TYPE);
   arg = callArgs->children[1];
   ck_assert(arg->tokenType);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"second5");
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE], ANY);
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_VALUE], TS_UNDEFINED_TYPE);
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE_INDEX], ANY);
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_VALUE_INDEX], TS_UNDEFINED_TYPE);
 
   token = tsFile->tokens[6];
   ck_assert_eq_ts_function(token->tokenType);
@@ -130,16 +130,16 @@ START_TEST(parse_valid_functions)
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first6");
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE], ANY);
-  ck_assert_wstr_eq(arg->children[TS_VARIABLE_VALUE]->content, L"1");
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE_INDEX], ANY);
+  ck_assert_wstr_eq(arg->children[TS_VARIABLE_VALUE_INDEX]->content, L"1");
   arg = callArgs->children[1];
   ck_assert_eq_ts_argument(arg->tokenType);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"second6");
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE], ANY);
-  ck_assert_wstr_eq(arg->children[TS_VARIABLE_VALUE]->content, L"2");
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE_INDEX], ANY);
+  ck_assert_wstr_eq(arg->children[TS_VARIABLE_VALUE_INDEX]->content, L"2");
 
   // example8
   token = tsFile->tokens[7];
@@ -154,16 +154,16 @@ START_TEST(parse_valid_functions)
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first7");
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE], NUMBER);
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_VALUE], TS_UNDEFINED_TYPE);
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE_INDEX], NUMBER);
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_VALUE_INDEX], TS_UNDEFINED_TYPE);
   arg = callArgs->children[1];
   ck_assert_eq_ts_argument(arg->tokenType);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"second7");
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE], OBJECT);
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_VALUE], TS_UNDEFINED_TYPE);
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE_INDEX], OBJECT);
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_VALUE_INDEX], TS_UNDEFINED_TYPE);
 
   // example9
   token = tsFile->tokens[8];
@@ -178,16 +178,16 @@ START_TEST(parse_valid_functions)
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"first8");
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE], NUMBER);
-  ck_assert_wstr_eq(arg->children[TS_VARIABLE_VALUE]->content, L"234");
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE_INDEX], NUMBER);
+  ck_assert_wstr_eq(arg->children[TS_VARIABLE_VALUE_INDEX]->content, L"234");
   arg = callArgs->children[1];
   ck_assert_eq_ts_argument(arg->tokenType);
   ck_assert_int_eq(arg->childrenSize, 2);
   ck_assert_ptr_ne(arg->children, NULL);
   ck_assert_ptr_ne(arg->name, NULL);
   ck_assert_wstr_eq(arg->name, L"second8");
-  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE], OBJECT);
-  ck_assert_eq_ts_json(arg->children[TS_VARIABLE_VALUE]->tokenType);
+  TS_check_validate_borrow(arg->children[TS_VARIABLE_TYPE_INDEX], OBJECT);
+  ck_assert_eq_ts_json(arg->children[TS_VARIABLE_VALUE_INDEX]->tokenType);
 
   // example10
   token = tsFile->tokens[9];

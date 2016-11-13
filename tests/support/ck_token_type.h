@@ -6,58 +6,118 @@ static char *
 __attribute__((__used__))
 _TS_type_to_string(const TSTokenType type) {
   switch (type) {
-    case TS_VAR: return "TS_VAR";
-    case TS_LET: return "TS_LET";
-    case TS_CONST: return "TS_CONST";
-    case TS_SEMICOLON: return "TS_SEMICOLON";
-    case TS_CLASS: return "TS_CLASS";
-    case TS_CLASS_FIELD: return "TS_CLASS_FIELD";
-    case TS_CLASS_METHOD: return "TS_CLASS_METHOD";
-    case TS_EXTENDS: return "TS_EXTENDS";
-    case TS_IMPLEMENTS: return "TS_IMPLEMENTS";
-    case TS_FUNCTION: return "TS_FUNCTION";
-    case TS_FUNCTION_RETURN_TYPE: return "TS_FUNCTION_RETURN_TYPE";
-    case TS_ARROW: return "TS_ARROW";
-    case TS_IF: return "TS_IF";
-    case TS_ELSE: return "TS_ELSE";
-    case TS_RETURN: return "TS_RETURN";
-    case TS_DECORATOR: return "TS_DECORATOR";
-    case TS_DEFAULT: return "TS_DEFAULT";
-    case TS_SCOPE: return "TS_SCOPE";
-    case TS_NEW: return "TS_NEW";
-    case TS_INLINE_COMMENT: return "TS_INLINE_COMMENT";
-    case TS_MULTILINE_COMMENT: return "TS_MULTILINE_COMMENT";
-    case TS_CONDITION: return "TS_CONDITION";
-    case TS_ARGUMENT: return "TS_ARGUMENT";
-    case TS_CALLER: return "TS_CALLER";
-    case TS_SWITCH: return "TS_SWITCH";
-    case TS_SWITCH_CONDITIONS: return "TS_SWITCH_CONDITIONS";
-    case TS_SWITCH_BODY: return "TS_SWITCH_BODY";
-    case TS_CASE: return "TS_CASE";
-    case TS_BREAK: return "TS_BREAK";
-    case TS_FOR: return "TS_FOR";
-    case TS_FOR_WITH_CONDITION: return "TS_FOR_WITH_CONDITION";
-    case TS_FOR_IN: return "TS_FOR_IN";
-    case TS_FOR_OF: return "TS_FOR_OF";
-    case TS_LOOP_VARIABLES_SECTION: return "TS_LOOP_VARIABLES_SECTION";
-    case TS_LOOP_CONDITION_SECTION: return "TS_LOOP_CONDITION_SECTION";
-    case TS_LOOP_CHANGE_SECTION: return "TS_LOOP_CHANGE_SECTION";
-    case TS_OF: return "TS_OF";
-    case TS_IN: return "TS_IN";
-    case TS_JSON: return "TS_JSON";
-    case TS_JSON_ENTRY: return "TS_JSON_ENTRY";
-    case TS_ARRAY: return "TS_ARRAY";
-    case TS_STRING: return "TS_STRING";
-    case TS_STRING_TEMPLATE: return "TS_STRING_TEMPLATE";
-    case TS_CALL_ARGUMENTS: return "TS_CALL_ARGUMENTS";
-    case TS_EXPORT: return "TS_EXPORT";
-    case TS_IMPORT: return "TS_IMPORT";
-    case TS_IMPORT_FROM: return "TS_IMPORT_FROM";
-    case TS_IMPORTED_TOKENS: return "TS_IMPORTED_TOKENS";
-    case TS_INTERFACE: return "TS_INTERFACE";
-    case TS_BORROW: return "TS_BORROW";
-    case TS_UNKNOWN: return "TS_UNKNOWN";
-    default: return " ((unknown type)) ";
+    case TS_UNKNOWN:
+      return "TS_UNKNOWN";
+    case TS_VAR:
+      return "TS_VAR";
+    case TS_LET:
+      return "TS_LET";
+    case TS_CONST:
+      return "TS_CONST";
+    case TS_SEMICOLON:
+      return "TS_SEMICOLON";
+    case TS_COLON:
+      return "TS_COLON";
+    case TS_CLASS:
+      return "TS_CLASS";
+    case TS_CLASS_FIELD:
+      return "TS_CLASS_FIELD";
+    case TS_CLASS_METHOD:
+      return "TS_CLASS_METHOD";
+    case TS_EXTENDS:
+      return "TS_EXTENDS";
+    case TS_IMPLEMENTS:
+      return "TS_IMPLEMENTS";
+    case TS_FUNCTION:
+      return "TS_FUNCTION";
+    case TS_FUNCTION_RETURN_TYPE:
+      return "TS_FUNCTION_RETURN_TYPE";
+    case TS_ARROW:
+      return "TS_ARROW";
+    case TS_IF:
+      return "TS_IF";
+    case TS_ELSE:
+      return "TS_ELSE";
+    case TS_RETURN:
+      return "TS_RETURN";
+    case TS_DECORATOR:
+      return "TS_DECORATOR";
+    case TS_DEFAULT:
+      return "TS_DEFAULT";
+    case TS_SCOPE:
+      return "TS_SCOPE";
+    case TS_NEW:
+      return "TS_NEW";
+    case TS_INLINE_COMMENT:
+      return "TS_INLINE_COMMENT";
+    case TS_MULTILINE_COMMENT:
+      return "TS_MULTILINE_COMMENT";
+    case TS_CONDITION:
+      return "TS_CONDITION";
+    case TS_ARGUMENT:
+      return "TS_ARGUMENT";
+    case TS_CALLER:
+      return "TS_CALLER";
+    case TS_SWITCH:
+      return "TS_SWITCH";
+    case TS_SWITCH_BODY:
+      return "TS_SWITCH_BODY";
+    case TS_CASE:
+      return "TS_CASE";
+    case TS_BREAK:
+      return "TS_BREAK";
+    case TS_FOR:
+      return "TS_FOR";
+    case TS_FOR_WITH_CONDITION:
+      return "TS_FOR_WITH_CONDITION";
+    case TS_FOR_IN:
+      return "TS_FOR_IN";
+    case TS_FOR_OF:
+      return "TS_FOR_OF";
+    case TS_LOOP_VARIABLES_SECTION:
+      return "TS_LOOP_VARIABLES_SECTION";
+    case TS_LOOP_CONDITION_SECTION:
+      return "TS_LOOP_CONDITION_SECTION";
+    case TS_LOOP_CHANGE_SECTION:
+      return "TS_LOOP_CHANGE_SECTION";
+    case TS_OF:
+      return "TS_OF";
+    case TS_IN:
+      return "TS_IN";
+    case TS_JSON:
+      return "TS_JSON";
+    case TS_JSON_ENTRY:
+      return "TS_JSON_ENTRY";
+    case TS_ARRAY:
+      return "TS_ARRAY";
+    case TS_STRING:
+      return "TS_STRING";
+    case TS_STRING_TEMPLATE:
+      return "TS_STRING_TEMPLATE";
+    case TS_CALL_ARGUMENTS:
+      return "TS_CALL_ARGUMENTS";
+    case TS_EXPORT:
+      return "TS_EXPORT";
+    case TS_IMPORT:
+      return "TS_IMPORT";
+    case TS_IMPORT_FROM:
+      return "TS_IMPORT_FROM";
+    case TS_IMPORTED_TOKENS:
+      return "TS_IMPORTED_TOKENS";
+    case TS_INTERFACE:
+      return "TS_INTERFACE";
+    case TS_INTERFACE_BODY:
+      return "TS_INTERFACE_BODY";
+    case TS_BORROW:
+      return "TS_BORROW";
+    case TS_OPERATOR:
+      return "TS_OPERATOR";
+    case TS_NUMBER:
+      return "TS_NUMBER";
+    case TS_GROUP:
+      return "TS_GROUP";
+    default:
+      return " ((unknown type)) ";
   }
 }
 
@@ -104,7 +164,6 @@ _TS_type_to_string(const TSTokenType type) {
 #define ck_assert_eq_ts_argument(type) ck_assert_tsType_eq(type, TS_ARGUMENT)
 #define ck_assert_eq_ts_caller(type) ck_assert_tsType_eq(type, TS_CALLER)
 #define ck_assert_eq_ts_switch(type) ck_assert_tsType_eq(type, TS_SWITCH)
-#define ck_assert_eq_ts_switch_conditions(type) ck_assert_tsType_eq(type, TS_SWITCH_CONDITIONS)
 #define ck_assert_eq_ts_switch_body(type) ck_assert_tsType_eq(type, TS_SWITCH_BODY)
 #define ck_assert_eq_ts_case(type) ck_assert_tsType_eq(type, TS_CASE)
 #define ck_assert_eq_ts_break(type) ck_assert_tsType_eq(type, TS_BREAK)
@@ -118,4 +177,6 @@ _TS_type_to_string(const TSTokenType type) {
 #define ck_assert_eq_ts_unknown(type) ck_assert_tsType_eq(type, TS_UNKNOWN)
 #define ck_assert_eq_ts_call_arguments(type) ck_assert_tsType_eq(type, TS_CALL_ARGUMENTS)
 #define ck_assert_eq_ts_borrow(type) ck_assert_tsType_eq(type, TS_BORROW)
+#define ck_assert_eq_ts_operator(type) ck_assert_tsType_eq(type, TS_OPERATOR)
 #define ck_assert_eq_ts_string(type) ck_assert_tsType_eq(type, TS_STRING)
+#define ck_assert_eq_ts_number(type) ck_assert_tsType_eq(type, TS_NUMBER)
