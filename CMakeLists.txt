@@ -26,6 +26,8 @@ SET(
     src/parser/ts_parse_multiline_comment.c
     src/parser/ts_parse_caller.c
     src/parser/ts_parse_for.c
+    src/parser/ts_parse_while.c
+    src/parser/ts_parse_do.c
     src/parser/ts_parse_of.c
     src/parser/ts_parse_in.c
     src/parser/ts_parse_json.c
@@ -83,6 +85,8 @@ IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
       tests/parser/parse_extends.c
       tests/parser/parse_json.c
       tests/parser/parse_implements.c
+      tests/parser/parse_while.c
+      tests/parser/parse_do.c
       tests/core/operators.c
       tests/core/sys.c
       tests/core/borrows.c
@@ -96,6 +100,7 @@ SET(
     include/cts/register.h
     include/cts/output.h
     include/cts/parser.h
+    include/cts/os.h
 )
 
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build)
@@ -253,6 +258,10 @@ ADD_TEST(NAME switch_conditions_unexpected_token COMMAND ./cts -f ./examples/swi
 ADD_TEST(NAME case_body_unexpected_end_of_stream COMMAND ./cts -f ./examples/case/body/unexpected_end_of_stream)
 ADD_TEST(NAME case_conditions_unexpected_end_of_stream COMMAND ./cts -f ./examples/case/conditions/unexpected_end_of_stream)
 ADD_TEST(NAME case_conditions_unexpected_token COMMAND ./cts -f ./examples/case/conditions/unexpected_token)
+
+ADD_TEST(NAME while_valid COMMAND ./cts -f ./examples/while/valid.ts)
+
+ADD_TEST(NAME do_valid COMMAND ./cts -f ./examples/do/valid.ts)
 
 IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
   ADD_TEST(NAME CheckTsc COMMAND ./cts_test)

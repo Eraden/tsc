@@ -21,9 +21,9 @@ TS_build_parser_token(
   return token;
 }
 
-static unsigned short int KEYWORDS_SIZE = 30 + 20/*TS_OPERATORS_COUNT*/;
+static unsigned short int KEYWORDS_SIZE = 32 + 20/*TS_OPERATORS_COUNT*/;
 
-static TSKeyword TS_KEYWORDS[30 + 20] = {
+static TSKeyword TS_KEYWORDS[32 + 20] = {
     // Keywords
     {(wchar_t *) L"var",        TS_parse_var},
     {(wchar_t *) L"let",        TS_parse_let},
@@ -49,6 +49,8 @@ static TSKeyword TS_KEYWORDS[30 + 20] = {
     {(wchar_t *) L"case",       TS_parse_case},
     {(wchar_t *) L"break",      TS_parse_break},
     {(wchar_t *) L"for",        TS_parse_for},
+    {(wchar_t *) L"while",      TS_parse_while},
+    {(wchar_t *) L"do",         TS_parse_do},
     {(wchar_t *) L"of",         TS_parse_of},
     {(wchar_t *) L"in",         TS_parse_in},
     {(wchar_t *) L"[",          TS_parse_array},
@@ -707,6 +709,12 @@ TS_free_tsToken(
     case TS_FOR_IN:
     case TS_FOR_OF:
       TS_free_for(token);
+      break;
+    case TS_WHILE:
+      TS_free_while(token);
+      break;
+    case TS_DO:
+      TS_free_do(token);
       break;
     case TS_OF:
       TS_free_of(token);

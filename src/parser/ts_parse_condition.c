@@ -13,6 +13,7 @@ TS_parse_condition(
       switch (token->parent->tokenType) {
         case TS_SWITCH:
         case TS_IF:
+        case TS_WHILE:
         case TS_CASE: {
           break;
         }
@@ -54,11 +55,8 @@ TS_parse_condition(
             break;
           }
           switch (token->parent->tokenType) {
-            case TS_SWITCH: {
-              TS_MOVE_BY(tsParseData, tok);
-              proceed = FALSE;
-              break;
-            }
+            case TS_SWITCH:
+            case TS_WHILE:
             case TS_IF: {
               TS_MOVE_BY(tsParseData, tok);
               proceed = FALSE;

@@ -18,11 +18,13 @@
 #include "parser/for/parse_for_let.h"
 #include "parser/for/parse_for_of.h"
 #include "parser/for/parse_for_in.h"
+#include "parser/parse_json.h"
+#include "parser/parse_implements.h"
+#include "parser/parse_while.h"
+#include "parser/parse_do.h"
 #include "core/sys.h"
 #include "core/operators.h"
 #include "core/borrows.h"
-#include "parser/parse_json.h"
-#include "parser/parse_implements.h"
 
 static char **only = NULL;
 static u_long onlySize = 0;
@@ -61,6 +63,9 @@ Suite *class_suite(void) {
   if (hasOnly("for") || hasOnly("for-let")) parse_for_let_suite(suite);
   if (hasOnly("for") || hasOnly("for-of")) parse_for_of_suite(suite);
   if (hasOnly("for") || hasOnly("for-in")) parse_for_in_suite(suite);
+
+  if (hasOnly("while")) parse_while_suite(suite);
+  if (hasOnly("do")) parse_do_suite(suite);
   return suite;
 }
 

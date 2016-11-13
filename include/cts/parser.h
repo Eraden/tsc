@@ -113,6 +113,8 @@ typedef enum eTSTokenType {
   TS_FOR_WITH_CONDITION,
   TS_FOR_IN,
   TS_FOR_OF,
+  TS_WHILE,
+  TS_DO,
   TS_LOOP_VARIABLES_SECTION,
   TS_LOOP_CONDITION_SECTION,
   TS_LOOP_CHANGE_SECTION,
@@ -298,8 +300,6 @@ TSParserToken *TS_parse_switch(TSFile *tsFile, TSParseData *tsParseData);
 
 void TS_free_switch(const TSParserToken *token);
 
-void TS_free_switch_conditions(const TSParserToken *token);
-
 void TS_free_switch_body(const TSParserToken *token);
 
 TSParserToken *TS_parse_case(TSFile *tsFile, TSParseData *tsParseData);
@@ -415,6 +415,14 @@ void TS_free_caller(const TSParserToken *token);
 TSParserToken *TS_parse_for(TSFile *tsFile, TSParseData *tsParseData);
 
 void TS_free_for(const TSParserToken *token);
+
+TSParserToken *TS_parse_while(TSFile *tsFile, TSParseData *tsParseData);
+
+void TS_free_while(const TSParserToken *token);
+
+TSParserToken *TS_parse_do(TSFile *tsFile, TSParseData *tsParseData);
+
+void TS_free_do(const TSParserToken *token);
 
 TSParserToken *__attribute__((__used__))TS_create_borrow(TSParserToken *child, TSParseData *tsParseData);
 

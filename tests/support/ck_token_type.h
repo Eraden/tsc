@@ -66,6 +66,10 @@ _TS_type_to_string(const TSTokenType type) {
       return "TS_CASE";
     case TS_BREAK:
       return "TS_BREAK";
+    case TS_DO:
+      return "TS_DO";
+    case TS_WHILE:
+      return "TS_WHILE";
     case TS_FOR:
       return "TS_FOR";
     case TS_FOR_WITH_CONDITION:
@@ -167,6 +171,8 @@ _TS_type_to_string(const TSTokenType type) {
 #define ck_assert_eq_ts_switch_body(type) ck_assert_tsType_eq(type, TS_SWITCH_BODY)
 #define ck_assert_eq_ts_case(type) ck_assert_tsType_eq(type, TS_CASE)
 #define ck_assert_eq_ts_break(type) ck_assert_tsType_eq(type, TS_BREAK)
+#define ck_assert_eq_ts_do(type) ck_assert_tsType_eq(type, TS_DO)
+#define ck_assert_eq_ts_while(type) ck_assert_tsType_eq(type, TS_WHILE)
 #define ck_assert_eq_ts_for(type) ck_assert_tsType_eq(type, TS_FOR)
 #define ck_assert_eq_ts_for_with_condition(type) ck_assert_tsType_eq(type, TS_FOR_WITH_CONDITION)
 #define ck_assert_eq_ts_for_in(type) ck_assert_tsType_eq(type, TS_FOR_IN)
