@@ -234,13 +234,3 @@ class Cat extends Animal implements Living {
 }
 ```
 
-# Tokenizer
-
-## Structure
-
-[[https://github.com/Eraden/tsc/blob/master/doc/structure.png|alt=structure]]
-
-## Operators
-
-[[https://github.com/Eraden/tsc/blob/master/doc/operators.png|alt=operators]]
-
