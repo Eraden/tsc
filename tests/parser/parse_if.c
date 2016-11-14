@@ -4,7 +4,7 @@ START_TEST(parse_valid_if_condition)
   TSFile *tsFile = TS_parse_file("./examples/if/valid.ts");
 
   ck_assert_tsFile_valid(tsFile);
-  ck_assert_int_eq(tsFile->tokensSize, 6);
+  ck_assert_int_eq(tsFile->tokensSize, 5);
 
   TSParserToken *token = NULL, *cond = NULL, *data = NULL, *scope = NULL, *constToken = NULL, *varToken = NULL, *semicolon = NULL;
 
@@ -18,8 +18,13 @@ START_TEST(parse_valid_if_condition)
   ck_assert_ptr_ne(cond->children, NULL);
   data = cond->children[0];
   ck_assert_wstr_eq(data->content, L"1");
-  cond = token->children[1];
-  ck_assert_eq_ts_semicolon(cond->tokenType);
+  scope = token->children[1];
+  ck_assert_eq_ts_scope(scope->tokenType);
+  ck_assert_uint_eq(scope->childrenSize, 1);
+  ck_assert_ptr_ne(scope->children, NULL);
+  semicolon = scope->children[0];
+  ck_assert_ptr_ne(semicolon, NULL);
+  ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
   // if (2) {}
   token = tsFile->tokens[1];
@@ -58,17 +63,17 @@ START_TEST(parse_valid_if_condition)
   data = cond->children[0];
   ck_assert_eq_ts_number(data->tokenType);
   ck_assert_wstr_eq(data->content, L"4");
-  constToken = token->children[1];
+  scope = token->children[1];
+  ck_assert_ptr_ne(scope, NULL);
+  ck_assert_eq_ts_scope(scope->tokenType);
+  constToken = scope->children[0];
   ck_assert_eq_ts_const(constToken->tokenType);
   ck_assert_ptr_ne(constToken->name, NULL);
   ck_assert_ptr_ne(constToken->children, NULL);
   ck_assert_wstr_eq(constToken->name, L"x");
 
-  token = tsFile->tokens[4];
-  ck_assert_eq_ts_semicolon(token->tokenType);
-
   // if (5) { var local = 10; const y = 1; }
-  token = tsFile->tokens[5];
+  token = tsFile->tokens[4];
   ck_assert_eq_ts_if(token->tokenType);
   ck_assert_int_eq(token->childrenSize, 2);
   ck_assert_ptr_ne(token->children, NULL);

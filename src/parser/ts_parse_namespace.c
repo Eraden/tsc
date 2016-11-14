@@ -5,6 +5,7 @@ TSParserToken *TS_parse_namespace(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN(TS_NAMESPACE, tsParseData);
+
     wchar_t *tok = NULL;
     unsigned char proceed = TRUE;
 
@@ -46,7 +47,7 @@ TSParserToken *TS_parse_namespace(
           break;
         }
         default: {
-          if (token->name == NULL && !TS_is_keyword(tok) && TS_name_isValid(tok)) {
+          if (token->name == NULL && !TS_is_keyword(tok) && TS_name_is_valid(tok)) {
             token->name = TS_clone_string(tok);
           } else {
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "namespace");
@@ -56,8 +57,6 @@ TSParserToken *TS_parse_namespace(
       }
       free((void *) tok);
     }
-
-    TS_register_type(tsFile, token);
 
   TS_TOKEN_END(TS_NAMESPACE)
 }

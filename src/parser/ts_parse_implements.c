@@ -46,7 +46,7 @@ TS_parse_implements(
         default: {
           if (TS_is_keyword(tok)) {
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "implements");
-          } else if (TS_name_isValid(tok) == FALSE) {
+          } else if (TS_name_is_valid(tok) == FALSE) {
             TS_MISSING_NAME(tsFile, token, "implements");
           } else {
             TSParserToken *definition = TS_find_type(tsFile->file, tok);

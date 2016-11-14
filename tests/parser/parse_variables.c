@@ -208,6 +208,7 @@ START_TEST(parse_const_with_reserved_word_as_name)
   TSFile *file = TS_parse_file("./examples/variables/const_name_reserved_word");
   ck_assert_ptr_ne(file, NULL);
   ck_assert_tsFile_syntax_error(file);
+  TS_check_error(file, L"Local variable name cannot use reserved word");
   TS_free_ts_file(file);
 END_TEST
 

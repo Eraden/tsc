@@ -206,7 +206,7 @@ TS_parse_import_imported_tokens(
         default: {
           if (TS_is_keyword(tok)) {
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "import");
-          } else if (!TS_name_isValid(tok)) {
+          } else if (!TS_name_is_valid(tok)) {
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "import");
           } else if (IMPORT_STARTED) {
             tsParseData->token = tok;

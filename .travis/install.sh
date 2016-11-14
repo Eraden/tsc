@@ -4,8 +4,8 @@ echo "$(lsb_release -a)"
 
 sudo add-apt-repository --yes ppa:george-edison55/cmake-3.x
 sudo apt-get update &> /dev/null
-sudo apt-get --yes remove oracle-java9-installer google-chrome-stable firefox
-sudo apt-get --yes remove mysql-client mysql-common mysql-community-client mysql-community-server mysql-server
+#sudo apt-get --yes remove oracle-java9-installer google-chrome-stable firefox
+#sudo apt-get --yes remove mysql-client mysql-common mysql-community-client mysql-community-server mysql-server
 #sudo apt-get --force-yes upgrade
 sudo apt-get --yes install check
 sudo apt-get --yes install cmake

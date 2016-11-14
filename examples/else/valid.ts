@@ -9,3 +9,10 @@ if (4); else {
   var variable = 30;
   const b = 20;
 }
+
+class Test {
+  method() {
+    if (1) return "true"; else return "false";
+  }
+}
+

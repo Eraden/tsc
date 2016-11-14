@@ -3,36 +3,35 @@
 START_TEST(parse_valid_else_condition)
   TSFile *tsFile = TS_parse_file("./examples/else/valid.ts");
 
-  ck_assert_int_eq(tsFile->tokensSize, 5);
+  ck_assert_int_eq(tsFile->tokensSize, 6);
   ck_assert_tsFile_valid(tsFile);
 
-  TSParserToken *token = NULL, *child = NULL, *scope = NULL, *val = NULL, *semicolon = NULL;
+  TSParserToken *ifToken = NULL, *child = NULL, *scope = NULL, *val = NULL, *semicolon = NULL, *elseToken = NULL, *condition = NULL;
 
-  // 1
-  token = tsFile->tokens[0];
-  ck_assert_eq_ts_if(token->tokenType);
-  ck_assert_ulong_eq(token->childrenSize, 3);
-  ck_assert_ptr_ne(token->children, NULL);
-  child = token->children[0];
-  ck_assert_eq_ts_condition(child->tokenType);
-  child = token->children[1];
-  ck_assert_eq_ts_semicolon(child->tokenType);
-  child = token->children[2];
-  ck_assert_eq_ts_else(child->tokenType);
+  // if (1); else;
+  ifToken = tsFile->tokens[0];
+  ck_assert_eq_ts_if(ifToken->tokenType);
+  ck_assert_ulong_eq(ifToken->childrenSize, 3);
+  ck_assert_ptr_ne(ifToken->children, NULL);
+  condition = ifToken->children[0];
+  ck_assert_eq_ts_condition(condition->tokenType);
+  scope = ifToken->children[1];
+  ck_assert_eq_ts_scope(scope->tokenType);
+  elseToken = ifToken->children[2];
+  ck_assert_eq_ts_else(elseToken->tokenType);
 
-  // 2
-  token = tsFile->tokens[1];
-  ck_assert_eq_ts_if(token->tokenType);
-  ck_assert_int_eq(token->childrenSize, 3);
-  ck_assert_ptr_ne(token->children, NULL);
-  child = token->children[0];
-  ck_assert_eq_ts_condition(child->tokenType);
-  child = token->children[1];
-  ck_assert_eq_ts_semicolon(child->tokenType);
-  child = token->children[2];
-  ck_assert_eq_ts_else(child->tokenType);
-
-  child = child->children[0];
+  // if (2); else const a = 10;
+  ifToken = tsFile->tokens[1];
+  ck_assert_eq_ts_if(ifToken->tokenType);
+  ck_assert_int_eq(ifToken->childrenSize, 3);
+  ck_assert_ptr_ne(ifToken->children, NULL);
+  condition = ifToken->children[0];
+  ck_assert_eq_ts_condition(condition->tokenType);
+  scope = ifToken->children[1];
+  ck_assert_eq_ts_scope(scope->tokenType);
+  elseToken = ifToken->children[2];
+  ck_assert_eq_ts_else(elseToken->tokenType);
+  child = elseToken->children[0];
   ck_assert_eq_ts_const(child->tokenType);
   ck_assert_ptr_ne(child->name, NULL);
   ck_assert_wstr_eq(child->name, L"a");
@@ -40,59 +39,54 @@ START_TEST(parse_valid_else_condition)
   semicolon = tsFile->tokens[2];
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
-  // 3
-  token = tsFile->tokens[3];
-  ck_assert_eq_ts_if(token->tokenType);
-  ck_assert_ulong_eq(token->childrenSize, 3);
-  ck_assert_ptr_ne(token->children, NULL);
-  child = token->children[0];
-  ck_assert_eq_ts_condition(child->tokenType);
-  child = token->children[1];
-  ck_assert_eq_ts_semicolon(child->tokenType);
-  child = token->children[2];
-  ck_assert_eq_ts_else(child->tokenType);
-  ck_assert_int_eq(child->childrenSize, 1);
-  ck_assert_ptr_ne(child->children, NULL);
-  scope = child->children[0];
+  // if (3); else { }
+  ifToken = tsFile->tokens[3];
+  ck_assert_eq_ts_if(ifToken->tokenType);
+  ck_assert_ulong_eq(ifToken->childrenSize, 3);
+  ck_assert_ptr_ne(ifToken->children, NULL);
+  condition = ifToken->children[0];
+  ck_assert_eq_ts_condition(condition->tokenType);
+  scope = ifToken->children[1];
+  ck_assert_eq_ts_scope(scope->tokenType);
+  elseToken = ifToken->children[2];
+  ck_assert_eq_ts_else(elseToken->tokenType);
+  ck_assert_int_eq(elseToken->childrenSize, 1);
+  ck_assert_ptr_ne(elseToken->children, NULL);
+  scope = elseToken->children[0];
   ck_assert_eq_ts_scope(scope->tokenType);
 
-  // 4
-  token = tsFile->tokens[4];
-  ck_assert_eq_ts_if(token->tokenType);
-  ck_assert_int_eq(token->childrenSize, 3);
-  ck_assert_ptr_ne(token->children, NULL);
-  child = token->children[0];
-  ck_assert_eq_ts_condition(child->tokenType);
-  child = token->children[1];
-  ck_assert_eq_ts_semicolon(child->tokenType);
-  child = token->children[2];
-  ck_assert_eq_ts_else(child->tokenType);
-  ck_assert_int_eq(child->childrenSize, 1);
-  ck_assert_ptr_ne(child->children, NULL);
-
-  scope = child->children[0];
+  /* if (4); else { var variable = 30; const b = 20; } */
+  ifToken = tsFile->tokens[4];
+  ck_assert_eq_ts_if(ifToken->tokenType);
+  ck_assert_int_eq(ifToken->childrenSize, 3);
+  ck_assert_ptr_ne(ifToken->children, NULL);
+  condition = ifToken->children[0];
+  ck_assert_eq_ts_condition(condition->tokenType);
+  scope = ifToken->children[1];
+  ck_assert_eq_ts_scope(scope->tokenType);
+  elseToken = ifToken->children[2];
+  ck_assert_eq_ts_else(elseToken->tokenType);
+  ck_assert_int_eq(elseToken->childrenSize, 1);
+  ck_assert_ptr_ne(elseToken->children, NULL);
+  scope = elseToken->children[0];
   ck_assert_eq_ts_scope(scope->tokenType);
   ck_assert_int_eq(scope->childrenSize, 4);
   ck_assert_ptr_ne(scope->children, NULL);
-
   val = scope->children[0];
   ck_assert_eq_ts_var(val->tokenType);
   ck_assert_ptr_ne(val->data, NULL);
   ck_assert_ptr_ne(val->name, NULL);
   ck_assert_wstr_eq(val->name, L"variable");
-//  ck_assert_ptr_ne(data->value, NULL);
-//  ck_assert_wstr_eq(data->value, L"30");
-
   semicolon = scope->children[1];
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
-
   val = scope->children[2];
   ck_assert_eq_ts_const(val->tokenType);
   ck_assert_ptr_ne(val->name, NULL);
   ck_assert_wstr_eq(val->name, L"b");
-
   semicolon = scope->children[3];
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
+  
+  /* class Test { method() { if (1) return "true"; else return "false"; } } */
 
   TS_free_ts_file(tsFile);
 END_TEST

@@ -154,7 +154,7 @@ TS_parse_function_lookup_return_type(
               token
           );
           proceed = FALSE;
-        } else if (!TS_name_isValid(tok)) {
+        } else if (!TS_name_is_valid(tok)) {
           free((void *) tok);
           TS_token_syntax_error((wchar_t *) L"Invalid type name for function return type!", tsFile, token);
           proceed = FALSE;
@@ -240,7 +240,7 @@ TS_parse_function(
           break;
         }
         default: {
-          if (TS_name_isValid(tok)) {
+          if (TS_name_is_valid(tok)) {
             token->name = TS_clone_string(tok);
             free((void *) tok);
           } else {

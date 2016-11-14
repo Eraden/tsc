@@ -50,7 +50,7 @@ TS_parse_decorator_name(
         break;
       }
       default: {
-        if (TS_name_isValid(tok) && !TS_is_keyword(tok)) {
+        if (TS_name_is_valid(tok) && !TS_is_keyword(tok)) {
           wchar_t *newPointer = TS_join_strings(name, tok);
           if (name) free(name);
           name = newPointer;
@@ -71,7 +71,7 @@ TS_parse_decorator_name(
           tsFile,
           token
       );
-    } else if (TS_name_isValid(name) != TRUE) {
+    } else if (TS_name_is_valid(name) != TRUE) {
       TS_token_syntax_error(
           (const wchar_t *) L"Invalid characters in decorator call",
           tsFile,

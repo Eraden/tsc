@@ -248,7 +248,7 @@ TSParserToken *TS_build_parser_token(TSTokenType tokenType, TSParseData *tsParse
 
 void TS_put_back(FILE *stream, volatile const wchar_t *value);
 
-unsigned char TS_name_isValid(const wchar_t *name);
+unsigned char TS_name_is_valid(const wchar_t *name);
 
 void TS_push_child(TSParserToken *token, TSParserToken *child);
 

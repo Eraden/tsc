@@ -4,6 +4,7 @@ general:
       - /experimental\/.*/
 dependencies:
   cache_directories:
+    - tmp
     - tmp/cmake-3.6.1
   override:
     - bash ./.travis/install.sh

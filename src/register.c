@@ -451,17 +451,24 @@ TS_remove_predefined() {
   pthread_mutex_unlock(&TS_PREDEFINED_MUTEX_LOCK);
 }
 
-static TSParserToken *TS_search_token_in_token(TSParserToken *token, wchar_t *name);
-static TSParserToken *TS_search_token_in_for(TSParserToken *token, wchar_t *name);
-static TSParserToken *TS_search_token_in_if(TSParserToken *token, wchar_t *name);
-static TSParserToken *TS_search_token_in_scope(TSParserToken *token, wchar_t *name);
-static TSParserToken *TS_search_token_in_method(TSParserToken *token, wchar_t *name);
-static TSParserToken *TS_search_token_in_call_arguments(TSParserToken *token, wchar_t *name);
+static TSParserToken *TS_search_token_in_token(TSParserToken *token, const wchar_t *name);
+
+static TSParserToken *TS_search_token_in_for(TSParserToken *token, const wchar_t *name);
+
+static TSParserToken *TS_search_token_in_if(TSParserToken *token, const wchar_t *name);
+
+static TSParserToken *TS_search_token_in_scope(TSParserToken *token, const wchar_t *name);
+
+static TSParserToken *TS_search_token_in_method(TSParserToken *token, const wchar_t *name);
+
+static TSParserToken *TS_search_token_in_call_arguments(TSParserToken *token, const wchar_t *name);
+
+static TSParserToken *TS_search_token_in_namespace(TSParserToken *token, const wchar_t *name);
 
 static TSParserToken *
 TS_search_token_in_for(
     TSParserToken *token,
-    wchar_t *name
+    const wchar_t *name
 ) {
   if (token->childrenSize < 1) return NULL;
   TSParserToken *head = token->children[0];
@@ -477,14 +484,15 @@ TS_search_token_in_for(
       if (variable && variable->name && wcscmp(variable->name, name) == 0) return variable;
       else return NULL;
     }
-    default: return NULL;
+    default:
+      return NULL;
   }
 }
 
 static TSParserToken *
 TS_search_token_in_scope(
     TSParserToken *token,
-    wchar_t *name
+    const wchar_t *name
 ) {
   TSParserToken **children = token->children;
   TSParserToken *child = NULL, *found = NULL;
@@ -502,7 +510,7 @@ TS_search_token_in_scope(
 static TSParserToken *
 TS_search_token_in_call_arguments(
     TSParserToken *token,
-    wchar_t *name
+    const wchar_t *name
 ) {
   TSParserToken **children = token->children;
   TSParserToken *child = NULL, *found = NULL;
@@ -520,7 +528,7 @@ TS_search_token_in_call_arguments(
 static TSParserToken *
 TS_search_token_in_if(
     TSParserToken *token,
-    wchar_t *name
+    const wchar_t *name
 ) {
   TSParserToken **children = token->children;
   TSParserToken *child = NULL, *found = NULL;
@@ -538,7 +546,7 @@ TS_search_token_in_if(
 static TSParserToken *
 TS_search_token_in_method(
     TSParserToken *token,
-    wchar_t *name
+    const wchar_t *name
 ) {
   TSParserToken **children = token->children;
   TSParserToken *child = NULL, *found = NULL;
@@ -567,9 +575,25 @@ TS_search_token_in_method(
 }
 
 static TSParserToken *
+TS_search_token_in_namespace(
+    TSParserToken *token,
+    const wchar_t *name
+) {
+  if (token == NULL)
+    return NULL;
+  if (token->childrenSize == 0)
+    return NULL;
+  if (token->children[0] == NULL)
+    return NULL;
+  if (token->children[0]->tokenType != TS_SCOPE)
+    return NULL;
+  return TS_search_token_in_scope(token->children[0], name);
+}
+
+static TSParserToken *
 TS_search_token_in_token(
     TSParserToken *token,
-    wchar_t *name
+    const wchar_t *name
 ) {
   switch (token->tokenType) {
     case TS_SCOPE: {
@@ -588,6 +612,9 @@ TS_search_token_in_token(
     case TS_FUNCTION:
     case TS_CLASS_METHOD: {
       return TS_search_token_in_method(token, name);
+    }
+    case TS_NAMESPACE: {
+      return TS_search_token_in_namespace(token, name);
     }
     case TS_UNKNOWN: {
       return NULL;

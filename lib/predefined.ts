@@ -34,7 +34,7 @@ class Iterator {
 class Boolean extends Object {
   constructor(value: any = undefined) {}
   static get length(): number { return 1; }
-  toString(): string { if(this) return "true"; else return "false"; }
+  toString(): string { if(this) return ""; }
 }
 
 class Array extends Object {

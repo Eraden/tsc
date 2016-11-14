@@ -86,6 +86,16 @@ TS_parse_case(
           free((void *) tok);
           break;
         }
+        case L'}': {
+          if (!scope) {
+            TS_put_back(tsFile->stream, tok);
+            proceed = FALSE;
+            free((void *) tok);
+          } else {
+            TS_UNEXPECTED_TOKEN(tsFile, token, tok, "case body");
+          }
+          break;
+        }
         default: {
           tsParseData->token = tok;
           TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);

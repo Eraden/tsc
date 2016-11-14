@@ -38,7 +38,7 @@ TS_parse_operator_right_operand(
       }
       default: {
         proceed = FALSE;
-        if (!TS_is_keyword(tok) && TS_name_isValid(tok)) {
+        if (!TS_is_keyword(tok) && TS_name_is_valid(tok)) {
           proceed = FALSE;
         } else {
           TS_UNEXPECTED_TOKEN(tsFile, tsParseData->parentTSToken, tok, "operator right operand");

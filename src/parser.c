@@ -99,7 +99,7 @@ void TS_put_back(FILE *stream, volatile const wchar_t *value) {
 }
 
 unsigned char
-TS_name_isValid(
+TS_name_is_valid(
     const wchar_t *name
 ) {
   if (name == NULL) return 0;

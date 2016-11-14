@@ -32,7 +32,7 @@ TS_parse_extends(
           break;
         }
         default: {
-          if (!TS_name_isValid(tok)) {
+          if (!TS_name_is_valid(tok)) {
             TS_token_syntax_error((wchar_t *) L"Invalid parent type name", tsFile, token);
           } else {
             TS_MOVE_BY(tsParseData, tok);

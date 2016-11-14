@@ -57,7 +57,11 @@ TS_parse_else(
     TSParseData *tsParseData
 ) {
   TS_TOKEN_BEGIN(TS_ELSE, tsParseData)
-    TS_parse_else_body(tsFile, tsParseData);
+    if (!token->parent || token->parent->tokenType != TS_IF) {
+      TS_token_syntax_error((const wchar_t *) L"Missing `if` for `else`", tsFile, token);
+    } else {
+      TS_parse_else_body(tsFile, tsParseData);
+    }
   TS_TOKEN_END(TS_ELSE);
 }
 

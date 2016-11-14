@@ -240,7 +240,7 @@ TS_parse_interface(
             }
           } else if (TS_is_keyword(tok)) {
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "interface");
-          } else if (token->name == NULL && TS_name_isValid(tok) == FALSE) {
+          } else if (token->name == NULL && TS_name_is_valid(tok) == FALSE) {
             TS_token_syntax_error((const wchar_t *) L"Not suitable interface name", tsFile, token);
           } else if (token->name == NULL) {
             TS_MOVE_BY(tsParseData, tok);

@@ -1,53 +1,6 @@
 #include <cts/register.h>
 
 static void
-TS_parse_if_body(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_log_to_file((wchar_t *) L"->   parsing as %s body\n", "if");
-  TSParserToken *token = tsParseData->parentTSToken;
-  const wchar_t *tok = NULL;
-
-  volatile unsigned char proceed = TRUE;
-  while (proceed) {
-    TS_LOOP_SANITY_CHECK(tsFile)
-
-    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
-
-    if (tok == NULL) {
-      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "`if` body (looking for brackets)");
-      break;
-    }
-
-    switch (tok[0]) {
-      case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
-      case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
-        free((void *) tok);
-        break;
-      }
-      default: {
-        tsParseData->token = tok;
-        TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
-        if (child) {
-          TS_push_child(token, child);
-        }
-        proceed = FALSE;
-
-        free((void *) tok);
-        break;
-      }
-    }
-  }
-  TS_log_to_file((wchar_t *) L"->   done %s body\n", "if");
-}
-
-static void
 TS_parse_if_conditions(
     TSFile *tsFile,
     TSParseData *tsParseData
@@ -141,6 +94,93 @@ TS_lookup_else(
   }
 }
 
+static void
+TS_parse_if_body(
+    TSFile *tsFile,
+    TSParseData *tsParseData
+) {
+  TS_log_to_file((wchar_t *) L"->   parsing as %s body\n", "if");
+  TSParserToken *token = tsParseData->parentTSToken;
+  const wchar_t *tok = NULL;
+  TSParserToken *scope = NULL;
+
+  volatile unsigned char proceed = TRUE;
+  while (proceed) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
+    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
+
+    if (tok == NULL) {
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "`if` body (looking for brackets)");
+      break;
+    }
+
+    switch (tok[0]) {
+      case L' ': {
+        TS_MOVE_BY(tsParseData, tok);
+        free((void *) tok);
+        break;
+      }
+      case L'\n': {
+        TS_NEW_LINE(tsParseData, tok);
+        free((void *) tok);
+        break;
+      }
+      default: {
+        tsParseData->token = tok;
+        TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
+        if (child) {
+          switch (child->tokenType) {
+            case TS_SEMICOLON: {
+              if (!scope) {
+                scope = TS_build_parser_token(TS_SCOPE, tsParseData);
+                tsParseData->parentTSToken = token;
+                TS_push_child(token, scope);
+              }
+              child->parent = scope;
+              TS_push_child(scope, child);
+              TS_lookup_else(tsFile, tsParseData);
+              proceed = FALSE;
+              break;
+            }
+            case TS_SCOPE: {
+              scope = child;
+              TS_push_child(token, scope);
+              TS_lookup_else(tsFile, tsParseData);
+              proceed = FALSE;
+              break;
+            }
+            case TS_ELSE: {
+              TS_push_child(token, child);
+              proceed = FALSE;
+              break;
+            }
+            default: {
+              if (!scope) {
+                scope = TS_build_parser_token(TS_SCOPE, tsParseData);
+                tsParseData->parentTSToken = token;
+                child->parent = scope;
+                TS_push_child(token, scope);
+                TS_push_child(scope, child);
+              } else {
+                TS_rollback_token(tsFile, tsParseData, child);
+                proceed = FALSE;
+              }
+
+              break;
+            }
+          }
+
+        }
+
+        free((void *) tok);
+        break;
+      }
+    }
+  }
+  TS_log_to_file((wchar_t *) L"->   done %s body\n", "if");
+}
+
 TSParserToken *
 TS_parse_if(
     TSFile *tsFile,
@@ -153,7 +193,6 @@ TS_parse_if(
 
     TS_parse_if_conditions(tsFile, tsParseData);
     TS_parse_if_body(tsFile, tsParseData);
-    TS_lookup_else(tsFile, tsParseData);
 
     tsParseData->parentTSToken = token->parent;
 

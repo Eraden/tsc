@@ -208,96 +208,153 @@ ENDIF ()
 
 FILE(COPY examples DESTINATION .)
 
-ADD_TEST(NAME cli_invalid_parameters COMMAND ./cts -)
-ADD_TEST(NAME cli_invalid_file_source_parameters COMMAND ./cts -f)
-
-ADD_TEST(NAME cli_blank_with_blank_file COMMAND ./cts -f ./examples/cli/blank.ts)
-ADD_TEST(NAME cli_blank_with_blank_file_and_level_info COMMAND ./cts -f ./examples/cli/blank.ts -l info)
-ADD_TEST(NAME cli_blank_with_blank_file_and_level_log COMMAND ./cts -f ./examples/cli/blank.ts -l log)
-ADD_TEST(NAME cli_blank_with_blank_file_and_level_debug COMMAND ./cts -f ./examples/cli/blank.ts -l debug)
-ADD_TEST(NAME cli_blank_with_blank_file_and_level_off COMMAND ./cts -f ./examples/cli/blank.ts -l off)
-ADD_TEST(NAME cli_eval_source COMMAND ./cts -c 'var\ a')
-
-ADD_TEST(NAME test_file COMMAND ./cts -f ./examples/test.ts)
-
-ADD_TEST(NAME namespace COMMAND ./cts -f ./examples/namespace/valid.ts)
-
-ADD_TEST(NAME functions COMMAND ./cts -f ./examples/functions/valid.ts)
-
-ADD_TEST(NAME If_blocks COMMAND ./cts -f ./examples/if/valid.ts)
-ADD_TEST(NAME If_else_blocks COMMAND ./cts -f ./examples/else/valid.ts)
-
-ADD_TEST(NAME Variables COMMAND ./cts -f ./examples/variables/valid.ts)
-ADD_TEST(NAME Var_name_is_reserved_name COMMAND ./cts -f ./examples/variables/var_name_reserved_word)
-ADD_TEST(NAME Let_name_is_reserved_name COMMAND ./cts -f ./examples/variables/let_name_reserved_word)
-ADD_TEST(NAME Const_name_is_reserved_name COMMAND ./cts -f ./examples/variables/const_name_reserved_word)
-
-ADD_TEST(NAME Decorator_valid COMMAND ./cts -f ./examples/decorator/valid.ts)
-ADD_TEST(NAME Decorator_invalid_character COMMAND ./cts -f ./examples/decorator/invalid_character)
-ADD_TEST(NAME Decorator_missing_name COMMAND ./cts -f ./examples/decorator/missing_name)
-ADD_TEST(NAME Decorator_unexpected_end_of_stream COMMAND ./cts -f ./examples/decorator/unexpected_end_of_stream)
-ADD_TEST(NAME Decorator_unexpected_keyword COMMAND ./cts -f ./examples/decorator/unexpected_keyword)
-
-ADD_TEST(NAME Class_fields COMMAND ./cts -f ./examples/class/class_with_multiple_fields.ts)
-ADD_TEST(NAME Class_methods COMMAND ./cts -f ./examples/class/class_with_multiple_methods.ts)
-ADD_TEST(NAME Class_with_invalid_name COMMAND ./cts -f ./examples/class/invalid_class_name)
-ADD_TEST(NAME Class_with_missing_ending COMMAND ./cts -f ./examples/class/missing_class_ending)
-
-ADD_TEST(NAME for_with_iteration COMMAND ./cts -f ./examples/for/let/valid.ts)
-ADD_TEST(NAME for_iteration_with_unexpected_end_of_stream COMMAND ./cts -f ./examples/for/let/unexpected_end_of_stream)
-
-ADD_TEST(NAME for_with_in COMMAND ./cts -f ./examples/for/in/valid.ts)
-ADD_TEST(NAME for_of_with_unexpected_end_of_stream COMMAND ./cts -f ./examples/for/in/unexpected_end_of_stream)
-
-ADD_TEST(NAME for_with_of COMMAND ./cts -f ./examples/for/of/valid.ts)
-ADD_TEST(NAME for_in_with_unexpected_end_of_stream COMMAND ./cts -f ./examples/for/of/unexpected_end_of_stream)
-
-ADD_TEST(NAME switch_head_unexpected_end_of_stream COMMAND ./cts -f ./examples/switch/head/unexpected_end_of_stream)
-ADD_TEST(NAME switch_head_unexpected_token COMMAND ./cts -f ./examples/switch/head/unexpected_token)
-ADD_TEST(NAME switch_body_unexpected_end_of_stream COMMAND ./cts -f ./examples/switch/body/unexpected_end_of_stream)
-ADD_TEST(NAME switch_body_unexpected_token COMMAND ./cts -f ./examples/switch/body/unexpected_token)
-ADD_TEST(NAME switch_conditions_unexpected_end_of_stream COMMAND ./cts -f ./examples/switch/conditions/unexpected_end_of_stream)
-ADD_TEST(NAME switch_conditions_unexpected_token COMMAND ./cts -f ./examples/switch/conditions/unexpected_token)
-ADD_TEST(NAME case_body_unexpected_end_of_stream COMMAND ./cts -f ./examples/case/body/unexpected_end_of_stream)
-ADD_TEST(NAME case_conditions_unexpected_end_of_stream COMMAND ./cts -f ./examples/case/conditions/unexpected_end_of_stream)
-ADD_TEST(NAME case_conditions_unexpected_token COMMAND ./cts -f ./examples/case/conditions/unexpected_token)
-
-ADD_TEST(NAME while_valid COMMAND ./cts -f ./examples/while/valid.ts)
-
-ADD_TEST(NAME do_valid COMMAND ./cts -f ./examples/do/valid.ts)
+ADD_TEST(NAME break_unexpected_token COMMAND ./cts -f examples/break/unexpected_token )
+ADD_TEST(NAME break_valid_ts COMMAND ./cts -f examples/break/valid.ts )
+ADD_TEST(NAME case_body_unexpected_end_of_stream COMMAND ./cts -f examples/case/body/unexpected_end_of_stream )
+ADD_TEST(NAME case_conditions_unexpected_end_of_stream COMMAND ./cts -f examples/case/conditions/unexpected_end_of_stream )
+ADD_TEST(NAME case_conditions_unexpected_token COMMAND ./cts -f examples/case/conditions/unexpected_token )
+ADD_TEST(NAME case_valid_ts COMMAND ./cts -f examples/case/valid.ts )
+ADD_TEST(NAME class_class_with_multiple_fields_ts COMMAND ./cts -f examples/class/class_with_multiple_fields.ts )
+ADD_TEST(NAME class_class_with_multiple_methods_ts COMMAND ./cts -f examples/class/class_with_multiple_methods.ts )
+ADD_TEST(NAME class_invalid_class_name COMMAND ./cts -f examples/class/invalid_class_name )
+ADD_TEST(NAME class_missing_class_ending COMMAND ./cts -f examples/class/missing_class_ending )
+ADD_TEST(NAME class_missing_class_name COMMAND ./cts -f examples/class/missing_class_name )
+ADD_TEST(NAME class_multiple_super_class COMMAND ./cts -f examples/class/multiple_super_class )
+ADD_TEST(NAME class_valid_ts COMMAND ./cts -f examples/class/valid.ts )
+ADD_TEST(NAME cli_blank_ts COMMAND ./cts -f examples/cli/blank.ts )
+ADD_TEST(NAME decorator_invalid_character COMMAND ./cts -f examples/decorator/invalid_character )
+ADD_TEST(NAME decorator_missing_name COMMAND ./cts -f examples/decorator/missing_name )
+ADD_TEST(NAME decorator_unexpected_end_of_stream COMMAND ./cts -f examples/decorator/unexpected_end_of_stream )
+ADD_TEST(NAME decorator_unexpected_keyword COMMAND ./cts -f examples/decorator/unexpected_keyword )
+ADD_TEST(NAME decorator_valid_ts COMMAND ./cts -f examples/decorator/valid.ts )
+ADD_TEST(NAME do_valid_ts COMMAND ./cts -f examples/do/valid.ts )
+ADD_TEST(NAME else_no_ending_bracket COMMAND ./cts -f examples/else/no_ending_bracket )
+ADD_TEST(NAME else_no_if COMMAND ./cts -f examples/else/no_if )
+ADD_TEST(NAME else_valid_ts COMMAND ./cts -f examples/else/valid.ts )
+ADD_TEST(NAME export_unexpected_end_of_stream COMMAND ./cts -f examples/export/unexpected_end_of_stream )
+ADD_TEST(NAME export_unexpected_new_line COMMAND ./cts -f examples/export/unexpected_new_line )
+ADD_TEST(NAME export_valid_ts COMMAND ./cts -f examples/export/valid.ts )
+ADD_TEST(NAME extends_valid_ts COMMAND ./cts -f examples/extends/valid.ts )
+ADD_TEST(NAME for_in_unexpected_end_of_stream COMMAND ./cts -f examples/for/in/unexpected_end_of_stream )
+ADD_TEST(NAME for_in_valid_ts COMMAND ./cts -f examples/for/in/valid.ts )
+ADD_TEST(NAME for_let_unexpected_end_of_stream COMMAND ./cts -f examples/for/let/unexpected_end_of_stream )
+ADD_TEST(NAME for_let_valid_ts COMMAND ./cts -f examples/for/let/valid.ts )
+ADD_TEST(NAME for_of_unexpected_end_of_stream COMMAND ./cts -f examples/for/of/unexpected_end_of_stream )
+ADD_TEST(NAME for_of_valid_ts COMMAND ./cts -f examples/for/of/valid.ts )
+ADD_TEST(NAME functions_invalid_return_type COMMAND ./cts -f examples/functions/invalid_return_type )
+ADD_TEST(NAME functions_invalid_return_type_name COMMAND ./cts -f examples/functions/invalid_return_type_name )
+ADD_TEST(NAME functions_missing_arg_name COMMAND ./cts -f examples/functions/missing_arg_name )
+ADD_TEST(NAME functions_missing_arg_type COMMAND ./cts -f examples/functions/missing_arg_type )
+ADD_TEST(NAME functions_missing_arg_value COMMAND ./cts -f examples/functions/missing_arg_value )
+ADD_TEST(NAME functions_missing_first_arg_name COMMAND ./cts -f examples/functions/missing_first_arg_name )
+ADD_TEST(NAME functions_missing_return_type COMMAND ./cts -f examples/functions/missing_return_type )
+ADD_TEST(NAME functions_valid_ts COMMAND ./cts -f examples/functions/valid.ts )
+ADD_TEST(NAME if_no_args COMMAND ./cts -f examples/if/no_args )
+ADD_TEST(NAME if_no_ending_bracket COMMAND ./cts -f examples/if/no_ending_bracket )
+ADD_TEST(NAME if_valid_ts COMMAND ./cts -f examples/if/valid.ts )
+ADD_TEST(NAME implements_valid_ts COMMAND ./cts -f examples/implements/valid.ts )
+ADD_TEST(NAME import_go_up_valid_ts COMMAND ./cts -f examples/import/go_up/valid.ts )
+ADD_TEST(NAME import_source_ts COMMAND ./cts -f examples/import/source.ts )
+ADD_TEST(NAME import_valid_ts COMMAND ./cts -f examples/import/valid.ts )
+ADD_TEST(NAME inline_comment_valid_ts COMMAND ./cts -f examples/inline_comment/valid.ts )
+ADD_TEST(NAME interface_valid_ts COMMAND ./cts -f examples/interface/valid.ts )
+ADD_TEST(NAME json_valid_ts COMMAND ./cts -f examples/json/valid.ts )
+ADD_TEST(NAME multiline_comment_missing_ending COMMAND ./cts -f examples/multiline_comment/missing_ending )
+ADD_TEST(NAME multiline_comment_valid_ts COMMAND ./cts -f examples/multiline_comment/valid.ts )
+ADD_TEST(NAME namespace_valid_ts COMMAND ./cts -f examples/namespace/valid.ts )
+ADD_TEST(NAME new_unexpected_colon COMMAND ./cts -f examples/new/unexpected_colon )
+ADD_TEST(NAME new_unexpected_end_of_stream COMMAND ./cts -f examples/new/unexpected_end_of_stream )
+ADD_TEST(NAME new_unexpected_new_line COMMAND ./cts -f examples/new/unexpected_new_line )
+ADD_TEST(NAME new_valid_ts COMMAND ./cts -f examples/new/valid.ts )
+ADD_TEST(NAME operators_valid_ts COMMAND ./cts -f examples/operators/valid.ts )
+ADD_TEST(NAME return_valid_ts COMMAND ./cts -f examples/return/valid.ts )
+ADD_TEST(NAME return_without_function COMMAND ./cts -f examples/return/without_function )
+ADD_TEST(NAME scope_valid_ts COMMAND ./cts -f examples/scope/valid.ts )
+ADD_TEST(NAME switch_body_unexpected_end_of_stream COMMAND ./cts -f examples/switch/body/unexpected_end_of_stream )
+ADD_TEST(NAME switch_body_unexpected_token COMMAND ./cts -f examples/switch/body/unexpected_token )
+ADD_TEST(NAME switch_conditions_unexpected_end_of_stream COMMAND ./cts -f examples/switch/conditions/unexpected_end_of_stream )
+ADD_TEST(NAME switch_conditions_unexpected_token COMMAND ./cts -f examples/switch/conditions/unexpected_token )
+ADD_TEST(NAME switch_head_unexpected_end_of_stream COMMAND ./cts -f examples/switch/head/unexpected_end_of_stream )
+ADD_TEST(NAME switch_head_unexpected_token COMMAND ./cts -f examples/switch/head/unexpected_token )
+ADD_TEST(NAME switch_valid_ts COMMAND ./cts -f examples/switch/valid.ts )
+ADD_TEST(NAME test_ts COMMAND ./cts -f examples/test.ts )
+ADD_TEST(NAME type_validation_ts COMMAND ./cts -f examples/type_validation.ts )
+ADD_TEST(NAME unicode_ts COMMAND ./cts -f examples/unicode.ts )
+ADD_TEST(NAME variables_const_name_reserved_word COMMAND ./cts -f examples/variables/const_name_reserved_word )
+ADD_TEST(NAME variables_let_name_reserved_word COMMAND ./cts -f examples/variables/let_name_reserved_word )
+ADD_TEST(NAME variables_missing_type COMMAND ./cts -f examples/variables/missing_type )
+ADD_TEST(NAME variables_missing_value COMMAND ./cts -f examples/variables/missing_value )
+ADD_TEST(NAME variables_no_name COMMAND ./cts -f examples/variables/no_name )
+ADD_TEST(NAME variables_valid_ts COMMAND ./cts -f examples/variables/valid.ts )
+ADD_TEST(NAME variables_var_name_reserved_word COMMAND ./cts -f examples/variables/var_name_reserved_word )
+ADD_TEST(NAME while_valid_ts COMMAND ./cts -f examples/while/valid.ts )
 
 IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
   ADD_TEST(NAME CheckTsc COMMAND ./cts_test)
 ENDIF ()
 
 SET_TESTS_PROPERTIES(
-    cli_invalid_parameters
-    cli_invalid_file_source_parameters
-
-    Var_name_is_reserved_name
-    Let_name_is_reserved_name
-    Const_name_is_reserved_name
-    Class_with_invalid_name
-    Class_with_missing_ending
-    Decorator_invalid_character
-    Decorator_missing_name
-    Decorator_unexpected_end_of_stream
-    Decorator_unexpected_keyword
-
-    switch_head_unexpected_end_of_stream
-    switch_head_unexpected_token
-    switch_body_unexpected_end_of_stream
-    switch_body_unexpected_token
-    switch_conditions_unexpected_end_of_stream
-    switch_conditions_unexpected_token
+    break_unexpected_token
 
     case_body_unexpected_end_of_stream
     case_conditions_unexpected_end_of_stream
     case_conditions_unexpected_token
 
-    for_iteration_with_unexpected_end_of_stream
-    for_of_with_unexpected_end_of_stream
-    for_in_with_unexpected_end_of_stream
+    class_invalid_class_name
+    class_missing_class_ending
+    class_missing_class_name
+    class_multiple_super_class
+
+    decorator_invalid_character
+    decorator_missing_name
+    decorator_unexpected_end_of_stream
+    decorator_unexpected_keyword
+
+    else_no_ending_bracket
+    else_no_if
+
+    export_unexpected_end_of_stream
+    export_unexpected_new_line
+
+    for_in_unexpected_end_of_stream
+
+    for_let_unexpected_end_of_stream
+
+    for_of_unexpected_end_of_stream
+
+    functions_invalid_return_type
+    functions_invalid_return_type_name
+    functions_missing_arg_name
+    functions_missing_arg_type
+    functions_missing_arg_value
+    functions_missing_first_arg_name
+    functions_missing_return_type
+
+    if_no_args
+    if_no_ending_bracket
+
+    multiline_comment_missing_ending
+
+    new_unexpected_colon
+    new_unexpected_end_of_stream
+    new_unexpected_new_line
+
+    return_without_function
+
+    switch_body_unexpected_end_of_stream
+    switch_body_unexpected_token
+    switch_conditions_unexpected_end_of_stream
+    switch_conditions_unexpected_token
+    switch_head_unexpected_end_of_stream
+    switch_head_unexpected_token
+
+    variables_const_name_reserved_word
+    variables_let_name_reserved_word
+    variables_missing_type
+    variables_missing_value
+    variables_no_name
+
+    variables_var_name_reserved_word
 
     PROPERTIES
     WILL_FAIL TRUE

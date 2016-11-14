@@ -468,7 +468,7 @@ TS_parse_class(
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "class name");
             free((void *) tok);
 
-          } else if (TS_name_isValid(tok) == FALSE) {
+          } else if (TS_name_is_valid(tok) == FALSE) {
             TS_token_syntax_error((wchar_t *) L"Invalid class name", tsFile, token);
             free((void *) tok);
 
