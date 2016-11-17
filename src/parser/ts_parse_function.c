@@ -2,18 +2,15 @@
 #include <cts/register.h>
 
 static void
-TS_parse_function_arguments(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TSParserToken *token = tsParseData->parentTSToken;
+TS_parse_function_arguments(TSFile *tsFile) {
+  TSParserToken *token = tsFile->parse.parentTSToken;
   const wchar_t *tok;
   volatile unsigned char proceed = TRUE;
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "function argument");
@@ -22,19 +19,19 @@ TS_parse_function_arguments(
 
     switch (tok[0]) {
       case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
+        TS_NEW_LINE(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L'(': {
-        TS_MOVE_BY(tsParseData, tok);
-        tsParseData->token = tok;
-        TSParserToken *callArguments = TS_parse_call_arguments(tsFile, tsParseData);
+        TS_MOVE_BY(tsFile, tok);
+        tsFile->parse.token = tok;
+        TSParserToken *callArguments = TS_parse_call_arguments(tsFile);
         TS_push_child(token, callArguments);
         proceed = FALSE;
         free((void *) tok);
@@ -51,25 +48,22 @@ TS_parse_function_arguments(
 }
 
 static void
-TS_parse_function_lookup_return_type(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TSParserToken *token = tsParseData->parentTSToken;
+TS_parse_function_lookup_return_type(TSFile *tsFile) {
+  TSParserToken *token = tsFile->parse.parentTSToken;
   const wchar_t *tok;
   volatile unsigned char proceed = TRUE;
   volatile unsigned char foundColon = FALSE;
   volatile unsigned char foundType = FALSE;
-  TSParserToken *type = TS_find_type(tsFile->file, (const wchar_t *) L"any");
-  TSParserToken *returnType = TS_build_parser_token(TS_FUNCTION_RETURN_TYPE, tsParseData);
-  tsParseData->parentTSToken = returnType->parent;
-  TS_push_child(returnType, TS_create_borrow(type, tsParseData));
+  TSParserToken *type = TS_find_type(tsFile->input.file, (const wchar_t *) L"any");
+  TSParserToken *returnType = TS_build_parser_token(TS_FUNCTION_RETURN_TYPE, tsFile);
+  tsFile->parse.parentTSToken = returnType->parent;
+  TS_push_child(returnType, TS_create_borrow(type, tsFile));
   TS_push_child(token, returnType);
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "function return type");
@@ -78,24 +72,24 @@ TS_parse_function_lookup_return_type(
 
     switch (tok[0]) {
       case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
+        TS_NEW_LINE(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L':': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         proceed = FALSE;
         foundColon = TRUE;
         break;
       }
       case L'{': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         proceed = FALSE;
         break;
@@ -112,7 +106,7 @@ TS_parse_function_lookup_return_type(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "function return type");
@@ -121,12 +115,12 @@ TS_parse_function_lookup_return_type(
 
     switch (tok[0]) {
       case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
+        TS_NEW_LINE(tsFile, tok);
         free((void *) tok);
         break;
       }
@@ -139,7 +133,7 @@ TS_parse_function_lookup_return_type(
           );
           free((void *) tok);
         } else {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
         }
         proceed = FALSE;
@@ -160,14 +154,14 @@ TS_parse_function_lookup_return_type(
           proceed = FALSE;
         } else {
           foundType = TRUE;
-          type = TS_find_type(tsFile->file, tok);
+          type = TS_find_type(tsFile->input.file, tok);
           if (type) {
             TS_free_borrow(returnType->children[0]);
-            returnType->children[0] = TS_create_borrow(type, tsParseData);
+            returnType->children[0] = TS_create_borrow(type, tsFile);
           } else {
             TS_UNKNOWN_TYPE(tsFile, token, tok);
           }
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
         }
         break;
@@ -177,18 +171,15 @@ TS_parse_function_lookup_return_type(
 }
 
 TSParserToken *
-TS_parse_function(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_FUNCTION, tsParseData)
+TS_parse_function(TSFile *tsFile) {
+  TS_TOKEN_BEGIN(TS_FUNCTION, tsFile)
     const wchar_t *tok = NULL;
     volatile unsigned char proceed = TRUE;
 
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "function");
@@ -197,24 +188,24 @@ TS_parse_function(
 
       switch (tok[0]) {
         case L' ': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L'\n': {
-          TS_NEW_LINE(tsParseData, tok);
+          TS_NEW_LINE(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L'(': {
           if (token->name) {
             proceed = FALSE;
-            TS_put_back(tsFile->stream, tok);
+            TS_put_back(tsFile->input.stream, tok);
             free((void *) tok);
             break;
           } else if (token->parent) {
             proceed = FALSE;
-            TS_put_back(tsFile->stream, tok);
+            TS_put_back(tsFile->input.stream, tok);
             free((void *) tok);
 
             switch (token->parent->tokenType) {
@@ -253,10 +244,10 @@ TS_parse_function(
       }
     }
 
-    TS_parse_function_arguments(tsFile, tsParseData);
-    TS_parse_function_lookup_return_type(tsFile, tsParseData);
-    tsParseData->token = (const wchar_t *) L"{";
-    TSParserToken *body = TS_parse_scope(tsFile, tsParseData);
+    TS_parse_function_arguments(tsFile);
+    TS_parse_function_lookup_return_type(tsFile);
+    tsFile->parse.token = (const wchar_t *) L"{";
+    TSParserToken *body = TS_parse_scope(tsFile);
     TS_push_child(token, body);
 
   TS_TOKEN_END(TS_FUNCTION);

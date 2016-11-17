@@ -1,12 +1,9 @@
 #include <cts/register.h>
 
 static unsigned char
-TS_parse_argument_done(
-    TSFile *tsFile,
-    TSParseData *tsParseData,
-    TSVariableParseFlag parseFlag
-) {
-  TSParserToken *token = tsParseData->parentTSToken;
+TS_parse_argument_done(TSFile *tsFile, TSVariableParseFlag parseFlag)
+{
+  TSParserToken *token = tsFile->parse.parentTSToken;
   switch (parseFlag) {
     case TS_PARSE_VARIABLE_NAME: {
       TS_token_syntax_error((wchar_t *) L"Missing argument name", tsFile, token);
@@ -30,11 +27,9 @@ TS_parse_argument_done(
 }
 
 TSParserToken *
-TS_parse_argument(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_ARGUMENT, tsParseData)
+TS_parse_argument(TSFile *tsFile)
+{
+  TS_TOKEN_BEGIN(TS_ARGUMENT, tsFile)
 
     const wchar_t *tok = NULL;
 
@@ -43,8 +38,8 @@ TS_parse_argument(
     token->childrenSize = 2;
     TSParserToken *value = NULL;
     TSParserToken *type = NULL;
-    token->children[TS_VARIABLE_TYPE_INDEX] = TS_create_borrow(TS_ANY_TYPE, tsParseData);
-    token->children[TS_VARIABLE_VALUE_INDEX] = TS_create_borrow(TS_UNDEFINED_TYPE, tsParseData);
+    token->children[TS_VARIABLE_TYPE_INDEX] = TS_create_borrow(TS_ANY_TYPE, tsFile);
+    token->children[TS_VARIABLE_VALUE_INDEX] = TS_create_borrow(TS_UNDEFINED_TYPE, tsFile);
 
     volatile unsigned char proceed = TRUE;
     TSVariableParseFlag parseFlag = TS_PARSE_VARIABLE_NAME;
@@ -52,7 +47,7 @@ TS_parse_argument(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "argument");
@@ -61,18 +56,18 @@ TS_parse_argument(
 
       switch (tok[0]) {
         case L' ': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L'\n': {
-          TS_NEW_LINE(tsParseData, tok);
+          TS_NEW_LINE(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L')': {
-          if (TS_parse_argument_done(tsFile, tsParseData, parseFlag)) {
-            TS_put_back(tsParseData->stream, tok);
+          if (TS_parse_argument_done(tsFile, parseFlag)) {
+            TS_put_back(tsFile->input.stream, tok);
           }
           free((void *) tok);
 
@@ -80,7 +75,7 @@ TS_parse_argument(
           break;
         }
         case L'=': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
 
           if (token->name == NULL) {
@@ -95,9 +90,9 @@ TS_parse_argument(
           break;
         }
         case L',': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
-          TS_parse_argument_done(tsFile, tsParseData, parseFlag);
+          TS_parse_argument_done(tsFile, parseFlag);
 
           proceed = FALSE;
 
@@ -118,7 +113,7 @@ TS_parse_argument(
             );
             proceed = FALSE;
           }
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           parseFlag = TS_PARSE_VARIABLE_TYPE;
           free((void *) tok);
 
@@ -138,30 +133,30 @@ TS_parse_argument(
             wchar_t *newPointer = TS_join_strings(token->name, tok);
             if (token->name) free((void *) token->name);
             token->name = newPointer;
-            TS_MOVE_BY(tsParseData, tok);
+            TS_MOVE_BY(tsFile, tok);
 
             parseFlag = TS_PARSE_VARIABLE_NONE;
 
           } else if (parseFlag == TS_PARSE_VARIABLE_VALUE) {
-            tsParseData->token = tok;
-            value = TS_find_type(tsFile->file, tok);
+            tsFile->parse.token = tok;
+            value = TS_find_type(tsFile->input.file, tok);
             if (value == NULL) {
-              value = TS_parse_ts_token(tsFile, tsParseData);
-              tsParseData->parentTSToken = token;
+              value = TS_parse_ts_token(tsFile);
+              tsFile->parse.parentTSToken = token;
             } else {
-              value = TS_create_borrow(value, tsParseData);
+              value = TS_create_borrow(value, tsFile);
             }
             TS_free_borrow(token->children[TS_VARIABLE_VALUE_INDEX]);
             token->children[TS_VARIABLE_VALUE_INDEX] = value;
             parseFlag = TS_PARSE_VARIABLE_NONE;
 
           } else if (parseFlag == TS_PARSE_VARIABLE_TYPE) {
-            TS_MOVE_BY(tsParseData, tok);
+            TS_MOVE_BY(tsFile, tok);
             if (tok[0] != L'(') {
-              type = TS_find_type(tsFile->file, tok);
+              type = TS_find_type(tsFile->input.file, tok);
               if (type) {
                 TS_free_borrow(token->children[TS_VARIABLE_TYPE_INDEX]);
-                token->children[TS_VARIABLE_TYPE_INDEX] = TS_create_borrow(type, tsParseData);
+                token->children[TS_VARIABLE_TYPE_INDEX] = TS_create_borrow(type, tsFile);
               } else {
                 TS_UNKNOWN_TYPE(tsFile, token, tok);
               }
@@ -170,7 +165,7 @@ TS_parse_argument(
             }
             parseFlag = TS_PARSE_VARIABLE_NONE;
           } else {
-            TS_MOVE_BY(tsParseData, tok);
+            TS_MOVE_BY(tsFile, tok);
           }
 
           free((void *) tok);

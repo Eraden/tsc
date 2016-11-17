@@ -1,11 +1,8 @@
 #include <cts/parser.h>
 
 TSParserToken *
-TS_parse_export(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_EXPORT, tsParseData)
+TS_parse_export(TSFile *tsFile) {
+  TS_TOKEN_BEGIN(TS_EXPORT, tsFile)
 
     if (token->parent != NULL && !TS_is_embedded_in(token, TS_NAMESPACE)) {
       TS_token_syntax_error(
@@ -20,7 +17,7 @@ TS_parse_export(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
       if (tok == NULL) {
         if (token->childrenSize == 1)
@@ -33,7 +30,7 @@ TS_parse_export(
 
       switch (tok[0]) {
         case L' ': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
           break;
         }
@@ -48,26 +45,26 @@ TS_parse_export(
             break;
           } else {
             proceed = FALSE;
-            TS_put_back(tsParseData->stream, tok);
+            TS_put_back(tsFile->input.stream, tok);
             free((void *) tok);
             break;
           }
         }
         case L';': {
           proceed = FALSE;
-          TS_put_back(tsParseData->stream, tok);
+          TS_put_back(tsFile->input.stream, tok);
           free((void *) tok);
           break;
         }
         default: {
           if (token->childrenSize == 1) {
-            TS_put_back(tsParseData->stream, tok);
+            TS_put_back(tsFile->input.stream, tok);
             proceed = FALSE;
           } else {
-            TS_MOVE_BY(tsParseData, tok);
+            TS_MOVE_BY(tsFile, tok);
 
-            tsParseData->token = tok;
-            TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
+            tsFile->parse.token = tok;
+            TSParserToken *child = TS_parse_ts_token(tsFile);
 
             TS_push_child(token, child);
           }

@@ -61,15 +61,15 @@ TS_token_syntax_error(
     ...
 ) {
   tsFile->sanity = TS_FILE_SYNTAX_ERROR;
-  ts_syntax_error(msg, tsFile->file, token->character, token->line);
+  ts_syntax_error(msg, tsFile->input.file, token->character, token->line);
 
-  u_long len = wcslen(msg) + wcslen(tsFile->file) + 60;
+  u_long len = wcslen(msg) + wcslen(tsFile->input.file) + 60;
   wchar_t *buffer = calloc(sizeof(wchar_t), len);
   swprintf(
       buffer,
       len,
       (const wchar_t *) L"Syntax error: %ls\n      Position: %ls:%u:%u [file:line:character]\n",
-      msg, tsFile->file, token->line + 1, token->character
+      msg, tsFile->input.file, token->line + 1, token->character
   );
   tsFile->errorReason = buffer;
 //

@@ -2,11 +2,7 @@
 
 static wchar_t *
 __attribute__((section("parse-decorator")))
-TS_parse_decorator_name(
-    TSFile *tsFile,
-    TSParseData *tsParseData,
-    TSParserToken *token
-) {
+TS_parse_decorator_name(TSFile *tsFile, TSParserToken *token) {
   const wchar_t *tok = NULL;
   volatile unsigned char proceed = TRUE;
   wchar_t *name = NULL;
@@ -14,7 +10,7 @@ TS_parse_decorator_name(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_get_token(tsFile->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "decorator call");
@@ -24,12 +20,12 @@ TS_parse_decorator_name(
 
     switch (tok[0]) {
       case L'(': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         if (name == NULL) {
           TS_token_syntax_error((const wchar_t *) L"Missing decorator name", tsFile, token);
         } else {
-          tsParseData->token = tok;
-          TSParserToken *callArgs = TS_parse_call_arguments(tsFile, tsParseData);
+          tsFile->parse.token = tok;
+          TSParserToken *callArgs = TS_parse_call_arguments(tsFile);
           TS_push_child(token, callArgs);
         }
         free((void *) tok);
@@ -40,7 +36,7 @@ TS_parse_decorator_name(
       case '\t':
       case '\r':
       case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         if (!name) {
           TS_token_syntax_error((const wchar_t *) L"Unexpected white character in decorator call function name", tsFile,
@@ -54,7 +50,7 @@ TS_parse_decorator_name(
           wchar_t *newPointer = TS_join_strings(name, tok);
           if (name) free(name);
           name = newPointer;
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
         } else {
           TS_UNEXPECTED_TOKEN(tsFile, token, tok, "call decorator");
         }
@@ -85,13 +81,10 @@ TS_parse_decorator_name(
 
 TSParserToken *
 __attribute__((section("parse-decorator")))
-TS_parse_decorator(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_DECORATOR, tsParseData)
+TS_parse_decorator(TSFile *tsFile) {
+  TS_TOKEN_BEGIN(TS_DECORATOR, tsFile)
 
-    wchar_t *name = TS_parse_decorator_name(tsFile, tsParseData, token);
+    wchar_t *name = TS_parse_decorator_name(tsFile, token);
 
     if (name) {
       token->name = TS_clone_string(name);
@@ -99,8 +92,8 @@ TS_parse_decorator(
     }
 
     if (tsFile->sanity == TS_FILE_VALID) {
-      tsParseData->token = (const wchar_t *) L"(";
-      TSParserToken *args = TS_parse_call_arguments(tsFile, tsParseData);
+      tsFile->parse.token = (const wchar_t *) L"(";
+      TSParserToken *args = TS_parse_call_arguments(tsFile);
       TS_push_child(token, args);
     }
 

@@ -2,10 +2,9 @@
 
 TSParserToken *
 TS_parse_in(
-    TSFile __attribute__((__unused__))*tsFile,
-    TSParseData *tsParseData
+    TSFile *tsFile
 ) {
-  TS_TOKEN_BEGIN(TS_IN, tsParseData)
+  TS_TOKEN_BEGIN(TS_IN, tsFile)
   TS_TOKEN_END(TS_IN)
 }
 

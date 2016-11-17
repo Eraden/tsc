@@ -1,10 +1,7 @@
 #include <cts/register.h>
 
-TSParserToken *TS_parse_namespace(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_NAMESPACE, tsParseData);
+TSParserToken *TS_parse_namespace(TSFile *tsFile) {
+  TS_TOKEN_BEGIN(TS_NAMESPACE, tsFile);
 
     wchar_t *tok = NULL;
     unsigned char proceed = TRUE;
@@ -15,7 +12,7 @@ TSParserToken *TS_parse_namespace(
     }
 
     while (proceed) {
-      tok = (wchar_t *) TS_get_token(tsFile->stream);
+      tok = (wchar_t *) TS_get_token(tsFile->input.stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "namespace");
@@ -24,11 +21,11 @@ TSParserToken *TS_parse_namespace(
 
       switch (tok[0]) {
         case L' ': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           break;
         }
         case L'\n': {
-          TS_NEW_LINE(tsParseData, tok);
+          TS_NEW_LINE(tsFile, tok);
           break;
         }
         case L'{': {
@@ -36,8 +33,8 @@ TSParserToken *TS_parse_namespace(
             TS_MISSING_NAME(tsFile, token, "namespace");
           } else {
             proceed = FALSE;
-            tsParseData->token = tok;
-            TSParserToken *scope = TS_parse_scope(tsFile, tsParseData);
+            tsFile->parse.token = tok;
+            TSParserToken *scope = TS_parse_scope(tsFile);
             if (scope) {
               TS_push_child(token, scope);
             } else {

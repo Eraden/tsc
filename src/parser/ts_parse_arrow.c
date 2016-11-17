@@ -1,11 +1,8 @@
 #include <cts/parser.h>
 
 TSParserToken *
-TS_parse_arrow(
-    TSFile *__attribute__((__unused__)) tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_ARROW, tsParseData)
+TS_parse_arrow(TSFile *tsFile) {
+  TS_TOKEN_BEGIN(TS_ARROW, tsFile)
 
   TS_TOKEN_END(TS_ARROW)
 }

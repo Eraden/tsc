@@ -1,23 +1,23 @@
 #include <cts/register.h>
 
-TSExperimental TS_experimentalFlag = TS_DISABLE_EXPERIMENTAL;
+TSExperimental __attribute__((__used__)) TS_experimentalFlag = TS_DISABLE_EXPERIMENTAL;
 
 TSParserToken *
 TS_build_parser_token(
     TSTokenType tokenType,
-    TSParseData *tsParseData
+    TSFile *tsFile
 ) {
   TSParserToken *token = TS_NEW_TOKEN;
   token->tokenType = tokenType;
-  token->character = tsParseData->character;
-  token->line = tsParseData->line;
+  token->character = tsFile->parse.character;
+  token->line = tsFile->parse.line;
   token->usageCount = 0;
   token->modifiers = TS_MODIFIER_SCOPE;
   token->children = NULL;
   token->childrenSize = 0;
-  token->parent = tsParseData->parentTSToken;
+  token->parent = tsFile->parse.parentTSToken;
   token->data = NULL;
-  tsParseData->parentTSToken = token;
+  tsFile->parse.parentTSToken = token;
   return token;
 }
 
@@ -145,10 +145,11 @@ TS_push_child(
     TSParserToken *child
 ) {
   TS_log_to_file((wchar_t *) L"%s\n", "Pushing new TSParserToken child to TSParserToken parent");
-  TSParserToken **newPointer = (TSParserToken **) calloc(sizeof(TSParserToken *), token->childrenSize + 1);
-  if (token->children != NULL) memcpy(newPointer, token->children, sizeof(TSParserToken *) * token->childrenSize);
-  if (token->children != NULL) free(token->children);
-  token->children = newPointer;
+  if (token->children == NULL) {
+    token->children = (TSParserToken **) calloc(sizeof(TSParserToken *), token->childrenSize + 1);
+  } else {
+    token->children = realloc(token->children, sizeof(TSParserToken *) * (token->childrenSize + 1) );
+  }
   token->children[token->childrenSize] = child;
   token->childrenSize += 1;
 //  child->parent = token;
@@ -170,31 +171,30 @@ TS_append_ts_parser_token(
 
 TSParserToken *
 TS_parse_ts_token(
-    TSFile *tsFile,
-    TSParseData *data
+    TSFile *tsFile
 ) {
   if (tsFile->sanity == TS_FILE_VALID) {
     for (u_short i = 0; i < KEYWORDS_SIZE; i++) {
       TSKeyword k = TS_KEYWORDS[i];
-      if (wcscmp(data->token, k.str) == 0) {
-        TS_log_to_file((wchar_t *) L"  -  data->token = \"%ls\"\n  -  k.str = \"%ls\"\n", data->token, k.str);
-        TSParserToken *token = k.callback(tsFile, data);
+      if (wcscmp(tsFile->parse.token, k.str) == 0) {
+        TS_log_to_file((wchar_t *) L"  -  data->token = \"%ls\"\n  -  k.str = \"%ls\"\n", tsFile->parse.token, k.str);
+        TSParserToken *token = k.callback(tsFile);
         return token;
       }
     }
   }
 
   TSParserToken *t = calloc(sizeof(TSParserToken), 1);
-  t->content = TS_clone_string(data->token);
+  t->content = TS_clone_string(tsFile->parse.token);
   t->children = NULL;
   t->childrenSize = 0;
   t->usageCount = 0;
-  t->line = data->line;
-  t->character = data->character;
-  t->parent = data->parentTSToken;
+  t->line = tsFile->parse.line;
+  t->character = tsFile->parse.character;
+  t->parent = tsFile->parse.parentTSToken;
 
-  if (data->token) {
-    switch (data->token[0]) {
+  if (tsFile->parse.token) {
+    switch (tsFile->parse.token[0]) {
       case L';': {
         t->tokenType = TS_SEMICOLON;
         break;
@@ -213,8 +213,8 @@ TS_parse_ts_token(
     t->tokenType = TS_UNKNOWN;
   }
 
-  if (data->parentTSToken == NULL && data->token != NULL && t->tokenType == TS_UNKNOWN) {
-    switch (data->token[0]) {
+  if (tsFile->parse.parentTSToken == NULL && tsFile->parse.token != NULL && t->tokenType == TS_UNKNOWN) {
+    switch (tsFile->parse.token[0]) {
       case L' ':
       case L'\n': {
         break;
@@ -230,10 +230,10 @@ TS_parse_ts_token(
   return t;
 }
 
-void TS_rollback_token(TSFile *tsFile, TSParseData *data, TSParserToken *token) {
-  TS_put_back(tsFile->stream, data->token);
-  data->line = data->line - (token->line - data->line);
-  data->character = data->character - (token->character - data->character);
+void TS_rollback_token(TSFile *tsFile, TSParserToken *token) {
+  TS_put_back(tsFile->input.stream, tsFile->parse.token);
+  tsFile->parse.line = tsFile->parse.line - (token->line - tsFile->parse.line);
+  tsFile->parse.character = tsFile->parse.character - (token->character - tsFile->parse.character);
   TS_free_ts_token(token);
 }
 
@@ -566,11 +566,10 @@ TS_parse_stream(
     fprintf(stderr, "OS error: %s\n", strerror(errno));
   }
 
-  TSParseData *data = calloc(sizeof(TSParseData), 1);
-  data->line = 0;
-  data->character = 0;
-  data->stream = stream;
-  data->parentTSToken = NULL;
+  tsFile->parse.line = 0;
+  tsFile->parse.character = 0;
+  tsFile->parse.stream = stream;
+  tsFile->parse.parentTSToken = NULL;
 
   if (tsFile->sanity != TS_FILE_VALID)
     return tsFile;
@@ -582,11 +581,11 @@ TS_parse_stream(
     tok = (const wchar_t *) TS_get_token(stream);
     if (tok == NULL) break;
 
-    data->token = tok;
-    if (data->token[0] == '\n') {
-      TS_NEW_LINE(data, tok);
+    tsFile->parse.token = tok;
+    if (tsFile->parse.token[0] == '\n') {
+      TS_NEW_LINE(tsFile, tok);
     } else {
-      TSParserToken *token = TS_parse_ts_token(tsFile, data);
+      TSParserToken *token = TS_parse_ts_token(tsFile);
       if (token->tokenType != TS_UNKNOWN) {
         TS_append_ts_parser_token(tsFile, token);
       } else {
@@ -597,11 +596,9 @@ TS_parse_stream(
     free((void *) tok);
   }
 
-  free(data);
-
-  if (tsFile->stream) {
-    fclose(tsFile->stream);
-    tsFile->stream = NULL;
+  if (tsFile->input.stream) {
+    fclose(tsFile->input.stream);
+    tsFile->input.stream = NULL;
   }
 
   return tsFile;
@@ -839,15 +836,15 @@ void
 TS_free_ts_file(
     TSFile *tsFile
 ) {
-  for (; tsFile->tokensSize;) {
+  for (; tsFile->tokensSize; ) {
     tsFile->tokensSize -= 1;
     TS_free_ts_token(tsFile->tokens[tsFile->tokensSize]);
   }
   if (tsFile->tokens != NULL) {
     free(tsFile->tokens);
   }
-  if (tsFile->file) {
-    free(tsFile->file);
+  if (tsFile->input.file) {
+    free(tsFile->input.file);
   }
   if (tsFile->errorReason) {
     free(tsFile->errorReason);

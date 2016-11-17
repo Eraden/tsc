@@ -1,18 +1,15 @@
 #include <cts/parser.h>
 
 TSParserToken *
-TS_parse_case(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_CASE, tsParseData)
+TS_parse_case(TSFile *tsFile) {
+  TS_TOKEN_BEGIN(TS_CASE, tsFile)
     const wchar_t *tok = NULL;
     volatile unsigned char proceed = TRUE;
 
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_get_token(tsFile->stream);
+      tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "case condition");
@@ -20,34 +17,34 @@ TS_parse_case(
       }
       switch (tok[0]) {
         case L' ': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L'\n': {
-          TS_NEW_LINE(tsParseData, tok);
+          TS_NEW_LINE(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L':': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
 
           proceed = FALSE;
           break;
         }
         default: {
-          TS_MOVE_BY(tsParseData, tok);
-          tsParseData->token = tok;
+          TS_MOVE_BY(tsFile, tok);
+          tsFile->parse.token = tok;
 
           if (token->childrenSize == 1) {
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "case condition. Only one is allowed!");
             proceed = FALSE;
           } else {
-            TS_put_back(tsFile->stream, tok);
-            tsParseData->token = (const wchar_t *) L"";
+            TS_put_back(tsFile->input.stream, tok);
+            tsFile->parse.token = (const wchar_t *) L"";
 
-            TSParserToken *child = TS_parse_condition(tsFile, tsParseData);
+            TSParserToken *child = TS_parse_condition(tsFile);
             if (child) {
               TS_push_child(token, child);
               proceed = FALSE;
@@ -68,7 +65,7 @@ TS_parse_case(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_get_token(tsFile->stream);
+      tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "case body");
@@ -77,18 +74,18 @@ TS_parse_case(
 
       switch (tok[0]) {
         case L' ': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L'\n': {
-          TS_NEW_LINE(tsParseData, tok);
+          TS_NEW_LINE(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L'}': {
           if (!scope) {
-            TS_put_back(tsFile->stream, tok);
+            TS_put_back(tsFile->input.stream, tok);
             proceed = FALSE;
             free((void *) tok);
           } else {
@@ -97,14 +94,14 @@ TS_parse_case(
           break;
         }
         default: {
-          tsParseData->token = tok;
-          TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
+          tsFile->parse.token = tok;
+          TSParserToken *child = TS_parse_ts_token(tsFile);
           if (child) {
             switch (child->tokenType) {
               case TS_SEMICOLON: {
                 if (!scope) {
-                  scope = TS_build_parser_token(TS_SCOPE, tsParseData);
-                  tsParseData->parentTSToken = scope->parent;
+                  scope = TS_build_parser_token(TS_SCOPE, tsFile);
+                  tsFile->parse.parentTSToken = scope->parent;
                   TS_push_child(token, scope);
                 }
                 TS_push_child(scope, child);
@@ -113,7 +110,7 @@ TS_parse_case(
               }
               case TS_CASE:
               case TS_DEFAULT: {
-                TS_rollback_token(tsFile, tsParseData, child);
+                TS_rollback_token(tsFile, child);
                 proceed = FALSE;
                 break;
               }
@@ -124,8 +121,8 @@ TS_parse_case(
               }
               default: {
                 if (!scope) {
-                  scope = TS_build_parser_token(TS_SCOPE, tsParseData);
-                  tsParseData->parentTSToken = scope->parent;
+                  scope = TS_build_parser_token(TS_SCOPE, tsFile);
+                  tsFile->parse.parentTSToken = scope->parent;
                   TS_push_child(token, scope);
                 }
                 TS_push_child(scope, child);

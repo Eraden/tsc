@@ -1,11 +1,8 @@
 #include <cts/parser.h>
 
 TSParserToken *
-TS_parse_return(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_RETURN, tsParseData)
+TS_parse_return(TSFile *tsFile) {
+  TS_TOKEN_BEGIN(TS_RETURN, tsFile)
 
     const wchar_t *tok = NULL;
     volatile unsigned char proceed = TRUE;
@@ -17,7 +14,7 @@ TS_parse_return(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
       if (tok == NULL) {
         break;
@@ -25,24 +22,24 @@ TS_parse_return(
 
       switch (tok[0]) {
         case L' ': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L'\n': {
-          TS_NEW_LINE(tsParseData, tok);
+          TS_NEW_LINE(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L';': {
           proceed = FALSE;
-          TS_put_back(tsParseData->stream, tok);
+          TS_put_back(tsFile->input.stream, tok);
           free((void *) tok);
           break;
         }
         default: {
-          tsParseData->token = tok;
-          TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
+          tsFile->parse.token = tok;
+          TSParserToken *child = TS_parse_ts_token(tsFile);
           TS_push_child(token, child);
 
           free((void *) tok);

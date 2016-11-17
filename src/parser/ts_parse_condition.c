@@ -2,11 +2,8 @@
 #include <cts/register.h>
 
 TSParserToken *
-TS_parse_condition(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_CONDITION, tsParseData)
+TS_parse_condition(TSFile *tsFile) {
+  TS_TOKEN_BEGIN(TS_CONDITION, tsFile)
     if (token->parent == NULL) {
       TS_token_syntax_error((const wchar_t *) L"Invalid condition parent", tsFile, token);
     } else {
@@ -30,7 +27,7 @@ TS_parse_condition(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (const wchar_t *) TS_get_token(tsParseData->stream);
+      tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "condition");
@@ -39,12 +36,12 @@ TS_parse_condition(
 
       switch (tok[0]) {
         case L' ': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L'\n': {
-          TS_NEW_LINE(tsParseData, tok);
+          TS_NEW_LINE(tsFile, tok);
           free((void *) tok);
           break;
         }
@@ -58,7 +55,7 @@ TS_parse_condition(
             case TS_SWITCH:
             case TS_WHILE:
             case TS_IF: {
-              TS_MOVE_BY(tsParseData, tok);
+              TS_MOVE_BY(tsFile, tok);
               proceed = FALSE;
               break;
             }
@@ -78,7 +75,7 @@ TS_parse_condition(
           }
           switch (token->parent->tokenType) {
             case TS_CASE: {
-              TS_MOVE_BY(tsParseData, tok);
+              TS_MOVE_BY(tsFile, tok);
               proceed = FALSE;
               break;
             }
@@ -91,10 +88,10 @@ TS_parse_condition(
           break;
         }
         default: {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
 
-          tsParseData->token = tok;
-          TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
+          tsFile->parse.token = tok;
+          TSParserToken *child = TS_parse_ts_token(tsFile);
 
           if (!child) {
             free((void *) tok);
@@ -115,12 +112,12 @@ TS_parse_condition(
             case TS_UNKNOWN: {
               TSParserToken *unresolved = child;
               resolved = TS_search_token(unresolved);
-              if (!resolved) resolved = TS_find_type(tsFile->file, unresolved->name);
+              if (!resolved) resolved = TS_find_type(tsFile->input.file, unresolved->name);
               if (!resolved) {
                 TS_UNEXPECTED_TOKEN(tsFile, unresolved, unresolved->name, "condition");
                 TS_free_ts_token(unresolved);
               } else {
-                resolved = TS_create_borrow(resolved, tsParseData);
+                resolved = TS_create_borrow(resolved, tsFile);
                 TS_free_ts_token(unresolved);
               }
               break;

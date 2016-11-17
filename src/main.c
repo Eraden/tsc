@@ -14,9 +14,9 @@ int main(int argc, const char **argv) {
   TSFile *tsFile = TS_parse_stream(settings.fileName, settings.stream);
   TSFileSanity sanity = tsFile->sanity;
 
-  if (tsFile->stream) {
-    fclose(tsFile->stream);
-    tsFile->stream = NULL;
+  if (tsFile->input.stream) {
+    fclose(tsFile->input.stream);
+    tsFile->input.stream = NULL;
   }
   TS_free_ts_file(tsFile);
 

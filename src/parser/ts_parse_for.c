@@ -1,22 +1,19 @@
 #include <cts/parser.h>
 
 TSTokenType
-TS_resolve_for_token_type(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
+TS_resolve_for_token_type(TSFile *tsFile) {
   TS_TOKEN_SECTION_BEGIN("for type check");
   volatile wchar_t *buffer = NULL;
   volatile u_long size = 0;
   volatile unsigned char proceed = TRUE;
   const wchar_t *tok;
-  TSParserToken *token = tsParseData->parentTSToken;
+  TSParserToken *token = tsFile->parse.parentTSToken;
   TSTokenType type = TS_FOR;
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
-    tok = (const wchar_t *) TS_get_token(tsFile->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "for");
@@ -89,7 +86,7 @@ TS_resolve_for_token_type(
     }
   }
   if (buffer) {
-    TS_put_back(tsFile->stream, buffer);
+    TS_put_back(tsFile->input.stream, buffer);
     free((void *) buffer);
   }
   TS_TOKEN_SECTION_END("for type check");
@@ -98,11 +95,8 @@ TS_resolve_for_token_type(
 }
 
 static void
-TS_parse_for_head_for_of(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TSParserToken *head = tsParseData->parentTSToken;
+TS_parse_for_head_for_of(TSFile *tsFile) {
+  TSParserToken *head = tsFile->parse.parentTSToken;
   const wchar_t *tok;
   TSForIterationParseFlag flag = TS_PARSE_FOR_VARIABLE;
 
@@ -111,7 +105,7 @@ TS_parse_for_head_for_of(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
-    tok = (const wchar_t *) TS_get_token(tsFile->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, head, "for of head");
@@ -120,24 +114,24 @@ TS_parse_for_head_for_of(
 
     switch (tok[0]) {
       case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
+        TS_NEW_LINE(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L')': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         proceed = FALSE;
         break;
       }
       default: {
-        tsParseData->token = tok;
-        TSParserToken *current = TS_parse_ts_token(tsFile, tsParseData);
+        tsFile->parse.token = tok;
+        TSParserToken *current = TS_parse_ts_token(tsFile);
         free((void *) tok);
         switch (flag) {
           case TS_PARSE_FOR_VARIABLE: {
@@ -180,15 +174,12 @@ TS_parse_for_head_for_of(
       }
     }
   }
-  tsParseData->parentTSToken = head->parent;
+  tsFile->parse.parentTSToken = head->parent;
 }
 
 static void
-TS_parse_for_head_for_in(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TSParserToken *head = tsParseData->parentTSToken;
+TS_parse_for_head_for_in(TSFile *tsFile) {
+  TSParserToken *head = tsFile->parse.parentTSToken;
   const wchar_t *tok;
   TSForIterationParseFlag flag = TS_PARSE_FOR_VARIABLE;
 
@@ -197,7 +188,7 @@ TS_parse_for_head_for_in(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
-    tok = (const wchar_t *) TS_get_token(tsFile->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, head, "for in head");
@@ -206,24 +197,24 @@ TS_parse_for_head_for_in(
 
     switch (tok[0]) {
       case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
+        TS_NEW_LINE(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L')': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         proceed = FALSE;
         break;
       }
       default: {
-        tsParseData->token = tok;
-        TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
+        tsFile->parse.token = tok;
+        TSParserToken *child = TS_parse_ts_token(tsFile);
         free((void *) tok);
         switch (flag) {
           case TS_PARSE_FOR_VARIABLE: {
@@ -264,21 +255,18 @@ TS_parse_for_head_for_in(
       }
     }
   }
-  tsParseData->parentTSToken = head->parent;
+  tsFile->parse.parentTSToken = head->parent;
 }
 
 static void
-TS_parse_for_head_for_with_condition(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TSParserToken *head = tsParseData->parentTSToken;
+TS_parse_for_head_for_with_condition(TSFile *tsFile) {
+  TSParserToken *head = tsFile->parse.parentTSToken;
   const wchar_t *tok;
   TSForWithConditionParseFlag flag = TS_PARSE_FOR_VARIABLES;
   TSParserToken *current = NULL;
   TSParserToken *variablesSection = NULL, *conditionSection = NULL, *changeSection = NULL;
 
-  variablesSection = TS_build_parser_token(TS_LOOP_VARIABLES_SECTION, tsParseData);
+  variablesSection = TS_build_parser_token(TS_LOOP_VARIABLES_SECTION, tsFile);
   current = variablesSection;
   TS_push_child(head, current);
 
@@ -287,7 +275,7 @@ TS_parse_for_head_for_with_condition(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
-    tok = (const wchar_t *) TS_get_token(tsFile->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, head, "for head");
@@ -295,36 +283,36 @@ TS_parse_for_head_for_with_condition(
     }
     switch (tok[0]) {
       case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
+        TS_NEW_LINE(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L')': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         proceed = FALSE;
         break;
       }
       case L';': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         switch (flag) {
           case TS_PARSE_FOR_VARIABLES: {
             flag = TS_PARSE_FOR_CONDITION;
-            tsParseData->parentTSToken = variablesSection->parent;
-            conditionSection = TS_build_parser_token(TS_LOOP_CONDITION_SECTION, tsParseData);
+            tsFile->parse.parentTSToken = variablesSection->parent;
+            conditionSection = TS_build_parser_token(TS_LOOP_CONDITION_SECTION, tsFile);
             current = conditionSection;
             TS_push_child(head, current);
             break;
           }
           case TS_PARSE_FOR_CONDITION: {
             flag = TS_PARSE_FOR_CHANGE;
-            tsParseData->parentTSToken = conditionSection->parent;
-            changeSection = TS_build_parser_token(TS_LOOP_CHANGE_SECTION, tsParseData);
+            tsFile->parse.parentTSToken = conditionSection->parent;
+            changeSection = TS_build_parser_token(TS_LOOP_CHANGE_SECTION, tsFile);
             current = changeSection;
             TS_push_child(head, current);
             break;
@@ -339,8 +327,8 @@ TS_parse_for_head_for_with_condition(
         break;
       }
       default: {
-        tsParseData->token = tok;
-        TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
+        tsFile->parse.token = tok;
+        TSParserToken *child = TS_parse_ts_token(tsFile);
         switch (flag) {
           case TS_PARSE_FOR_VARIABLES: {
             switch (child->tokenType) {
@@ -371,28 +359,25 @@ TS_parse_for_head_for_with_condition(
   if (flag != TS_PARSE_FOR_CHANGE) {
     TS_token_syntax_error((const wchar_t *) L"Unexpected end of for head", tsFile, head);
   }
-  tsParseData->parentTSToken = head->parent;
+  tsFile->parse.parentTSToken = head->parent;
 }
 
 static TSParserToken *
-TS_parse_for_head(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TSTokenType headType = TS_resolve_for_token_type(tsFile, tsParseData);
-  TSParserToken *head = TS_build_parser_token(headType, tsParseData);
+TS_parse_for_head(TSFile *tsFile) {
+  TSTokenType headType = TS_resolve_for_token_type(tsFile);
+  TSParserToken *head = TS_build_parser_token(headType, tsFile);
 
   switch (head->tokenType) {
     case TS_FOR_WITH_CONDITION: {
-      TS_parse_for_head_for_with_condition(tsFile, tsParseData);
+      TS_parse_for_head_for_with_condition(tsFile);
       break;
     }
     case TS_FOR_IN: {
-      TS_parse_for_head_for_in(tsFile, tsParseData);
+      TS_parse_for_head_for_in(tsFile);
       break;
     }
     case TS_FOR_OF: {
-      TS_parse_for_head_for_of(tsFile, tsParseData);
+      TS_parse_for_head_for_of(tsFile);
       break;
     }
     default: {
@@ -403,10 +388,7 @@ TS_parse_for_head(
 }
 
 TSParserToken *
-TS_parse_for_body(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
+TS_parse_for_body(TSFile *tsFile) {
   const wchar_t *tok = NULL;
   volatile unsigned char proceed = TRUE;
   unsigned char buildScope = TRUE;
@@ -415,25 +397,25 @@ TS_parse_for_body(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile);
 
-    tok = (const wchar_t *) TS_get_token(tsFile->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
     if (tok == NULL) {
-      TS_UNEXPECTED_END_OF_STREAM(tsFile, tsParseData->parentTSToken, "for body");
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, tsFile->parse.parentTSToken, "for body");
       break;
     }
     switch (tok[0]) {
       case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
+        TS_NEW_LINE(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L';': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         proceed = FALSE;
         buildScope = FALSE;
@@ -445,7 +427,7 @@ TS_parse_for_body(
         break;
       }
       default: {
-        TS_UNEXPECTED_TOKEN(tsFile, tsParseData->parentTSToken, tok, "for");
+        TS_UNEXPECTED_TOKEN(tsFile, tsFile->parse.parentTSToken, tok, "for");
         proceed = FALSE;
         break;
       }
@@ -454,19 +436,16 @@ TS_parse_for_body(
 
   if (tsFile->sanity != TS_FILE_VALID) buildScope = FALSE;
   if (buildScope) {
-    tsParseData->token = (const wchar_t *) L"{";
-    body = TS_parse_scope(tsFile, tsParseData);
+    tsFile->parse.token = (const wchar_t *) L"{";
+    body = TS_parse_scope(tsFile);
   }
 
   return body;
 }
 
 TSParserToken *
-TS_parse_for(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_FOR, tsParseData)
+TS_parse_for(TSFile *tsFile) {
+  TS_TOKEN_BEGIN(TS_FOR, tsFile)
 
     const wchar_t *tok = NULL;
     volatile unsigned char proceed = TRUE;
@@ -474,7 +453,7 @@ TS_parse_for(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile);
 
-      tok = (const wchar_t *) TS_get_token(tsFile->stream);
+      tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "for");
@@ -483,17 +462,17 @@ TS_parse_for(
 
       switch (tok[0]) {
         case L' ': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L'\n': {
-          TS_NEW_LINE(tsParseData, tok);
+          TS_NEW_LINE(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L'(': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
           proceed = FALSE;
           break;
@@ -507,10 +486,10 @@ TS_parse_for(
       }
     }
 
-    TSParserToken *head = TS_parse_for_head(tsFile, tsParseData);
+    TSParserToken *head = TS_parse_for_head(tsFile);
     TS_push_child(token, head);
 
-    TSParserToken *body = TS_parse_for_body(tsFile, tsParseData);
+    TSParserToken *body = TS_parse_for_body(tsFile);
     if (body) TS_push_child(token, body);
 
   TS_TOKEN_END(TS_FOR)

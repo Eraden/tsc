@@ -24,11 +24,8 @@ TS_parse_import_resolve_imports(
 }
 
 static TSParserToken *
-TS_parse_import_from(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_IMPORT_FROM, tsParseData);
+TS_parse_import_from(TSFile *tsFile) {
+  TS_TOKEN_BEGIN(TS_IMPORT_FROM, tsFile);
 
     unsigned char proceed = TRUE;
     wchar_t *tok = NULL;
@@ -36,7 +33,7 @@ TS_parse_import_from(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (wchar_t *) TS_get_token(tsFile->stream);
+      tok = (wchar_t *) TS_get_token(tsFile->input.stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "import from");
@@ -45,19 +42,19 @@ TS_parse_import_from(
 
       switch (tok[0]) {
         case L' ': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           if (token->childrenSize) proceed = FALSE;
           free((void *) tok);
           break;
         }
         case L'\n': {
-          TS_NEW_LINE(tsParseData, tok);
+          TS_NEW_LINE(tsFile, tok);
           if (token->childrenSize) proceed = FALSE;
           free((void *) tok);
           break;
         }
         case L';': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           if (token->children == NULL) {
             TS_token_syntax_error((const wchar_t *) L"Unexpected `;` while parsing `import from`", tsFile, token);
           }
@@ -67,10 +64,10 @@ TS_parse_import_from(
         }
         case L'\'':
         case L'"': {
-          tsParseData->token = tok;
-          TSParserToken *string = TS_parse_string(tsFile, tsParseData);
+          tsFile->parse.token = tok;
+          TSParserToken *string = TS_parse_string(tsFile);
           if (string) {
-            wchar_t *directory = TS_resolve_directory(tsFile->file);
+            wchar_t *directory = TS_resolve_directory(tsFile->input.file);
             wchar_t *resolved = TS_resolve_path(directory, string->content);
             free(directory);
             if (resolved) {
@@ -109,11 +106,8 @@ TS_parse_import_from(
 }
 
 static TSParserToken *
-TS_parse_import_from_file(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TSParserToken *token = tsParseData->parentTSToken;
+TS_parse_import_from_file(TSFile *tsFile) {
+  TSParserToken *token = tsFile->parse.parentTSToken;
   TSParserToken *fromToken = NULL;
   unsigned char proceed = TRUE;
   wchar_t *tok = NULL;
@@ -121,7 +115,7 @@ TS_parse_import_from_file(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (wchar_t *) TS_get_token(tsFile->stream);
+    tok = (wchar_t *) TS_get_token(tsFile->input.stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "import");
@@ -130,19 +124,19 @@ TS_parse_import_from_file(
 
     switch (tok[0]) {
       case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
+        TS_NEW_LINE(tsFile, tok);
         free((void *) tok);
         break;
       }
       default: {
         if (wcscmp(tok, (const wchar_t *) L"from") == 0) {
-          tsParseData->token = tok;
-          fromToken = TS_parse_import_from(tsFile, tsParseData);
+          tsFile->parse.token = tok;
+          fromToken = TS_parse_import_from(tsFile);
         } else {
           TS_UNEXPECTED_TOKEN(tsFile, token, tok, "import, expect `from`");
         }
@@ -156,11 +150,8 @@ TS_parse_import_from_file(
 }
 
 static TSParserToken *
-TS_parse_import_imported_tokens(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_IMPORTED_TOKENS, tsParseData);
+TS_parse_import_imported_tokens(TSFile *tsFile) {
+  TS_TOKEN_BEGIN(TS_IMPORTED_TOKENS, tsFile);
 
     unsigned char proceed = TRUE, IMPORT_STARTED = FALSE;
     wchar_t *tok = NULL;
@@ -168,7 +159,7 @@ TS_parse_import_imported_tokens(
     while (proceed) {
       TS_LOOP_SANITY_CHECK(tsFile)
 
-      tok = (wchar_t *) TS_get_token(tsFile->stream);
+      tok = (wchar_t *) TS_get_token(tsFile->input.stream);
 
       if (tok == NULL) {
         TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "import tokens");
@@ -177,29 +168,29 @@ TS_parse_import_imported_tokens(
 
       switch (tok[0]) {
         case L' ': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L'\n': {
-          TS_NEW_LINE(tsParseData, tok);
+          TS_NEW_LINE(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L'{': {
           IMPORT_STARTED = TRUE;
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
           break;
         }
         case L'}': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           proceed = FALSE;
           free((void *) tok);
           break;
         }
         case L',': {
-          TS_MOVE_BY(tsParseData, tok);
+          TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
           break;
         }
@@ -209,8 +200,8 @@ TS_parse_import_imported_tokens(
           } else if (!TS_name_is_valid(tok)) {
             TS_UNEXPECTED_TOKEN(tsFile, token, tok, "import");
           } else if (IMPORT_STARTED) {
-            tsParseData->token = tok;
-            TSParserToken *unknown = TS_parse_ts_token(tsFile, tsParseData);
+            tsFile->parse.token = tok;
+            TSParserToken *unknown = TS_parse_ts_token(tsFile);
             if (unknown) {
               TS_push_child(token, unknown);
             } else {
@@ -230,18 +221,15 @@ TS_parse_import_imported_tokens(
 }
 
 TSParserToken *
-TS_parse_import(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_IMPORT, tsParseData)
+TS_parse_import(TSFile *tsFile) {
+  TS_TOKEN_BEGIN(TS_IMPORT, tsFile)
 
-    tsParseData->token = (const wchar_t *) L"";
-    TSParserToken *imports = TS_parse_import_imported_tokens(tsFile, tsParseData);
+    tsFile->parse.token = (const wchar_t *) L"";
+    TSParserToken *imports = TS_parse_import_imported_tokens(tsFile);
     if (imports) {
       TS_push_child(token, imports);
     }
-    TSParserToken *fromToken = TS_parse_import_from_file(tsFile, tsParseData);
+    TSParserToken *fromToken = TS_parse_import_from_file(tsFile);
     if (fromToken) {
       TS_push_child(token, fromToken);
     }

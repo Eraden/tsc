@@ -2,11 +2,8 @@
 #include <cts/register.h>
 
 static void
-TS_parse_scope_body(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TSParserToken *token = tsParseData->parentTSToken;
+TS_parse_scope_body(TSFile *tsFile) {
+  TSParserToken *token = tsFile->parse.parentTSToken;
   const wchar_t *tok = NULL;
   volatile unsigned char proceed = TRUE;
 
@@ -16,7 +13,7 @@ TS_parse_scope_body(
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
-    tok = (const wchar_t *) TS_get_token(tsParseData->stream);
+    tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
 
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "scope");
@@ -24,24 +21,24 @@ TS_parse_scope_body(
     }
     switch (tok[0]) {
       case L' ': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L'\n': {
-        TS_NEW_LINE(tsParseData, tok);
+        TS_NEW_LINE(tsFile, tok);
         free((void *) tok);
         break;
       }
       case L'}': {
-        TS_MOVE_BY(tsParseData, tok);
+        TS_MOVE_BY(tsFile, tok);
         proceed = FALSE;
         free((void *) tok);
         break;
       }
       default: {
-        tsParseData->token = tok;
-        TSParserToken *child = TS_parse_ts_token(tsFile, tsParseData);
+        tsFile->parse.token = tok;
+        TSParserToken *child = TS_parse_ts_token(tsFile);
 
         switch (child->tokenType) {
           case TS_UNKNOWN: {
@@ -50,7 +47,7 @@ TS_parse_scope_body(
             if (resolved == child) {
               TS_push_child(token, child);
             } else if (resolved) {
-              TS_push_child(token, TS_create_borrow(resolved, tsParseData));
+              TS_push_child(token, TS_create_borrow(resolved, tsFile));
               // Replaced with new borrow
               TS_free_ts_token(child);
             } else {
@@ -85,13 +82,10 @@ TS_parse_scope_body(
 }
 
 TSParserToken *
-TS_parse_scope(
-    TSFile *tsFile,
-    TSParseData *tsParseData
-) {
-  TS_TOKEN_BEGIN(TS_SCOPE, tsParseData)
+TS_parse_scope(TSFile *tsFile) {
+  TS_TOKEN_BEGIN(TS_SCOPE, tsFile)
 
-    TS_parse_scope_body(tsFile, tsParseData);
+    TS_parse_scope_body(tsFile);
 
   TS_TOKEN_END(TS_SCOPE)
 }

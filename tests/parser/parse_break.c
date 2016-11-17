@@ -17,7 +17,7 @@ START_TEST(break_unexpected_token)
 
   swprintf(error, 256,
            (const wchar_t *) L"Syntax error: Unexpected `break` in global scope\n      Position: %ls:1:5 [file:line:character]\n",
-           tsFile->file
+           tsFile->input.file
   );
 //  ck_assert_wstr_eq(tsFile->errorReason, error);
   TS_free_ts_file(tsFile);

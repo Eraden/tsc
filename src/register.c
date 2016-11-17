@@ -35,7 +35,7 @@ TSParserToken __attribute__((__used__)) *TS_BITWISE_AND = NULL;
 TSParserToken __attribute__((__used__)) *TS_BITWISE_OR = NULL;
 TSParserToken __attribute__((__used__)) *TS_BITWISE_XOR = NULL;
 
-static unsigned char registers_swapped = FALSE;
+static unsigned char __attribute__((__used__)) registers_swapped = FALSE;
 
 static pthread_mutex_t
     CLASS_REGISTER_MUTEX_LOCK,
@@ -133,7 +133,7 @@ TS_find_file(
   RegisterCollection files = TS_REGISTER;
   for (u_long index = 0; index < TS_REGISTER_SIZE; index++) {
     TSRegisterEntry *entry = files[0];
-    if (wcscmp(entry->tsFile->file, buffer) == 0) {
+    if (wcscmp(entry->tsFile->input.file, buffer) == 0) {
       tsFile = entry->tsFile;
       break;
     }
@@ -147,8 +147,8 @@ TS_find_file(
     tsFile = calloc(sizeof(TSFile), 1);
     tsFile->tokens = NULL;
     tsFile->tokensSize = 0;
-    tsFile->stream = stream;
-    tsFile->file = TS_clone_string(buffer);
+    tsFile->input.stream = stream;
+    tsFile->input.file = TS_clone_string(buffer);
 
     if (stream) {
       tsFile->sanity = TS_FILE_VALID;
@@ -212,7 +212,7 @@ TS_find_type(
 
   for (u_long entryIndex = 0; entryIndex < TS_REGISTER_SIZE; entryIndex++) {
     TSRegisterEntry *entry = TS_REGISTER[entryIndex];
-    if (file != NULL && wcscmp(entry->tsFile->file, file) == 0) {
+    if (file != NULL && wcscmp(entry->tsFile->input.file, file) == 0) {
       for (u_long clsIndex = 0; clsIndex < entry->listSize; clsIndex++) {
         TSParserToken *cls = entry->classList[clsIndex];
         if (wcscmp(cls->name, name) == 0) {
@@ -258,65 +258,18 @@ TS_destroy_register(
   pthread_mutex_unlock(&FILE_REGISTER_MUTEX_LOCK);
 }
 
-static TSParseData
-TS_build_parse_data(void) {
-  TSParseData data;
-  data.line = 0;
-  data.character = 0;
-  data.token = 0;
-  data.stream = 0;
-  data.parentTSToken = 0;
-  return data;
-}
-
-static TSParserToken *
-TS_build_operator(wchar_t *operator, unsigned short int index) {
-  TSParseData data = TS_build_parse_data();
-  data.token = operator;
-
-  TSParserToken *token = TS_parse_operator(NULL, &data);
-  TS_OPERATORS[index] = token;
-  return token;
-}
-
 static void
-__TS_setup_operators(void) {
-  TS_OPERATORS = calloc(sizeof(TSParserToken *), TS_OPERATORS_COUNT);
-
-  unsigned short int index = 0;
-  // Arithmetic Operators
-  TS_PLUS = TS_build_operator((wchar_t *) L"+", index++);
-  TS_MINUS = TS_build_operator((wchar_t *) L"-", index++);
-  TS_MULTIPLY = TS_build_operator((wchar_t *) L"*", index++);
-  TS_DIVIDE = TS_build_operator((wchar_t *) L"/", index++);
-  TS_MODULO = TS_build_operator((wchar_t *) L"%", index++);
-  TS_INCREMENT = TS_build_operator((wchar_t *) L"++", index++);
-  TS_DECREMENT = TS_build_operator((wchar_t *) L"--", index++);
-
-  // Relational Operators
-  TS_EQUAL = TS_build_operator((wchar_t *) L"==", index++);
-  TS_SAME = TS_build_operator((wchar_t *) L"===", index++);
-  TS_NOT_EQUAL = TS_build_operator((wchar_t *) L"!=", index++);
-  TS_GREATER = TS_build_operator((wchar_t *) L">", index++);
-  TS_GREATER_OR_EQUAL = TS_build_operator((wchar_t *) L">=", index++);
-  TS_LESS = TS_build_operator((wchar_t *) L"<", index++);
-  TS_LESS_OR_EQUAL = TS_build_operator((wchar_t *) L"<=", index++);
-
-  // Logical Operators
-  TS_LOGICAL_AND = TS_build_operator((wchar_t *) L"&&", index++);
-  TS_LOGICAL_OR = TS_build_operator((wchar_t *) L"||", index++);
-  TS_LOGICAL_NOT = TS_build_operator((wchar_t *) L"!", index++);
-
-  // Bitwise Operators
-  TS_BITWISE_AND = TS_build_operator((wchar_t *) L"&", index++);
-  TS_BITWISE_OR = TS_build_operator((wchar_t *) L"|", index++);
-  TS_BITWISE_XOR = TS_build_operator((wchar_t *) L"^", index);
+TS_build_parse_data(TSFile *tsFile) {
+  tsFile->parse.line = 0;
+  tsFile->parse.character = 0;
+  tsFile->parse.token = 0;
+  tsFile->parse.stream = 0;
+  tsFile->parse.parentTSToken = 0;
 }
 
 static void
 __TS_setup_predefined(void) {
   if (TS_PREDEFINED_REGISTER == NULL) {
-    __TS_setup_operators();
     TS_PREDEFINED_REGISTER = calloc(sizeof(TSRegisterEntry *), 1);
 
     swap(u_long, TS_PREDEFINED_REGISTER_SIZE, TS_REGISTER_SIZE);
@@ -326,71 +279,70 @@ __TS_setup_predefined(void) {
     const char *path = TS_get_user_library_path();
     TSFile *tsFile = TS_PREDEFINED_FILE = TS_find_file(path, NULL);
 
-    TSParseData data;
     TSParserToken *type, *extends;
 
     // any
-    data = TS_build_parse_data();
-    type = TS_ANY_TYPE = TS_build_parser_token(TS_INTERFACE, &data);
+    TS_build_parse_data(tsFile);
+    type = TS_ANY_TYPE = TS_build_parser_token(TS_INTERFACE, tsFile);
     type->name = TS_clone_string((const wchar_t *) L"any");
     TS_append_ts_parser_token(tsFile, type);
     TS_register_type(tsFile, type);
     // this
-    data = TS_build_parse_data();
-    type = TS_build_parser_token(TS_INTERFACE, &data);
+    TS_build_parse_data(tsFile);
+    type = TS_build_parser_token(TS_INTERFACE, tsFile);
     type->name = TS_clone_string((const wchar_t *) L"this");
     TS_append_ts_parser_token(tsFile, type);
     TS_register_type(tsFile, type);
     // true
-    data = TS_build_parse_data();
-    type = TS_build_parser_token(TS_INTERFACE, &data);
+    TS_build_parse_data(tsFile);
+    type = TS_build_parser_token(TS_INTERFACE, tsFile);
     type->name = TS_clone_string((const wchar_t *) L"true");
     TS_append_ts_parser_token(tsFile, type);
     TS_register_type(tsFile, type);
     // false
-    data = TS_build_parse_data();
-    type = TS_build_parser_token(TS_INTERFACE, &data);
+    TS_build_parse_data(tsFile);
+    type = TS_build_parser_token(TS_INTERFACE, tsFile);
     type->name = TS_clone_string((const wchar_t *) L"false");
     TS_append_ts_parser_token(tsFile, type);
     TS_register_type(tsFile, type);
     // object
-    data = TS_build_parse_data();
-    type = TS_build_parser_token(TS_CLASS, &data);
+    TS_build_parse_data(tsFile);
+    type = TS_build_parser_token(TS_CLASS, tsFile);
     type->name = TS_clone_string((const wchar_t *) L"object");
-    extends = TS_build_parser_token(TS_IMPLEMENTS, &data);
-    TS_push_child(extends, TS_create_borrow(TS_ANY_TYPE, &data));
+    extends = TS_build_parser_token(TS_IMPLEMENTS, tsFile);
+    TS_push_child(extends, TS_create_borrow(TS_ANY_TYPE, tsFile));
     TS_push_child(type, extends);
     TS_append_ts_parser_token(tsFile, type);
     TS_register_type(tsFile, type);
     // undefined
-    data = TS_build_parse_data();
-    type = TS_UNDEFINED_TYPE = TS_build_parser_token(TS_INTERFACE, &data);
+    TS_build_parse_data(tsFile);
+    type = TS_UNDEFINED_TYPE = TS_build_parser_token(TS_INTERFACE, tsFile);
     type->name = TS_clone_string((const wchar_t *) L"undefined");
-    extends = TS_build_parser_token(TS_EXTENDS, &data);
-    TS_push_child(extends, TS_create_borrow(TS_ANY_TYPE, &data));
+    extends = TS_build_parser_token(TS_EXTENDS, tsFile);
+    TS_push_child(extends, TS_create_borrow(TS_ANY_TYPE, tsFile));
     TS_push_child(type, extends);
     TS_append_ts_parser_token(tsFile, type);
     TS_register_type(tsFile, type);
     // null
-    data = TS_build_parse_data();
-    type = TS_NULL_TYPE = TS_build_parser_token(TS_INTERFACE, &data);
+    TS_build_parse_data(tsFile);
+    type = TS_NULL_TYPE = TS_build_parser_token(TS_INTERFACE, tsFile);
     type->name = TS_clone_string((const wchar_t *) L"null");
-    extends = TS_build_parser_token(TS_EXTENDS, &data);
-    TS_push_child(extends, TS_create_borrow(TS_ANY_TYPE, &data));
+    extends = TS_build_parser_token(TS_EXTENDS, tsFile);
+    TS_push_child(extends, TS_create_borrow(TS_ANY_TYPE, tsFile));
     TS_push_child(type, extends);
     TS_append_ts_parser_token(tsFile, type);
     TS_register_type(tsFile, type);
     // void
-    data = TS_build_parse_data();
-    type = TS_build_parser_token(TS_INTERFACE, &data);
+    TS_build_parse_data(tsFile);
+    type = TS_build_parser_token(TS_INTERFACE, tsFile);
     type->name = TS_clone_string((const wchar_t *) L"void");
-    extends = TS_build_parser_token(TS_EXTENDS, &data);
-    TS_push_child(extends, TS_create_borrow(TS_ANY_TYPE, &data));
+    extends = TS_build_parser_token(TS_EXTENDS, tsFile);
+    TS_push_child(extends, TS_create_borrow(TS_ANY_TYPE, tsFile));
     TS_push_child(type, extends);
     TS_append_ts_parser_token(tsFile, type);
     TS_register_type(tsFile, type);
 
-    TS_parse_stream(path, tsFile->stream);
+    TS_parse_stream(path, tsFile->input.stream);
     free((void *) path);
 
     if (TS_PREDEFINED_FILE->sanity != TS_FILE_VALID) {
@@ -405,8 +357,8 @@ __TS_setup_predefined(void) {
       TS_PREDEFINED_FILE = NULL;
       exit(5);
     } else {
-      TS_NUMBER_TYPE = TS_find_type(TS_PREDEFINED_FILE->file, (const wchar_t *) L"number");
-      TS_STRING_TYPE = TS_find_type(TS_PREDEFINED_FILE->file, (const wchar_t *) L"string");
+      TS_NUMBER_TYPE = TS_find_type(TS_PREDEFINED_FILE->input.file, (const wchar_t *) L"number");
+      TS_STRING_TYPE = TS_find_type(TS_PREDEFINED_FILE->input.file, (const wchar_t *) L"string");
     }
 
     swap(u_long, TS_PREDEFINED_REGISTER_SIZE, TS_REGISTER_SIZE);
@@ -434,14 +386,6 @@ TS_remove_predefined() {
 
     TS_free_ts_file(TS_PREDEFINED_FILE);
     TS_destroy_register();
-
-    TSParserToken **operators = TS_OPERATORS;
-    for (unsigned short int size = TS_OPERATORS_COUNT; size;) {
-      TS_free_operator(operators[0]);
-      size -= 1;
-      operators += 1;
-    }
-    free(TS_OPERATORS);
 
     swap(u_long, TS_PREDEFINED_REGISTER_SIZE, TS_REGISTER_SIZE);
     swap(RegisterCollection, TS_PREDEFINED_REGISTER, TS_REGISTER);
