@@ -58,44 +58,44 @@
 
 ## Output
 
-- [ ] parse `inline comment`
-- [ ] parse `multi line comment`
-- [ ] parse `var`
-- [ ] parse `let`
-- [ ] parse `const`
-- [ ] parse `array`
-- [X] parse `if`
-- [X] parse `else`
-- [ ] parse `switch`
-- [ ] parse `case`
-- [ ] parse `default`
-- [ ] parse `for`
-- [ ] parse `in`
-- [ ] parse `of`
-- [ ] parse `do`
-- [ ] parse `break`
-- [ ] parse `group`
-- [ ] parse `while`
-- [ ] parse `function`
-- [ ] parse `class`
-- [ ] parse `interface`
-- [ ] parse `extends`
-- [ ] parse `implements`
-- [ ] parse `conditions`
-- [ ] parse `arguments`
-- [ ] parse `decorator`
-- [ ] parse `;`
-- [ ] parse `.`
-- [ ] parse `operators`
-- [ ] parse `export`
-- [ ] parse `import`
-- [ ] parse `json`
-- [ ] parse `namespace`
-- [ ] parse `new`
-- [ ] parse `scope`
-- [ ] parse `string`
-- [ ] parse `string template`
-- [ ] parse `=>`
+- [ ] build `inline comment` output
+- [ ] build `multi line comment` output
+- [ ] build `var` output
+- [ ] build `let` output
+- [ ] build `const` output
+- [ ] build `array` output
+- [X] build `if` output
+- [X] build `else` output
+- [ ] build `switch` output
+- [ ] build `case` output
+- [ ] build `default` output
+- [ ] build `for` output
+- [ ] build `in` output
+- [ ] build `of` output
+- [ ] build `do` output
+- [ ] build `break` output
+- [ ] build `group` output
+- [ ] build `while` output
+- [ ] build `function` output
+- [ ] build `class` output
+- [ ] build `interface` output
+- [ ] build `extends` output
+- [ ] build `implements` output
+- [ ] build `conditions` output
+- [ ] build `arguments` output
+- [ ] build `decorator` output
+- [ ] build `;` output
+- [ ] build `.` output
+- [ ] build `operators` output
+- [ ] build `export` output
+- [ ] build `import` output
+- [ ] build `json` output
+- [ ] build `namespace` output
+- [ ] build `new` output
+- [ ] build `scope` output
+- [ ] build `string` output
+- [ ] build `string template` output
+- [ ] build `=>` output
 
 ## Validator
 
