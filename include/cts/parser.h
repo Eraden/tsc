@@ -415,6 +415,4 @@ TSFile *TS_parse_file(const char *fileName);
 
 TSFile *TS_parse_stream(const char *file, FILE *stream);
 
-void TS_free_ts_file(TSFile *tsFile);
-
 unsigned char TS_is_embedded_in(TSParserToken *token, TSTokenType type);

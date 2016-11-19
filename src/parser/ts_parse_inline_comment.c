@@ -26,12 +26,8 @@ TS_parse_inline_comment(TSFile *tsFile) {
         }
         default: {
           TS_MOVE_BY(tsFile, tok);
-          u_long size = TS_STRING_END + wcslen(tok);
-          if (token->content != NULL) size += wcslen(token->content);
-          wchar_t *newPointer = (wchar_t *) calloc(sizeof(wchar_t), size);
-          if (token->content != NULL) wcscpy(newPointer, token->name);
+          wchar_t *newPointer = TS_join_strings(token->content, tok);
           if (token->content != NULL) free(token->content);
-          wcscat(newPointer, tok);
           token->content = newPointer;
           free((void *) tok);
         }

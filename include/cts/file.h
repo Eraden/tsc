@@ -25,7 +25,9 @@ typedef struct sTSFile {
       char *outputFileName;
       wchar_t *buffer;
     };
+    unsigned int indent;
     TSOutputTargetType type;
+    TSParserToken *currentToken;
   } output;
 
   struct {
@@ -41,9 +43,19 @@ typedef struct sTSFile {
     TSParserToken *parentTSToken;
   } parse;
 
+  struct {
+    unsigned char preserveComments;
+    unsigned char highlight;
+    unsigned int indentSize;
+  } settings;
+
   TSParserToken **tokens;
   u_long tokensSize;
 
   TSFileSanity sanity;
   wchar_t *errorReason;
 } TSFile;
+
+TSFile *TS_build_file();
+
+void TS_free_ts_file(TSFile *tsFile);

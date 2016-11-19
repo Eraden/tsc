@@ -1,4 +1,5 @@
 #include <cts/register.h>
+#include <cts/file.h>
 
 TSExperimental __attribute__((__used__)) TS_experimentalFlag = TS_DISABLE_EXPERIMENTAL;
 
@@ -571,6 +572,11 @@ TS_parse_stream(
   tsFile->parse.stream = stream;
   tsFile->parse.parentTSToken = NULL;
 
+  tsFile->output.type = TS_OUTPUT_UNSET;
+  tsFile->output.stream = NULL;
+  tsFile->output.currentToken = NULL;
+  tsFile->output.indent = 0;
+
   if (tsFile->sanity != TS_FILE_VALID)
     return tsFile;
 
@@ -830,29 +836,6 @@ TS_free_children_from(
     children += 1;
   }
   if (token->children != NULL) free(token->children);
-}
-
-void
-TS_free_ts_file(
-    TSFile *tsFile
-) {
-  for (; tsFile->tokensSize; ) {
-    tsFile->tokensSize -= 1;
-    TS_free_ts_token(tsFile->tokens[tsFile->tokensSize]);
-  }
-  if (tsFile->tokens != NULL) {
-    free(tsFile->tokens);
-  }
-  if (tsFile->input.file) {
-    free(tsFile->input.file);
-  }
-  if (tsFile->errorReason) {
-    free(tsFile->errorReason);
-  }
-
-  TS_register_remove_file(tsFile);
-
-  free((void *) tsFile);
 }
 
 unsigned char TS_is_embedded_in(TSParserToken *token, TSTokenType type) {

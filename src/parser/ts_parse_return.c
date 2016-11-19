@@ -43,6 +43,7 @@ TS_parse_return(TSFile *tsFile) {
           TS_push_child(token, child);
 
           free((void *) tok);
+          // FIXME: multiple return!!!
           break;
         }
       }

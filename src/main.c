@@ -1,5 +1,7 @@
-#include <cts/parser.h>
+#include <cts/file.h>
+#include <cts/output.h>
 #include <cts/register.h>
+
 
 int main(int argc, const char **argv) {
   setlocale(LC_ALL, "");
@@ -12,12 +14,16 @@ int main(int argc, const char **argv) {
   TS_log_to_file((wchar_t *) L"Parsing file: %s\n", settings.fileName);
 
   TSFile *tsFile = TS_parse_stream(settings.fileName, settings.stream);
+  TS_set_output_stream(tsFile, stdout);
   TSFileSanity sanity = tsFile->sanity;
 
   if (tsFile->input.stream) {
     fclose(tsFile->input.stream);
     tsFile->input.stream = NULL;
   }
+
+  TS_build_output(tsFile);
+
   TS_free_ts_file(tsFile);
 
   TS_destroy_register();

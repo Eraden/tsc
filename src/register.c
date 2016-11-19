@@ -1,4 +1,5 @@
 #include <cts/register.h>
+#include <cts/file.h>
 
 // Predefined TS types
 TSParserToken __attribute__((__used__)) *TS_ANY_TYPE = NULL;
@@ -6,34 +7,6 @@ TSParserToken __attribute__((__used__)) *TS_NUMBER_TYPE = NULL;
 TSParserToken __attribute__((__used__)) *TS_STRING_TYPE = NULL;
 TSParserToken __attribute__((__used__)) *TS_UNDEFINED_TYPE = NULL;
 TSParserToken __attribute__((__used__)) *TS_NULL_TYPE = NULL;
-
-// Arithmetic Operators
-TSParserToken __attribute__((__used__)) *TS_PLUS = NULL;
-TSParserToken __attribute__((__used__)) *TS_MINUS = NULL;
-TSParserToken __attribute__((__used__)) *TS_MULTIPLY = NULL;
-TSParserToken __attribute__((__used__)) *TS_DIVIDE = NULL;
-TSParserToken __attribute__((__used__)) *TS_MODULO = NULL;
-TSParserToken __attribute__((__used__)) *TS_INCREMENT = NULL;
-TSParserToken __attribute__((__used__)) *TS_DECREMENT = NULL;
-
-// Relational Operators
-TSParserToken __attribute__((__used__)) *TS_EQUAL = NULL;
-TSParserToken __attribute__((__used__)) *TS_SAME = NULL;
-TSParserToken __attribute__((__used__)) *TS_NOT_EQUAL = NULL;
-TSParserToken __attribute__((__used__)) *TS_GREATER = NULL;
-TSParserToken __attribute__((__used__)) *TS_GREATER_OR_EQUAL = NULL;
-TSParserToken __attribute__((__used__)) *TS_LESS = NULL;
-TSParserToken __attribute__((__used__)) *TS_LESS_OR_EQUAL = NULL;
-
-// Logical Operators
-TSParserToken __attribute__((__used__)) *TS_LOGICAL_AND = NULL;
-TSParserToken __attribute__((__used__)) *TS_LOGICAL_OR = NULL;
-TSParserToken __attribute__((__used__)) *TS_LOGICAL_NOT = NULL;
-
-// Bitwise Operators
-TSParserToken __attribute__((__used__)) *TS_BITWISE_AND = NULL;
-TSParserToken __attribute__((__used__)) *TS_BITWISE_OR = NULL;
-TSParserToken __attribute__((__used__)) *TS_BITWISE_XOR = NULL;
 
 static unsigned char __attribute__((__used__)) registers_swapped = FALSE;
 
@@ -144,9 +117,7 @@ TS_find_file(
   if (tsFile == NULL) {
     if (stream == NULL) stream = fopen(path, "r");
 
-    tsFile = calloc(sizeof(TSFile), 1);
-    tsFile->tokens = NULL;
-    tsFile->tokensSize = 0;
+    tsFile = TS_build_file();
     tsFile->input.stream = stream;
     tsFile->input.file = TS_clone_string(buffer);
 

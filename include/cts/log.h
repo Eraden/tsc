@@ -5,6 +5,7 @@
 #endif
 
 #include <cts/sys.h>
+#include <cts/highlight.h>
 
 void TS_io_panic(wchar_t *msg);
 void TS_init_log(void);

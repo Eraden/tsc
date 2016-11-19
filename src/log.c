@@ -14,7 +14,9 @@ void
 TS_io_panic(
     wchar_t *msg
 ) {
-  fprintf(stderr, "%ls\n%s\n", msg, strerror(errno));
+  TS_highlight_error();
+  fwprintf(stderr, (const wchar_t *) L"%ls\n%s\n", msg, strerror(errno));
+  TS_clear_highlight();
   exit(TS_FILE_NOT_FOUND_CODE);
 }
 

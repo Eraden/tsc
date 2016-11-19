@@ -47,6 +47,46 @@ SET(
 
 SET(
     OUTPUT_SOURCES
+    src/output/ts_build_array_output.c
+    src/output/ts_build_argument_output.c
+    src/output/ts_build_arrow_output.c
+    src/output/ts_build_break_output.c
+    src/output/ts_build_borrow_output.c
+    src/output/ts_build_call_arguments_output.c
+    src/output/ts_build_caller_output.c
+    src/output/ts_build_case_output.c
+    src/output/ts_build_class_output.c
+    src/output/ts_build_colon_output.c
+    src/output/ts_build_condition_output.c
+    src/output/ts_build_decorator_output.c
+    src/output/ts_build_default_output.c
+    src/output/ts_build_do_output.c
+    src/output/ts_build_else_output.c
+    src/output/ts_build_export_output.c
+    src/output/ts_build_extends_output.c
+    src/output/ts_build_for_output.c
+    src/output/ts_build_function_output.c
+    src/output/ts_build_group_output.c
+    src/output/ts_build_if_output.c
+    src/output/ts_build_implements_output.c
+    src/output/ts_build_import_output.c
+    src/output/ts_build_in_output.c
+    src/output/ts_build_inline_comment_output.c
+    src/output/ts_build_interface_output.c
+    src/output/ts_build_json_output.c
+    src/output/ts_build_local_variable_output.c
+    src/output/ts_build_multiline_comment_output.c
+    src/output/ts_build_namespace_output.c
+    src/output/ts_build_new_output.c
+    src/output/ts_build_of_output.c
+    src/output/ts_build_operator_output.c
+    src/output/ts_build_return_output.c
+    src/output/ts_build_scope_output.c
+    src/output/ts_build_string_output.c
+    src/output/ts_build_semicolon_output.c
+    src/output/ts_build_switch_output.c
+    src/output/ts_build_while_output.c
+    src/output/ts_buld_number_output.c
     src/output/ts_output_header.c
     src/output/ts_output_footer.c
     src/output.c
@@ -54,6 +94,8 @@ SET(
 
 SET(
     SOURCE_FILES
+    src/file.c
+    src/highlight.c
     src/os.c
     src/sys.c
     src/log.c
