@@ -37,7 +37,7 @@ TS_parse_local_variable_body(TSFile *tsFile) {
   TSParserToken *value = NULL;
   TSParserToken *type = NULL;
   token->children[TS_VARIABLE_TYPE_INDEX] = TS_create_borrow(TS_ANY_TYPE, tsFile);
-  token->children[TS_VARIABLE_VALUE_INDEX] = TS_create_borrow(TS_UNDEFINED_TYPE, tsFile);
+  token->children[TS_VARIABLE_VALUE_INDEX] = TS_create_undefined(tsFile);
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -98,7 +98,21 @@ TS_parse_local_variable_body(TSFile *tsFile) {
       }
       case L';': {
         proceed = FALSE;
-        TS_put_back(tsFile->input.stream, tok);
+        if (token->parent && token->parent->tokenType == TS_CALL_ARGUMENTS) {
+          TS_UNEXPECTED_TOKEN(tsFile, token, tok, "argument");
+        } else {
+          TS_put_back(tsFile->input.stream, tok);
+        }
+        free((void *) tok);
+        break;
+      }
+      case L')': {
+        proceed = FALSE;
+        if (token->parent && token->parent->tokenType == TS_CALL_ARGUMENTS) {
+          TS_put_back(tsFile->input.stream, tok);
+        } else {
+          TS_UNEXPECTED_TOKEN(tsFile, token, tok, "local variable");
+        }
         free((void *) tok);
         break;
       }
@@ -108,9 +122,7 @@ TS_parse_local_variable_body(TSFile *tsFile) {
           TS_parse_local_variable_done(tsFile, parseFlag);
           proceed = FALSE;
           free((void *) tok);
-          break;
-        }
-        if (parseFlag == TS_PARSE_VARIABLE_NAME) {
+        } else if (parseFlag == TS_PARSE_VARIABLE_NAME) {
           TS_log_to_file((wchar_t *) L"Setting name of local variable\n");
           if (TS_is_keyword(tok)) {
             free((void *) tok);
@@ -131,7 +143,7 @@ TS_parse_local_variable_body(TSFile *tsFile) {
             TS_type_from_string(tsFile, value);
           }
           if (value) {
-            TS_free_borrow(token->children[TS_VARIABLE_VALUE_INDEX]);
+            TS_free_ts_token(token->children[TS_VARIABLE_VALUE_INDEX]);
             token->children[TS_VARIABLE_VALUE_INDEX] = value;
           } else {
             // TODO error

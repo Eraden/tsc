@@ -37,6 +37,12 @@
 - [X] parse `while`
 - [X] parse `function`
 - [X] parse `class`
+- [X] parse `class member`
+- [X] parse `class static member`
+- [X] parse `class method`
+- [X] parse `class static method`
+- [ ] parse defining `class` property using `[]`
+- [X] parse `super`
 - [X] parse `interface`
 - [X] parse `extends`
 - [X] parse `implements`
@@ -55,6 +61,8 @@
 - [X] parse `string`
 - [ ] parse `string template`
 - [ ] parse `=>`
+- [ ] parse `(("symbol"))`
+- [X] parse `...spread`
 
 ## Output
 
@@ -77,7 +85,13 @@
 - [ ] build `group` output
 - [ ] build `while` output
 - [ ] build `function` output
-- [ ] build `class` output
+- [X] build `class` output
+- [ ] build `class member` output
+- [ ] build `class static member` output
+- [ ] build `class method` output
+- [ ] build `class static method` output
+- [ ] build `class` property using `[]` output
+- [X] build `super` output
 - [ ] build `interface` output
 - [ ] build `extends` output
 - [ ] build `implements` output
@@ -96,6 +110,7 @@
 - [ ] build `string` output
 - [ ] build `string template` output
 - [ ] build `=>` output
+- [ ] build `(("symbol"))` output
 
 ## Validator
 

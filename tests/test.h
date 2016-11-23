@@ -16,6 +16,7 @@
 #include "support/ck_token_eq.h"
 #include "support/borrow.h"
 #include "support/ts_errors.h"
+#include "support/children_validation.h"
 
 TSParserToken *ANY;
 TSParserToken *NUMBER;

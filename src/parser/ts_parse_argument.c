@@ -39,7 +39,7 @@ TS_parse_argument(TSFile *tsFile)
     TSParserToken *value = NULL;
     TSParserToken *type = NULL;
     token->children[TS_VARIABLE_TYPE_INDEX] = TS_create_borrow(TS_ANY_TYPE, tsFile);
-    token->children[TS_VARIABLE_VALUE_INDEX] = TS_create_borrow(TS_UNDEFINED_TYPE, tsFile);
+    token->children[TS_VARIABLE_VALUE_INDEX] = TS_create_undefined(tsFile);
 
     volatile unsigned char proceed = TRUE;
     TSVariableParseFlag parseFlag = TS_PARSE_VARIABLE_NAME;
@@ -146,7 +146,7 @@ TS_parse_argument(TSFile *tsFile)
             } else {
               value = TS_create_borrow(value, tsFile);
             }
-            TS_free_borrow(token->children[TS_VARIABLE_VALUE_INDEX]);
+            TS_free_ts_token(token->children[TS_VARIABLE_VALUE_INDEX]);
             token->children[TS_VARIABLE_VALUE_INDEX] = value;
             parseFlag = TS_PARSE_VARIABLE_NONE;
 

@@ -42,6 +42,8 @@ SET(
     src/parser/ts_parse_group.c
     src/parser/ts_parse_operator.c
     src/parser/ts_parse_namespace.c
+    src/parser/ts_parse_spread.c
+    src/parser/ts_parse_super.c
     src/parser.c
 )
 
@@ -87,6 +89,8 @@ SET(
     src/output/ts_build_switch_output.c
     src/output/ts_build_while_output.c
     src/output/ts_buld_number_output.c
+    src/output/ts_build_spread_output.c
+    src/output/ts_build_super_output.c
     src/output/ts_output_header.c
     src/output/ts_output_footer.c
     src/output.c
@@ -130,6 +134,8 @@ IF (DEFINED TSC_TEST AND TSC_TEST MATCHES "1")
       tests/parser/parse_implements.c
       tests/parser/parse_while.c
       tests/parser/parse_do.c
+      tests/parser/parse_super.c
+      tests/parser/parse_spread.c
       tests/core/operators.c
       tests/core/sys.c
       tests/core/borrows.c
@@ -273,9 +279,9 @@ ADD_TEST(NAME do_valid_ts COMMAND ./cts -f examples/do/valid.ts )
 ADD_TEST(NAME else_no_ending_bracket COMMAND ./cts -f examples/else/no_ending_bracket )
 ADD_TEST(NAME else_no_if COMMAND ./cts -f examples/else/no_if )
 ADD_TEST(NAME else_valid_ts COMMAND ./cts -f examples/else/valid.ts )
-ADD_TEST(NAME export_unexpected_end_of_stream COMMAND ./cts -f examples/export/unexpected_end_of_stream )
-ADD_TEST(NAME export_unexpected_new_line COMMAND ./cts -f examples/export/unexpected_new_line )
-ADD_TEST(NAME export_valid_ts COMMAND ./cts -f examples/export/valid.ts )
+ADD_TEST(NAME export_unexpected_end_of_stream COMMAND ./cts -f examples/export/input/unexpected_end_of_stream)
+ADD_TEST(NAME export_unexpected_new_line COMMAND ./cts -f examples/export/input/unexpected_new_line)
+ADD_TEST(NAME export_valid_ts COMMAND ./cts -f examples/export/input/valid.ts)
 ADD_TEST(NAME extends_valid_ts COMMAND ./cts -f examples/extends/valid.ts )
 ADD_TEST(NAME for_in_unexpected_end_of_stream COMMAND ./cts -f examples/for/in/unexpected_end_of_stream )
 ADD_TEST(NAME for_in_valid_ts COMMAND ./cts -f examples/for/in/valid.ts )
@@ -291,9 +297,9 @@ ADD_TEST(NAME functions_missing_arg_value COMMAND ./cts -f examples/functions/mi
 ADD_TEST(NAME functions_missing_first_arg_name COMMAND ./cts -f examples/functions/missing_first_arg_name )
 ADD_TEST(NAME functions_missing_return_type COMMAND ./cts -f examples/functions/missing_return_type )
 ADD_TEST(NAME functions_valid_ts COMMAND ./cts -f examples/functions/valid.ts )
-ADD_TEST(NAME if_no_args COMMAND ./cts -f examples/if/no_args )
-ADD_TEST(NAME if_no_ending_bracket COMMAND ./cts -f examples/if/no_ending_bracket )
-ADD_TEST(NAME if_valid_ts COMMAND ./cts -f examples/if/valid.ts )
+ADD_TEST(NAME if_no_args COMMAND ./cts -f examples/if/input/no_args)
+ADD_TEST(NAME if_no_ending_bracket COMMAND ./cts -f examples/if/input/no_ending_bracket)
+ADD_TEST(NAME if_valid_ts COMMAND ./cts -f examples/if/input/valid.ts)
 ADD_TEST(NAME implements_valid_ts COMMAND ./cts -f examples/implements/valid.ts )
 ADD_TEST(NAME import_go_up_valid_ts COMMAND ./cts -f examples/import/go_up/valid.ts )
 ADD_TEST(NAME import_source_ts COMMAND ./cts -f examples/import/source.ts )
@@ -312,6 +318,8 @@ ADD_TEST(NAME operators_valid_ts COMMAND ./cts -f examples/operators/valid.ts )
 ADD_TEST(NAME return_valid_ts COMMAND ./cts -f examples/return/valid.ts )
 ADD_TEST(NAME return_without_function COMMAND ./cts -f examples/return/without_function )
 ADD_TEST(NAME scope_valid_ts COMMAND ./cts -f examples/scope/valid.ts )
+ADD_TEST(NAME spread_valid_ts COMMAND ./cts -f examples/spread/input/valid.ts )
+ADD_TEST(NAME super_valid_ts COMMAND ./cts -f examples/super/input/valid.ts )
 ADD_TEST(NAME switch_body_unexpected_end_of_stream COMMAND ./cts -f examples/switch/body/unexpected_end_of_stream )
 ADD_TEST(NAME switch_body_unexpected_token COMMAND ./cts -f examples/switch/body/unexpected_token )
 ADD_TEST(NAME switch_conditions_unexpected_end_of_stream COMMAND ./cts -f examples/switch/conditions/unexpected_end_of_stream )

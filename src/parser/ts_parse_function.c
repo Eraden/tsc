@@ -32,7 +32,7 @@ TS_parse_function_arguments(TSFile *tsFile) {
         TS_MOVE_BY(tsFile, tok);
         tsFile->parse.token = tok;
         TSParserToken *callArguments = TS_parse_call_arguments(tsFile);
-        TS_push_child(token, callArguments);
+        token->children[TS_FUNCTION_CALL_ARGS_INDEX] = callArguments;
         proceed = FALSE;
         free((void *) tok);
         break;
@@ -50,15 +50,15 @@ TS_parse_function_arguments(TSFile *tsFile) {
 static void
 TS_parse_function_lookup_return_type(TSFile *tsFile) {
   TSParserToken *token = tsFile->parse.parentTSToken;
-  const wchar_t *tok;
+  const wchar_t *tok = NULL;
   volatile unsigned char proceed = TRUE;
   volatile unsigned char foundColon = FALSE;
   volatile unsigned char foundType = FALSE;
-  TSParserToken *type = TS_find_type(tsFile->input.file, (const wchar_t *) L"any");
+  TSParserToken *type = TS_ANY_TYPE;
   TSParserToken *returnType = TS_build_parser_token(TS_FUNCTION_RETURN_TYPE, tsFile);
-  tsFile->parse.parentTSToken = returnType->parent;
+  tsFile->parse.parentTSToken = token;
   TS_push_child(returnType, TS_create_borrow(type, tsFile));
-  TS_push_child(token, returnType);
+  token->children[TS_FUNCTION_RETURN_TYPE_INDEX] = returnType;
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -173,6 +173,10 @@ TS_parse_function_lookup_return_type(TSFile *tsFile) {
 TSParserToken *
 TS_parse_function(TSFile *tsFile) {
   TS_TOKEN_BEGIN(TS_FUNCTION, tsFile)
+
+    token->childrenSize = 3;
+    token->children = calloc(sizeof(TSParserToken *), token->childrenSize);
+
     const wchar_t *tok = NULL;
     volatile unsigned char proceed = TRUE;
 
@@ -248,7 +252,7 @@ TS_parse_function(TSFile *tsFile) {
     TS_parse_function_lookup_return_type(tsFile);
     tsFile->parse.token = (const wchar_t *) L"{";
     TSParserToken *body = TS_parse_scope(tsFile);
-    TS_push_child(token, body);
+    token->children[TS_FUNCTION_BODY_INDEX] = body;
 
   TS_TOKEN_END(TS_FUNCTION);
 }

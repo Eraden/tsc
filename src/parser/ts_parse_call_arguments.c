@@ -1,4 +1,5 @@
 #include <cts/register.h>
+#include <cts/file.h>
 
 TSParserToken *
 TS_parse_call_arguments(TSFile *tsFile) {
@@ -37,15 +38,22 @@ TS_parse_call_arguments(TSFile *tsFile) {
           break;
         }
         default: {
-          TS_put_back(tsFile->input.stream, tok);
-          tsFile->parse.token = tok;
-          TSParserToken *child = TS_parse_argument(tsFile);
-          if (child == NULL) {
-            TS_token_syntax_error((const wchar_t *) L"Expecting call argument but nothing was found", tsFile, token);
-          } else if (child->tokenType != TS_ARGUMENT) {
-            TS_UNEXPECTED_TOKEN(tsFile, child, tok, "call arguments");
-            TS_free_ts_token(child);
+          TSParserToken *child = NULL;
+          if (wcscmp(tok, (const wchar_t *) L"...") == 0) {
+            tsFile->parse.token = tok;
+            child = TS_parse_spread(tsFile);
+          } else if (wcscmp(tok, (const wchar_t *) L"{") == 0) {
+            tsFile->parse.token = tok;
+            child = TS_parse_json(tsFile);
+          } else if (TS_name_is_valid(tok) && !TS_is_keyword(tok)) {
+            TS_put_back(tsFile->input.stream, tok);
+            tsFile->parse.token = tok;
+            child = TS_parse_argument(tsFile);
           } else {
+            TS_UNEXPECTED_TOKEN(tsFile, token, tok, "call arguments");
+          }
+
+          if (child) {
             TS_push_child(token, child);
           }
           free((void *) tok);

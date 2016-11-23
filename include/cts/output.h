@@ -137,6 +137,10 @@ void TS_build_group_output(TSFile *tsFile);
 
 void TS_build_namespace_output(TSFile *tsFile);
 
+void TS_build_super_output(TSFile *tsFile);
+
+void TS_build_spread_output(TSFile *tsFile);
+
 extern const wchar_t *
 __attribute__((__malloc__))
 TS_output_header(void);

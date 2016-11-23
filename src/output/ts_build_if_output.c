@@ -34,8 +34,6 @@ void TS_build_if_output(TSFile *tsFile) {
   if (token->childrenSize == 3) {
     TSParserToken *elseToken = token->children[2];
 
-    TS_build_indent_output(tsFile);
-
     tsFile->output.currentToken = elseToken;
     TS_build_else_output(tsFile);
   }

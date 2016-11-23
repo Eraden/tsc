@@ -5,7 +5,9 @@ void TS_write(TSFile *tsFile, const wchar_t *buffer) {
   switch (tsFile->output.type) {
     case TS_OUTPUT_STREAM: {
       fwprintf(tsFile->output.stream, (const wchar_t *) L"%ls", buffer);
-      fflush(tsFile->output.stream);
+      if (tsFile->output.stream != stdout && tsFile->output.stream != stderr) {
+        fflush(tsFile->output.stream);
+      }
       break;
     }
     case TS_OUTPUT_STRING: {
@@ -83,7 +85,8 @@ void TS_set_output_file(TSFile *tsFile, char *fileName) {
 void TS_build_token_output(TSFile *tsFile) {
   switch (tsFile->output.currentToken->tokenType) {
     case TS_UNKNOWN: {
-      TS_build_unknown_output(tsFile);
+      TS_highlighted_error("Unexpected unknown token in generating JavaScript phase\n");
+      TS_highlighted_error("  consider as a bug and please report\n");
       break;
     }
     case TS_VAR: {
@@ -314,6 +317,39 @@ void TS_build_token_output(TSFile *tsFile) {
       TS_build_namespace_output(tsFile);
       break;
     }
+    case TS_UNDEFINED: {
+      TS_build_indent_output(tsFile);
+      TS_write(tsFile, (const wchar_t *) L"undefined");
+      break;
+    }
+    case TS_NULL: {
+      TS_build_indent_output(tsFile);
+      TS_write(tsFile, (const wchar_t *) L"null");
+      break;
+    }
+    case TS_THIS: {
+      TS_build_indent_output(tsFile);
+      TS_write(tsFile, (const wchar_t *) L"this");
+      break;
+    }
+    case TS_TRUE:{
+      TS_build_indent_output(tsFile);
+      TS_write(tsFile, (const wchar_t *) L"true");
+      break;
+    }
+    case TS_FALSE: {
+      TS_build_indent_output(tsFile);
+      TS_write(tsFile, (const wchar_t *) L"false");
+      break;
+    }
+    case TS_SUPER: {
+      TS_build_super_output(tsFile);
+      break;
+    }
+    case TS_SPREAD: {
+      TS_build_spread_output(tsFile);
+      break;
+    }
   }
 }
 
@@ -333,10 +369,6 @@ void TS_build_indent_output(TSFile *tsFile) {
   }
 }
 
-void TS_build_unknown_output(TSFile *tsFile) {
-  //
-}
-
 void TS_build_output(TSFile *tsFile) {
   if (tsFile->sanity != TS_FILE_VALID)
     return;
@@ -351,7 +383,6 @@ void TS_build_output(TSFile *tsFile) {
   TSParserToken *token = NULL;
 
   volatile unsigned int initialIndent = tsFile->output.indent;
-  tsFile->output.indent += 1;
 
   // imports
   index = tsFile->tokensSize;
@@ -366,6 +397,13 @@ void TS_build_output(TSFile *tsFile) {
     }
     tokens += 1;
   }
+
+  tsFile->output.indent = initialIndent + 1;
+  TS_build_indent_output(tsFile);
+  TS_write(tsFile, (const wchar_t *) L"var module = {};\n");
+  TS_build_indent_output(tsFile);
+  TS_write(tsFile, (const wchar_t *) L"(function (module) {\n");
+  tsFile->output.indent += 1;
 
   // definitions
   index = tsFile->tokensSize;
@@ -387,7 +425,6 @@ void TS_build_output(TSFile *tsFile) {
     index -= 1;
     token = tokens[0];
     if (token->tokenType == TS_EXPORT) {
-      tsFile->output.indent = initialIndent;
       tsFile->output.currentToken = token;
       TS_build_token_output(tsFile);
     }
@@ -397,10 +434,18 @@ void TS_build_output(TSFile *tsFile) {
   if (tsFile->output.indent > 0) {
     tsFile->output.indent -= 1;
   } else {
-    TS_highlight_error();
-    fprintf(stderr, "Invalid indent move!\n");
-    TS_clear_highlight();
-    exit(7);
+    TS_highlighted_error("Invalid indent move!\n");
+    exit(TS_PARSER_INTERNAL_ERROR);
+  }
+
+  TS_build_indent_output(tsFile);
+  TS_write(tsFile, (const wchar_t *) L"}(module))\n");
+
+  if (tsFile->output.indent > 0) {
+    tsFile->output.indent -= 1;
+  } else {
+    TS_highlighted_error("Invalid indent move!\n");
+    exit(TS_PARSER_INTERNAL_ERROR);
   }
 
   TS_build_indent_output(tsFile);

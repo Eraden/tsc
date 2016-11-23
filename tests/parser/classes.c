@@ -93,8 +93,8 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->modifiers == TS_MODIFIER_PRIVATE);
 
   ck_assert_wstr_eq(childToken->name, L"method_1");
-  ck_assert_ptr_eq(childToken->children, NULL);
-  ck_assert_uint_eq(childToken->childrenSize, 0);
+  ck_assert_ptr_ne(childToken->children, NULL);
+  ck_assert_uint_eq(childToken->childrenSize, 3);
 
   // 7
   classToken = tsFile->tokens[6];
@@ -108,9 +108,9 @@ START_TEST(parse_valid_classes_file)
   ck_assert_eq_ts_class_method(childToken->tokenType);
   ck_assert(childToken->modifiers == TS_MODIFIER_PRIVATE);
 
-  ck_assert_wstr_eq(childToken->name, L"method_2");;
-  ck_assert_ptr_eq(childToken->children, NULL);
-  ck_assert_uint_eq(childToken->childrenSize, 0);
+  ck_assert_wstr_eq(childToken->name, L"method_2");
+  ck_assert_ptr_ne(childToken->children, NULL);
+  ck_assert_uint_eq(childToken->childrenSize, 3);
 
   // 8
   classToken = tsFile->tokens[7];
@@ -125,8 +125,8 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->modifiers == TS_MODIFIER_PROTECTED);
 
   ck_assert_wstr_eq(childToken->name, L"method_3");
-  ck_assert_ptr_eq(childToken->children, NULL);
-  ck_assert_uint_eq(childToken->childrenSize, 0);
+  ck_assert_ptr_ne(childToken->children, NULL);
+  ck_assert_uint_eq(childToken->childrenSize, 3);
 
   // 9
   classToken = tsFile->tokens[8];
@@ -141,8 +141,8 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->modifiers == TS_MODIFIER_PUBLIC);
 
   ck_assert_wstr_eq(childToken->name, L"method_4");
-  ck_assert_ptr_eq(childToken->children, NULL);
-  ck_assert_uint_eq(childToken->childrenSize, 0);
+  ck_assert_ptr_ne(childToken->children, NULL);
+  ck_assert_uint_eq(childToken->childrenSize, 3);
 
   // 10
   classToken = tsFile->tokens[9];
@@ -164,8 +164,8 @@ START_TEST(parse_valid_classes_file)
   ck_assert(childToken->modifiers == TS_MODIFIER_PRIVATE);
 
   ck_assert_wstr_eq(childToken->name, L"bar");
-  ck_assert_ptr_eq(childToken->children, NULL);
-  ck_assert_uint_eq(childToken->childrenSize, 0);
+  ck_assert_ptr_ne(childToken->children, NULL);
+  ck_assert_uint_eq(childToken->childrenSize, 3);
 
   // 11
   TSParserToken *token = tsFile->tokens[10];

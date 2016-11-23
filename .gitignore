@@ -3,3 +3,4 @@ build
 lib/*.a
 .idea
 doc/*.log
+cmake-build-debug

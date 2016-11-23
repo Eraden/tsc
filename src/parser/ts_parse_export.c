@@ -52,7 +52,7 @@ TS_parse_export(TSFile *tsFile) {
         }
         case L';': {
           proceed = FALSE;
-          TS_put_back(tsFile->input.stream, tok);
+//          TS_put_back(tsFile->input.stream, tok);
           free((void *) tok);
           break;
         }

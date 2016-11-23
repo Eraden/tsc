@@ -22,11 +22,12 @@ TS_build_parser_token(
   return token;
 }
 
-static unsigned short int KEYWORDS_SIZE = 33 + 20/*TS_OPERATORS_COUNT*/;
+static unsigned short int KEYWORDS_SIZE = 35 + 20/*TS_OPERATORS_COUNT*/;
 
-static TSKeyword TS_KEYWORDS[33 + 20] = {
+static TSKeyword TS_KEYWORDS[35 + 20] = {
     // Keywords
     {(wchar_t *) L"namespace",  TS_parse_namespace},
+    {(wchar_t *) L"super",      TS_parse_super},
     {(wchar_t *) L"var",        TS_parse_var},
     {(wchar_t *) L"let",        TS_parse_let},
     {(wchar_t *) L"const",      TS_parse_const},
@@ -59,6 +60,7 @@ static TSKeyword TS_KEYWORDS[33 + 20] = {
     {(wchar_t *) L"(",          TS_parse_group},
     {(wchar_t *) L"//",         TS_parse_inline_comment},
     {(wchar_t *) L"/*",         TS_parse_multiline_comment},
+    {(wchar_t *) L"...",        TS_parse_spread},
     // Arithmetic Operators
     {(wchar_t *) L"+",          TS_parse_operator_advanced},
     {(wchar_t *) L"-",          TS_parse_operator_advanced},
@@ -170,6 +172,11 @@ TS_append_ts_parser_token(
   tsFile->tokensSize += 1;
 }
 
+TSParserToken *TS_create_undefined(TSFile *tsFile) {
+  tsFile->parse.token = (const wchar_t *) L"undefined";
+  return TS_parse_ts_token(tsFile);
+}
+
 TSParserToken *
 TS_parse_ts_token(
     TSFile *tsFile
@@ -195,19 +202,32 @@ TS_parse_ts_token(
   t->parent = tsFile->parse.parentTSToken;
 
   if (tsFile->parse.token) {
-    switch (tsFile->parse.token[0]) {
-      case L';': {
-        t->tokenType = TS_SEMICOLON;
-        break;
-      }
-      case L'.': {
-        t->tokenType = TS_COLON;
-        break;
-      }
-      default: {
-        t->tokenType = TS_UNKNOWN;
-        TS_type_from_string(tsFile, t);
-        break;
+    const wchar_t *name = tsFile->parse.token;
+    if (wcscmp(name, (const wchar_t *) L"this") == 0) {
+      t->tokenType = TS_THIS;
+    } else if (wcscmp(name, (const wchar_t *) L"true") == 0) {
+      t->tokenType = TS_TRUE;
+    } else if (wcscmp(name, (const wchar_t *) L"false") == 0) {
+      t->tokenType = TS_FALSE;
+    } else if (wcscmp(name, (const wchar_t *) L"null") == 0) {
+      t->tokenType = TS_NULL;
+    } else if (wcscmp(name, (const wchar_t *) L"undefined") == 0) {
+      t->tokenType = TS_UNDEFINED;
+    } else {
+      switch (tsFile->parse.token[0]) {
+        case L';': {
+          t->tokenType = TS_SEMICOLON;
+          break;
+        }
+        case L'.': {
+          t->tokenType = TS_COLON;
+          break;
+        }
+        default: {
+          t->tokenType = TS_UNKNOWN;
+          TS_type_from_string(tsFile, t);
+          break;
+        }
       }
     }
   } else {
@@ -446,6 +466,34 @@ TS_get_token(
         }
         break;
       }
+      case L'.': {
+        TS_GET_TOKEN_MSG((wchar_t *) L"# '.' character building token...\n", tok)
+        if (tok == NULL) {
+          wchar_t second = (wchar_t) fgetwc(stream);
+          wchar_t third = (wchar_t) fgetwc(stream);
+          if (second == L'.' && third == L'.') {
+            tok = calloc(sizeof(wchar_t), 4);
+            tok[0] = c;
+            tok[1] = c;
+            tok[2] = c;
+            return tok;
+          } else {
+            ungetwc((wint_t) third, stream);
+            ungetwc((wint_t) second, stream);
+            tok = calloc(sizeof(wchar_t), 2);
+            tok[0] = c;
+            return tok;
+          }
+        } else {
+          ungetwc((wint_t) c, stream);
+          TS_GET_TOKEN_MSG(
+              (wchar_t *) L"# Putting back since token ('%ls') exists and contains invalid characters...\n",
+              tok
+          )
+          return tok;
+        }
+        break;
+      }
       case L'@':
       case L'\'':
       case L'\"':
@@ -456,7 +504,6 @@ TS_get_token(
       case L'[':
       case L']':
       case L',':
-      case L'.':
       case L':':
       case L';':
       case L'#':
@@ -564,18 +611,12 @@ TS_parse_stream(
     wchar_t *msg = (wchar_t *) L"File not found!";
     tsFile->errorReason = calloc(sizeof(wchar_t), wcslen(msg) + 1);
     wcscpy(tsFile->errorReason, msg);
-    fprintf(stderr, "OS error: %s\n", strerror(errno));
   }
 
   tsFile->parse.line = 0;
   tsFile->parse.character = 0;
   tsFile->parse.stream = stream;
   tsFile->parse.parentTSToken = NULL;
-
-  tsFile->output.type = TS_OUTPUT_UNSET;
-  tsFile->output.stream = NULL;
-  tsFile->output.currentToken = NULL;
-  tsFile->output.indent = 0;
 
   if (tsFile->sanity != TS_FILE_VALID)
     return tsFile;
@@ -625,6 +666,18 @@ TS_free_ts_token(
     const TSParserToken *token
 ) {
   switch (token->tokenType) {
+    case TS_THIS:
+    case TS_FALSE:
+    case TS_TRUE:
+    case TS_UNDEFINED:
+    case TS_NULL: {
+      TS_free_unknown(token);
+      break;
+    }
+    case TS_SUPER: {
+      TS_free_super(token);
+      break;
+    }
     case TS_VAR:
       TS_free_var(token);
       break;
@@ -687,6 +740,9 @@ TS_free_ts_token(
       break;
     case TS_ARGUMENT:
       TS_free_argument(token);
+      break;
+    case TS_SPREAD:
+      TS_free_spread(token);
       break;
     case TS_CONDITION:
       TS_free_condition(token);

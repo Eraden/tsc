@@ -1,12 +1,10 @@
-#include <cts/register.h>
 #include <cts/file.h>
+#include <cts/register.h>
 
 // Predefined TS types
 TSParserToken __attribute__((__used__)) *TS_ANY_TYPE = NULL;
 TSParserToken __attribute__((__used__)) *TS_NUMBER_TYPE = NULL;
 TSParserToken __attribute__((__used__)) *TS_STRING_TYPE = NULL;
-TSParserToken __attribute__((__used__)) *TS_UNDEFINED_TYPE = NULL;
-TSParserToken __attribute__((__used__)) *TS_NULL_TYPE = NULL;
 
 static unsigned char __attribute__((__used__)) registers_swapped = FALSE;
 
@@ -129,7 +127,7 @@ TS_find_file(
       wchar_t *msg = (wchar_t *) L"File not found!";
       tsFile->errorReason = calloc(sizeof(wchar_t), wcslen(msg) + 1);
       wcscpy(tsFile->errorReason, msg);
-      fprintf(stderr, "OS error: %s\n", strerror(errno));
+      fprintf(stderr, "  OS error: %s\n", strerror(errno));
     }
     TS_register_file(tsFile);
   }
@@ -258,47 +256,11 @@ __TS_setup_predefined(void) {
     type->name = TS_clone_string((const wchar_t *) L"any");
     TS_append_ts_parser_token(tsFile, type);
     TS_register_type(tsFile, type);
-    // this
-    TS_build_parse_data(tsFile);
-    type = TS_build_parser_token(TS_INTERFACE, tsFile);
-    type->name = TS_clone_string((const wchar_t *) L"this");
-    TS_append_ts_parser_token(tsFile, type);
-    TS_register_type(tsFile, type);
-    // true
-    TS_build_parse_data(tsFile);
-    type = TS_build_parser_token(TS_INTERFACE, tsFile);
-    type->name = TS_clone_string((const wchar_t *) L"true");
-    TS_append_ts_parser_token(tsFile, type);
-    TS_register_type(tsFile, type);
-    // false
-    TS_build_parse_data(tsFile);
-    type = TS_build_parser_token(TS_INTERFACE, tsFile);
-    type->name = TS_clone_string((const wchar_t *) L"false");
-    TS_append_ts_parser_token(tsFile, type);
-    TS_register_type(tsFile, type);
     // object
     TS_build_parse_data(tsFile);
     type = TS_build_parser_token(TS_CLASS, tsFile);
     type->name = TS_clone_string((const wchar_t *) L"object");
     extends = TS_build_parser_token(TS_IMPLEMENTS, tsFile);
-    TS_push_child(extends, TS_create_borrow(TS_ANY_TYPE, tsFile));
-    TS_push_child(type, extends);
-    TS_append_ts_parser_token(tsFile, type);
-    TS_register_type(tsFile, type);
-    // undefined
-    TS_build_parse_data(tsFile);
-    type = TS_UNDEFINED_TYPE = TS_build_parser_token(TS_INTERFACE, tsFile);
-    type->name = TS_clone_string((const wchar_t *) L"undefined");
-    extends = TS_build_parser_token(TS_EXTENDS, tsFile);
-    TS_push_child(extends, TS_create_borrow(TS_ANY_TYPE, tsFile));
-    TS_push_child(type, extends);
-    TS_append_ts_parser_token(tsFile, type);
-    TS_register_type(tsFile, type);
-    // null
-    TS_build_parse_data(tsFile);
-    type = TS_NULL_TYPE = TS_build_parser_token(TS_INTERFACE, tsFile);
-    type->name = TS_clone_string((const wchar_t *) L"null");
-    extends = TS_build_parser_token(TS_EXTENDS, tsFile);
     TS_push_child(extends, TS_create_borrow(TS_ANY_TYPE, tsFile));
     TS_push_child(type, extends);
     TS_append_ts_parser_token(tsFile, type);
@@ -377,6 +339,8 @@ static TSParserToken *TS_search_token_in_scope(TSParserToken *token, const wchar
 static TSParserToken *TS_search_token_in_method(TSParserToken *token, const wchar_t *name);
 
 static TSParserToken *TS_search_token_in_call_arguments(TSParserToken *token, const wchar_t *name);
+
+static TSParserToken *TS_search_token_in_class(TSParserToken *token, const wchar_t *name);
 
 static TSParserToken *TS_search_token_in_namespace(TSParserToken *token, const wchar_t *name);
 
@@ -489,6 +453,24 @@ TS_search_token_in_method(
   return found;
 }
 
+static TSParserToken *TS_search_token_in_class(TSParserToken *token, const wchar_t *name) {
+  TS_EACH_CHILD(token)
+    switch (current->tokenType) {
+      case TS_CLASS_FIELD:
+      case TS_CLASS_METHOD: {
+        if (current->name && wcscmp(current->name, name) == 0)
+          return current;
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  TS_END_EACH
+
+  return NULL;
+}
+
 static TSParserToken *
 TS_search_token_in_namespace(
     TSParserToken *token,
@@ -530,6 +512,9 @@ TS_search_token_in_token(
     }
     case TS_NAMESPACE: {
       return TS_search_token_in_namespace(token, name);
+    }
+    case TS_CLASS: {
+      return TS_search_token_in_class(token, name);
     }
     case TS_UNKNOWN: {
       return NULL;

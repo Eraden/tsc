@@ -1,5 +1,6 @@
 #include <cts/parser.h>
 #include <cts/register.h>
+#include <cts/file.h>
 
 static void
 TS_parse_scope_body(TSFile *tsFile) {
@@ -43,6 +44,7 @@ TS_parse_scope_body(TSFile *tsFile) {
         switch (child->tokenType) {
           case TS_UNKNOWN: {
             TSParserToken *resolved = TS_search_token(child);
+            if (!resolved) resolved = TS_find_type(tsFile->input.file, child->name);
 
             if (resolved == child) {
               TS_push_child(token, child);

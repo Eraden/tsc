@@ -2,7 +2,6 @@
 #include <cts/output.h>
 #include <cts/register.h>
 
-
 int main(int argc, const char **argv) {
   setlocale(LC_ALL, "");
 

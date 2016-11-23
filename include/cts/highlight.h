@@ -15,6 +15,8 @@ void TS_highlight(const char *color, FILE *file);
 
 void TS_highlight_code(const char *color);
 
+void TS_highlighted_error(const char *msg);
+
 void TS_highlight_error();
 
 void TS_clear_highlight();

@@ -1,0 +1,795 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="cts"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="clang"/>
+		<Option virtualFolders="CMake Files\;CMake Files\cmake\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/eraden/code/eraden/tsc/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test">
+				<Option working_dir="/home/eraden/code/eraden/tsc/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 test"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tsparser">
+				<Option output="/home/eraden/code/eraden/tsc/lib/libtsparser.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/eraden/code/eraden/tsc/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DDEBUG=1"/>
+					<Add option="-DDebug=1"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-D_UNICODE"/>
+					<Add option="-D_MBCS"/>
+					<Add option="-DLIBRARY_OUTPUT_PATH=&quot;/home/eraden/code/eraden/tsc/lib&quot;"/>
+					<Add directory="/home/eraden/code/eraden/tsc/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.1/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/x86_64-linux-gnu/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 tsparser"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tsparser/fast">
+				<Option output="/home/eraden/code/eraden/tsc/lib/libtsparser.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/eraden/code/eraden/tsc/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DDEBUG=1"/>
+					<Add option="-DDebug=1"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-D_UNICODE"/>
+					<Add option="-D_MBCS"/>
+					<Add option="-DLIBRARY_OUTPUT_PATH=&quot;/home/eraden/code/eraden/tsc/lib&quot;"/>
+					<Add directory="/home/eraden/code/eraden/tsc/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.1/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/x86_64-linux-gnu/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 tsparser/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="cts">
+				<Option output="/home/eraden/code/eraden/tsc/build/cts" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/eraden/code/eraden/tsc/build"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DDEBUG=1"/>
+					<Add option="-DDebug=1"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-D_UNICODE"/>
+					<Add option="-D_MBCS"/>
+					<Add option="-DLIBRARY_OUTPUT_PATH=&quot;/home/eraden/code/eraden/tsc/lib&quot;"/>
+					<Add directory="/home/eraden/code/eraden/tsc/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.1/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/x86_64-linux-gnu/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 cts"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="cts/fast">
+				<Option output="/home/eraden/code/eraden/tsc/build/cts" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/eraden/code/eraden/tsc/build"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DDEBUG=1"/>
+					<Add option="-DDebug=1"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-D_UNICODE"/>
+					<Add option="-D_MBCS"/>
+					<Add option="-DLIBRARY_OUTPUT_PATH=&quot;/home/eraden/code/eraden/tsc/lib&quot;"/>
+					<Add directory="/home/eraden/code/eraden/tsc/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.1/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/x86_64-linux-gnu/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 cts/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/local">
+				<Option working_dir="/home/eraden/code/eraden/tsc/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/local"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tsoutput">
+				<Option output="/home/eraden/code/eraden/tsc/lib/libtsoutput.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/eraden/code/eraden/tsc/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DDEBUG=1"/>
+					<Add option="-DDebug=1"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-D_UNICODE"/>
+					<Add option="-D_MBCS"/>
+					<Add option="-DLIBRARY_OUTPUT_PATH=&quot;/home/eraden/code/eraden/tsc/lib&quot;"/>
+					<Add directory="/home/eraden/code/eraden/tsc/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.1/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/x86_64-linux-gnu/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 tsoutput"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tsoutput/fast">
+				<Option output="/home/eraden/code/eraden/tsc/lib/libtsoutput.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/eraden/code/eraden/tsc/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DDEBUG=1"/>
+					<Add option="-DDebug=1"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-D_UNICODE"/>
+					<Add option="-D_MBCS"/>
+					<Add option="-DLIBRARY_OUTPUT_PATH=&quot;/home/eraden/code/eraden/tsc/lib&quot;"/>
+					<Add directory="/home/eraden/code/eraden/tsc/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.1/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/x86_64-linux-gnu/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 tsoutput/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="cts_test">
+				<Option output="/home/eraden/code/eraden/tsc/build/cts_test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/eraden/code/eraden/tsc/build"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DDEBUG=1"/>
+					<Add option="-DDebug=1"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-D_UNICODE"/>
+					<Add option="-D_MBCS"/>
+					<Add option="-DLIBRARY_OUTPUT_PATH=&quot;/home/eraden/code/eraden/tsc/lib&quot;"/>
+					<Add directory="/home/eraden/code/eraden/tsc/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.1/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/x86_64-linux-gnu/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 cts_test"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="cts_test/fast">
+				<Option output="/home/eraden/code/eraden/tsc/build/cts_test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/eraden/code/eraden/tsc/build"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DDEBUG=1"/>
+					<Add option="-DDebug=1"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-D_UNICODE"/>
+					<Add option="-D_MBCS"/>
+					<Add option="-DLIBRARY_OUTPUT_PATH=&quot;/home/eraden/code/eraden/tsc/lib&quot;"/>
+					<Add directory="/home/eraden/code/eraden/tsc/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-3.8/bin/../lib/clang/3.8.1/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/x86_64-linux-gnu/c++/6.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/6.2.0/../../../../include/c++/6.2.0/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 cts_test/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install">
+				<Option working_dir="/home/eraden/code/eraden/tsc/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 install"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/strip">
+				<Option working_dir="/home/eraden/code/eraden/tsc/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/strip"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="list_install_components">
+				<Option working_dir="/home/eraden/code/eraden/tsc/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 list_install_components"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/eraden/code/eraden/tsc/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/eraden/code/eraden/tsc/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/eraden/code/eraden/tsc/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/file.c">
+			<Option target="cts"/>
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/highlight.c">
+			<Option target="cts"/>
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/log.c">
+			<Option target="cts"/>
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/main.c">
+			<Option target="cts"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/os.c">
+			<Option target="cts"/>
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_argument_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_array_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_arrow_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_borrow_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_break_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_call_arguments_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_caller_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_case_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_class_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_colon_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_condition_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_decorator_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_default_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_do_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_else_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_export_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_extends_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_for_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_function_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_group_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_if_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_implements_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_import_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_in_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_inline_comment_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_interface_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_json_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_local_variable_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_multiline_comment_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_namespace_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_new_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_of_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_operator_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_return_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_scope_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_semicolon_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_spread_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_string_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_super_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_switch_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_build_while_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_buld_number_output.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_output_footer.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/output/ts_output_header.c">
+			<Option target="tsoutput"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_borrow.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_argument.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_arithmetic_operator.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_array.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_arrow.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_break.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_call_arguments.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_caller.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_case.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_class.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_condition.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_decorator.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_default.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_do.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_else.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_export.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_extends.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_for.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_function.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_group.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_if.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_implements.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_import.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_in.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_inline_comment.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_interface.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_json.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_local_variable.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_multiline_comment.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_namespace.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_new.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_of.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_operator.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_return.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_scope.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_scope_or_json.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_spread.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_string.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_super.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_switch.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/parser/ts_parse_while.c">
+			<Option target="tsparser"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/register.c">
+			<Option target="cts"/>
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/src/sys.c">
+			<Option target="cts"/>
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/core/borrows.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/core/borrows.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/core/operators.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/core/operators.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/core/sys.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/core/sys.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/main.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/class/multiple_instance_fields.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/class/multiple_instance_fields.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/class/multiple_instance_methods.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/class/multiple_instance_methods.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/classes.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/classes.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/for/parse_for_in.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/for/parse_for_in.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/for/parse_for_let.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/for/parse_for_let.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/for/parse_for_of.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/for/parse_for_of.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_break.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_break.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_decorator.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_decorator.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_do.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_do.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_else.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_else.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_exports.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_exports.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_extends.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_extends.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_function.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_function.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_if.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_if.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_implements.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_implements.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_inline_comment.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_inline_comment.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_json.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_json.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_multiline_comment.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_multiline_comment.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_new.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_new.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_return.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_return.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_spread.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_spread.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_super.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_super.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_switch.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_switch.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_variables.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_variables.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_while.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/parser/parse_while.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/test.c">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/tests/test.h">
+			<Option target="cts_test"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/eraden/code/eraden/tsc/cmake/FindCheck.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

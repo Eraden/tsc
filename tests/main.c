@@ -22,6 +22,8 @@
 #include "parser/parse_implements.h"
 #include "parser/parse_while.h"
 #include "parser/parse_do.h"
+#include "parser/parse_super.h"
+#include "parser/parse_spread.h"
 #include "core/sys.h"
 #include "core/operators.h"
 #include "core/borrows.h"
@@ -55,7 +57,7 @@ Suite *class_suite(void) {
   if (hasOnly("return")) parse_return_keyword_suite(suite);
   if (hasOnly("decorator")) parse_decorator_suite(suite);
 
-  if (hasOnly("variable")) parse_variables_suite(suite); // missing semicolons in test
+  if (hasOnly("variable")) parse_variables_suite(suite);
   if (hasOnly("class")) parse_classes_suite(suite);
   if (hasOnly("class") || hasOnly("extends")) parse_extends_suite(suite);
   if (hasOnly("new")) parse_new_suite(suite);
@@ -66,6 +68,9 @@ Suite *class_suite(void) {
 
   if (hasOnly("while")) parse_while_suite(suite);
   if (hasOnly("do")) parse_do_suite(suite);
+
+  if (hasOnly("super")) parse_super_suite(suite);
+  if (hasOnly("spread")) parse_spread_suite(suite);
   return suite;
 }
 

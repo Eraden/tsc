@@ -6,6 +6,7 @@ START_TEST(parse_valid_return)
 
   TSParserToken *token = NULL, *ret = NULL, *returned = NULL, *callArgs = NULL, *returnType = NULL, *scope = NULL, *semicolon = NULL;
 
+  /* function a() { return; } */
   token = tsFile->tokens[0];
   ck_assert_eq_ts_function(token->tokenType);
   ck_assert_uint_eq(token->childrenSize, 3);
@@ -25,6 +26,7 @@ START_TEST(parse_valid_return)
   semicolon = scope->children[1];
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
+  /* function b() { return 1; } */
   token = tsFile->tokens[1];
   ck_assert_eq_ts_function(token->tokenType);
   ck_assert_uint_eq(token->childrenSize, 3);
@@ -48,6 +50,7 @@ START_TEST(parse_valid_return)
   semicolon = scope->children[1];
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
+  /* function c() { return {}; } */
   token = tsFile->tokens[2];
   ck_assert_eq_ts_function(token->tokenType);
   ck_assert_uint_eq(token->childrenSize, 3);
@@ -69,6 +72,7 @@ START_TEST(parse_valid_return)
   semicolon = scope->children[1];
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
+  /* function d() { return true; } */
   token = tsFile->tokens[3];
   ck_assert_eq_ts_function(token->tokenType);
   ck_assert_uint_eq(token->childrenSize, 3);
@@ -86,12 +90,13 @@ START_TEST(parse_valid_return)
   ck_assert_uint_eq(ret->childrenSize, 1);
   ck_assert_ptr_ne(ret->children, NULL);
   returned = ret->children[0];
-  ck_assert_eq_ts_unknown(returned->tokenType);
+  ck_assert_eq_ts_true(returned->tokenType);
   ck_assert_ptr_ne(returned->name, NULL);
   ck_assert_wstr_eq(returned->name, L"true");
   semicolon = scope->children[1];
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
 
+  /* function e() { return false; } */
   token = tsFile->tokens[4];
   ck_assert_eq_ts_function(token->tokenType);
   ck_assert_uint_eq(token->childrenSize, 3);
@@ -109,9 +114,7 @@ START_TEST(parse_valid_return)
   ck_assert_uint_eq(ret->childrenSize, 1);
   ck_assert_ptr_ne(ret->children, NULL);
   returned = ret->children[0];
-  ck_assert_eq_ts_unknown(returned->tokenType);
-  ck_assert_ptr_ne(returned->name, NULL);
-  ck_assert_wstr_eq(returned->name, L"false");
+  ck_assert_eq_ts_false(returned->tokenType);
   semicolon = scope->children[1];
   ck_assert_eq_ts_semicolon(semicolon->tokenType);
 

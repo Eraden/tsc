@@ -213,7 +213,7 @@ TS_parse_arguments(
         settings.fileName = "(code eval)";
       } else {
         fprintf(stderr, "Evaluation failed due failure of creating temp file.\nOS error: %s\n", strerror(errno));
-        exit(6);
+        exit(TS_TEMP_FILE_OPEN_FAILURE);
       }
     } else if (strcmp(arg, "-o") == 0 || strcmp(arg, "--out") == 0) {
       if (i + 1 >= argc) {
@@ -231,7 +231,9 @@ TS_parse_arguments(
       settings.stream = stdin;
       settings.fileName = "(code eval)";
     } else {
-      fprintf(stderr, "Unknown parameter: '%s'\n\n", arg);
+      char error[1024];
+      sprintf(error, "Unknown parameter: '%s'\n\n", arg);
+      TS_highlighted_error(error);
       TS_info_msg();
       exit(EXIT_FAILURE);
     }

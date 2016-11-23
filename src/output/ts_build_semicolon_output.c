@@ -7,8 +7,7 @@ void TS_build_semicolon_output(TSFile *tsFile) {
   if (semicolon->parent) {
     switch (semicolon->parent->tokenType) {
       case TS_SCOPE: {
-        TS_write(tsFile, (const wchar_t *) L";\n");
-        TS_build_indent_output(tsFile);
+        TS_write(tsFile, (const wchar_t *) L";");
         break;
       }
       default: {
@@ -18,6 +17,5 @@ void TS_build_semicolon_output(TSFile *tsFile) {
     }
   } else {
     TS_write(tsFile, (const wchar_t *) L";\n");
-    TS_build_indent_output(tsFile);
   }
 }

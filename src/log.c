@@ -11,12 +11,14 @@ TS_set_error_output(FILE *file) {
 }
 
 void
-TS_io_panic(
-    wchar_t *msg
-) {
-  TS_highlight_error();
-  fwprintf(stderr, (const wchar_t *) L"%ls\n%s\n", msg, strerror(errno));
-  TS_clear_highlight();
+TS_io_panic(wchar_t *msg) {
+  wchar_t *buffer = calloc(sizeof(wchar_t *), 1024);
+  char *error = calloc(sizeof(char), 1024);
+  swprintf(buffer, 1024, (const wchar_t *) L"%ls\n  %s\n", msg, strerror(errno));
+  wcstombs(error, buffer, 1024);
+  TS_highlighted_error(error);
+  free(buffer);
+  free(error);
   exit(TS_FILE_NOT_FOUND_CODE);
 }
 

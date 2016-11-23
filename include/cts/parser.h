@@ -45,8 +45,27 @@
     return token; \
   }
 
+#define TS_EACH_CHILD(token) \
+  unsigned int childIndex = token->childrenSize; \
+  TSParserToken **children = token->children; \
+  while (childIndex) { \
+    childIndex -= 1; \
+    TSParserToken *current = children[0];
+
+#define TS_END_EACH \
+    children += 1; \
+  }
+
 #define TS_INTERFACE_METHOD_ARGUMENTS_INDEX 0
 #define TS_INTERFACE_METHOD_RETURN_TYPE_INDEX 1
+
+#define TS_FUNCTION_CALL_ARGS_INDEX 0
+#define TS_FUNCTION_RETURN_TYPE_INDEX 1
+#define TS_FUNCTION_BODY_INDEX 2
+
+#define TS_CLASS_METHOD_CALL_ARGS_INDEX 0
+#define TS_CLASS_METHOD_RETURN_TYPE_INDEX 1
+#define TS_CLASS_METHOD_BODY_INDEX 2
 
 #define TS_SWITCH_CONDITIONS_INDEX 0
 #define TS_SWITCH_BODY_INDEX 1
@@ -63,9 +82,15 @@ typedef TSParserToken *(*TS_token_build_fn)(TSFile *tsFile);
 
 typedef enum eTSTokenType {
   TS_UNKNOWN = 0,
-  TS_VAR = 1,
-  TS_LET = 2,
-  TS_CONST = 3,
+  TS_UNDEFINED,
+  TS_NULL,
+  TS_THIS,
+  TS_SUPER,
+  TS_TRUE,
+  TS_FALSE,
+  TS_VAR,
+  TS_LET,
+  TS_CONST,
   TS_SEMICOLON,
   TS_COLON,
   TS_CLASS,
@@ -120,6 +145,7 @@ typedef enum eTSTokenType {
   TS_NUMBER,
   TS_GROUP,
   TS_NAMESPACE,
+  TS_SPREAD,
 } __attribute__ ((__packed__)) TSTokenType;
 
 typedef enum sTSClassParseFlag {
@@ -223,11 +249,19 @@ void TS_push_child(TSParserToken *token, TSParserToken *child);
 
 void TS_free_unknown(const TSParserToken *token);
 
-TSParserToken *TS_parse_operator(TSFile *tsFile);
+TSParserToken *TS_create_undefined(TSFile *tsFile);
 
 TSParserToken *TS_parse_operator_advanced(TSFile *tsFile);
 
 void TS_free_operator(const TSParserToken *token);
+
+TSParserToken *TS_parse_spread(TSFile *tsFile);
+
+void TS_free_spread(const TSParserToken *token);
+
+TSParserToken *TS_parse_super(TSFile *tsFile);
+
+void TS_free_super(const TSParserToken *token);
 
 TSParserToken *TS_parse_group(TSFile *tsFile);
 

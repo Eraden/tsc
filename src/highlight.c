@@ -5,8 +5,12 @@ void TS_highlight(const char *color, FILE *file) {
 }
 
 void TS_clear_highlight() {
-  fwprintf(stdout, L"%s", TS_COLOR_NORMAL);
-  fwprintf(stderr, L"%s", TS_COLOR_NORMAL);
+  fprintf(stdout, "%s", TS_COLOR_NORMAL);
+  fprintf(stderr, "%s", TS_COLOR_NORMAL);
+}
+
+void TS_highlighted_error(const char *msg) {
+  fprintf(stderr, "%s%s%s", TS_COLOR_RED, msg, TS_COLOR_NORMAL);
 }
 
 void TS_highlight_code(const char *color) {

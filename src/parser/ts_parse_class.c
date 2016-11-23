@@ -1,5 +1,37 @@
+#include <cts/file.h>
 #include <cts/parser.h>
 #include <cts/register.h>
+
+static wchar_t *TS_class_method_move_to_type(TSFile *tsFile) {
+  wchar_t *tok = NULL;
+  while (1) {
+    TS_LOOP_SANITY_CHECK(tsFile)
+
+    tok = (wchar_t *) TS_get_token(tsFile->input.stream);
+
+    if (tok == NULL) {
+      TS_UNEXPECTED_END_OF_STREAM(tsFile, tsFile->parse.parentTSToken, "class method return type");
+      break;
+    }
+
+    switch (tok[0]) {
+      case L' ': {
+        TS_MOVE_BY(tsFile, tok);
+        free((void *) tok);
+        break;
+      }
+      case L'\n': {
+        TS_NEW_LINE(tsFile, tok);
+        free((void *) tok);
+        break;
+      }
+      default: {
+        return tok;
+      }
+    }
+  }
+  return NULL;
+}
 
 static wchar_t *
 TS_class_name_from_parent(TSFile *tsFile, TSParserToken *token, volatile const wchar_t *tok) {
@@ -93,14 +125,13 @@ TS_parse_class_head(TSFile *tsFile, TSParserToken *token) {
 static void
 TS_parse_class_method(TSFile *tsFile, TSParserToken *bodyToken) {
   volatile unsigned char proceed = TRUE;
-  const wchar_t *tok;
-
-  TSClassParseFlag parseFlag = TS_PARSE_CLASS_MEMBER_METHOD_ARGUMENTS;
+  const wchar_t *tok = NULL;
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
 
     tok = (const wchar_t *) TS_get_token(tsFile->input.stream);
+
     if (tok == NULL) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, bodyToken, "class header");
       break;
@@ -117,66 +148,50 @@ TS_parse_class_method(TSFile *tsFile, TSParserToken *bodyToken) {
         free((void *) tok);
         break;
       }
-      case L'{':
-      case L')': {
+      case L'{': {
         TS_MOVE_BY(tsFile, tok);
+        tsFile->parse.token = tok;
+
+        TSParserToken *scope = TS_parse_scope(tsFile);
+        bodyToken->children[TS_CLASS_METHOD_BODY_INDEX] = scope;
         free((void *) tok);
-        parseFlag = TS_PARSE_CLASS_MEMBER_METHOD_BODY;
+        proceed = FALSE;
         break;
       }
       case L':': {
         TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
-        parseFlag = TS_PARSE_CLASS_MEMBER_METHOD_RETURN_TYPE;
-        break;
-      }
-      case L';': {
-        TS_MOVE_BY(tsFile, tok);
-        free((void *) tok);
-        break;
-      }
-      case L'}': {
-        TS_MOVE_BY(tsFile, tok);
-        free((void *) tok);
-        proceed = FALSE;
-        break;
-      }
-      default: {
-        if (parseFlag == TS_PARSE_CLASS_MEMBER_METHOD_ARGUMENTS) {
-          TS_put_back(tsFile->input.stream, tok);
-          tsFile->parse.token = tok;
-          TSParserToken *argument = TS_parse_call_arguments(tsFile);
-          if (argument) {
-            TS_push_child(bodyToken, argument);
-          } else {
-            // TODO error
-          }
 
-          free((void *) tok);
-        } else if (parseFlag == TS_PARSE_CLASS_MEMBER_METHOD_BODY) {
-          TS_put_back(tsFile->input.stream, tok);
-          tsFile->parse.token = tok;
-
-          TSParserToken *child = TS_parse_scope(tsFile);
-          TS_push_child(bodyToken, child);
-          proceed = FALSE;
-          free((void *) tok);
-
-        } else /*if (parseFlag == TS_PARSE_CLASS_MEMBER_METHOD_RETURN_TYPE)*/ {
+        tok = TS_class_method_move_to_type(tsFile);
+        if (tok) {
           TSParserToken *classToken = TS_find_type(tsFile->input.file, tok);
           if (classToken) {
-            TSParserToken *returnType = TS_build_parser_token(TS_FUNCTION_RETURN_TYPE, tsFile);
-            tsFile->parse.parentTSToken = returnType->parent;
-            TS_push_child(returnType, TS_create_borrow(classToken, tsFile));
-            TS_push_child(bodyToken, returnType);
+            TSParserToken *returnType = bodyToken->children[TS_CLASS_METHOD_RETURN_TYPE_INDEX];
+            TS_free_borrow(returnType->children[0]);
+            returnType->children[0] = TS_create_borrow(classToken, tsFile);
           } else {
             TS_UNKNOWN_TYPE(tsFile, bodyToken, tok);
           }
-
           TS_MOVE_BY(tsFile, tok);
           free((void *) tok);
         }
         break;
+      }
+      case L'(': {
+        tsFile->parse.token = tok;
+        TSParserToken *arguments = TS_parse_call_arguments(tsFile);
+        if (arguments) {
+          bodyToken->children[TS_CLASS_METHOD_CALL_ARGS_INDEX] = arguments;
+        } else {
+          // TODO error
+        }
+
+        free((void *) tok);
+        break;
+      }
+      default: {
+        TS_UNEXPECTED_TOKEN(tsFile, bodyToken, tok, "class method");
+        free((void *) tok);
       }
     }
   }
@@ -226,18 +241,25 @@ TS_parse_class_member(TSFile *tsFile) {
           tsFile->parse.parentTSToken = bodyToken;
 
           bodyToken->name = TS_clone_string(name);
+
+          bodyToken->childrenSize = 3;
+          bodyToken->children = calloc(sizeof(TSParserToken *), bodyToken->childrenSize);
+          TSParserToken *returnType = TS_build_parser_token(TS_FUNCTION_RETURN_TYPE, tsFile);
+          TS_push_child(returnType, TS_create_borrow(TS_ANY_TYPE, tsFile));
+          bodyToken->children[TS_CLASS_METHOD_RETURN_TYPE_INDEX] = returnType;
+          tsFile->parse.parentTSToken = bodyToken;
+
           if (type) {
             TSParserToken *classToken = TS_find_type(tsFile->input.file, type);
             if (classToken) {
-              TSParserToken *returnType = TS_build_parser_token(TS_FUNCTION_RETURN_TYPE, tsFile);
-              tsFile->parse.parentTSToken = returnType->parent;
-              TS_push_child(returnType, TS_create_borrow(classToken, tsFile));
-              TS_push_child(bodyToken, returnType);
+              TS_free_borrow(returnType->children[0]);
+              returnType->children[0] = TS_create_borrow(classToken, tsFile);
             } else {
               TS_UNKNOWN_TYPE(tsFile, bodyToken, type);
             }
           }
 
+          TS_put_back(tsFile->input.stream, tok);
           TS_parse_class_method(tsFile, bodyToken);
           tsFile->parse.parentTSToken = bodyToken->parent;
 

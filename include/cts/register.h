@@ -19,8 +19,6 @@ TSFile *TS_PREDEFINED_FILE;
 TSParserToken __attribute__((__used__)) *TS_ANY_TYPE;
 TSParserToken __attribute__((__used__)) *TS_NUMBER_TYPE;
 TSParserToken __attribute__((__used__)) *TS_STRING_TYPE;
-TSParserToken __attribute__((__used__)) *TS_UNDEFINED_TYPE;
-TSParserToken __attribute__((__used__)) *TS_NULL_TYPE;
 
 TSRegisterEntry *TS_register_file(TSFile *tsFile);
 void TS_register_remove_file(TSFile *file);

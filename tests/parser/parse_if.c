@@ -1,7 +1,7 @@
 #include "parse_if.h"
 
 START_TEST(parse_valid_if_condition)
-  TSFile *tsFile = TS_parse_file("./examples/if/valid.ts");
+  TSFile *tsFile = TS_parse_file("./examples/if/input/valid.ts");
 
   ck_assert_tsFile_valid(tsFile);
   ck_assert_int_eq(tsFile->tokensSize, 5);
@@ -110,14 +110,14 @@ START_TEST(parse_valid_if_condition)
 END_TEST
 
 START_TEST(parse_if_without_args)
-  TSFile *tsFile = TS_parse_file("./examples/if/no_args");
+  TSFile *tsFile = TS_parse_file("./examples/if/input/no_args");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert_tsFile_syntax_error(tsFile);
   TS_free_ts_file(tsFile);
 END_TEST
 
 START_TEST(parse_if_without_end_bracket)
-  TSFile *tsFile = TS_parse_file("./examples/if/no_ending_bracket");
+  TSFile *tsFile = TS_parse_file("./examples/if/input/no_ending_bracket");
   ck_assert_ptr_ne(tsFile, NULL);
   ck_assert_tsFile_syntax_error(tsFile);
   TS_free_ts_file(tsFile);

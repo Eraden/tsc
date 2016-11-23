@@ -8,6 +8,18 @@ _TS_type_to_string(const TSTokenType type) {
   switch (type) {
     case TS_UNKNOWN:
       return "TS_UNKNOWN";
+    case TS_THIS:
+      return "TS_THIS";
+    case TS_SUPER:
+      return "TS_SUPER";
+    case TS_FALSE:
+      return "TS_FALSE";
+    case TS_TRUE:
+      return "TS_TRUE";
+    case TS_UNDEFINED:
+      return "TS_UNDEFINED";
+    case TS_NULL:
+      return "TS_NULL";
     case TS_VAR:
       return "TS_VAR";
     case TS_LET:
@@ -120,6 +132,8 @@ _TS_type_to_string(const TSTokenType type) {
       return "TS_NUMBER";
     case TS_GROUP:
       return "TS_GROUP";
+    case TS_SPREAD:
+      return "TS_SPREAD";
     default:
       return " ((unknown type)) ";
   }
@@ -138,6 +152,12 @@ _TS_type_to_string(const TSTokenType type) {
 
 #define ck_assert_tsType_eq(X, Y)  _ck_assert_token_type(X, ==, Y)
 
+#define ck_assert_eq_ts_this(type) ck_assert_tsType_eq(type, TS_THIS)
+#define ck_assert_eq_ts_super(type) ck_assert_tsType_eq(type, TS_SUPER)
+#define ck_assert_eq_ts_false(type) ck_assert_tsType_eq(type, TS_FALSE)
+#define ck_assert_eq_ts_true(type) ck_assert_tsType_eq(type, TS_TRUE)
+#define ck_assert_eq_ts_undefined(type) ck_assert_tsType_eq(type, TS_UNDEFINED)
+#define ck_assert_eq_ts_null(type) ck_assert_tsType_eq(type, TS_NULL)
 #define ck_assert_eq_ts_var(type) ck_assert_tsType_eq(type, TS_VAR)
 #define ck_assert_eq_ts_let(type) ck_assert_tsType_eq(type, TS_LET)
 #define ck_assert_eq_ts_const(type) ck_assert_tsType_eq(type, TS_CONST)
@@ -186,3 +206,4 @@ _TS_type_to_string(const TSTokenType type) {
 #define ck_assert_eq_ts_operator(type) ck_assert_tsType_eq(type, TS_OPERATOR)
 #define ck_assert_eq_ts_string(type) ck_assert_tsType_eq(type, TS_STRING)
 #define ck_assert_eq_ts_number(type) ck_assert_tsType_eq(type, TS_NUMBER)
+#define ck_assert_eq_ts_spread(type) ck_assert_tsType_eq(type, TS_SPREAD)
