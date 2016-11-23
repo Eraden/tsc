@@ -9,7 +9,8 @@ START_TEST(parse_valid_super)
   ck_assert_uint_eq(tsFile->tokensSize, 3);
 
   TSParserToken **tokens = tsFile->tokens;
-  TSParserToken *superToken = NULL;
+  TSParserToken *mth = NULL, *prop = NULL;
+  TSParserToken *super__token = NULL;
   TSParserToken *callArgs = NULL;
   TSParserToken *baseClassToken = NULL;
   TSParserToken *baseClassConstructor = NULL;
@@ -34,14 +35,11 @@ START_TEST(parse_valid_super)
     }
    */
   baseClassToken = tokens[0];
-  ck_assert_ptr_ne(baseClassToken, NULL);
-  ck_assert_eq_ts_class(baseClassToken->tokenType);
-  ck_assert_ptr_ne(baseClassToken->children, NULL);
-  ck_assert_uint_eq(baseClassToken->childrenSize, 2);
+  ck_validate_child(baseClassToken, TS_CLASS, L"Base", 2);
   baseClassConstructor = baseClassToken->children[0];
-  ck_assert_ptr_ne(baseClassConstructor, NULL);
-  ck_assert_eq_ts_class_method(baseClassConstructor->tokenType);
-  ck_assert_uint_eq(baseClassConstructor->childrenSize, 3);
+  ck_validate_child(baseClassConstructor, TS_CLASS_METHOD, L"constructor", 3);
+  mth = baseClassToken->children[1];
+  ck_validate_child(mth, TS_CLASS_METHOD, L"method1", 3);
 
   /*
     class Child extends Base {
@@ -63,129 +61,82 @@ START_TEST(parse_valid_super)
    */
   tokens += 1;
   childClassToken = tokens[0];
-  ck_assert_ptr_ne(childClassToken, NULL);
-  ck_assert_eq_ts_class(childClassToken->tokenType);
-  ck_assert_ptr_ne(childClassToken->children, NULL);
-  ck_assert_uint_eq(childClassToken->childrenSize, 5);
+  ck_validate_child(childClassToken, TS_CLASS, L"Child", 5);
+  ck_validate_extends(childClassToken, baseClassToken);
+  prop = childClassToken->children[1];
+  ck_validate_child(prop, TS_CLASS_FIELD, L"prop", 2);
   childClassConstructor = childClassToken->children[2];
-  ck_assert_ptr_ne(childClassConstructor, NULL);
-  ck_assert_eq_ts_class_method(childClassConstructor->tokenType);
-  ck_assert_uint_eq(childClassConstructor->childrenSize, 3);
-  ck_assert_ptr_ne(childClassConstructor->children, NULL);
+  ck_validate_child(childClassConstructor, TS_CLASS_METHOD, L"constructor", 3);
   childClassConstructorScope = childClassConstructor->children[TS_CLASS_METHOD_BODY_INDEX];
-  ck_assert_ptr_ne(childClassConstructorScope, NULL);
-  ck_assert_eq_ts_scope(childClassConstructorScope->tokenType);
-  ck_assert_ptr_ne(childClassConstructorScope->children, NULL);
-  ck_assert_uint_gt(childClassConstructorScope->childrenSize, 1);
-  superToken = childClassConstructorScope->children[0];
-  ck_assert_ptr_ne(superToken, NULL);
-  ck_assert_eq_ts_super(superToken->tokenType);
-  ck_assert_ptr_eq(superToken->name, NULL);
-  ck_assert_ptr_ne(superToken->children, NULL);
-  ck_assert_uint_eq(superToken->childrenSize, 1);
-  callArgs = superToken->children[0];
-  ck_assert_ptr_ne(callArgs, NULL);
-  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
+  ck_validate_child(childClassConstructorScope, TS_SCOPE, NULL, 7);
+  super__token = childClassConstructorScope->children[0];
+  ck_validate_child(super__token, TS_SUPER, NULL, 1);
+  callArgs = super__token->children[0];
+  ck_validate_child(callArgs, TS_CALL_ARGUMENTS, NULL, 0);
   childClassMethod1 = childClassToken->children[3];
-  ck_assert_ptr_ne(childClassMethod1, NULL);
-  ck_assert_eq_ts_class_method(childClassMethod1->tokenType);
-  ck_assert_ptr_ne(childClassMethod1->children, NULL);
-  ck_assert_uint_eq(childClassMethod1->childrenSize, 3);
+  ck_validate_child(childClassMethod1, TS_CLASS_METHOD, L"method1", 3);
   childClassMethod1Scope = childClassMethod1->children[TS_CLASS_METHOD_BODY_INDEX];
-  ck_assert_ptr_ne(childClassMethod1Scope, NULL);
-  ck_assert_eq_ts_scope(childClassMethod1Scope->tokenType);
-  ck_assert_ptr_ne(childClassMethod1Scope->children, NULL);
-  ck_assert_uint_eq(childClassMethod1Scope->childrenSize, 2); // super + semicolon
-  superToken = childClassMethod1Scope->children[0];
-  ck_assert_ptr_ne(superToken, NULL);
-  ck_assert_eq_ts_super(superToken->tokenType);
-  ck_assert_ptr_ne(superToken->name, NULL);
-  ck_assert_wstr_eq(superToken->name, L"method1");
-  ck_assert_ptr_ne(superToken->children, NULL);
-  ck_assert_uint_eq(superToken->childrenSize, 1);
-  callArgs = superToken->children[0];
-  ck_assert_ptr_ne(callArgs, NULL);
-  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
+  ck_validate_child(childClassMethod1Scope, TS_SCOPE, NULL, 2); // super + semicolon
+  super__token = childClassMethod1Scope->children[0];
+  ck_validate_child(super__token, TS_SUPER, L"method1", 1);
+  callArgs = super__token->children[0];
+  ck_validate_child(callArgs, TS_CALL_ARGUMENTS, NULL, 0);
 
   /*
      class Advanced extends Child {
-      constructor(arg) {
-        super(arg);
-      }
-
-      method1() {
-        super.method1();
-      }
-
-      method2(arg) {
-        super.method2(arg);
-      }
+      constructor(arg) { super(arg); }
+      method1() { super.method1(); }
+      method2(arg) { super.method2(arg); }
     }
    */
   tokens += 1;
   advancedClassToken = tokens[0];
-  ck_assert_ptr_ne(advancedClassToken, NULL);
-  ck_assert_eq_ts_class(advancedClassToken->tokenType);
-  ck_assert_ptr_ne(advancedClassToken->children, NULL);
-  ck_assert_uint_eq(advancedClassToken->childrenSize, 4);
-  advancedClassConstructor = advancedClassToken->children[1];
-  ck_assert_ptr_ne(advancedClassConstructor, NULL);
-  ck_assert_eq_ts_class_method(advancedClassConstructor->tokenType);
-  ck_assert_uint_eq(advancedClassConstructor->childrenSize, 3);
-  advancedClassConstructorScope = advancedClassConstructor->children[TS_CLASS_METHOD_BODY_INDEX];
-  ck_assert_ptr_ne(advancedClassConstructorScope, NULL);
-  ck_assert_eq_ts_scope(advancedClassConstructorScope->tokenType);
-  ck_assert_ptr_ne(advancedClassConstructorScope->children, NULL);
-  ck_assert_uint_eq(advancedClassConstructorScope->childrenSize, 2); // super() + semicolon
-  superToken = advancedClassConstructorScope->children[0];
-  ck_assert_ptr_ne(superToken, NULL);
-  ck_assert_eq_ts_super(superToken->tokenType);
-  ck_assert_ptr_eq(superToken->name, NULL);
-  ck_assert_ptr_ne(superToken->children, NULL);
-  ck_assert_uint_eq(superToken->childrenSize, 1);
-  callArgs = superToken->children[0];
-  ck_assert_ptr_ne(callArgs, NULL);
-  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
-  advancedClassMethod1 = advancedClassToken->children[2];
-  ck_assert_ptr_ne(advancedClassMethod1, NULL);
-  ck_assert_eq_ts_class_method(advancedClassMethod1->tokenType);
-  ck_assert_ptr_ne(advancedClassMethod1->children, NULL);
-  ck_assert_uint_eq(advancedClassMethod1->childrenSize, 3);
-  advancedClassMethod1Scope = advancedClassMethod1->children[TS_CLASS_METHOD_BODY_INDEX];
-  ck_assert_ptr_ne(advancedClassMethod1Scope, NULL);
-  ck_assert_eq_ts_scope(advancedClassMethod1Scope->tokenType);
-  ck_assert_ptr_ne(advancedClassMethod1Scope->children, NULL);
-  ck_assert_uint_eq(advancedClassMethod1Scope->childrenSize, 2); // super + semicolon
-  superToken = advancedClassMethod1Scope->children[0];
-  ck_assert_ptr_ne(superToken, NULL);
-  ck_assert_eq_ts_super(superToken->tokenType);
-  ck_assert_ptr_ne(superToken->name, NULL);
-  ck_assert_wstr_eq(superToken->name, L"method1");
-  ck_assert_ptr_ne(superToken->children, NULL);
-  ck_assert_uint_eq(superToken->childrenSize, 1);
-  callArgs = superToken->children[0];
-  ck_assert_ptr_ne(callArgs, NULL);
-  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
-  advancedClassMethod2 = advancedClassToken->children[3];
-  ck_assert_ptr_ne(advancedClassMethod2, NULL);
-  ck_assert_eq_ts_class_method(advancedClassMethod2->tokenType);
-  ck_assert_ptr_ne(advancedClassMethod2->children, NULL);
-  ck_assert_uint_eq(advancedClassMethod2->childrenSize, 3);
-  advancedClassMethod2Scope = advancedClassMethod2->children[TS_CLASS_METHOD_BODY_INDEX];
-  ck_assert_ptr_ne(advancedClassMethod2Scope, NULL);
-  ck_assert_eq_ts_scope(advancedClassMethod2Scope->tokenType);
-  ck_assert_ptr_ne(advancedClassMethod2Scope->children, NULL);
-  ck_assert_uint_eq(advancedClassMethod2Scope->childrenSize, 2); // super + semicolon
-  superToken = advancedClassMethod2Scope->children[0];
-  ck_assert_ptr_ne(superToken, NULL);
-  ck_assert_eq_ts_super(superToken->tokenType);
-  ck_assert_ptr_ne(superToken->name, NULL);
-  ck_assert_wstr_eq(superToken->name, L"method2");
-  ck_assert_ptr_ne(superToken->children, NULL);
-  ck_assert_uint_eq(superToken->childrenSize, 1);
-  callArgs = superToken->children[0];
-  ck_assert_ptr_ne(callArgs, NULL);
-  ck_assert_eq_ts_call_arguments(callArgs->tokenType);
+  ck_begin_token(advancedClassToken, TS_CLASS, L"Advanced", 4)
+
+    ck_begin_child(extendsToken, TS_EXTENDS, NULL, 1, advancedClassToken)
+      ck_begin_child(extendsBorrowClass, TS_BORROW, NULL, 1, extendsToken)
+        ck_begin_child(parentClass, TS_CLASS, L"Child", 5, extendsBorrowClass)
+          ck_assert_ptr_eq(parentClass, childClassToken);
+        ck_end_child(extendsBorrowClass, FALSE)
+      ck_end_child(extendsToken, FALSE)
+    ck_end_child(advancedClassToken, TRUE)
+
+    ck_begin_child(constructor, TS_CLASS_METHOD, L"constructor", 3, advancedClassToken)
+      ck_begin_child(args, TS_CALL_ARGUMENTS, NULL, 1, constructor)
+      ck_end_child(constructor, TRUE)
+
+      ck_begin_child(returnType, TS_FUNCTION_RETURN_TYPE, NULL, 1, constructor)
+      ck_end_child(constructor, TRUE)
+
+      ck_begin_child(body, TS_SCOPE, NULL, 2, constructor)
+        ck_begin_child(superToken, TS_SUPER, NULL, 1, body)
+          ck_begin_child(callArgs, TS_CALL_ARGUMENTS, NULL, 1, superToken)
+            ck_begin_child(arg, TS_ARGUMENT, L"arg", 2, callArgs)
+            ck_end_child(callArgs, FALSE)
+          ck_end_child(superToken, FALSE)
+        ck_end_child(body, TRUE)
+
+        ck_begin_child(semicolon, TS_SEMICOLON, L";", 0, body)
+        ck_end_child(body, FALSE)
+      ck_end_child(constructor, FALSE)
+    ck_end_child(advancedClassToken, TRUE)
+
+    ck_begin_child(method1, TS_CLASS_METHOD, L"method1", 3, advancedClassToken)
+      ck_begin_child(callArgs, TS_CALL_ARGUMENTS, NULL, 0, method1)
+      ck_end_child(method1, TRUE)
+
+      ck_begin_child(returnType, TS_FUNCTION_RETURN_TYPE, NULL, 1, method1)
+      ck_end_child(method1, TRUE)
+
+      ck_begin_child(body, TS_SCOPE, NULL, 2, method1)
+        ck_begin_child(superToken, TS_SUPER, L"method1", 1, body)
+        ck_end_child(body, TRUE)
+
+        ck_begin_child(semicolon, TS_SEMICOLON, L";", 0, body)
+        ck_end_child(body, FALSE)
+      ck_end_child(method1, FALSE)
+    ck_end_child(advancedClassToken, FALSE)
+  ck_end_token()
 
   TS_free_ts_file(tsFile);
 END_TEST
