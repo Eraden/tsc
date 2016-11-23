@@ -9,78 +9,82 @@ START_TEST(parse_valid_super)
   ck_assert_uint_eq(tsFile->tokensSize, 3);
 
   TSParserToken **tokens = tsFile->tokens;
-  TSParserToken *mth = NULL, *prop = NULL;
-  TSParserToken *super__token = NULL;
-  TSParserToken *callArgs = NULL;
   TSParserToken *baseClassToken = NULL;
-  TSParserToken *baseClassConstructor = NULL;
   TSParserToken *childClassToken = NULL;
-  TSParserToken *childClassConstructor = NULL;
-  TSParserToken *childClassConstructorScope = NULL;
-  TSParserToken *childClassMethod1 = NULL;
-  TSParserToken *childClassMethod1Scope = NULL;
   TSParserToken *advancedClassToken = NULL;
-  TSParserToken *advancedClassConstructor = NULL;
-  TSParserToken *advancedClassConstructorScope = NULL;
-  TSParserToken *advancedClassMethod1 = NULL;
-  TSParserToken *advancedClassMethod1Scope = NULL;
-  TSParserToken *advancedClassMethod2 = NULL;
-  TSParserToken *advancedClassMethod2Scope = NULL;
 
   /*
     class Base {
       constructor() {}
-
       method1() {}
     }
    */
   baseClassToken = tokens[0];
-  ck_validate_child(baseClassToken, TS_CLASS, L"Base", 2);
-  baseClassConstructor = baseClassToken->children[0];
-  ck_validate_child(baseClassConstructor, TS_CLASS_METHOD, L"constructor", 3);
-  mth = baseClassToken->children[1];
-  ck_validate_child(mth, TS_CLASS_METHOD, L"method1", 3);
+
+  ck_begin_token(baseClassToken, TS_CLASS, L"Base", 2);
+    ck_begin_child(constructor, TS_CLASS_METHOD, L"constructor", 3, baseClassToken)
+    ck_end_child(baseClassToken, TRUE);
+
+    ck_begin_child(method1, TS_CLASS_METHOD, L"method1", 3, baseClassToken)
+    ck_end_child(baseClassToken, FALSE);
+  ck_end_token();
 
   /*
     class Child extends Base {
       prop;
-
-      constructor(arg) {
-        super();
-        this.prop = arg;
-      }
-
-      method1() {
-        super.method1();
-      }
-
-      method2(arg) {
-        this.prop = arg;
-      }
+      constructor(arg) { super(); this.prop = arg; }
+      method1() { super.method1(); }
+      method2(arg) { this.prop = arg; }
     }
    */
   tokens += 1;
   childClassToken = tokens[0];
-  ck_validate_child(childClassToken, TS_CLASS, L"Child", 5);
-  ck_validate_extends(childClassToken, baseClassToken);
-  prop = childClassToken->children[1];
-  ck_validate_child(prop, TS_CLASS_FIELD, L"prop", 2);
-  childClassConstructor = childClassToken->children[2];
-  ck_validate_child(childClassConstructor, TS_CLASS_METHOD, L"constructor", 3);
-  childClassConstructorScope = childClassConstructor->children[TS_CLASS_METHOD_BODY_INDEX];
-  ck_validate_child(childClassConstructorScope, TS_SCOPE, NULL, 7);
-  super__token = childClassConstructorScope->children[0];
-  ck_validate_child(super__token, TS_SUPER, NULL, 1);
-  callArgs = super__token->children[0];
-  ck_validate_child(callArgs, TS_CALL_ARGUMENTS, NULL, 0);
-  childClassMethod1 = childClassToken->children[3];
-  ck_validate_child(childClassMethod1, TS_CLASS_METHOD, L"method1", 3);
-  childClassMethod1Scope = childClassMethod1->children[TS_CLASS_METHOD_BODY_INDEX];
-  ck_validate_child(childClassMethod1Scope, TS_SCOPE, NULL, 2); // super + semicolon
-  super__token = childClassMethod1Scope->children[0];
-  ck_validate_child(super__token, TS_SUPER, L"method1", 1);
-  callArgs = super__token->children[0];
-  ck_validate_child(callArgs, TS_CALL_ARGUMENTS, NULL, 0);
+
+  ck_begin_token(childClassToken, TS_CLASS, L"Child", 5)
+    ck_begin_child(extends, TS_EXTENDS, NULL, 1, childClassToken)
+      ck_begin_child(borrow, TS_BORROW, NULL, 1, extends)
+        ck_begin_child(parent, TS_CLASS, L"Base", baseClassToken->childrenSize, borrow)
+          ck_assert_ptr_eq(parent, baseClassToken);
+        ck_end_child(borrow, FALSE)
+      ck_end_child(extends, FALSE)
+    ck_end_child(childClassToken, TRUE)
+
+    ck_begin_child(prop, TS_CLASS_FIELD, L"prop", 2, childClassToken)
+    ck_end_child(childClassToken, TRUE)
+
+    ck_begin_child(constructor, TS_CLASS_METHOD, L"constructor", 3, childClassToken)
+      ck_begin_child(args, TS_CALL_ARGUMENTS, NULL, 1, constructor)
+      ck_end_child(constructor, TRUE)
+
+      ck_begin_child(returnType, TS_FUNCTION_RETURN_TYPE, NULL, 1, constructor)
+      ck_end_child(constructor, TRUE)
+
+      ck_begin_child(scope, TS_SCOPE, NULL, 7, constructor)
+        ck_begin_child(super, TS_SUPER, NULL, 1, scope)
+          ck_begin_child(args, TS_CALL_ARGUMENTS, NULL, 0, super)
+          ck_end_child(super, FALSE)
+        ck_end_child(scope, TRUE)
+      ck_end_child(constructor, FALSE)
+    ck_end_child(childClassToken, TRUE)
+
+    ck_begin_child(method1, TS_CLASS_METHOD, L"method1", 3, childClassToken)
+      ck_begin_child(args, TS_CALL_ARGUMENTS, NULL, 0, method1)
+      ck_end_child(method1, TRUE)
+
+      ck_begin_child(returnType, TS_FUNCTION_RETURN_TYPE, NULL, 1, method1)
+      ck_end_child(method1, TRUE)
+
+      ck_begin_child(scope, TS_SCOPE, NULL, 2, method1)
+        ck_begin_child(super, TS_SUPER, L"method1", 1, scope)
+          ck_begin_child(args, TS_CALL_ARGUMENTS, NULL, 0, super)
+          ck_end_child(super, FALSE)
+        ck_end_child(scope, TRUE)
+      ck_end_child(method1, FALSE)
+    ck_end_child(childClassToken, TRUE)
+
+    ck_begin_child(method2, TS_CLASS_METHOD, L"method2", 3, childClassToken)
+    ck_end_child(childClassToken, FALSE)
+  ck_end_token()
 
   /*
      class Advanced extends Child {
