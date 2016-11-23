@@ -10,23 +10,58 @@ START_TEST(parse_valid_spread)
 
   TSParserToken **tokens = tsFile->tokens;
   TSParserToken *args = NULL, *arg = NULL, *spread = NULL;
-  TSParserToken *fn = NULL, *classToken = NULL, *mth = NULL;
+  TSParserToken *fn = NULL, *classToken = NULL, *extends = NULL, *mth = NULL;
 
   /* function first(...args) {} */
   fn = tokens[0];
-  ck_validate_child(fn, TS_FUNCTION, L"first", 3);
+  ck_validate_child( fn, TS_FUNCTION, L"first", 3 );
+  args = fn->children[TS_FUNCTION_CALL_ARGS_INDEX];
+  ck_validate_child(args, TS_CALL_ARGUMENTS, NULL, 1);
+  spread = args->children[0];
+  ck_validate_child(spread, TS_SPREAD, L"args", 2);
 
   tokens += 1;
   /* function second(firstArgument, ...functionRest) {} */
   fn = tokens[0];
+  ck_validate_child( fn, TS_FUNCTION, L"second", 3 );
+  args = fn->children[TS_FUNCTION_CALL_ARGS_INDEX];
+  ck_validate_child(args, TS_CALL_ARGUMENTS, NULL, 2);
+  arg = args->children[0];
+  ck_validate_child(arg, TS_ARGUMENT, L"firstArgument", 2);
+  spread = args->children[1];
+  ck_validate_child(spread, TS_SPREAD, L"functionRest", 2);
 
   tokens += 1;
   /* class Example { constructor(...constructorArgs) {} method(methodArgument, ...methodRest) {} } */
   classToken = tokens[0];
+  ck_validate_child(classToken, TS_CLASS, L"Example", 2);
+  mth = classToken->children[0];
+  ck_validate_child(mth, TS_CLASS_METHOD, L"constructor", 3);
+  args = mth->children[TS_CLASS_METHOD_CALL_ARGS_INDEX];
+  ck_validate_child(args, TS_CALL_ARGUMENTS, NULL, 1);
+  spread = args->children[0];
+  ck_validate_child(spread, TS_SPREAD, L"constructorArgs", 2);
+  mth = classToken->children[1];
+  ck_validate_child(mth, TS_CLASS_METHOD, L"method", 3);
+  args = mth->children[TS_CLASS_METHOD_CALL_ARGS_INDEX];
+  ck_validate_child(args, TS_CALL_ARGUMENTS, NULL, 2);
+  arg = args->children[0];
+  ck_validate_child(arg, TS_ARGUMENT, L"methodArgument", 2);
+  spread = args->children[1];
+  ck_validate_child(spread, TS_SPREAD, L"methodRest", 2);
 
   tokens += 1;
   /* class Child extends Example { secondMethod(...secondMethodArgs) { this.method(1, ...secondMethodArgs); } } */
   classToken = tokens[0];
+  ck_validate_child(classToken, TS_CLASS, L"Child", 2);
+  extends = classToken->children[0];
+  ck_validate_child(extends, TS_EXTENDS, NULL, 1);
+  mth = classToken->children[1];
+  ck_validate_child(mth, TS_CLASS_METHOD, L"secondMethod", 3);
+  args = mth->children[TS_CLASS_METHOD_CALL_ARGS_INDEX];
+  ck_validate_child(args, TS_CALL_ARGUMENTS, NULL, 1);
+  spread = args->children[0];
+  ck_validate_child(spread, TS_SPREAD, L"secondMethodArgs", 2);
 
   TS_free_ts_file(tsFile);
 END_TEST
