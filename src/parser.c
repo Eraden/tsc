@@ -432,7 +432,15 @@ TS_get_token(
       }
       case L'=': {
         TS_GET_TOKEN_MSG((wchar_t *) L"# '=' character building token...\n", tok)
-        if (tok == NULL || (tok[0] == c && prev == c) ||
+        wchar_t next = (wchar_t) fgetwc(stream);
+        ungetwc((wint_t) next, stream);
+
+        if (tok == NULL && next == L'>') {
+          tok = calloc(sizeof(wchar_t *), 3);
+          tok[0] = L'=';
+          tok[1] = L'>';
+          return tok;
+        } else if (tok == NULL || (tok[0] == c && prev == c) ||
             (prev == L'-' || prev == L'+' || prev == L'|' || prev == L'&')) {
           const size_t size = tok == NULL ? 1 : wcslen((const wchar_t *) tok) + 1;
 
@@ -445,11 +453,8 @@ TS_get_token(
           prev = c;
 
           tok = newPointer;
-          wchar_t next = (wchar_t) fgetwc(stream);
 
-          ungetwc((wint_t) next, stream);
-
-          if (next != L'=') {
+          if (next != L'=' && next != L'>') {
             return tok;
           }
           if (size == 3) {

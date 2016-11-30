@@ -7,7 +7,7 @@ TS_parse_return(TSFile *tsFile) {
     const wchar_t *tok = NULL;
     volatile unsigned char proceed = TRUE;
 
-    if (!(TS_is_embedded_in(token, TS_CLASS_METHOD) || TS_is_embedded_in(token, TS_FUNCTION))) {
+    if (!(TS_is_embedded_in(token, TS_CLASS_METHOD) || TS_is_embedded_in(token, TS_FUNCTION) || TS_is_embedded_in(token, TS_ARROW))) {
       TS_UNEXPECTED_GLOBAL_TOKEN(tsFile, token, "return")
     }
 
@@ -31,6 +31,7 @@ TS_parse_return(TSFile *tsFile) {
           free((void *) tok);
           break;
         }
+        case L'}':
         case L';': {
           proceed = FALSE;
           TS_put_back(tsFile->input.stream, tok);

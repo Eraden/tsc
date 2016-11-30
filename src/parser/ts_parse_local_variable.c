@@ -140,7 +140,7 @@ TS_parse_local_variable_body(TSFile *tsFile) {
           tsFile->parse.token = tok;
 
           if (TS_is_arrow(tsFile)) {
-            value = TS_parse_array(tsFile);
+            value = TS_parse_arrow(tsFile);
           } else {
             value = TS_parse_ts_token(tsFile);
           }

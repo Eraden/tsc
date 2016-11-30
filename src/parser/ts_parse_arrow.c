@@ -20,6 +20,7 @@ TS_is_arrow(TSFile *tsFile ) {
     if (wcscmp(tok, (const wchar_t *) L"=>") == 0) {
       buffer = TS_append_string(buffer, tok);
       isArrow = TRUE;
+      free((void *) tok);
       break;
     }
 
@@ -29,7 +30,6 @@ TS_is_arrow(TSFile *tsFile ) {
         if (tsFile->parse.parentTSToken->tokenType == TS_CALL_ARGUMENTS) {
           proceed = FALSE;
         }
-        TS_join_strings(buffer, tok);
         break;
       }
       case L',': {
@@ -58,8 +58,10 @@ TS_is_arrow(TSFile *tsFile ) {
     }
     free((void *) tok);
   }
-  TS_put_back(tsFile->input.stream, buffer);
-  if (buffer) free(buffer);
+  if (buffer) {
+    TS_put_back(tsFile->input.stream, buffer);
+    free(buffer);
+  }
   return isArrow;
 }
 

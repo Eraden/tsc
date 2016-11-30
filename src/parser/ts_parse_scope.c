@@ -8,8 +8,11 @@ TS_parse_scope_body(TSFile *tsFile) {
   const wchar_t *tok = NULL;
   volatile unsigned char proceed = TRUE;
 
-  unsigned char IS_BODY = (unsigned char) (TS_is_embedded_in(token, TS_CLASS_METHOD) ||
-      TS_is_embedded_in(token, TS_FUNCTION));
+  unsigned char IS_BODY = (unsigned char) (
+      TS_is_embedded_in(token, TS_CLASS_METHOD) ||
+      TS_is_embedded_in(token, TS_FUNCTION) ||
+      TS_is_embedded_in(token, TS_ARROW)
+  );
 
   while (proceed) {
     TS_LOOP_SANITY_CHECK(tsFile)
@@ -20,7 +23,8 @@ TS_parse_scope_body(TSFile *tsFile) {
       TS_UNEXPECTED_END_OF_STREAM(tsFile, token, "scope");
       break;
     }
-    switch (tok[0]) {
+
+    switch (*tok) {
       case L' ': {
         TS_MOVE_BY(tsFile, tok);
         free((void *) tok);
