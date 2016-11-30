@@ -76,6 +76,9 @@
 #define TS_OPERATOR_A_INDEX 0
 #define TS_OPERATOR_B_INDEX 1
 
+#define TS_ARROW_CALL_ARGS_INDEX 0
+#define TS_ARROW_BODY_INDEX 1
+
 typedef struct sTSKeyword TSKeyword;
 
 typedef TSParserToken *(*TS_token_build_fn)(TSFile *tsFile);
@@ -345,6 +348,8 @@ TSParserToken *TS_parse_arrow(TSFile *tsFile);
 
 void TS_free_arrow(const TSParserToken *token);
 
+const unsigned char TS_is_arrow(TSFile *tsFile);
+
 TSParserToken *TS_parse_if(TSFile *tsFile);
 
 void TS_free_if(const TSParserToken *token);
@@ -437,7 +442,7 @@ TSParserToken *TS_parse_ts_token(TSFile *tsFile);
 
 void TS_rollback_token(TSFile *tsFile, TSParserToken *token);
 
-void TS_free_ts_token(const TSParserToken *token);
+void TS_free_ts_token(TSParserToken *token);
 
 void TS_free_children(const TSParserToken *token);
 

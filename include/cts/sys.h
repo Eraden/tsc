@@ -21,10 +21,12 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #else
+
 #include <sys/unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <pwd.h>
+
 #endif
 
 #define TS_PARSE_FAILURE_CODE 4
@@ -79,6 +81,8 @@ void TS_log_position(const wchar_t *file, const u_long character, const u_long l
 const TSParserSettings TS_parse_arguments(int argc, const char **argv);
 
 wchar_t *TS_join_strings(const wchar_t *, const wchar_t *);
+
+wchar_t *TS_append_string(wchar_t *str, wchar_t *part);
 
 void TS_suppress_logging(void (*fn)(void));
 

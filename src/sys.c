@@ -258,6 +258,13 @@ wchar_t *TS_join_strings(const wchar_t *a, const wchar_t *b) {
   return buffer;
 }
 
+wchar_t *TS_append_string(wchar_t *str, wchar_t *part) {
+  if (str == NULL) str = calloc(sizeof(wchar_t), wcslen(part) + 1);
+  else str = realloc(str, sizeof(wchar_t) * (wcslen(str) + wcslen(part) + 1));
+  wcscat(str, part);
+  return str;
+}
+
 void TS_suppress_logging(void (*fn)(void)) {
 #if DEBUG == 1
   TSVerbosity memo = TS_VERBOSITY_DEBUG;

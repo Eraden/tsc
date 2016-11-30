@@ -22,9 +22,9 @@ TS_build_parser_token(
   return token;
 }
 
-static unsigned short int KEYWORDS_SIZE = 35 + 20/*TS_OPERATORS_COUNT*/;
+static unsigned short int KEYWORDS_SIZE = 34 + 20/*TS_OPERATORS_COUNT*/;
 
-static TSKeyword TS_KEYWORDS[35 + 20] = {
+static TSKeyword TS_KEYWORDS[34 + 20] = {
     // Keywords
     {(wchar_t *) L"namespace",  TS_parse_namespace},
     {(wchar_t *) L"super",      TS_parse_super},
@@ -33,7 +33,6 @@ static TSKeyword TS_KEYWORDS[35 + 20] = {
     {(wchar_t *) L"const",      TS_parse_const},
     {(wchar_t *) L"class",      TS_parse_class},
     {(wchar_t *) L"function",   TS_parse_function},
-    {(wchar_t *) L"=>",         TS_parse_arrow},
     {(wchar_t *) L"if",         TS_parse_if},
     {(wchar_t *) L"else",       TS_parse_else},
     {(wchar_t *) L"return",     TS_parse_return},
@@ -663,7 +662,7 @@ TS_free_unknown(
 
 void
 TS_free_ts_token(
-    const TSParserToken *token
+    TSParserToken *token
 ) {
   switch (token->tokenType) {
     case TS_THIS:

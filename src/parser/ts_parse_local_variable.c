@@ -138,7 +138,13 @@ TS_parse_local_variable_body(TSFile *tsFile) {
 
         } else if (parseFlag == TS_PARSE_VARIABLE_VALUE) {
           tsFile->parse.token = tok;
-          value = TS_parse_ts_token(tsFile);
+
+          if (TS_is_arrow(tsFile)) {
+            value = TS_parse_array(tsFile);
+          } else {
+            value = TS_parse_ts_token(tsFile);
+          }
+
           if (value && value->tokenType == TS_UNKNOWN) {
             TS_type_from_string(tsFile, value);
           }
